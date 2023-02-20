@@ -13,34 +13,35 @@ module "resource_group" {
 # VPC
 ###############################################################################
 
-module "acl_profile" {
-  source = "git::https://github.ibm.com/GoldenEye/acl-profile-ocp.git?ref=1.1.2"
-}
+# module "acl_profile" {
+#   source = "git::https://github.ibm.com/GoldenEye/acl-profile-ocp.git?ref=1.1.2"
+# }
 
-locals {
-  acl_rules_map = {
-    private = concat(
-      module.acl_profile.base_acl,
-      module.acl_profile.https_acl,
-      module.acl_profile.deny_all_acl
-    )
-  }
-  vpc_cidr_bases = {
-    private = "192.168.0.0/20",
-    transit = "192.168.16.0/20",
-    edge    = "192.168.32.0/20"
-  }
-}
+# locals {
+#   acl_rules_map = {
+#     private = concat(
+#       module.acl_profile.base_acl,
+#       module.acl_profile.https_acl,
+#       module.acl_profile.deny_all_acl
+#     )
+#   }
+#   vpc_cidr_bases = {
+#     private = "192.168.0.0/20",
+#     transit = "192.168.16.0/20",
+#     edge    = "192.168.32.0/20"
+#   }
+# }
 
 module "vpc" {
-  source                    = "git::https://github.ibm.com/GoldenEye/vpc-module.git?ref=5.3.0"
-  unique_name               = var.prefix
-  ibm_region                = var.region
-  resource_group_id         = module.resource_group.resource_group_id
-  cidr_bases                = local.vpc_cidr_bases
-  acl_rules_map             = local.acl_rules_map
-  virtual_private_endpoints = {}
-  vpc_tags                  = var.resource_tags
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v3.0.0"
+  resource_group_id   = module.resource_group.resource_group_id
+  region              = var.region
+  prefix              = var.prefix
+  tags                = var.resource_tags
+  name                = var.vpc_name
+  address_prefixes    = var.address_prefix
+  subnets             = var.subnets
+  use_public_gateways = var.use_public_gateways
 }
 
 ##############################################################################
@@ -57,13 +58,34 @@ resource "ibm_resource_instance" "kms_instance" {
 
 resource "ibm_kms_key" "kube_key" {
   instance_id  = ibm_resource_instance.kms_instance.guid
-  key_name     = "kube-key-${var-prefix}"
+  key_name     = "kube-key-${var.prefix}"
   standard_key = false
 }
 
 ##############################################################################
 # Base OCP Cluster
 ##############################################################################
+locals {
+  cluster_vpc_subnets = {
+    zone-1 = [{
+      id         = module.vpc.subnet_zone_list[0].id
+      zone       = module.vpc.subnet_zone_list[0].zone
+      cidr_block = module.vpc.subnet_zone_list[0].cidr
+    }],
+    zone-2 = [{
+      id         = module.vpc.subnet_zone_list[1].id
+      zone       = module.vpc.subnet_zone_list[1].zone
+      cidr_block = module.vpc.subnet_zone_list[1].cidr
+    }],
+    zone-3 = [{
+      id         = module.vpc.subnet_zone_list[2].id
+      zone       = module.vpc.subnet_zone_list[2].zone
+      cidr_block = module.vpc.subnet_zone_list[2].cidr
+    }]
+  }
+}
+
+
 module "ocp_base" {
   source               = "../.."
   cluster_name         = var.prefix
@@ -72,7 +94,7 @@ module "ocp_base" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = module.vpc.subnets
+  vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version

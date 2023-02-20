@@ -14,16 +14,14 @@ variable "resource_group" {
   default     = null
 }
 
-variable "resource_tags" {
-  type        = list(string)
-  description = "Optional list of tags to be added to created resources"
-  default     = []
-}
-
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
   default     = "base-ocp-sz"
+  validation {
+    error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
+    condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
+  }
 }
 
 variable "region" {
@@ -38,11 +36,26 @@ variable "ocp_version" {
   default     = null
 }
 
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to created resources"
+  default     = []
+}
+
+variable "vpc_name" {
+  type = string
+  description = "Name of the VPC"
+  default = "management"
+}
+
+##############################################################################
+
 variable "cluster_zone_list" {
   type        = list(string)
   description = "A list of the availability zones (AZ) to provision the cluster in. Example: `cluster_zone_list = [\"1\"]` will provision a cluster in only one zone, e.g., us-south-1"
-  # Single Zone
-  default = ["1"]
+  default = ["1"]   # Single Zone
+  
+  # Validation rules
   validation {
     condition     = alltrue([for zone in var.cluster_zone_list : contains(["1", "2", "3"], zone)])
     error_message = "A cluster_zone_list value must be a string of \"1\", \"2\" or \"3\"."
@@ -57,4 +70,78 @@ variable "cluster_zone_list" {
   }
 }
 
-##############################################################################
+variable "use_public_gateways" {
+  description = "Create a public gateway in any of the three zones with `true`."
+  type = object({
+    zone-1 = optional(bool)
+    zone-2 = optional(bool)
+    zone-3 = optional(bool)
+  })
+  default = {
+    zone-1 = true
+    zone-2 = false
+    zone-3 = false
+  }
+}
+
+variable "address_prefix" {
+  description = "Defining IP Range for VPC"
+  type = object({
+    zone-1 = optional(list(string))
+    zone-2 = optional(list(string))
+    zone-3 = optional(list(string))
+  })
+  default = {
+    zone-1 = ["10.10.10.0/24"]
+    zone-2 = ["10.20.10.0/24"]
+    zone-3 = ["10.30.10.0/24"]
+  }
+}
+
+variable "subnets" {
+  description = "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created"
+  type = object({
+    zone-1 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+    zone-2 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+    zone-3 = list(object({
+      name           = string
+      cidr           = string
+      public_gateway = optional(bool)
+      acl_name       = string
+    }))
+  })
+
+  default = {
+    zone-1 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-1"
+        cidr     = "10.10.10.0/24"
+      }
+    ],
+    zone-2 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-2"
+        cidr     = "10.20.10.0/24"
+      }
+    ],
+    zone-3 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-3"
+        cidr     = "10.30.10.0/24"
+      }
+    ]
+  }
+}
