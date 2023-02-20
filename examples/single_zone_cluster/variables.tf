@@ -43,9 +43,9 @@ variable "resource_tags" {
 }
 
 variable "vpc_name" {
-  type = string
+  type        = string
   description = "Name of the VPC"
-  default = "management"
+  default     = "management"
 }
 
 ##############################################################################
@@ -53,8 +53,8 @@ variable "vpc_name" {
 variable "cluster_zone_list" {
   type        = list(string)
   description = "A list of the availability zones (AZ) to provision the cluster in. Example: `cluster_zone_list = [\"1\"]` will provision a cluster in only one zone, e.g., us-south-1"
-  default = ["1"]   # Single Zone
-  
+  default     = ["1"] # Single Zone
+
   # Validation rules
   validation {
     condition     = alltrue([for zone in var.cluster_zone_list : contains(["1", "2", "3"], zone)])

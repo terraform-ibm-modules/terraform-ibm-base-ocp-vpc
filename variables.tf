@@ -51,25 +51,25 @@ variable "worker_pools" {
   }))
   default = [
     {
-      subnet_prefix    = "private"
+      subnet_prefix    = "zone-1"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
       labels           = {}
     },
     {
-      subnet_prefix    = "edge"
-      pool_name        = "edge"
+      subnet_prefix    = "zone-2"
+      pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "edge" }
+      labels           = { "dedicated" : "zone-2" }
     },
     {
-      subnet_prefix    = "transit"
-      pool_name        = "transit"
+      subnet_prefix    = "zone-3"
+      pool_name        = "zone-3"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "transit" }
+      labels           = { "dedicated" : "zone-3" }
     }
   ]
   description = "List of worker pools"
@@ -81,14 +81,14 @@ variable "worker_pools_taints" {
 
   default = {
     all = []
-    transit = [{
+    zone-3 = [{
       key    = "dedicated"
-      value  = "transit"
+      value  = "zone-3"
       effect = "NoExecute"
     }]
-    edge = [{
+    zone-2 = [{
       key    = "dedicated"
-      value  = "edge"
+      value  = "zone-2"
       effect = "NoExecute"
     }]
     default = []
@@ -173,3 +173,114 @@ variable "vpc_id" {
 
 
 ##############################################################################
+# variable "vpcs" {
+#   description = "A map describing VPCs to be created in this repo."
+#   type = list(
+#     object({
+#       prefix                      = string           # VPC prefix
+#       resource_group              = optional(string) # Name of the group where VPC will be created
+#       use_manual_address_prefixes = optional(bool)
+#       classic_access              = optional(bool)
+#       default_network_acl_name    = optional(string)
+#       default_security_group_name = optional(string)
+#       default_security_group_rules = optional(
+#         list(
+#           object({
+#             name      = string
+#             direction = string
+#             remote    = string
+#             tcp = optional(
+#               object({
+#                 port_max = optional(number)
+#                 port_min = optional(number)
+#               })
+#             )
+#             udp = optional(
+#               object({
+#                 port_max = optional(number)
+#                 port_min = optional(number)
+#               })
+#             )
+#             icmp = optional(
+#               object({
+#                 type = optional(number)
+#                 code = optional(number)
+#               })
+#             )
+#           })
+#         )
+#       )
+#       default_routing_table_name = optional(string)
+#       flow_logs_bucket_name      = optional(string)
+#       address_prefixes = optional(
+#         object({
+#           zone-1 = optional(list(string))
+#           zone-2 = optional(list(string))
+#           zone-3 = optional(list(string))
+#         })
+#       )
+#       network_acls = list(
+#         object({
+#           name              = string
+#           add_cluster_rules = optional(bool)
+#           rules = list(
+#             object({
+#               name        = string
+#               action      = string
+#               destination = string
+#               direction   = string
+#               source      = string
+#               tcp = optional(
+#                 object({
+#                   port_max        = optional(number)
+#                   port_min        = optional(number)
+#                   source_port_max = optional(number)
+#                   source_port_min = optional(number)
+#                 })
+#               )
+#               udp = optional(
+#                 object({
+#                   port_max        = optional(number)
+#                   port_min        = optional(number)
+#                   source_port_max = optional(number)
+#                   source_port_min = optional(number)
+#                 })
+#               )
+#               icmp = optional(
+#                 object({
+#                   type = optional(number)
+#                   code = optional(number)
+#                 })
+#               )
+#             })
+#           )
+#         })
+#       )
+#       use_public_gateways = object({
+#         zone-1 = optional(bool)
+#         zone-2 = optional(bool)
+#         zone-3 = optional(bool)
+#       })
+#       subnets = object({
+#         zone-1 = list(object({
+#           name           = string
+#           cidr           = string
+#           public_gateway = optional(bool)
+#           acl_name       = string
+#         }))
+#         zone-2 = list(object({
+#           name           = string
+#           cidr           = string
+#           public_gateway = optional(bool)
+#           acl_name       = string
+#         }))
+#         zone-3 = list(object({
+#           name           = string
+#           cidr           = string
+#           public_gateway = optional(bool)
+#           acl_name       = string
+#         }))
+#       })
+#     })
+#   )
+# }

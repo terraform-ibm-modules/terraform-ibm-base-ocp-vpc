@@ -8,18 +8,26 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
-// Use existing resource group
-const resourceGroup = "geretain-test-resources"
-const defaultExampleTerraformDir = "examples/default"
+// Resource groups are maintained https://github.ibm.com/GoldenEye/ge-dev-account-management
+const resourceGroup = "geretain-test-base-ocp-vpc"
+const standardExampleTerraformDir = "examples/standard"
 
-func TestRunDefaultExample(t *testing.T) {
+// Ensure there is one test per supported OCP version
+const ocpVersion1 = "4.10"
+const ocpVersion2 = "4.9"
+const ocpVersion3 = "4.8"
+
+func TestRunStandardExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  defaultExampleTerraformDir,
-		Prefix:        "mod-template",
+		TerraformDir:  standardExampleTerraformDir,
+		Prefix:        "base-ocp",
 		ResourceGroup: resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion2,
+		},
 	})
 
 	output, err := options.RunTestConsistency()
@@ -30,14 +38,14 @@ func TestRunDefaultExample(t *testing.T) {
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
-	t.Skip("Skipping upgrade test until initial code is in primary branch")
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  defaultExampleTerraformDir,
-		Prefix:        "mod-template-upg",
+		TerraformDir:  standardExampleTerraformDir,
+		Prefix:        "base-ocp-upg",
 		ResourceGroup: resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion2,
+		},
 	})
 
 	output, err := options.RunTestUpgrade()

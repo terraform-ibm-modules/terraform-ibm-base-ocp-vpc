@@ -4,35 +4,35 @@ set -e
 
 function run_checks() {
 
-  LAST_ATTEMPT=$1
-  NAMESPACE=calico-system
+  last_attempt=$1
+  namespace=calico-system
 
   # Get list of calico-node pods (There will be 1 pod per worker node)
   PODS=()
-  while IFS='' read -r LINE; do PODS+=("$LINE"); done < <(oc get pods -n "${NAMESPACE}" | grep calico-node | cut -f1 -d ' ')
+  while IFS='' read -r line; do PODS+=("$line"); done < <(oc get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' ')
 
   # Iterate through pods to check health
-  HEALTHY=true
+  healthy=true
   for pod in "${PODS[@]}"; do
-    COMMAND="oc logs ${pod} -n ${NAMESPACE} --tail=0"
+    command="oc logs ${pod} -n ${namespace} --tail=0"
     # If it is the last attempt then print the output
-    if [ "${LAST_ATTEMPT}" == true ]; then
-      NODE=$(oc get pod "$pod" -n "${NAMESPACE}" -o=jsonpath='{.spec.nodeName}')
-      echo "Checking node: $NODE"
-      if ! ${COMMAND}; then
-        HEALTHY=false
+    if [ "${last_attempt}" == true ]; then
+      node=$(oc get pod "$pod" -n "${namespace}" -o=jsonpath='{.spec.nodeName}')
+      echo "Checking node: $node"
+      if ! ${command}; then
+        healthy=false
       else
         echo "OK"
       fi
     # Otherwise redirect output to /dev/null
     else
-      if ! ${COMMAND} &> /dev/null; then
-        HEALTHY=false
+      if ! ${command} &> /dev/null; then
+        healthy=false
       fi
     fi
   done
 
-  if [ "$HEALTHY" == "false" ]; then
+  if [ "$healthy" == "false" ]; then
     return 1
   else
     return 0
@@ -40,31 +40,31 @@ function run_checks() {
 
 }
 
-COUNTER=0
-RETRY_COUNT=40
-RETRY_WAIT_TIME=60
+counter=0
+number_retries=40
+retry_wait_time=60
 
 echo "Running script to ensure kube master can communicate with all worker nodes.."
 
-while [ ${COUNTER} -le ${RETRY_COUNT} ]; do
+while [ ${counter} -le ${number_retries} ]; do
 
   # Determine if it is last attempt
-  LAST_ATTEMPT=false
-  if [ "${COUNTER}" -eq ${RETRY_COUNT} ]; then
-    LAST_ATTEMPT=true
+  last_attempt=false
+  if [ "${counter}" -eq ${number_retries} ]; then
+    last_attempt=true
   fi
 
-  ((COUNTER=COUNTER+1))
-  if ! run_checks ${LAST_ATTEMPT}; then
-    if [ "${COUNTER}" -gt ${RETRY_COUNT} ]; then
+  ((counter=counter+1))
+  if ! run_checks ${last_attempt}; then
+    if [ "${counter}" -gt ${number_retries} ]; then
       echo "Maximum attempts reached, giving up."
       echo
       echo "Found kube master is unable to communicate with one or more of its workers."
       echo "Please create a support issue with IBM Cloud and include the error message."
       exit 1
     else
-      echo "Retrying in ${RETRY_WAIT_TIME}s. (Retry attempt ${COUNTER} / ${RETRY_COUNT})"
-      sleep ${RETRY_WAIT_TIME}
+      echo "Retrying in ${retry_wait_time}s. (Retry attempt ${counter} / ${number_retries})"
+      sleep ${retry_wait_time}
     fi
   else
     break

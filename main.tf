@@ -1,43 +1,34 @@
 ##############################################################################
 # base-ocp-vpc-module
-#
 # Deploy Openshift cluster in IBM Cloud on VPC Gen 2
 ##############################################################################
 
 # Segregate pools, as we need default pool for cluster creation
 locals {
-  default_pool = element([
-    for pool in var.worker_pools :
-    pool if pool.pool_name == "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-  ], 0)
-  other_pools = [
-    for pool in var.worker_pools :
-    pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes
-  ]
-  other_autoscaling_pools = [
-    for pool in var.worker_pools :
-    pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes
-  ]
+  # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+  default_pool            = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
+  other_pools             = [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
+  other_autoscaling_pools = [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
   default_kube_version = "${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions[length(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions) - 1]}_openshift"
   kube_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_kube_version : "${var.ocp_version}_openshift"
-  cos_name             = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
-  cos_location         = "global"
-  cos_plan             = "standard"
-  cos_instance_crn     = var.use_existing_cos != false ? var.existing_cos_id : ibm_resource_instance.cos_instance[0].id
+
+  cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
+  cos_location     = "global"
+  cos_plan         = "standard"
+  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : ibm_resource_instance.cos_instance[0].id
+
   # Validation approach based on https://stackoverflow.com/a/66682419
   validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
   validate_msg       = "A value for 'existing_cos_id' variable must be passed when 'use_existing_cos = true'"
   # tflint-ignore: terraform_unused_declarations
-  validate_check = regex(
-    "^${local.validate_msg}$",
-    (!local.validate_condition
-      ? local.validate_msg
-  : ""))
+  validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
+
   delete_timeout = "2h"
   create_timeout = "3h"
   update_timeout = "3h"
-  cluster_id     = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+
+  cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
 }
 
 # Lookup the current default kube version
@@ -110,7 +101,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   }
 
   timeouts {
-    # Extend create, update and delete timeout to static values. 
+    # Extend create, update and delete timeout to static values.
     delete = local.delete_timeout
     create = local.create_timeout
     update = local.update_timeout

@@ -29,60 +29,6 @@ module "vpc" {
 # Base OCP Single Zone Cluster
 ###############################################################################
 locals {
-  cluster_zones = formatlist("${var.region}-%s", var.cluster_zone_list) # ["au-syd-1"]
-  # cluster_vpc_subnets = {
-  #   zone-1 = [
-  #     for zone in module.vpc.subnet_zone_list[0] :
-  #     {
-  #       id         = zone.id
-  #       zone       = zone.zone
-  #       cidr_block = zone.cidr_block
-  #     } if contains(local.cluster_zones, zone.zone)
-  #   ],
-  #   zone-2 = [
-  #     for zone in module.vpc.subnet_zone_list[1] :
-  #     {
-  #       id         = zone.id
-  #       zone       = zone.zone
-  #       cidr_block = zone.cidr_block
-  #     } if contains(local.cluster_zones, zone.zone)
-  #   ],
-  #   zone-3 = [
-  #     for zone in module.vpc.subnet_zone_list[2] :
-  #     {
-  #       id         = zone.id
-  #       zone       = zone.zone
-  #       cidr_block = zone.cidr_block
-  #     } if contains(local.cluster_zones, zone.zone)
-  #   ]
-  # }
-
-  # cluster_vpc_subnets = {
-  #   zone-1 = contains(local.cluster_zones, module.vpc.subnet_zone_list[0].zone) == true ? [
-  #     {
-  #       id         = module.vpc.subnet_zone_list[0].id
-  #       zone       = module.vpc.subnet_zone_list[0].zone
-  #       cidr_block = module.vpc.subnet_zone_list[0].cidr
-  #     }
-  #   ] : [],
-  #   zone-2 = contains(local.cluster_zones, module.vpc.subnet_zone_list[1].zone) == true ? [
-  #     {
-  #       id         = module.vpc.subnet_zone_list[1].id
-  #       zone       = module.vpc.subnet_zone_list[1].zone
-  #       cidr_block = module.vpc.subnet_zone_list[1].cidr
-  #     }
-  #   ] : [],
-  #   zone-3 = contains(local.cluster_zones, module.vpc.subnet_zone_list[2].zone) == true ? [
-  #     {
-  #       id         = module.vpc.subnet_zone_list[2].id
-  #       zone       = module.vpc.subnet_zone_list[2].zone
-  #       cidr_block = module.vpc.subnet_zone_list[2].cidr
-  #     }
-  #   ] : []
-
-  # }
-
-  #### WOrked but condition check is required to span the same zone across all subnets
   cluster_vpc_subnets = {
     zone-1 = [{
       id         = module.vpc.subnet_zone_list[0].id
