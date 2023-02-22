@@ -13,39 +13,78 @@ module "resource_group" {
 # VPC
 ###############################################################################
 
-# module "acl_profile" {
-#   source = "git::https://github.ibm.com/GoldenEye/acl-profile-ocp.git?ref=1.1.2"
-# }
+locals {
+  public_gateway = {
+    zone-1 = true
+    zone-2 = true
+    zone-3 = false
+  }
+  addresses = {
+    zone-1 = ["10.10.10.0/24"]
+    zone-2 = ["10.20.10.0/24"]
+    zone-3 = ["10.30.10.0/24"]
+  }
+  subnets = {
+    zone-1 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-1"
+        cidr     = "10.10.10.0/24"
+      }
+    ],
+    zone-2 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-2"
+        cidr     = "10.20.10.0/24"
+      }
+    ],
+    zone-3 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-3"
+        cidr     = "10.30.10.0/24"
+      }
+    ]
+  }
 
-# locals {
-#   acl_rules_map = {
-#     private = concat(
-#       module.acl_profile.base_acl,
-#       module.acl_profile.https_acl,
-#       module.acl_profile.deny_all_acl
-#     )
-#   }
-#   vpc_cidr_bases = {
-#     private = "192.168.0.0/20",
-#     transit = "192.168.16.0/20",
-#     edge    = "192.168.32.0/20"
-#   }
-# }
+  cluster_vpc_subnets = {
+    zone-1 = [{
+      id         = module.vpc.subnet_zone_list[0].id
+      zone       = module.vpc.subnet_zone_list[0].zone
+      cidr_block = module.vpc.subnet_zone_list[0].cidr
+      }
+    ],
+    zone-2 = [{
+      id         = module.vpc.subnet_zone_list[1].id
+      zone       = module.vpc.subnet_zone_list[1].zone
+      cidr_block = module.vpc.subnet_zone_list[1].cidr
+      }
+    ],
+    zone-3 = [{
+      id         = module.vpc.subnet_zone_list[2].id
+      zone       = module.vpc.subnet_zone_list[2].zone
+      cidr_block = module.vpc.subnet_zone_list[2].cidr
+      }
+    ]
+  }
+}
 
-# module "vpc" {
-#   source                    = "git::https://github.ibm.com/GoldenEye/vpc-module.git?ref=5.3.0"
-#   unique_name               = var.prefix
-#   ibm_region                = var.region
-#   resource_group_id         = module.resource_group.resource_group_id
-#   cidr_bases                = local.vpc_cidr_bases
-#   acl_rules_map             = local.acl_rules_map
-#   virtual_private_endpoints = {}
-#   vpc_tags                  = var.resource_tags
-# }
+module "vpc" {
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v3.0.0"
+  resource_group_id   = module.resource_group.resource_group_id
+  region              = var.region
+  prefix              = var.prefix
+  tags                = var.resource_tags
+  name                = var.vpc_name
+  address_prefixes    = local.addresses
+  subnets             = local.subnets
+  use_public_gateways = local.public_gateway
+}
 
-# ---------------------------------------------------------------------------------------------------------------------
+###############################################################################
 # Base OCP Clusters
-# ---------------------------------------------------------------------------------------------------------------------
+###############################################################################
 
 module "ocp_base_cluster_1" {
   source               = "../.."
@@ -54,7 +93,7 @@ module "ocp_base_cluster_1" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = module.vpc.subnets
+  vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
@@ -69,7 +108,7 @@ module "ocp_base_cluster_2" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = module.vpc.subnets
+  vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
@@ -90,22 +129,55 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
   resource_group_id = module.ocp_base_cluster_2.resource_group_id
 }
 
-###############################################################################
-# Cluster Proxy - THis has to be replaced with something else usig helm??
-###############################################################################
+##############################################################################
+# Observability instances : Create logdna and sysdig instances.
+##############################################################################
 
-module "proxy_cluster_1" {
-  source = "git::https://github.ibm.com/GoldenEye/cluster-proxy-module.git?ref=2.4.52"
+module "observability_instances" {
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.1.1"
+  providers = {
+    logdna.at = logdna.at
+    logdna.ld = logdna.ld
+  }
+  resource_group_id          = module.resource_group.resource_group_id
+  region                     = var.region
+  logdna_plan                = "7-day"
+  sysdig_plan                = "graduated-tier"
+  activity_tracker_provision = false
+  enable_platform_logs       = false
+  enable_platform_metrics    = false
+  logdna_instance_name       = "${var.prefix}-logdna"
+  sysdig_instance_name       = "${var.prefix}-sysdig"
+}
+
+##############################################################################
+# Observability agents
+##############################################################################
+
+module "observability_agents_1" {
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.0"
   providers = {
     helm = helm.helm_cluster_1
   }
-  cluster_id = module.ocp_base_cluster_1.cluster_id
+  cluster_id                = module.ocp_base_cluster_1.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  logdna_instance_name      = module.observability_instances.logdna_name
+  logdna_ingestion_key      = module.observability_instances.logdna_ingestion_key
+  sysdig_instance_name      = module.observability_instances.sysdig_name
+  sysdig_access_key         = module.observability_instances.sysdig_access_key
 }
 
-module "proxy_cluster_2" {
-  source = "git::https://github.ibm.com/GoldenEye/cluster-proxy-module.git?ref=2.4.52"
+module "observability_agents_2" {
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.0"
   providers = {
     helm = helm.helm_cluster_2
   }
-  cluster_id = module.ocp_base_cluster_2.cluster_id
+  cluster_id                = module.ocp_base_cluster_2.cluster_id
+  cluster_resource_group_id = module.ocp_base_cluster_2.resource_group_id
+  logdna_instance_name      = module.observability_instances.logdna_name
+  logdna_ingestion_key      = module.observability_instances.logdna_ingestion_key
+  sysdig_instance_name      = module.observability_instances.sysdig_name
+  sysdig_access_key         = module.observability_instances.sysdig_access_key
 }
+
+##############################################################################

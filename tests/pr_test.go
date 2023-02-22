@@ -2,9 +2,11 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
@@ -12,25 +14,43 @@ import (
 const resourceGroup = "geretain-test-base-ocp-vpc"
 const standardExampleTerraformDir = "examples/standard"
 
-// Ensure there is one test per supported OCP version
+// Ensure there is one test per supported OCP version (see if we can automate this - https://github.ibm.com/GoldenEye/issues/issues/1671)
 const ocpVersion1 = "4.10"
 const ocpVersion2 = "4.9"
 const ocpVersion3 = "4.8"
 
-func TestRunStandardExample(t *testing.T) {
-	t.Parallel()
+var sharedInfoSvc *cloudinfo.CloudInfoService
 
+// TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
+// for multiple tests
+func TestMain(m *testing.M) {
+
+	sharedInfoSvc, _ = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
+	os.Exit(m.Run())
+}
+
+func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardExampleTerraformDir,
-		Prefix:        "base-ocp",
-		ResourceGroup: resourceGroup,
+		Testing:          t,
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
+		ResourceGroup:    resourceGroup,
+		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion2,
 		},
 	})
 
+	return options
+}
+
+func TestRunStandardExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
+
 	output, err := options.RunTestConsistency()
+
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
@@ -38,15 +58,10 @@ func TestRunStandardExample(t *testing.T) {
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardExampleTerraformDir,
-		Prefix:        "base-ocp-upg",
-		ResourceGroup: resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
-		},
-	})
+	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
+	t.Skip("Skipping upgrade test until initial code is in primary branch")
+
+	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {

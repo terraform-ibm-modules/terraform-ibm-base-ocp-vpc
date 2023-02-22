@@ -11,7 +11,11 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
-  default     = "standard"
+  default     = "base-ocp-std"
+  validation {
+    error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
+    condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
+  }
 }
 
 variable "region" {
@@ -41,7 +45,7 @@ variable "ocp_version" {
 variable "vpc_name" {
   type        = string
   description = "Name of the VPC"
-  default     = "base-ocp"
+  default     = "management"
 }
 
 variable "worker_pools" {
@@ -53,23 +57,23 @@ variable "worker_pools" {
     resource_group_id = optional(string)
     labels            = optional(map(string))
   }))
+  description = "Name of the VPC"
   default = [
     {
-      subnet_prefix    = "private"
+      subnet_prefix    = "zone-1"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
-      workers_per_zone = 1
+      workers_per_zone = 2
       labels           = {}
     },
     {
-      subnet_prefix    = "edge"
-      pool_name        = "edge"
+      subnet_prefix    = "zone-2"
+      pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
-      workers_per_zone = 1
-      labels           = { "dedicated" : "edge" }
+      workers_per_zone = 2
+      labels           = { "dedicated" : "zone-2" }
     }
   ]
-  description = "List of worker pools"
 }
 
 variable "worker_pools_taints" {
@@ -78,9 +82,9 @@ variable "worker_pools_taints" {
 
   default = {
     all = []
-    edge = [{
+    zone-2 = [{
       key    = "dedicated"
-      value  = "edge"
+      value  = "zone-2"
       effect = "NoExecute"
     }]
     default = []
@@ -88,79 +92,3 @@ variable "worker_pools_taints" {
 }
 
 ##############################################################################
-
-variable "use_public_gateways" {
-  description = "Create a public gateway in any of the three zones with `true`."
-  type = object({
-    zone-1 = optional(bool)
-    zone-2 = optional(bool)
-    zone-3 = optional(bool)
-  })
-  default = {
-    zone-1 = true
-    zone-2 = false
-    zone-3 = false
-  }
-}
-
-variable "address_prefix" {
-  description = "Defining IP Range for VPC"
-  type = object({
-    zone-1 = optional(list(string))
-    zone-2 = optional(list(string))
-    zone-3 = optional(list(string))
-  })
-  default = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
-  }
-}
-
-variable "subnets" {
-  description = "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created"
-  type = object({
-    zone-1 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-2 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-3 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-  })
-
-  default = {
-    zone-1 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
-      }
-    ],
-    zone-2 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
-      }
-    ],
-    zone-3 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
-      }
-    ]
-  }
-}

@@ -12,7 +12,41 @@ module "resource_group" {
 ###############################################################################
 # VPC
 ###############################################################################
-
+locals {
+  public_gateway = {
+    zone-1 = true
+    zone-2 = false
+    zone-3 = false
+  }
+  addresses = {
+    zone-1 = ["10.10.10.0/24"]
+    zone-2 = ["10.20.10.0/24"]
+    zone-3 = ["10.30.10.0/24"]
+  }
+  subnets = {
+    zone-1 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-1"
+        cidr     = "10.10.10.0/24"
+      }
+    ],
+    zone-2 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-2"
+        cidr     = "10.20.10.0/24"
+      }
+    ],
+    zone-3 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-3"
+        cidr     = "10.30.10.0/24"
+      }
+    ]
+  }
+}
 module "vpc" {
   source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v3.0.0"
   resource_group_id   = module.resource_group.resource_group_id
@@ -20,31 +54,35 @@ module "vpc" {
   prefix              = var.prefix
   tags                = var.resource_tags
   name                = var.vpc_name
-  address_prefixes    = var.address_prefix
-  subnets             = var.subnets
-  use_public_gateways = var.use_public_gateways
+  address_prefixes    = local.addresses
+  subnets             = local.subnets
+  use_public_gateways = local.public_gateway
 }
 
 ###############################################################################
-# Base OCP Single Zone Cluster
+# Base OCP
 ###############################################################################
 locals {
+  # cluster_zones = formatlist("${var.region}-%s", var.cluster_zone_list)
   cluster_vpc_subnets = {
     zone-1 = [{
       id         = module.vpc.subnet_zone_list[0].id
       zone       = module.vpc.subnet_zone_list[0].zone
       cidr_block = module.vpc.subnet_zone_list[0].cidr
-    }],
+      }
+    ],
     zone-2 = [{
       id         = module.vpc.subnet_zone_list[1].id
       zone       = module.vpc.subnet_zone_list[1].zone
       cidr_block = module.vpc.subnet_zone_list[1].cidr
-    }],
+      }
+    ],
     zone-3 = [{
       id         = module.vpc.subnet_zone_list[2].id
       zone       = module.vpc.subnet_zone_list[2].zone
       cidr_block = module.vpc.subnet_zone_list[2].cidr
-    }]
+      }
+    ]
   }
 }
 
@@ -57,10 +95,8 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
-  # worker_pools         = var.worker_pools
-  # worker_pools_taints  = var.worker_pools_taints
-  ocp_version = var.ocp_version
-  tags        = var.resource_tags
+  ocp_version          = var.ocp_version
+  tags                 = var.resource_tags
 }
 
 ##############################################################################

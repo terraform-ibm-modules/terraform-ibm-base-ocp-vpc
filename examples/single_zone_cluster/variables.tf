@@ -48,8 +48,6 @@ variable "vpc_name" {
   default     = "management"
 }
 
-##############################################################################
-
 variable "cluster_zone_list" {
   type        = list(string)
   description = "A list of the availability zones (AZ) to provision the cluster in. Example: `cluster_zone_list = [\"1\"]` will provision a cluster in only one zone, e.g., us-south-1"
@@ -69,79 +67,4 @@ variable "cluster_zone_list" {
     error_message = "The cluster_zone_list only allows for specifying a minimum of one zone up to a maximum of three zones."
   }
 }
-
-variable "use_public_gateways" {
-  description = "Create a public gateway in any of the three zones with `true`."
-  type = object({
-    zone-1 = optional(bool)
-    zone-2 = optional(bool)
-    zone-3 = optional(bool)
-  })
-  default = {
-    zone-1 = true
-    zone-2 = false
-    zone-3 = false
-  }
-}
-
-variable "address_prefix" {
-  description = "Defining IP Range for VPC"
-  type = object({
-    zone-1 = optional(list(string))
-    zone-2 = optional(list(string))
-    zone-3 = optional(list(string))
-  })
-  default = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
-  }
-}
-
-variable "subnets" {
-  description = "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created"
-  type = object({
-    zone-1 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-2 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-    zone-3 = list(object({
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-      acl_name       = string
-    }))
-  })
-
-  default = {
-    zone-1 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
-      }
-    ],
-    zone-2 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
-      }
-    ],
-    zone-3 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
-      }
-    ]
-  }
-}
+##############################################################################

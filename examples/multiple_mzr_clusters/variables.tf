@@ -12,6 +12,10 @@ variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
   default     = "base-ocp-mzr"
+  validation {
+    error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
+    condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
+  }
 }
 
 variable "region" {
@@ -38,6 +42,12 @@ variable "ocp_version" {
   default     = null
 }
 
+variable "vpc_name" {
+  type        = string
+  description = "Name of the VPC"
+  default     = "management"
+}
+
 variable "worker_pools" {
   type = list(object({
     subnet_prefix     = string
@@ -49,18 +59,18 @@ variable "worker_pools" {
   }))
   default = [
     {
-      subnet_prefix    = "private"
+      subnet_prefix    = "zone-1"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
-      workers_per_zone = 1
+      workers_per_zone = 2
       labels           = {}
     },
     {
-      subnet_prefix    = "edge"
-      pool_name        = "edge"
+      subnet_prefix    = "zone-2"
+      pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
-      workers_per_zone = 1
-      labels           = { "dedicated" : "edge" }
+      workers_per_zone = 2
+      labels           = { "dedicated" : "zone-2" }
     }
   ]
   description = "List of worker pools"
@@ -72,9 +82,9 @@ variable "worker_pools_taints" {
 
   default = {
     all = []
-    edge = [{
+    zone-2 = [{
       key    = "dedicated"
-      value  = "edge"
+      value  = "zone-2"
       effect = "NoExecute"
     }]
     default = []

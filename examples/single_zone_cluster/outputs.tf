@@ -7,5 +7,4 @@ output "cluster_vpc_subnets" {
   description = "List of cluster vpc subnets"
 }
 
-
 ##############################################################################
