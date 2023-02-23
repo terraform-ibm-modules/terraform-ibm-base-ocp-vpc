@@ -15,62 +15,62 @@
         {
             "scc_goal_id": "3000258",
             "description": "Check whether Cloud Object Storage has at least # users with the IAM manager role",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000259",
             "description:": "Check whether Cloud Object Storage has at least # service IDs with the IAM manager role",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000266",
             "description": "Check whether Key Protect has at least # users with the IAM manager role",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000267",
             "description:": "Check whether Key Protect has at least # service IDs with the IAM manager role",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000402",
             "description": "Check whether Cloud Internet Services (CIS) has DDoS protection enabled",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000418",
             "description:": "Check whether account has at least one VPN or Direct Link configured",
-            "ignore_reason": "...",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/3905",
             "is_valid": true
         },
         {
             "scc_goal_id": "3000441",
             "description": "Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 22",
-            "ignore_reason": "...",
-            "is_valid": true
+            "ignore_reason": "This is a false alert. The way the subnets are arranged in the VPC ensures proper workload isolation. And it's not a violation of any NIST, SOC or other control. On the contrary, FedRAMP makes it clear that SG or ACLs are currently not seen as a security boundary, only subnets (https://www.fedramp.gov/assets/resources/documents/FedRAMP_subnets_white_paper.pdf)",
+            "is_valid": false
         },
         {
             "scc_goal_id": "3000442",
             "description:": "Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 3389",
-            "ignore_reason": "...",
-            "is_valid": true
+            "ignore_reason": "This is a false alert. The way the subnets are arranged in the VPC ensures proper workload isolation. And it's not a violation of any NIST, SOC or other control. On the contrary, FedRAMP makes it clear that SG or ACLs are currently not seen as a security boundary, only subnets (https://www.fedramp.gov/assets/resources/documents/FedRAMP_subnets_white_paper.pdf)",
+            "is_valid": false
         },
         {
             "scc_goal_id": "3000451",
             "description": "Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to any port",
-            "ignore_reason": "...",
-            "is_valid": true
+            "ignore_reason": "This is a false alert. The way the subnets are arranged in the VPC ensures proper workload isolation. And it's not a violation of any NIST, SOC or other control. On the contrary, FedRAMP makes it clear that SG or ACLs are currently not seen as a security boundary, only subnets (https://www.fedramp.gov/assets/resources/documents/FedRAMP_subnets_white_paper.pdf)",
+            "is_valid": false
         },
         {
             "scc_goal_id": "3000452",
             "description:": "Check whether Virtual Private Cloud (VPC) network access control lists don't allow egress from 0.0.0.0/0 to any port",
-            "ignore_reason": "...",
-            "is_valid": true
+            "ignore_reason": "This is a false alert. The way the subnets are arranged in the VPC ensures proper workload isolation. And it's not a violation of any NIST, SOC or other control. On the contrary, FedRAMP makes it clear that SG or ACLs are currently not seen as a security boundary, only subnets (https://www.fedramp.gov/assets/resources/documents/FedRAMP_subnets_white_paper.pdf)",
+            "is_valid": false
         }
     ]
 }
