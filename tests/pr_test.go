@@ -12,7 +12,10 @@ import (
 
 // Resource groups are maintained https://github.ibm.com/GoldenEye/ge-dev-account-management
 const resourceGroup = "geretain-test-base-ocp-vpc"
-const standardExampleTerraformDir = "examples/standard"
+
+// const standardExampleTerraformDir = "examples/standard"
+const mzrExampleTerraformDir = "examples/multiple_mzr_clusters"
+const szExampleTerraformDir = "examples/single_zone_cluster"
 
 // Ensure there is one test per supported OCP version (see if we can automate this - https://github.ibm.com/GoldenEye/issues/issues/1671)
 const ocpVersion1 = "4.10"
@@ -44,28 +47,44 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 	return options
 }
 
-func TestRunStandardExample(t *testing.T) {
+// func TestRunStandardExample(t *testing.T) {
+// 	t.Parallel()
+
+// 	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
+
+// 	output, err := options.RunTestConsistency()
+
+// 	assert.Nil(t, err, "This should not have errored")
+// 	assert.NotNil(t, output, "Expected some output")
+// }
+
+// Validating other examples :
+func TestRunMZRClustersExample(t *testing.T) {
 	t.Parallel()
-
-	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
-
+	options := setupOptions(t, "base-ocp-mzr", mzrExampleTerraformDir)
 	output, err := options.RunTestConsistency()
-
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+func TestRunSingleZoneClusterExample(t *testing.T) {
+	t.Parallel()
+	options := setupOptions(t, "base-ocp-sz", szExampleTerraformDir)
+	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunUpgradeExample(t *testing.T) {
-	t.Parallel()
+// func TestRunUpgradeExample(t *testing.T) {
+// 	t.Parallel()
 
-	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
-	t.Skip("Skipping upgrade test until initial code is in primary branch")
+// 	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
+// 	t.Skip("Skipping upgrade test until initial code is in primary branch")
 
-	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
+// 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-}
+// 	output, err := options.RunTestUpgrade()
+// 	if !options.UpgradeTestSkipped {
+// 		assert.Nil(t, err, "This should not have errored")
+// 		assert.NotNil(t, output, "Expected some output")
+// 	}
+// }

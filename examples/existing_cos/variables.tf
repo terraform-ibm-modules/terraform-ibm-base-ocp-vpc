@@ -20,13 +20,6 @@ variable "resource_tags" {
   default     = []
 }
 
-
-variable "vpc_name" {
-  type        = string
-  description = "Name of the VPC"
-  default     = "management"
-}
-
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
@@ -47,6 +40,20 @@ variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
   default     = null
+}
+
+variable "vpc_subnets" {
+  type = map(list(object({
+    id         = string
+    zone       = string
+    cidr_block = string
+  })))
+  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
 variable "existing_cos_id" {
