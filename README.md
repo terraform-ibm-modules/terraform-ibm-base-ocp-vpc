@@ -118,7 +118,7 @@ You need the following permissions to run this module.
 
 - [ Existing COS](examples/existing_cos)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
-<!-- - [ Single Zone Cluster](examples/single_zone_cluster) -->
+- [ Single Zone Cluster](examples/single_zone_cluster)
 - [ Standard Example](examples/standard)
 <!-- END EXAMPLES HOOK -->
 

@@ -64,30 +64,25 @@ module "vpc" {
 ###############################################################################
 locals {
 
-  cluster_zones = formatlist("${var.region}-%s", var.cluster_zone_list)
-
   cluster_vpc_subnets = {
     zone-1 = [{
-      id = module.vpc.subnet_zone_list[0].id
+      id         = module.vpc.subnet_zone_list[0].id
       zone       = module.vpc.subnet_zone_list[0].zone
       cidr_block = module.vpc.subnet_zone_list[0].cidr
       }
+    ],
+    zone-2 = [{
+      id         = module.vpc.subnet_zone_list[1].id
+      zone       = module.vpc.subnet_zone_list[1].zone
+      cidr_block = module.vpc.subnet_zone_list[1].cidr
+      }
+    ],
+    zone-3 = [{
+      id         = module.vpc.subnet_zone_list[2].id
+      zone       = module.vpc.subnet_zone_list[2].zone
+      cidr_block = module.vpc.subnet_zone_list[2].cidr
+      }
     ]
-    # ,
-    # zone-2 = [{
-    #   id = module.vpc.subnet_zone_list[1].id
-    #   # zone       = module.vpc.subnet_zone_list[1].zone
-    #   zone       = contains(local.cluster_zones, module.vpc.subnet_zone_list[1].zone) == true ? module.vpc.subnet_zone_list[1].zone : local.cluster_zones[0]
-    #   cidr_block = module.vpc.subnet_zone_list[1].cidr
-    #   }
-    # ],
-    # zone-3 = [{
-    #   id         = module.vpc.subnet_zone_list[2].id
-    #   zone       = module.vpc.subnet_zone_list[2].zone
-    #   zone       = contains(local.cluster_zones, module.vpc.subnet_zone_list[2].zone) == true ? module.vpc.subnet_zone_list[2].zone : local.cluster_zones[0]
-    #   cidr_block = module.vpc.subnet_zone_list[2].cidr
-    #   }
-    # ]
   }
 }
 

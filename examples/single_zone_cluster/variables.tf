@@ -48,23 +48,4 @@ variable "vpc_name" {
   default     = "management"
 }
 
-variable "cluster_zone_list" {
-  type        = list(string)
-  description = "A list of the availability zones (AZ) to provision the cluster in. Example: `cluster_zone_list = [\"1\"]` will provision a cluster in only one zone, e.g., us-south-1"
-  default     = ["1"] # Single Zone
-
-  # Validation rules
-  validation {
-    condition     = alltrue([for zone in var.cluster_zone_list : contains(["1", "2", "3"], zone)])
-    error_message = "A cluster_zone_list value must be a string of \"1\", \"2\" or \"3\"."
-  }
-  validation {
-    condition     = length(var.cluster_zone_list) == length(distinct(var.cluster_zone_list))
-    error_message = "A cluster_zone_list value must be a unique string of \"1\", \"2\" or \"3\" within the list."
-  }
-  validation {
-    condition     = length(var.cluster_zone_list) >= 1 && length(var.cluster_zone_list) <= 3
-    error_message = "The cluster_zone_list only allows for specifying a minimum of one zone up to a maximum of three zones."
-  }
-}
 ##############################################################################
