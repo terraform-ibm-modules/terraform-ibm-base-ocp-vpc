@@ -71,6 +71,12 @@
             "description:": "Check whether Virtual Private Cloud (VPC) network access control lists don't allow egress from 0.0.0.0/0 to any port",
             "ignore_reason": "This is a false alert. The way the subnets are arranged in the VPC ensures proper workload isolation. And it's not a violation of any NIST, SOC or other control. On the contrary, FedRAMP makes it clear that SG or ACLs are currently not seen as a security boundary, only subnets (https://www.fedramp.gov/assets/resources/documents/FedRAMP_subnets_white_paper.pdf)",
             "is_valid": false
+        },
+        {
+            "scc_goal_id": "3000907",
+            "description:": "A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption.",
+            "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/4000",
+            "is_valid": true
         }
     ]
 }
