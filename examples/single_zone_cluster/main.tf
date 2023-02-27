@@ -69,21 +69,16 @@ locals {
       id         = module.vpc.subnet_zone_list[0].id
       zone       = module.vpc.subnet_zone_list[0].zone
       cidr_block = module.vpc.subnet_zone_list[0].cidr
-      }
-    ],
-    zone-2 = [{
-      id         = module.vpc.subnet_zone_list[1].id
-      zone       = module.vpc.subnet_zone_list[1].zone
-      cidr_block = module.vpc.subnet_zone_list[1].cidr
-      }
-    ],
-    zone-3 = [{
-      id         = module.vpc.subnet_zone_list[2].id
-      zone       = module.vpc.subnet_zone_list[2].zone
-      cidr_block = module.vpc.subnet_zone_list[2].cidr
-      }
-    ]
+    }]
   }
+  sz_pool = [
+    {
+      subnet_prefix    = "zone-1"
+      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+      labels           = {}
+  }]
 }
 
 module "ocp_base" {
@@ -97,6 +92,7 @@ module "ocp_base" {
   vpc_subnets          = local.cluster_vpc_subnets
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
+  worker_pools         = local.sz_pool
 }
 
 ##############################################################################
