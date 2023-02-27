@@ -57,38 +57,21 @@ variable "worker_pools" {
     resource_group_id = optional(string)
     labels            = optional(map(string))
   }))
-  description = "Name of the VPC"
+  description = "List of worker pools."
   default = [
     {
       subnet_prefix    = "zone-1"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = {}
     },
     {
       subnet_prefix    = "zone-2"
       pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "zone-2" }
     }
   ]
-}
-
-variable "worker_pools_taints" {
-  type        = map(list(object({ key = string, value = string, effect = string })))
-  description = "Map of lists containing node taints by node-pool name"
-
-  default = {
-    all = []
-    zone-2 = [{
-      key    = "dedicated"
-      value  = "zone-2"
-      effect = "NoExecute"
-    }]
-    default = []
-  }
 }
 
 ##############################################################################

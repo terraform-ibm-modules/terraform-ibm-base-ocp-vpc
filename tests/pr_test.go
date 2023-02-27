@@ -10,11 +10,10 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
-// Resource groups are maintained https://github.ibm.com/GoldenEye/ge-dev-account-management
 const resourceGroup = "geretain-test-base-ocp-vpc"
 const standardExampleTerraformDir = "examples/standard"
 
-// Ensure there is one test per supported OCP version (see if we can automate this - https://github.ibm.com/GoldenEye/issues/issues/1671)
+// Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.10"
 const ocpVersion2 = "4.9"
 const ocpVersion3 = "4.8"

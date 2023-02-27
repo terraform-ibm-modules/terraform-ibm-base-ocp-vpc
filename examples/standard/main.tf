@@ -112,7 +112,6 @@ module "ocp_base" {
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = var.worker_pools
-  worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   kms_config = {

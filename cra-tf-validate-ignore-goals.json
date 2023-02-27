@@ -74,7 +74,7 @@
         },
         {
             "scc_goal_id": "3000907",
-            "description:": "A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption.",
+            "description:": "Check whether OpenShift version is up-to-date",
             "ignore_reason": "Tracking in https://github.ibm.com/GoldenEye/issues/issues/4000",
             "is_valid": true
         }
