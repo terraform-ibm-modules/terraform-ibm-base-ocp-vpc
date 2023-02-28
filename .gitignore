@@ -16,6 +16,8 @@ crash.log
 #
 *.tfvars
 
+.history/*
+
 # Ignore files for local testing
 test.tf
 
@@ -37,7 +39,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Ignore .tfsec
+# Ignore tfsec
 .tfsec/
 
 # Ignore brew lock
@@ -52,5 +54,5 @@ Brewfile.lock.json
 # Node modules
 /node_modules
 
-# Visual Studio Code
+# VS Code State
 .vscode/
