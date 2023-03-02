@@ -62,21 +62,16 @@ module "vpc" {
 }
 
 ##############################################################################
-# KMS
+# Key Protect
 ##############################################################################
-resource "ibm_resource_instance" "kms_instance" {
-  name              = "${var.prefix}-kms"
-  service           = "kms"
-  plan              = "tiered-pricing"
-  location          = var.region
-  resource_group_id = module.resource_group.resource_group_id
-  tags              = var.resource_tags
-}
 
-resource "ibm_kms_key" "kube_key" {
-  instance_id  = ibm_resource_instance.kms_instance.guid
-  key_name     = "kube-key-${var.prefix}"
-  standard_key = false
+module "kp_all_inclusive" {
+  source                    = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
+  key_protect_instance_name = "${var.prefix}-kp-instance"
+  resource_group_id         = module.resource_group.resource_group_id
+  region                    = var.region
+  resource_tags             = var.resource_tags
+  key_map                   = { "ocp" = ["${var.prefix}-cluster-key"] }
 }
 
 ##############################################################################
@@ -115,8 +110,8 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   kms_config = {
-    instance_id = ibm_resource_instance.kms_instance.guid
-    crk_id      = ibm_kms_key.kube_key.key_id
+    instance_id = module.kp_all_inclusive.key_protect_guid
+    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].crn
   }
 }
 

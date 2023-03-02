@@ -14,9 +14,11 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const standardExampleTerraformDir = "examples/standard"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.10"
-const ocpVersion2 = "4.9"
-const ocpVersion3 = "4.8"
+const ocpVersion1 = "4.12"
+const ocpVersion2 = "4.11"
+const ocpVersion3 = "4.10"
+const ocpVersion4 = "4.9"
+const ocpVersion5 = "4.8"
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 
