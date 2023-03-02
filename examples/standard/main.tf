@@ -111,7 +111,7 @@ module "ocp_base" {
   tags                 = var.resource_tags
   kms_config = {
     instance_id = module.kp_all_inclusive.key_protect_guid
-    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].crn
+    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
   }
 }
 
