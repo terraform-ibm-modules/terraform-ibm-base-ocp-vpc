@@ -79,11 +79,9 @@ resource "ibm_container_vpc_cluster" "cluster" {
   }
 
   # Apply taints to the default worker pools i.e private
+
   dynamic "taints" {
-    for_each = concat(
-      var.worker_pools_taints["all"],
-      var.worker_pools_taints["default"],
-    )
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["default"])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -139,11 +137,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   }
 
   # Apply taints to the default worker pools i.e private
+
   dynamic "taints" {
-    for_each = concat(
-      var.worker_pools_taints["all"],
-      var.worker_pools_taints["default"],
-    )
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["default"])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -226,11 +222,9 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # Apply taints to worker pools i.e. other_pools
+
   dynamic "taints" {
-    for_each = concat(
-      var.worker_pools_taints["all"],
-      var.worker_pools_taints[each.value["pool_name"]],
-    )
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["pool_name"])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -254,6 +248,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   lifecycle {
     ignore_changes = [worker_count]
   }
+
   dynamic "zones" {
     for_each = var.vpc_subnets[each.value.subnet_prefix]
     content {
@@ -263,11 +258,9 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   # Apply taints to worker pools i.e. other_pools
+
   dynamic "taints" {
-    for_each = concat(
-      var.worker_pools_taints["all"],
-      var.worker_pools_taints[each.value["pool_name"]],
-    )
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["pool_name"])
     content {
       effect = taints.value.effect
       key    = taints.value.key
