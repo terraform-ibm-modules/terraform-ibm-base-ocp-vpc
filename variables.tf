@@ -171,5 +171,10 @@ variable "vpc_id" {
   description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
+variable "is_private_cluster" {
+  type        = bool
+  description = "Flag to establish nodes connectivity if the cluster is only accessible from IBM backend and not from private endpoint."
+  default     = true
+}
 
 ##############################################################################

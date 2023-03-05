@@ -292,9 +292,16 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 # push down an updated vpn config, and then the vpn server and client need
 # to pick up this updated config. Depending on how busy the network
 # microservice is handling requests, there might be a delay.
+
+# Please note - This network check is only applicable in case of public
+# endpoints and will not be checked if private endpoint is used.
+
 ##############################################################################
 
 resource "null_resource" "confirm_network_healthy" {
+
+  # If private endpoint then do not create this resource.
+  count = var.is_private_cluster ? 0 : 1
 
   depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 

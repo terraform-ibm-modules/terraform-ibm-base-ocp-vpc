@@ -101,6 +101,19 @@
         "line": 98
       }
     },
+    "is_private_cluster": {
+      "name": "is_private_cluster",
+      "type": "bool",
+      "description": "Flag to establish nodes connectivity if the cluster is only accessible from IBM backend and not from private endpoint.",
+      "default": true,
+      "source": [
+        "null_resource.confirm_network_healthy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 174
+      }
+    },
     "kms_config": {
       "name": "kms_config",
       "type": "object({\n    crk_id           = string\n    instance_id      = string\n    private_endpoint = optional(bool, true) # defaults to true\n  })",
@@ -507,12 +520,15 @@
       "mode": "managed",
       "type": "null_resource",
       "name": "confirm_network_healthy",
+      "attributes": {
+        "count": "is_private_cluster"
+      },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 297
+        "line": 301
       }
     },
     "null_resource.reset_api_key": {
