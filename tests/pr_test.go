@@ -58,6 +58,9 @@ func TestRunStandardExample(t *testing.T) {
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
+	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
+	t.Skip("Skipping upgrade test until initial code is in primary branch")
+
 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
 	output, err := options.RunTestUpgrade()
