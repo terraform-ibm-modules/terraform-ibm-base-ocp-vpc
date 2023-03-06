@@ -11,7 +11,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
-  default     = "base-ocp-mzr"
+  default     = "base-ocp-std"
   validation {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
@@ -57,6 +57,7 @@ variable "worker_pools" {
     resource_group_id = optional(string)
     labels            = optional(map(string))
   }))
+  description = "List of worker pools."
   default = [
     {
       subnet_prefix    = "zone-1"
@@ -69,10 +70,14 @@ variable "worker_pools" {
       pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "zone-2" }
+    },
+    {
+      subnet_prefix    = "zone-3"
+      pool_name        = "zone-3"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
     }
   ]
-  description = "List of worker pools"
 }
 
 variable "worker_pools_taints" {
@@ -81,12 +86,17 @@ variable "worker_pools_taints" {
 
   default = {
     all = []
+    default = []
     zone-2 = [{
       key    = "dedicated"
       value  = "zone-2"
       effect = "NoExecute"
     }]
-    default = []
+    zone-3 = [{
+      key    = "dedicated"
+      value  = "zone-3"
+      effect = "NoExecute"
+    }]
   }
 }
 
