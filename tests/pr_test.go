@@ -44,22 +44,22 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 	return options
 }
 
-// func TestRunStandardExample(t *testing.T) {
-// 	t.Parallel()
+func TestRunStandardExample(t *testing.T) {
+	t.Parallel()
 
-// 	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
+	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
 
-// 	output, err := options.RunTestConsistency()
+	output, err := options.RunTestConsistency()
 
-// 	assert.Nil(t, err, "This should not have errored")
-// 	assert.NotNil(t, output, "Expected some output")
-// }
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
 
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
 	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
-	// t.Skip("Skipping upgrade test until initial code is in primary branch")
+	t.Skip("Skipping upgrade test until initial code is in primary branch")
 
 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
