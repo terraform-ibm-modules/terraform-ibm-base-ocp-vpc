@@ -85,7 +85,7 @@ variable "worker_pools_taints" {
   description = "Map of lists containing node taints by node-pool name"
 
   default = {
-    all = []
+    all     = []
     default = []
     zone-2 = [{
       key    = "dedicated"
