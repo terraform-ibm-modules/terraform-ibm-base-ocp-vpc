@@ -224,8 +224,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   # Apply taints to worker pools i.e. other_pools
 
   dynamic "taints" {
-    for_each = var.worker_pools_taints == null ? [] : concat(
-    var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -261,8 +260,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   # Apply taints to worker pools i.e. other_pools
 
   dynamic "taints" {
-    for_each = var.worker_pools_taints == null ? [] : concat(
-    var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
     content {
       effect = taints.value.effect
       key    = taints.value.key

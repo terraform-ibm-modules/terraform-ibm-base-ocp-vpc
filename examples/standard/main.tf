@@ -13,42 +13,6 @@ module "resource_group" {
 # VPC
 ###############################################################################
 
-locals {
-  public_gateway = {
-    zone-1 = true
-    zone-2 = false
-    zone-3 = false
-  }
-  addresses = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
-  }
-  subnets = {
-    zone-1 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
-      }
-    ],
-    zone-2 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
-      }
-    ],
-    zone-3 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
-      }
-    ]
-  }
-}
-
 module "vpc" {
   source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.0.0"
   resource_group_id   = module.resource_group.resource_group_id
@@ -56,9 +20,9 @@ module "vpc" {
   prefix              = var.prefix
   tags                = var.resource_tags
   name                = var.vpc_name
-  address_prefixes    = local.addresses
-  subnets             = local.subnets
-  use_public_gateways = local.public_gateway
+  address_prefixes    = var.addresses
+  subnets             = var.subnets
+  use_public_gateways = var.public_gateway
 }
 
 ##############################################################################
