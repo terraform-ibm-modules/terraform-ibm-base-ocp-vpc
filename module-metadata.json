@@ -468,7 +468,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 244
+        "line": 250
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -512,7 +512,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 297
+        "line": 303
       }
     },
     "null_resource.reset_api_key": {
