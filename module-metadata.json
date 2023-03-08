@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 104
+        "line": 87
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 134
+        "line": 117
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 116
+        "line": 99
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 129
       }
     },
     "force_delete_storage": {
@@ -73,7 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 128
+        "line": 111
       }
     },
     "ignore_worker_pool_size_changes": {
@@ -87,7 +87,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 92
+        "line": 75
       }
     },
     "kms_config": {
@@ -96,7 +96,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 135
       }
     },
     "ocp_entitlement": {
@@ -110,7 +110,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 122
+        "line": 105
       }
     },
     "ocp_version": {
@@ -119,7 +119,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 98
+        "line": 81
       }
     },
     "region": {
@@ -193,7 +193,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 140
+        "line": 123
       }
     },
     "vpc_id": {
@@ -209,7 +209,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 163
+        "line": 146
       },
       "immutable": true
     },
@@ -229,25 +229,18 @@
       "description": "List of worker pools",
       "default": [
         {
-          "labels": {},
           "machine_type": "bx2.4x16",
           "pool_name": "default",
           "subnet_prefix": "zone-1",
           "workers_per_zone": 2
         },
         {
-          "labels": {
-            "dedicated": "zone-2"
-          },
           "machine_type": "bx2.4x16",
           "pool_name": "zone-2",
           "subnet_prefix": "zone-2",
           "workers_per_zone": 2
         },
         {
-          "labels": {
-            "dedicated": "zone-3"
-          },
           "machine_type": "bx2.4x16",
           "pool_name": "zone-3",
           "subnet_prefix": "zone-3",
@@ -262,28 +255,10 @@
     "worker_pools_taints": {
       "name": "worker_pools_taints",
       "type": "map(list(object({ key = string, value = string, effect = string })))",
-      "description": "Map of lists containing node taints by node-pool name",
-      "default": {
-        "all": [],
-        "default": [],
-        "zone-2": [
-          {
-            "effect": "NoExecute",
-            "key": "dedicated",
-            "value": "zone-2"
-          }
-        ],
-        "zone-3": [
-          {
-            "effect": "NoExecute",
-            "key": "dedicated",
-            "value": "zone-3"
-          }
-        ]
-      },
+      "description": "Optional, Map of lists containing node taints by node-pool name",
       "pos": {
         "filename": "variables.tf",
-        "line": 72
+        "line": 69
       }
     }
   },
@@ -418,7 +393,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 179
+        "line": 174
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -441,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 112
+        "line": 110
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -480,7 +455,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 232
+        "line": 225
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -496,7 +471,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 198
+        "line": 193
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -524,7 +499,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 285
+        "line": 277
       }
     }
   },
@@ -541,7 +516,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 188
+        "line": 183
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
