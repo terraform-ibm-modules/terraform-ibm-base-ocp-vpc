@@ -49,7 +49,7 @@ resource "ibm_resource_instance" "cos_instance" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                      = [null_resource.reset_api_key]
+  depends_on                      = [ibm_container_api_key_reset.reset_api_key]
   count                           = var.ignore_worker_pool_size_changes ? 0 : 1
   name                            = var.cluster_name
   vpc_id                          = var.vpc_id
@@ -175,22 +175,10 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 # when the IAM API key is initially created and when it is fully replicated across Cloudant instances where the API key
 # does not work because it is not fully replicated, so commands that require the API key may fail with 404.
 #
-# WORKAROUND:
-# Run a script that checks if an IAM API key already exists for the given region and resource group, and if it does not,
-# run the ibmcloud ks api-key reset command to create one. The script will then pause for some time to allow any IAM
-# Cloudant replication to occur. By doing this, it means the cluster provisioning process will not attempt to create a
-# new key, and simply use the key created by this script. So hence should not face 404s anymore.
-# The script should be replaced by an ibm provider resource when support is added. That enhancement is being tracked in
-# https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4292
 
-resource "null_resource" "reset_api_key" {
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
-    }
-  }
+resource "ibm_container_api_key_reset" "reset_api_key" {
+  region            = var.region
+  resource_group_id = var.resource_group_id
 }
 
 ##############################################################################

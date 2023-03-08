@@ -4,7 +4,6 @@
 
 module "ocp_base" {
   source               = "../.."
-  ibmcloud_api_key     = var.ibmcloud_api_key
   ocp_version          = var.ocp_version
   region               = var.region
   tags                 = var.resource_tags

@@ -12,7 +12,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 29
+        "line": 23
       },
       "immutable": true
     },
@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 110
+        "line": 104
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 140
+        "line": 134
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 122
+        "line": 116
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 146
       }
     },
     "force_delete_storage": {
@@ -73,18 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 134
-      }
-    },
-    "ibmcloud_api_key": {
-      "name": "ibmcloud_api_key",
-      "type": "string",
-      "description": "APIkey that's associated with the account to use, set via environment variable TF_VAR_ibmcloud_api_key",
-      "required": true,
-      "sensitive": true,
-      "pos": {
-        "filename": "variables.tf",
-        "line": 5
+        "line": 128
       }
     },
     "ignore_worker_pool_size_changes": {
@@ -98,7 +87,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 98
+        "line": 92
       }
     },
     "kms_config": {
@@ -107,7 +96,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 158
+        "line": 152
       }
     },
     "ocp_entitlement": {
@@ -121,7 +110,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 128
+        "line": 122
       }
     },
     "ocp_version": {
@@ -130,7 +119,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 104
+        "line": 98
       }
     },
     "region": {
@@ -138,10 +127,15 @@
       "type": "string",
       "description": "The IBM Cloud region where the cluster will be provisioned.",
       "required": true,
+      "source": [
+        "ibm_container_api_key_reset.reset_api_key.region"
+      ],
       "pos": {
         "filename": "variables.tf",
-        "line": 17
-      }
+        "line": 11
+      },
+      "cloud_data_type": "region",
+      "immutable": true
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -150,6 +144,7 @@
       "required": true,
       "source": [
         "data.ibm_container_cluster_config.cluster_config.resource_group_id",
+        "ibm_container_api_key_reset.reset_api_key.resource_group_id",
         "ibm_container_vpc_cluster.autoscaling_cluster.resource_group_id",
         "ibm_container_vpc_cluster.cluster.resource_group_id",
         "ibm_container_vpc_worker_pool.autoscaling_pool.resource_group_id",
@@ -158,7 +153,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 12
+        "line": 6
       },
       "cloud_data_type": "resource_group",
       "immutable": true,
@@ -178,7 +173,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 23
+        "line": 17
       },
       "min_length": 1,
       "max_length": 128,
@@ -198,7 +193,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 140
       }
     },
     "vpc_id": {
@@ -214,7 +209,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 169
+        "line": 163
       },
       "immutable": true
     },
@@ -225,7 +220,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 34
+        "line": 28
       }
     },
     "worker_pools": {
@@ -261,7 +256,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 43
+        "line": 37
       }
     },
     "worker_pools_taints": {
@@ -288,7 +283,7 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 78
+        "line": 72
       }
     }
   },
@@ -365,7 +360,8 @@
         "filename": "outputs.tf",
         "line": 43
       },
-      "type": "string"
+      "type": "string",
+      "cloud_data_type": "region"
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -409,6 +405,22 @@
     }
   },
   "managed_resources": {
+    "ibm_container_api_key_reset.reset_api_key": {
+      "mode": "managed",
+      "type": "ibm_container_api_key_reset",
+      "name": "reset_api_key",
+      "attributes": {
+        "region": "region",
+        "resource_group_id": "resource_group_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 179
+      }
+    },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
       "mode": "managed",
       "type": "ibm_container_vpc_cluster",
@@ -468,7 +480,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 244
+        "line": 232
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -484,7 +496,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 210
+        "line": 198
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -512,19 +524,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 297
-      }
-    },
-    "null_resource.reset_api_key": {
-      "mode": "managed",
-      "type": "null_resource",
-      "name": "reset_api_key",
-      "provider": {
-        "name": "null"
-      },
-      "pos": {
-        "filename": "main.tf",
-        "line": 186
+        "line": 285
       }
     }
   },
@@ -541,7 +541,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 200
+        "line": 188
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {

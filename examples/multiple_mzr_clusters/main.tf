@@ -98,7 +98,6 @@ module "ocp_base_cluster_1" {
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
-  ibmcloud_api_key     = var.ibmcloud_api_key
 }
 
 module "ocp_base_cluster_2" {
@@ -113,7 +112,6 @@ module "ocp_base_cluster_2" {
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
-  ibmcloud_api_key     = var.ibmcloud_api_key
 }
 
 ###############################################################################
