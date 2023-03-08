@@ -31,10 +31,16 @@ func TestMain(m *testing.M) {
 
 func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     terraformDir,
-		Prefix:           prefix,
-		ResourceGroup:    resourceGroup,
+		Testing:       t,
+		TerraformDir:  terraformDir,
+		Prefix:        prefix,
+		ResourceGroup: resourceGroup,
+		IgnoreDestroys: testhelper.Exemptions{ // Ignore for consistency check
+			List: []string{
+				"module.ocp_base.null_resource.confirm_network_healthy",
+				"module.ocp_base.null_resource.reset_api_key",
+			},
+		},
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion2,
