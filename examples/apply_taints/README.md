@@ -1,4 +1,4 @@
-# Standard Example
+# Apply Taints Example
 
- - The example will provision an OCP cluster with one extra worker pool inside a VPC.
+ - This example provisions OCP cluster and set taints for worker pools.
  - The example also enables a key protect provider for the cluster, as well as the required COS instance.
