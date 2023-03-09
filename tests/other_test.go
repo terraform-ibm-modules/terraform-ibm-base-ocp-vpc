@@ -40,7 +40,7 @@ func TestRunMultiClusterExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion1,
+			"ocp_version": ocpVersion2,
 		},
 	})
 	output, err := options.RunTestConsistency()

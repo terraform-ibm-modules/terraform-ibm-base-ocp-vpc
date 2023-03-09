@@ -37,7 +37,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
+			"ocp_version": ocpVersion1,
 		},
 	})
 
@@ -57,9 +57,6 @@ func TestRunStandardExample(t *testing.T) {
 
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
-
-	// TODO: Remove this line after the first merge to primary branch is complete to enable upgrade test
-	t.Skip("Skipping upgrade test until initial code is in primary branch")
 
 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
