@@ -37,7 +37,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
+			"ocp_version": ocpVersion1,
 		},
 	})
 
