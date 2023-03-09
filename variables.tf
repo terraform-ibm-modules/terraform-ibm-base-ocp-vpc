@@ -55,21 +55,18 @@ variable "worker_pools" {
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = {}
     },
     {
       subnet_prefix    = "zone-2"
       pool_name        = "zone-2"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "zone-2" }
     },
     {
       subnet_prefix    = "zone-3"
       pool_name        = "zone-3"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "zone-3" }
     }
   ]
   description = "List of worker pools"
@@ -77,22 +74,8 @@ variable "worker_pools" {
 
 variable "worker_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
-  description = "Map of lists containing node taints by node-pool name"
-
-  default = {
-    all = []
-    zone-3 = [{
-      key    = "dedicated"
-      value  = "zone-3"
-      effect = "NoExecute"
-    }]
-    zone-2 = [{
-      key    = "dedicated"
-      value  = "zone-2"
-      effect = "NoExecute"
-    }]
-    default = []
-  }
+  description = "Optional, Map of lists containing node taints by node-pool name"
+  default     = null
 }
 
 variable "ignore_worker_pool_size_changes" {
@@ -103,7 +86,7 @@ variable "ignore_worker_pool_size_changes" {
 
 variable "ocp_version" {
   type        = string
-  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'default' is passed, the current default OCP version will be used."
+  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used."
   default     = null
 }
 

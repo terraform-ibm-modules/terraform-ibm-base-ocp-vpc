@@ -13,41 +13,23 @@ module "resource_group" {
 # VPC
 ###############################################################################
 
-locals {
-  public_gateway = {
-    zone-1 = true
-    zone-2 = true
-    zone-3 = false
-  }
-  addresses = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
-  }
-  subnets = {
-    zone-1 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
-      }
-    ],
-    zone-2 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
-      }
-    ],
-    zone-3 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
-      }
-    ]
-  }
+module "vpc" {
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.0.0"
+  resource_group_id   = module.resource_group.resource_group_id
+  region              = var.region
+  prefix              = var.prefix
+  tags                = var.resource_tags
+  name                = var.vpc_name
+  address_prefixes    = var.addresses
+  subnets             = var.subnets
+  use_public_gateways = var.public_gateway
+}
 
+###############################################################################
+# Base OCP Clusters
+###############################################################################
+
+locals {
   cluster_vpc_subnets = {
     zone-1 = [{
       id         = module.vpc.subnet_zone_list[0].id
@@ -69,22 +51,6 @@ locals {
     ]
   }
 }
-
-module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.0.0"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = local.addresses
-  subnets             = local.subnets
-  use_public_gateways = local.public_gateway
-}
-
-###############################################################################
-# Base OCP Clusters
-###############################################################################
 
 module "ocp_base_cluster_1" {
   source               = "../.."
@@ -155,7 +121,7 @@ module "observability_instances" {
 ##############################################################################
 
 module "observability_agents_1" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.0"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.2"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -168,7 +134,7 @@ module "observability_agents_1" {
 }
 
 module "observability_agents_2" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.0"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.2"
   providers = {
     helm = helm.helm_cluster_2
   }
