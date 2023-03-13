@@ -176,8 +176,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 # run the ibmcloud ks api-key reset command to create one. The script will then pause for some time to allow any IAM
 # Cloudant replication to occur. By doing this, it means the cluster provisioning process will not attempt to create a
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
-# The script should be replaced by an ibm provider resource when support is added. That enhancement is being tracked in
-# https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4292
+# The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
@@ -194,6 +193,16 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
+  download = var.disable_public_endpoint ? false : true
+  # Added above line to skip downloading the configuration, but this resulted in error in worker pool i.e.
+  # Error: [ERROR] Error waiting for workerpool (cg518eto06lqh4e1d0l0/cg518eto06lqh4e1d0l0-193e02c) to become ready:
+  # [ERROR] Error retrieving workers for cluster: Request failed with status code: 404,
+  # ServerErrorResponse: {
+  #   "incidentID":"c88a943c-29aa-45dd-a84d-23f7e9053506",
+  #   "code":"G0008","description":"The specified cluster could not be found by name. Provide the cluster ID instead.",
+  #   "type":"General","recoveryCLI":"To list all clusters you have access to, run 'ibmcloud ks cluster ls'."
+  # }
+  # count = var.disable_public_endpoint ? 0 : 1 # This resulted in same error as mentioned in issue already i.e. Error downloading the cluster config
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   resource_group_id = var.resource_group_id
@@ -296,7 +305,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 resource "null_resource" "confirm_network_healthy" {
 
   # If private endpoint then do not create this resource.
-  count = var.is_private_cluster ? 0 : 1
+  count = var.disable_public_endpoint ? 0 : 1
+  # count = var.is_private_cluster ? 0 : 1 # This is another attempt to provide flag for restricting kube commands in private cluster
 
   depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 
