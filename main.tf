@@ -31,6 +31,11 @@ locals {
   cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
 }
 
+locals {
+  crk             = var.kms_config == null ? null : var.kms_config.crk_id
+  kms_instance_id = var.kms_config == null ? null : var.kms_config.instance_id
+}
+
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {}
 
@@ -64,6 +69,8 @@ resource "ibm_container_vpc_cluster" "cluster" {
   force_delete_storage            = var.force_delete_storage
   disable_public_service_endpoint = var.disable_public_endpoint
   worker_labels                   = local.default_pool.labels
+  crk                             = local.crk
+  kms_instance_id                 = local.kms_instance_id
 
   lifecycle {
     ignore_changes = [kube_version]
@@ -122,6 +129,8 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   force_delete_storage            = var.force_delete_storage
   disable_public_service_endpoint = var.disable_public_endpoint
   worker_labels                   = local.default_pool.labels
+  crk                             = local.crk
+  kms_instance_id                 = local.kms_instance_id
 
   lifecycle {
     ignore_changes = [worker_count, kube_version]
@@ -211,6 +220,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   flavor            = each.value.machine_type
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
+  crk               = local.crk
+  kms_instance_id   = local.kms_instance_id
 
   dynamic "zones" {
     for_each = var.vpc_subnets[each.value.subnet_prefix]
@@ -243,6 +254,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   flavor            = each.value.machine_type
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
+  crk               = local.crk
+  kms_instance_id   = local.kms_instance_id
 
   lifecycle {
     ignore_changes = [worker_count]
