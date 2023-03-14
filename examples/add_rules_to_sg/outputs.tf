@@ -8,17 +8,17 @@ output "cluster_name" {
 }
 
 output "vpc_security_group" {
-  value = data.ibm_security_group.get_vpc_sg
+  value       = data.ibm_security_group.get_vpc_sg
   description = "Get VPC SG rules"
 }
 
 output "vpc_cluster_security_group" {
-  value = data.ibm_security_group.get_vpc_cluster_sg
+  value       = data.ibm_security_group.get_vpc_cluster_sg
   description = "Get VPC Cluster SG rules"
 }
 
 output "allow_ssh_rule" {
-  value = data.ibm_security_group.allow_ssh
+  value       = data.ibm_security_group.allow_ssh
   description = "Allow SSH rule"
 }
 
