@@ -88,6 +88,18 @@ variable "ocp_version" {
   type        = string
   description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.ocp_version == null,
+      var.ocp_version == "latest",
+      var.ocp_version == "4.9",
+      var.ocp_version == "4.10",
+      var.ocp_version == "4.11",
+      var.ocp_version == "4.12",
+    ])
+    error_message = "The specified ocp_version is not one of the validated versions."
+  }
 }
 
 variable "cluster_ready_when" {
