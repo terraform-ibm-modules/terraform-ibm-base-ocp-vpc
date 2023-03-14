@@ -64,6 +64,9 @@ resource "ibm_container_vpc_cluster" "cluster" {
   force_delete_storage            = var.force_delete_storage
   disable_public_service_endpoint = var.disable_public_endpoint
   worker_labels                   = local.default_pool.labels
+  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   lifecycle {
     ignore_changes = [kube_version]
@@ -122,6 +125,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   force_delete_storage            = var.force_delete_storage
   disable_public_service_endpoint = var.disable_public_endpoint
   worker_labels                   = local.default_pool.labels
+  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   lifecycle {
     ignore_changes = [worker_count, kube_version]
@@ -211,6 +217,9 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   flavor            = each.value.machine_type
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
+  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   dynamic "zones" {
     for_each = var.vpc_subnets[each.value.subnet_prefix]
@@ -243,6 +252,9 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   flavor            = each.value.machine_type
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
+  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   lifecycle {
     ignore_changes = [worker_count]

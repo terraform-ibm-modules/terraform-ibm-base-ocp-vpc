@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 93
+        "line": 98
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 123
+        "line": 128
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 105
+        "line": 110
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 135
+        "line": 140
       }
     },
     "force_delete_storage": {
@@ -73,7 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 117
+        "line": 122
       }
     },
     "ibmcloud_api_key": {
@@ -98,7 +98,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 81
+        "line": 86
       }
     },
     "kms_config": {
@@ -107,7 +107,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 141
+        "line": 146
       }
     },
     "ocp_entitlement": {
@@ -121,7 +121,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 111
+        "line": 116
       }
     },
     "ocp_version": {
@@ -130,7 +130,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 87
+        "line": 92
       }
     },
     "region": {
@@ -198,7 +198,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 129
+        "line": 134
       }
     },
     "vpc_id": {
@@ -214,7 +214,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 157
       },
       "immutable": true
     },
@@ -230,7 +230,7 @@
     },
     "worker_pools": {
       "name": "worker_pools",
-      "type": "list(object({\n    subnet_prefix     = string\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n  }))",
+      "type": "list(object({\n    subnet_prefix     = string\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
       "description": "List of worker pools",
       "default": [
         {
@@ -263,7 +263,7 @@
       "description": "Optional, Map of lists containing node taints by node-pool name",
       "pos": {
         "filename": "variables.tf",
-        "line": 75
+        "line": 80
       }
     }
   },
@@ -404,7 +404,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 110
+        "line": 113
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -443,7 +443,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 237
+        "line": 246
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -459,7 +459,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 205
+        "line": 211
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -487,7 +487,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 289
+        "line": 301
       }
     },
     "null_resource.reset_api_key": {
@@ -499,7 +499,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 181
+        "line": 187
       }
     }
   },
@@ -516,7 +516,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 195
+        "line": 201
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
