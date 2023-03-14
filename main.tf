@@ -176,8 +176,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 # run the ibmcloud ks api-key reset command to create one. The script will then pause for some time to allow any IAM
 # Cloudant replication to occur. By doing this, it means the cluster provisioning process will not attempt to create a
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
-# The script should be replaced by an ibm provider resource when support is added. That enhancement is being tracked in
-# https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4292
+# The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
