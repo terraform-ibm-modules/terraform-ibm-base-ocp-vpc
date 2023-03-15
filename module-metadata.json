@@ -45,8 +45,10 @@
       "description": "Flag indicating that the public endpoint should be enabled or disabled",
       "default": false,
       "source": [
+        "data.ibm_container_cluster_config.cluster_config.download",
         "ibm_container_vpc_cluster.autoscaling_cluster.disable_public_service_endpoint",
-        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint"
+        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint",
+        "null_resource.confirm_network_healthy.count"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -443,7 +445,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 237
+        "line": 248
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -459,7 +461,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 205
+        "line": 215
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -482,12 +484,15 @@
       "mode": "managed",
       "type": "null_resource",
       "name": "confirm_network_healthy",
+      "attributes": {
+        "count": "disable_public_endpoint"
+      },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 289
+        "line": 305
       }
     },
     "null_resource.reset_api_key": {
@@ -509,6 +514,7 @@
       "type": "ibm_container_cluster_config",
       "name": "cluster_config",
       "attributes": {
+        "download": "disable_public_endpoint",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
