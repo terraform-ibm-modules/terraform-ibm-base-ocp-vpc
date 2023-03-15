@@ -136,6 +136,11 @@ variable "worker_pools" {
     workers_per_zone  = number
     resource_group_id = optional(string)
     labels            = optional(map(string))
+    boot_volume_encryption_kms_config = optional(object({
+      crk             = string
+      kms_instance_id = string
+      kms_account_id  = optional(string)
+    }))
   }))
   description = "List of worker pools."
   default = [
