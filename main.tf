@@ -231,6 +231,12 @@ resource "ibm_container_vpc_worker_pool" "pool" {
     }
   }
 
+  timeouts {
+    # Extend create and delete timeout to 2h
+    delete = "2h"
+    create = "2h"
+  }
+
 }
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
@@ -293,7 +299,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 
 resource "null_resource" "confirm_network_healthy" {
 
-  count = var.confirm_network_healthy ? 1 : 0
+  count = var.verify_worker_network_readiness ? 1 : 0
 
   depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 

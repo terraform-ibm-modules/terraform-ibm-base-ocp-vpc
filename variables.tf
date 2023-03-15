@@ -154,9 +154,9 @@ variable "vpc_id" {
   description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
-variable "confirm_network_healthy" {
+variable "verify_worker_network_readiness" {
   type        = bool
-  description = "Set the flag as true only if runtime is able to access kubernetes cluster otherwise change the value to false - Default : true"
+  description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
   default     = true
 }
 

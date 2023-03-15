@@ -30,19 +30,6 @@
         "line": 93
       }
     },
-    "confirm_network_healthy": {
-      "name": "confirm_network_healthy",
-      "type": "bool",
-      "description": "Set the flag as true only if runtime is able to access kubernetes cluster otherwise change the value to false - Default : true",
-      "default": true,
-      "source": [
-        "null_resource.confirm_network_healthy.count"
-      ],
-      "pos": {
-        "filename": "variables.tf",
-        "line": 157
-      }
-    },
     "cos_name": {
       "name": "cos_name",
       "type": "string",
@@ -212,6 +199,19 @@
       "pos": {
         "filename": "variables.tf",
         "line": 129
+      }
+    },
+    "verify_worker_network_readiness": {
+      "name": "verify_worker_network_readiness",
+      "type": "bool",
+      "description": "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false.",
+      "default": true,
+      "source": [
+        "null_resource.confirm_network_healthy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 157
       }
     },
     "vpc_id": {
@@ -456,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 237
+        "line": 243
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -496,14 +496,14 @@
       "type": "null_resource",
       "name": "confirm_network_healthy",
       "attributes": {
-        "count": "confirm_network_healthy"
+        "count": "verify_worker_network_readiness"
       },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 294
+        "line": 300
       }
     },
     "null_resource.reset_api_key": {
