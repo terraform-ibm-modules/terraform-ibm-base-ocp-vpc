@@ -115,6 +115,7 @@ You need the following permissions to run this module.
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
+- [ Add Rules to Security Groups Example](examples/add_rules_to_sg)
 - [ Apply Taints Example](examples/apply_taints)
 - [ Existing COS](examples/existing_cos)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
