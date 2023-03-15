@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 93
+        "line": 105
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 123
+        "line": 135
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 105
+        "line": 117
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 135
+        "line": 147
       }
     },
     "force_delete_storage": {
@@ -73,7 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 117
+        "line": 129
       }
     },
     "ibmcloud_api_key": {
@@ -107,7 +107,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 141
+        "line": 153
       }
     },
     "ocp_entitlement": {
@@ -121,7 +121,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 111
+        "line": 123
       }
     },
     "ocp_version": {
@@ -198,7 +198,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 129
+        "line": 141
       }
     },
     "verify_worker_network_readiness": {
@@ -227,7 +227,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 164
       },
       "immutable": true
     },
