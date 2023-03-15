@@ -193,16 +193,6 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  download = var.disable_public_endpoint ? false : true
-  # Added above line to skip downloading the configuration, but this resulted in error in worker pool i.e.
-  # Error: [ERROR] Error waiting for workerpool (cg518eto06lqh4e1d0l0/cg518eto06lqh4e1d0l0-193e02c) to become ready:
-  # [ERROR] Error retrieving workers for cluster: Request failed with status code: 404,
-  # ServerErrorResponse: {
-  #   "incidentID":"c88a943c-29aa-45dd-a84d-23f7e9053506",
-  #   "code":"G0008","description":"The specified cluster could not be found by name. Provide the cluster ID instead.",
-  #   "type":"General","recoveryCLI":"To list all clusters you have access to, run 'ibmcloud ks cluster ls'."
-  # }
-  # count = var.disable_public_endpoint ? 0 : 1 # This resulted in same error as mentioned in issue already i.e. Error downloading the cluster config
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   resource_group_id = var.resource_group_id
@@ -234,7 +224,6 @@ resource "ibm_container_vpc_worker_pool" "pool" {
 
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
-    # for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -271,7 +260,6 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
-    # for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -283,6 +271,10 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 
 ##############################################################################
 # Confirm network healthy by ensuring master can communicate with all workers.
+#
+# Please note:
+# The network health check is applicable only if the cluster is accessible.
+#
 # To do this, we run a script to execute "kubectl logs" against each calico
 # daemonset pod (as there will be one pod per node) and ensure it passes.
 #
@@ -297,16 +289,11 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 # to pick up this updated config. Depending on how busy the network
 # microservice is handling requests, there might be a delay.
 
-# Please note - This network check is only applicable in case of public
-# endpoints and will not be checked if private endpoint is used.
-
 ##############################################################################
 
 resource "null_resource" "confirm_network_healthy" {
 
-  # If private endpoint then do not create this resource.
-  count = var.disable_public_endpoint ? 0 : 1
-  # count = var.is_private_cluster ? 0 : 1 # This is another attempt to provide flag for restricting kube commands in private cluster
+  count = var.confirm_network_healthy ? 1 : 0
 
   depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 

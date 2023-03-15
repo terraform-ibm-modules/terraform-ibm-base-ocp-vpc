@@ -154,11 +154,10 @@ variable "vpc_id" {
   description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
-# commented as this variable is not serving the purpose.
-# variable "is_private_cluster" {
-#   type        = bool
-#   description = "Flag to establish nodes connectivity if the cluster is only accessible from IBM backend and not from private endpoint."
-#   default     = true
-# }
+variable "confirm_network_healthy" {
+  type        = bool
+  description = "Set the flag as true only if runtime is able to access kubernetes cluster otherwise change the value to false - Default : true"
+  default     = true
+}
 
 ##############################################################################

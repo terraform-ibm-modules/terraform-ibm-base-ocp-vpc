@@ -62,18 +62,17 @@ locals {
 }
 
 module "ocp_base" {
-  source                  = "../.."
-  cluster_name            = var.prefix
-  ibmcloud_api_key        = var.ibmcloud_api_key
-  resource_group_id       = module.resource_group.resource_group_id
-  region                  = var.region
-  force_delete_storage    = true
-  vpc_id                  = module.vpc.vpc_id
-  vpc_subnets             = local.cluster_vpc_subnets
-  worker_pools            = var.worker_pools
-  ocp_version             = var.ocp_version
-  tags                    = var.resource_tags
-  disable_public_endpoint = true # Adding this to create a private cluster
+  source               = "../.."
+  cluster_name         = var.prefix
+  ibmcloud_api_key     = var.ibmcloud_api_key
+  resource_group_id    = module.resource_group.resource_group_id
+  region               = var.region
+  force_delete_storage = true
+  vpc_id               = module.vpc.vpc_id
+  vpc_subnets          = local.cluster_vpc_subnets
+  worker_pools         = var.worker_pools
+  ocp_version          = var.ocp_version
+  tags                 = var.resource_tags
   kms_config = {
     instance_id = module.kp_all_inclusive.key_protect_guid
     crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id

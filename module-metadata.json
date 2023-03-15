@@ -30,6 +30,19 @@
         "line": 93
       }
     },
+    "confirm_network_healthy": {
+      "name": "confirm_network_healthy",
+      "type": "bool",
+      "description": "Set the flag as true only if runtime is able to access kubernetes cluster otherwise change the value to false - Default : true",
+      "default": true,
+      "source": [
+        "null_resource.confirm_network_healthy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 157
+      }
+    },
     "cos_name": {
       "name": "cos_name",
       "type": "string",
@@ -45,10 +58,8 @@
       "description": "Flag indicating that the public endpoint should be enabled or disabled",
       "default": false,
       "source": [
-        "data.ibm_container_cluster_config.cluster_config.download",
         "ibm_container_vpc_cluster.autoscaling_cluster.disable_public_service_endpoint",
-        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint",
-        "null_resource.confirm_network_healthy.count"
+        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -445,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 248
+        "line": 237
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -461,7 +472,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 215
+        "line": 205
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -485,14 +496,14 @@
       "type": "null_resource",
       "name": "confirm_network_healthy",
       "attributes": {
-        "count": "disable_public_endpoint"
+        "count": "confirm_network_healthy"
       },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 305
+        "line": 294
       }
     },
     "null_resource.reset_api_key": {
@@ -514,7 +525,6 @@
       "type": "ibm_container_cluster_config",
       "name": "cluster_config",
       "attributes": {
-        "download": "disable_public_endpoint",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
