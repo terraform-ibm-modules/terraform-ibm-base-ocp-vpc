@@ -232,7 +232,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   timeouts {
-    # Extend create and delete timeout to 2h (See https://github.ibm.com/GoldenEye/issues/issues/3898)
+    # Extend create and delete timeout to 2h
     delete = "2h"
     create = "2h"
   }
