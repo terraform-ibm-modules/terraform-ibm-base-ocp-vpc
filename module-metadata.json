@@ -201,6 +201,19 @@
         "line": 141
       }
     },
+    "verify_worker_network_readiness": {
+      "name": "verify_worker_network_readiness",
+      "type": "bool",
+      "description": "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false.",
+      "default": true,
+      "source": [
+        "null_resource.confirm_network_healthy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 169
+      }
+    },
     "vpc_id": {
       "name": "vpc_id",
       "type": "string",
@@ -482,12 +495,15 @@
       "mode": "managed",
       "type": "null_resource",
       "name": "confirm_network_healthy",
+      "attributes": {
+        "count": "verify_worker_network_readiness"
+      },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 295
+        "line": 300
       }
     },
     "null_resource.reset_api_key": {
