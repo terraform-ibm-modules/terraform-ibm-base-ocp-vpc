@@ -57,20 +57,7 @@ variable "worker_pools" {
     }))
   }))
   description = "List of worker pools."
-  default = [
-    {
-      subnet_prefix    = "zone-1"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    },
-    {
-      subnet_prefix    = "zone-2"
-      pool_name        = "zone-2"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    }
-  ]
+  default     = []
 }
 
 ##############################################################################
