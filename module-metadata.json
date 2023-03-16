@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 98
+        "line": 110
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 128
+        "line": 140
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 110
+        "line": 122
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 140
+        "line": 152
       }
     },
     "force_delete_storage": {
@@ -73,7 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 122
+        "line": 134
       }
     },
     "ibmcloud_api_key": {
@@ -107,7 +107,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 158
       }
     },
     "ocp_entitlement": {
@@ -121,7 +121,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 116
+        "line": 128
       }
     },
     "ocp_version": {
@@ -198,7 +198,20 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 134
+        "line": 146
+      }
+    },
+    "verify_worker_network_readiness": {
+      "name": "verify_worker_network_readiness",
+      "type": "bool",
+      "description": "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false.",
+      "default": true,
+      "source": [
+        "null_resource.confirm_network_healthy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 174
       }
     },
     "vpc_id": {
@@ -214,7 +227,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 157
+        "line": 169
       },
       "immutable": true
     },
@@ -443,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 246
+        "line": 252
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -482,12 +495,15 @@
       "mode": "managed",
       "type": "null_resource",
       "name": "confirm_network_healthy",
+      "attributes": {
+        "count": "verify_worker_network_readiness"
+      },
       "provider": {
         "name": "null"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 301
+        "line": 312
       }
     },
     "null_resource.reset_api_key": {

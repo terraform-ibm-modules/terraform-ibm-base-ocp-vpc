@@ -93,6 +93,18 @@ variable "ocp_version" {
   type        = string
   description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.ocp_version == null,
+      var.ocp_version == "latest",
+      var.ocp_version == "4.9",
+      var.ocp_version == "4.10",
+      var.ocp_version == "4.11",
+      var.ocp_version == "4.12",
+    ])
+    error_message = "The specified ocp_version is not of the valid versions."
+  }
 }
 
 variable "cluster_ready_when" {
@@ -159,4 +171,10 @@ variable "vpc_id" {
   description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
-#############################################################################
+variable "verify_worker_network_readiness" {
+  type        = bool
+  description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
+  default     = true
+}
+
+##############################################################################
