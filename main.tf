@@ -223,7 +223,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   # Apply taints to worker pools i.e. other_pools
 
   dynamic "taints" {
-    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -265,7 +265,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   # Apply taints to worker pools i.e. other_pools
 
   dynamic "taints" {
-    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints[each.value["pool_name"]])
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
     content {
       effect = taints.value.effect
       key    = taints.value.key
@@ -277,6 +277,10 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 
 ##############################################################################
 # Confirm network healthy by ensuring master can communicate with all workers.
+#
+# Please note:
+# The network health check is applicable only if the cluster is accessible.
+#
 # To do this, we run a script to execute "kubectl logs" against each calico
 # daemonset pod (as there will be one pod per node) and ensure it passes.
 #
@@ -290,9 +294,12 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
 # push down an updated vpn config, and then the vpn server and client need
 # to pick up this updated config. Depending on how busy the network
 # microservice is handling requests, there might be a delay.
+
 ##############################################################################
 
 resource "null_resource" "confirm_network_healthy" {
+
+  count = var.verify_worker_network_readiness ? 1 : 0
 
   depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 
