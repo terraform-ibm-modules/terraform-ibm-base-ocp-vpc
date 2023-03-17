@@ -10,51 +10,6 @@ module "resource_group" {
 }
 
 ###############################################################################
-# Security Group Rules
-###############################################################################
-
-# Retrieve information of an existing security group as a read-only data source.
-data "ibm_security_group" "get_vpc_sg" {
-  description = "ID of the clusters VPC"
-  name        = "kube-${module.ocp_base.vpc_id}"
-}
-
-data "ibm_security_group" "get_vpc_cluster_sg" {
-  description = "ID of cluster created"
-  name        = "kube-${module.ocp_base.cluster_id}"
-}
-
-# locals {
-#   security_group_rules = toset(["allow_ssh", "allow_http", "allow_https", "allow_all", "allow_outbound"])
-# }
-
-# data "ibm_security_group" "get_vpc_sg_all" {
-#   for_each    = local.security_group_rules
-#   description = "ID of the clusters VPC"
-#   # name             = "kube-${module.ocp_base.vpc_id}"
-#   name = each.value
-# }
-
-data "ibm_security_group" "allow_ssh" {
-  description = "Allow SSH Rule"
-  # name             = "kube-${module.ocp_base.cluster_id}"
-  name = "allow_ssh"
-}
-
-
-#Create, delete, and update a rule for a security group
-# Cusomtize the rule and attach it with a security group id
-# kube-<clusterId> and kube-<vpcid> SG
-# resource "ibm_security_group_rule" "allow_port_8080" {
-#     direction = "ingress"
-#     ether_type = "IPv4"
-#     port_range_min = 8080
-#     port_range_max = 8080
-#     protocol = "tcp"
-#     security_group_id = data.ibm_security_group.get_vpc_sg.id
-# }
-
-###############################################################################
 # VPC
 ###############################################################################
 
@@ -68,8 +23,105 @@ module "vpc" {
   address_prefixes    = var.addresses
   subnets             = var.subnets
   use_public_gateways = var.public_gateway
-  # security_group_rules =
 }
+
+
+# Add example adding rules to the the kube-<clusterId> and kube-<vpcid> SGs
+
+##############################################################################
+# Security Group Rules addition.
+##############################################################################
+
+###
+# Create and add rules for kube-vpc-id security group
+###
+
+resource "ibm_is_security_group" "kube_vpc_sg" {
+  name           = "kube-${module.ocp_base.vpc_id}"
+  vpc            = module.vpc.vpc_id
+  resource_group = module.resource_group.resource_group_id
+}
+
+resource "ibm_is_security_group_rule" "kube_vpc_rules" {
+  for_each  = { for rule in var.sg_rules : rule.name => rule }
+  group     = ibm_is_security_group.kube_vpc_sg.id
+  direction = each.value.direction
+  remote    = each.value.remote
+
+  dynamic "tcp" {
+    for_each = each.value.tcp == null ? [] : [each.value]
+    content {
+      port_min = each.value.tcp.port_min
+      port_max = each.value.tcp.port_max
+    }
+  }
+
+  dynamic "udp" {
+    for_each = each.value.udp == null ? [] : [each.value]
+    content {
+      port_min = each.value.udp.port_min
+      port_max = each.value.udp.port_max
+    }
+  }
+
+  dynamic "icmp" {
+    for_each = each.value.icmp == null ? [] : [each.value]
+    content {
+      type = lookup(each.value.icmp, "type", null)
+      code = lookup(each.value.icmp, "code", null)
+    }
+  }
+}
+
+# data "ibm_is_security_group" "kube_vpc_sg" {
+#   name = ibm_is_security_group.kube_vpc_sg.name
+# }
+
+#######
+# Add rules to Kube-cluster-Id Security Group
+######
+
+resource "ibm_is_security_group" "kube_cluster_sg" {
+  name           = "kube-${module.ocp_base.cluster_id}"
+  vpc            = module.vpc.vpc_id
+  resource_group = module.resource_group.resource_group_id
+}
+
+# Create rules for kube-cluster-id security group
+resource "ibm_is_security_group_rule" "kube_cluster_rules" {
+  for_each  = { for rule in var.sg_rules : rule.name => rule }
+  group     = ibm_is_security_group.kube_cluster_sg.id
+  direction = each.value.direction
+  remote    = each.value.remote
+
+  dynamic "tcp" {
+    for_each = each.value.tcp == null ? [] : [each.value]
+    content {
+      port_min = each.value.tcp.port_min
+      port_max = each.value.tcp.port_max
+    }
+  }
+
+  dynamic "udp" {
+    for_each = each.value.udp == null ? [] : [each.value]
+    content {
+      port_min = each.value.udp.port_min
+      port_max = each.value.udp.port_max
+    }
+  }
+
+  dynamic "icmp" {
+    for_each = each.value.icmp == null ? [] : [each.value]
+    content {
+      type = lookup(each.value.icmp, "type", null)
+      code = lookup(each.value.icmp, "code", null)
+    }
+  }
+}
+
+# data "ibm_is_security_group" "kube_cluster_sg" {
+#   name = ibm_is_security_group.kube_cluster_sg.name
+# }
 
 ##############################################################################
 # Key Protect

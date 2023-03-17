@@ -7,23 +7,14 @@ output "cluster_name" {
   description = "The name of the provisioned cluster."
 }
 
-output "vpc_security_group" {
-  value       = data.ibm_security_group.get_vpc_sg
-  description = "Get VPC SG rules"
+output "rules_kube_vpc" {
+  description = "The kube-vpc-id security group id and rules"
+  value       = "${ibm_is_security_group.kube_vpc_sg.id} => ${ibm_is_security_group.kube_vpc_sg.rules}"
 }
 
-output "vpc_cluster_security_group" {
-  value       = data.ibm_security_group.get_vpc_cluster_sg
-  description = "Get VPC Cluster SG rules"
+output "rules_kube_cluster" {
+  description = "The kube-cluster-id security group id and rules"
+  value       = "${ibm_is_security_group.kube_cluster_sg.id} => ${ibm_is_security_group.kube_cluster_sg.rules}"
 }
-
-output "allow_ssh_rule" {
-  value       = data.ibm_security_group.allow_ssh
-  description = "Allow SSH rule"
-}
-
-# output "vpc_cluster_security_group" {
-#   value = data.ibm_security_group.get_vpc_cluster_sg
-# }
 
 ##############################################################################
