@@ -29,29 +29,6 @@ module "vpc" {
 # Base OCP Clusters
 ###############################################################################
 
-locals {
-  cluster_vpc_subnets = {
-    zone-1 = [{
-      id         = module.vpc.subnet_zone_list[0].id
-      zone       = module.vpc.subnet_zone_list[0].zone
-      cidr_block = module.vpc.subnet_zone_list[0].cidr
-      }
-    ],
-    zone-2 = [{
-      id         = module.vpc.subnet_zone_list[1].id
-      zone       = module.vpc.subnet_zone_list[1].zone
-      cidr_block = module.vpc.subnet_zone_list[1].cidr
-      }
-    ],
-    zone-3 = [{
-      id         = module.vpc.subnet_zone_list[2].id
-      zone       = module.vpc.subnet_zone_list[2].zone
-      cidr_block = module.vpc.subnet_zone_list[2].cidr
-      }
-    ]
-  }
-}
-
 module "ocp_base_cluster_1" {
   source               = "../.."
   cluster_name         = "${var.prefix}-cluster-1"
@@ -59,7 +36,7 @@ module "ocp_base_cluster_1" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
+  vpc_subnets          = module.vpc.subnet_detail_map
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version
@@ -74,7 +51,7 @@ module "ocp_base_cluster_2" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
+  vpc_subnets          = module.vpc.subnet_detail_map
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
   ocp_version          = var.ocp_version

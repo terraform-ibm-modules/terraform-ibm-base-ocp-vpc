@@ -29,14 +29,6 @@ module "vpc" {
 # Base OCP
 ###############################################################################
 locals {
-
-  cluster_vpc_subnets = {
-    zone-1 = [{
-      id         = module.vpc.subnet_zone_list[0].id
-      zone       = module.vpc.subnet_zone_list[0].zone
-      cidr_block = module.vpc.subnet_zone_list[0].cidr
-    }]
-  }
   sz_pool = [
     {
       subnet_prefix    = "zone-1"
@@ -54,7 +46,7 @@ module "ocp_base" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
+  vpc_subnets          = module.vpc.subnet_detail_map
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   worker_pools         = local.sz_pool
