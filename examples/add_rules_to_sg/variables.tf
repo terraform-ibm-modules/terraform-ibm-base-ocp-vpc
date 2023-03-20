@@ -163,8 +163,8 @@ variable "sg_rules" {
 
   default = [
     { name = "allow-port-8080", direction = "inbound", tcp = { port_max = 8080, port_min = 8080 }, remote = "10.10.10.0/24" },
-    { name = "allow-port-443", direction = "inbound", tcp = { port_max = 8080, port_min = 8080 }, remote = "10.10.10.0/24" },
-    { name = "udp-range", direction = "inbound", udp = { port_max = 30103, port_min = 30105 }, remote = "10.10.10.0/24" },
+    { name = "allow-port-443", direction = "inbound", tcp = { port_max = 443, port_min = 443 }, remote = "10.10.10.0/24" },
+    { name = "udp-range", direction = "inbound", udp = { port_max = 30103, port_min = 30103 }, remote = "10.10.10.0/24" },
   ]
 
   type = list(
@@ -196,84 +196,18 @@ variable "sg_rules" {
   validation {
     error_message = "Security group rule direction can only be `inbound` or `outbound`."
     condition = (var.sg_rules == null || length(var.sg_rules) == 0) ? true : length(distinct(
-      flatten([
-        # Check through rules
-        for rule in var.sg_rules :
-        # Return false if direction is not valid
-        false if !contains(["inbound", "outbound"], rule.direction)
-      ])
+      # Return false if direction is not valid
+      flatten([for rule in var.sg_rules : false if !contains(["inbound", "outbound"], rule.direction)])
     )) == 0
   }
 
   validation {
     error_message = "Security group rule names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
     condition = (var.sg_rules == null || length(var.sg_rules) == 0) ? true : length(distinct(
-      flatten([
-        # Check through rules
-        for rule in var.sg_rules :
-        # Return false if rule name is not valid
-        false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", rule.name))
-      ])
+      # Return false if rule name is not valid
+      flatten([for rule in var.sg_rules : false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", rule.name))])
     )) == 0
   }
 }
-
-# variable "kube_cluster_sg_rules" {
-#   description = "List of security group rules to be added to the kube-<clusterId> security group"
-
-#     default = [
-#       { name = "allow_port_8080" , direction = "inbound" , tcp = { port_max = 8080 , port_min  = 8080 }, remote = "10.10.10.0/24" },
-#       { name = "allow_port_443" , direction = "inbound" , tcp = { port_max = 8080 , port_min  = 8080 }, remote = "10.10.10.0/24" },
-#       { name = "udp_range" , direction = "inbound" , udp = { port_max = 301023 , port_min  = 301025 }, remote = "10.10.10.0/24" },
-#     ]
-
-#   type = list(
-#     object({
-#       name      = string
-#       direction = string
-#       remote    = string
-#       tcp = optional(
-#         object({
-#           port_max = optional(number)
-#           port_min = optional(number)
-#         })
-#       )
-#       udp = optional(
-#         object({
-#           port_max = optional(number)
-#           port_min = optional(number)
-#         })
-#       )
-#       icmp = optional(
-#         object({
-#           type = optional(number)
-#           code = optional(number)
-#         })
-#       )
-#     })
-#   )
-
-#   validation {
-#     error_message = "Security group rule direction can only be `inbound` or `outbound`."
-#     condition = (var.kube_cluster_sg_rules == null || length(var.kube_cluster_sg_rules) == 0) ? true : length(distinct(
-#       flatten([
-#         # Check through rules and return false if direction is not valid
-#         for rule in var.kube_cluster_sg_rules : false if !contains(["inbound", "outbound"], rule.direction)
-#       ])
-#     )) == 0
-#   }
-
-#   validation {
-#     error_message = "Security group rule names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
-#     condition = (var.kube_cluster_sg_rules == null || length(var.kube_cluster_sg_rules) == 0) ? true : length(distinct(
-#       flatten([
-#         # Check through rules
-#         for rule in var.kube_cluster_sg_rules :
-#         # Return false if rule name is not valid
-#         false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", rule.name))
-#       ])
-#     )) == 0
-#   }
-# }
 
 ##############################################################################

@@ -26,25 +26,20 @@ module "vpc" {
 }
 
 
-# Add example adding rules to the the kube-<clusterId> and kube-<vpcid> SGs
-
 ##############################################################################
 # Security Group Rules addition.
 ##############################################################################
 
-###
-# Create and add rules for kube-vpc-id security group
-###
-
-resource "ibm_is_security_group" "kube_vpc_sg" {
-  name           = "kube-${module.ocp_base.vpc_id}"
-  vpc            = module.vpc.vpc_id
-  resource_group = module.resource_group.resource_group_id
+data "ibm_is_security_group" "kube_vpc_sg" {
+  # Kube- <vpc id> Security Group
+  name = "kube-${module.ocp_base.vpc_id}"
 }
 
+# Create rules for SGs
 resource "ibm_is_security_group_rule" "kube_vpc_rules" {
+
   for_each  = { for rule in var.sg_rules : rule.name => rule }
-  group     = ibm_is_security_group.kube_vpc_sg.id
+  group     = data.ibm_is_security_group.kube_vpc_sg.id
   direction = each.value.direction
   remote    = each.value.remote
 
@@ -73,24 +68,15 @@ resource "ibm_is_security_group_rule" "kube_vpc_rules" {
   }
 }
 
-# data "ibm_is_security_group" "kube_vpc_sg" {
-#   name = ibm_is_security_group.kube_vpc_sg.name
-# }
-
-#######
-# Add rules to Kube-cluster-Id Security Group
-######
-
-resource "ibm_is_security_group" "kube_cluster_sg" {
-  name           = "kube-${module.ocp_base.cluster_id}"
-  vpc            = module.vpc.vpc_id
-  resource_group = module.resource_group.resource_group_id
+data "ibm_is_security_group" "kube_cluster_sg" {
+  # Kube-<cluster id> Security Group
+  name = "kube-${module.ocp_base.cluster_id}"
 }
 
-# Create rules for kube-cluster-id security group
 resource "ibm_is_security_group_rule" "kube_cluster_rules" {
+
   for_each  = { for rule in var.sg_rules : rule.name => rule }
-  group     = ibm_is_security_group.kube_cluster_sg.id
+  group     = data.ibm_is_security_group.kube_cluster_sg.id
   direction = each.value.direction
   remote    = each.value.remote
 
@@ -118,10 +104,6 @@ resource "ibm_is_security_group_rule" "kube_cluster_rules" {
     }
   }
 }
-
-# data "ibm_is_security_group" "kube_cluster_sg" {
-#   name = ibm_is_security_group.kube_cluster_sg.name
-# }
 
 ##############################################################################
 # Key Protect
@@ -139,6 +121,7 @@ module "kp_all_inclusive" {
 ##############################################################################
 # Base OCP Cluster
 ##############################################################################
+
 locals {
   cluster_vpc_subnets = {
     zone-1 = [{
