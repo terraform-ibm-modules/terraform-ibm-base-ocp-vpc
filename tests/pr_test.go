@@ -12,8 +12,7 @@ import (
 
 const resourceGroup = "geretain-test-base-ocp-vpc"
 
-// const standardExampleTerraformDir = "examples/standard"
-const sgRuleExampleTerraformDir = "examples/add_rules_to_sg"
+const standardExampleTerraformDir = "examples/standard"
 
 // Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.12"
@@ -46,21 +45,10 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 	return options
 }
 
-// func TestRunStandardExample(t *testing.T) {
-// 	t.Parallel()
-
-// 	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
-
-// 	output, err := options.RunTestConsistency()
-
-// 	assert.Nil(t, err, "This should not have errored")
-// 	assert.NotNil(t, output, "Expected some output")
-// }
-
-func TestRunSGRuleExample(t *testing.T) {
+func TestRunStandardExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", sgRuleExampleTerraformDir)
+	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
 
 	output, err := options.RunTestConsistency()
 
@@ -68,14 +56,14 @@ func TestRunSGRuleExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-// func TestRunUpgradeExample(t *testing.T) {
-// 	t.Parallel()
+func TestRunUpgradeExample(t *testing.T) {
+	t.Parallel()
 
-// 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
+	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 
-// 	output, err := options.RunTestUpgrade()
-// 	if !options.UpgradeTestSkipped {
-// 		assert.Nil(t, err, "This should not have errored")
-// 		assert.NotNil(t, output, "Expected some output")
-// 	}
-// }
+	output, err := options.RunTestUpgrade()
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+		assert.NotNil(t, output, "Expected some output")
+	}
+}

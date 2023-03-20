@@ -30,15 +30,14 @@ module "vpc" {
 # Security Group Rules addition.
 ##############################################################################
 
+# Kube-<vpc id> Security Group
 data "ibm_is_security_group" "kube_vpc_sg" {
-  # Kube- <vpc id> Security Group
   name = "kube-${module.ocp_base.vpc_id}"
 }
 
-# Create rules for SGs
 resource "ibm_is_security_group_rule" "kube_vpc_rules" {
 
-  for_each  = { for rule in var.sg_rules : rule.name => rule }
+  for_each  = { for rule in var.sg_rules_vpc : rule.name => rule }
   group     = data.ibm_is_security_group.kube_vpc_sg.id
   direction = each.value.direction
   remote    = each.value.remote
@@ -68,14 +67,14 @@ resource "ibm_is_security_group_rule" "kube_vpc_rules" {
   }
 }
 
+# Kube-<cluster id> Security Group
 data "ibm_is_security_group" "kube_cluster_sg" {
-  # Kube-<cluster id> Security Group
   name = "kube-${module.ocp_base.cluster_id}"
 }
 
 resource "ibm_is_security_group_rule" "kube_cluster_rules" {
 
-  for_each  = { for rule in var.sg_rules : rule.name => rule }
+  for_each  = { for rule in var.sg_rules_cluster : rule.name => rule }
   group     = data.ibm_is_security_group.kube_cluster_sg.id
   direction = each.value.direction
   remote    = each.value.remote
