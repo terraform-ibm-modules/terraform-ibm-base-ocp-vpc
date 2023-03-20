@@ -2,9 +2,9 @@
 # Outputs
 ##############################################################################
 
-output "cluster_vpc_subnets" {
-  value       = local.cluster_vpc_subnets
-  description = "List of cluster vpc subnets"
+output "cluster_name" {
+  value       = module.ocp_base.cluster_name
+  description = "The name of the provisioned cluster."
 }
 
 ##############################################################################
