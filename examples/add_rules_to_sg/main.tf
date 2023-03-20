@@ -14,7 +14,7 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.1.0"
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.2.0"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -121,26 +121,6 @@ module "kp_all_inclusive" {
 # Base OCP Cluster
 ##############################################################################
 
-locals {
-  cluster_vpc_subnets = {
-    zone-1 = [{
-      id         = module.vpc.subnet_zone_list[0].id
-      zone       = module.vpc.subnet_zone_list[0].zone
-      cidr_block = module.vpc.subnet_zone_list[0].cidr
-    }],
-    zone-2 = [{
-      id         = module.vpc.subnet_zone_list[1].id
-      zone       = module.vpc.subnet_zone_list[1].zone
-      cidr_block = module.vpc.subnet_zone_list[1].cidr
-    }],
-    zone-3 = [{
-      id         = module.vpc.subnet_zone_list[2].id
-      zone       = module.vpc.subnet_zone_list[2].zone
-      cidr_block = module.vpc.subnet_zone_list[2].cidr
-    }]
-  }
-}
-
 module "ocp_base" {
   source               = "../.."
   cluster_name         = var.prefix
@@ -149,7 +129,7 @@ module "ocp_base" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
+  vpc_subnets          = module.vpc.subnet_detail_map
   worker_pools         = var.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
