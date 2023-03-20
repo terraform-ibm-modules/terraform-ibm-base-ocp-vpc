@@ -50,22 +50,14 @@ variable "worker_pools" {
     workers_per_zone  = number
     resource_group_id = optional(string)
     labels            = optional(map(string))
+    boot_volume_encryption_kms_config = optional(object({
+      crk             = string
+      kms_instance_id = string
+      kms_account_id  = optional(string)
+    }))
   }))
   description = "List of worker pools."
-  default = [
-    {
-      subnet_prefix    = "zone-1"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    },
-    {
-      subnet_prefix    = "zone-2"
-      pool_name        = "zone-2"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    }
-  ]
+  default     = []
 }
 
 ##############################################################################
