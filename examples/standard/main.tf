@@ -35,7 +35,11 @@ module "kp_all_inclusive" {
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   resource_tags             = var.resource_tags
-  key_map                   = { "ocp" = ["${var.prefix}-cluster-key"] }
+  key_map = { "ocp" = [
+    "${var.prefix}-cluster-key",
+    "${var.prefix}-default-pool-boot-volume-encryption-key",
+    "${var.prefix}-other-pool-boot-volume-encryption-key"
+  ] }
 }
 
 ##############################################################################
@@ -59,6 +63,33 @@ locals {
       cidr_block = module.vpc.subnet_zone_list[2].cidr
     }]
   }
+
+  worker_pools = [
+    {
+      subnet_prefix     = "zone-1"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = {}
+      resource_group_id = module.resource_group.resource_group_id
+      boot_volume_encryption_kms_config = {
+        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
+      }
+    },
+    {
+      subnet_prefix     = "zone-2"
+      pool_name         = "zone-2"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = {}
+      resource_group_id = module.resource_group.resource_group_id
+      boot_volume_encryption_kms_config = {
+        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
+      }
+    }
+  ]
 }
 
 module "ocp_base" {
@@ -70,7 +101,7 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = var.worker_pools
+  worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   kms_config = {
