@@ -77,7 +77,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ##############################################################################
 
 module "observability_instances" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.3.0"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.4.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -98,7 +98,7 @@ module "observability_instances" {
 ##############################################################################
 
 module "observability_agents_1" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.2"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -111,7 +111,7 @@ module "observability_agents_1" {
 }
 
 module "observability_agents_2" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.0.2"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
   providers = {
     helm = helm.helm_cluster_2
   }
