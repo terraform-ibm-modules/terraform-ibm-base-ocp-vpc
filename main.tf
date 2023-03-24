@@ -199,6 +199,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
+  count             = var.verify_worker_network_readiness ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   resource_group_id = var.resource_group_id
@@ -319,7 +320,7 @@ resource "null_resource" "confirm_network_healthy" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
 }

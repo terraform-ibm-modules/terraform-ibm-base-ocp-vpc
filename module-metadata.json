@@ -207,6 +207,7 @@
       "description": "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false.",
       "default": true,
       "source": [
+        "data.ibm_container_cluster_config.cluster_config.count",
         "null_resource.confirm_network_healthy.count"
       ],
       "pos": {
@@ -456,7 +457,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 252
+        "line": 253
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -472,7 +473,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 211
+        "line": 212
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -503,7 +504,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 312
+        "line": 313
       }
     },
     "null_resource.reset_api_key": {
@@ -525,6 +526,7 @@
       "type": "ibm_container_cluster_config",
       "name": "cluster_config",
       "attributes": {
+        "count": "verify_worker_network_readiness",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
