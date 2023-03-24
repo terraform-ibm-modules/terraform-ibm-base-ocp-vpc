@@ -1,6 +1,28 @@
 {
   "path": ".",
   "variables": {
+    "access_tags": {
+      "name": "access_tags",
+      "type": "list(string)",
+      "description": "A list of access tags to apply to the cluster, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details",
+      "default": [],
+      "source": [
+        "ibm_resource_tag.cluster_access_tag.count",
+        "ibm_resource_tag.cluster_access_tag.tags",
+        "ibm_resource_tag.cos_access_tag.tags"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 168
+      },
+      "min_length": 1,
+      "max_length": 128,
+      "matches": "^[A-Za-z0-9:_ .-]+$",
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
+      }
+    },
     "cluster_name": {
       "name": "cluster_name",
       "type": "string",
@@ -92,14 +114,19 @@
       "type": "bool",
       "description": "Enable if using worker autoscaling. Stops Terraform managing worker count",
       "default": false,
+      "required": true,
       "source": [
         "ibm_container_vpc_cluster.autoscaling_cluster.count",
-        "ibm_container_vpc_cluster.cluster.count"
+        "ibm_container_vpc_cluster.cluster.count",
+        "ibm_resource_tag.cluster_access_tag.resource_id"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 66
-      }
+        "line": 86
+      },
+      "min_length": 1,
+      "max_length": 1024,
+      "matches": "^crn:v1(:[a-zA-Z0-9 \\-\\._~\\*\\+,;=!$\u0026'\\(\\)\\/\\?#\\[\\]@]*){8}$|^[0-9]+$"
     },
     "kms_config": {
       "name": "kms_config",
@@ -194,7 +221,8 @@
       "description": "Flag indicating whether or not to use an existing COS instance",
       "default": false,
       "source": [
-        "ibm_resource_instance.cos_instance.count"
+        "ibm_resource_instance.cos_instance.count",
+        "ibm_resource_tag.cos_access_tag.count"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -212,7 +240,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 154
+        "line": 187
       }
     },
     "vpc_id": {
@@ -228,7 +256,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 149
+        "line": 182
       },
       "immutable": true
     },
@@ -399,7 +427,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 113
+        "line": 120
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -422,7 +450,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 51
+        "line": 58
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -438,7 +466,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 253
+        "line": 271
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -454,7 +482,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 212
+        "line": 230
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -473,6 +501,39 @@
         "line": 37
       }
     },
+    "ibm_resource_tag.cluster_access_tag": {
+      "mode": "managed",
+      "type": "ibm_resource_tag",
+      "name": "cluster_access_tag",
+      "attributes": {
+        "count": "access_tags",
+        "resource_id": "ignore_worker_pool_size_changes",
+        "tags": "access_tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 184
+      }
+    },
+    "ibm_resource_tag.cos_access_tag": {
+      "mode": "managed",
+      "type": "ibm_resource_tag",
+      "name": "cos_access_tag",
+      "attributes": {
+        "count": "use_existing_cos",
+        "tags": "access_tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 47
+      }
+    },
     "null_resource.confirm_network_healthy": {
       "mode": "managed",
       "type": "null_resource",
@@ -485,7 +546,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 313
+        "line": 331
       }
     },
     "null_resource.reset_api_key": {
@@ -497,7 +558,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 187
+        "line": 205
       }
     }
   },
@@ -515,7 +576,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 201
+        "line": 219
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
