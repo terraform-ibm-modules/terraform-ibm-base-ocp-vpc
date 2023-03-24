@@ -73,12 +73,14 @@ variable "addresses" {
     zone-2 = optional(list(string))
     zone-3 = optional(list(string))
   })
+
   default = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
+    zone-1 = ["10.10.10.0/23", "10.10.15.0/24"]
+    zone-2 = ["10.20.10.0/23", "10.20.15.0/24"]
+    zone-3 = ["10.30.10.0/23", "10.30.15.0/24"]
   }
 }
+
 
 variable "subnets" {
   description = "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created"
@@ -107,22 +109,37 @@ variable "subnets" {
     zone-1 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
+        name     = "z1-subnet-1"
+        cidr     = "10.10.10.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z1-subnet-2"
+        cidr     = "10.10.15.0/24"
       }
     ],
     zone-2 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
+        name     = "z2-subnet-1"
+        cidr     = "10.20.10.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z2-subnet-2"
+        cidr     = "10.20.15.0/24"
       }
     ],
     zone-3 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
+        name     = "z3-subnet-1"
+        cidr     = "10.30.10.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z3-subnet-2"
+        cidr     = "10.30.15.0/24"
       }
     ]
   }
