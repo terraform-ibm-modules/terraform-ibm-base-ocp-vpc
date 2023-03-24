@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 148
+        "line": 168
       },
       "min_length": 1,
       "max_length": 128,
@@ -122,7 +122,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 66
+        "line": 86
       },
       "min_length": 1,
       "max_length": 1024,
@@ -240,7 +240,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 167
+        "line": 187
       }
     },
     "vpc_id": {
@@ -256,7 +256,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 162
+        "line": 182
       },
       "immutable": true
     },
