@@ -56,20 +56,20 @@ variable "worker_pools" {
   }))
   default = [
     {
-      subnet_prefix    = "zone-1"
+      subnet_prefix    = "default"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
     },
     {
-      subnet_prefix    = "zone-2"
-      pool_name        = "zone-2"
+      subnet_prefix    = "subnet-2"
+      pool_name        = "subnet-2"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
     },
     {
-      subnet_prefix    = "zone-3"
-      pool_name        = "zone-3"
+      subnet_prefix    = "subnet-3"
+      pool_name        = "subnet-3"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
     }

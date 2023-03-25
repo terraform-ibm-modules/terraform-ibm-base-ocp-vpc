@@ -250,19 +250,19 @@
         {
           "machine_type": "bx2.4x16",
           "pool_name": "default",
-          "subnet_prefix": "zone-1",
+          "subnet_prefix": "default",
           "workers_per_zone": 2
         },
         {
           "machine_type": "bx2.4x16",
-          "pool_name": "zone-2",
-          "subnet_prefix": "zone-2",
+          "pool_name": "subnet-2",
+          "subnet_prefix": "subnet-2",
           "workers_per_zone": 2
         },
         {
           "machine_type": "bx2.4x16",
-          "pool_name": "zone-3",
-          "subnet_prefix": "zone-3",
+          "pool_name": "subnet-3",
+          "subnet_prefix": "subnet-3",
           "workers_per_zone": 2
         }
       ],
