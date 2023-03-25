@@ -128,7 +128,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ##############################################################################
 
 module "observability_instances" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.4.0"
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.5.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
