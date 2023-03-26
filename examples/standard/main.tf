@@ -83,7 +83,7 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = module.vpc.subnet_detail_map
-  worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
+  worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : tolist(local.worker_pools)
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   kms_config = {
