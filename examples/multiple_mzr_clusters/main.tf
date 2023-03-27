@@ -32,22 +32,22 @@ module "vpc" {
 locals {
   cluster_1_vpc_subnets = {
     default = [
-      for zone in module.vpc.subnet_detail_map :
+      for subnet in module.vpc.subnet_detail_map :
       {
-        id         = zone[0].id
-        zone       = zone[0].zone
-        cidr_block = zone[0].cidr_block
+        id         = subnet[0].id
+        zone       = subnet[0].zone
+        cidr_block = subnet[0].cidr_block
       }
     ]
   }
 
   cluster_2_vpc_subnets = {
     default = [
-      for zone in module.vpc.subnet_detail_map :
+      for subnet in module.vpc.subnet_detail_map :
       {
-        id         = zone[1].id
-        zone       = zone[1].zone
-        cidr_block = zone[1].cidr_block
+        id         = subnet[1].id
+        zone       = subnet[1].zone
+        cidr_block = subnet[1].cidr_block
       }
     ]
   }

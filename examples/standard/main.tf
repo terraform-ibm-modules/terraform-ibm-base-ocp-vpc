@@ -48,11 +48,11 @@ module "kp_all_inclusive" {
 locals {
   cluster_vpc_subnets = {
     default = [
-      for zone in module.vpc.subnet_zone_list :
+      for subnet in module.vpc.subnet_zone_list :
       {
-        id         = zone.id
-        zone       = zone.zone
-        cidr_block = zone.cidr
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.cidr
       }
     ]
   }
