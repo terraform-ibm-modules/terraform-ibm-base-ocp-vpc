@@ -3,7 +3,10 @@
 ##############################################################################
 
 module "ocp_base" {
-  source               = "../.."
+  source = "../.."
+  providers = {
+    ibm.access_tags = ibm.access_tags
+  }
   ibmcloud_api_key     = var.ibmcloud_api_key
   ocp_version          = var.ocp_version
   region               = var.region
@@ -15,6 +18,7 @@ module "ocp_base" {
   vpc_subnets          = var.vpc_subnets
   use_existing_cos     = true
   existing_cos_id      = var.existing_cos_id
+  access_tags          = var.access_tags
 }
 
 ##############################################################################

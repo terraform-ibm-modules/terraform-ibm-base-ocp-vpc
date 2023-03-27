@@ -47,7 +47,10 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../.."
+  source = "../.."
+  providers = {
+    ibm.access_tags = ibm.access_tags
+  }
   cluster_name         = var.prefix
   ibmcloud_api_key     = var.ibmcloud_api_key
   resource_group_id    = module.resource_group.resource_group_id
@@ -58,6 +61,7 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   worker_pools         = local.sz_pool
+  access_tags          = var.access_tags
 }
 
 ##############################################################################

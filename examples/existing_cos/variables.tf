@@ -8,6 +8,13 @@ variable "ibmcloud_api_key" {
   sensitive   = true
 }
 
+variable "ibmcloud_access_tags_api_key" {
+  type        = string
+  description = "Only required for attaching access tags to resources created by the root module, set via environment variable TF_VAR_ibmcloud_access_tags_api_key"
+  sensitive   = true
+  default     = null
+}
+
 variable "resource_group" {
   type        = string
   description = "Resource group to provision the cluster in"
@@ -18,6 +25,12 @@ variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
   default     = []
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "Optional list of access tags to be added to the created cluster"
+  default     = ["geretain-dev:permanent-test-tag-1"]
 }
 
 variable "prefix" {
