@@ -62,18 +62,20 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../.."
-  cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = var.worker_pools
-  worker_pools_taints  = var.worker_pools_taints
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
+  source                          = "../.."
+  cluster_name                    = var.prefix
+  ibmcloud_api_key                = var.ibmcloud_api_key
+  resource_group_id               = module.resource_group.resource_group_id
+  region                          = var.region
+  force_delete_storage            = true
+  vpc_id                          = module.vpc.vpc_id
+  vpc_subnets                     = local.cluster_vpc_subnets
+  worker_pools                    = var.worker_pools
+  worker_pools_taints             = var.worker_pools_taints
+  ocp_version                     = var.ocp_version
+  disable_public_endpoint         = var.disable_public_endpoint
+  verify_worker_network_readiness = var.verify_worker_network_readiness
+  tags                            = var.resource_tags
   kms_config = {
     instance_id = module.kp_all_inclusive.key_protect_guid
     crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
