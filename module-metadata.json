@@ -398,6 +398,12 @@
       "source": "ibm-cloud/ibm",
       "version_constraints": [
         "\u003e= 1.49.0"
+      ],
+      "aliases": [
+        {
+          "name": "ibm",
+          "alias": "access_tags"
+        }
       ]
     },
     "null": {
@@ -427,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 120
+        "line": 121
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -450,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 58
+        "line": 59
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -466,7 +472,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 271
+        "line": 273
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -482,7 +488,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 230
+        "line": 232
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -511,11 +517,12 @@
         "tags": "access_tags"
       },
       "provider": {
-        "name": "ibm"
+        "name": "ibm",
+        "alias": "access_tags"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 184
+        "line": 185
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -527,7 +534,8 @@
         "tags": "access_tags"
       },
       "provider": {
-        "name": "ibm"
+        "name": "ibm",
+        "alias": "access_tags"
       },
       "pos": {
         "filename": "main.tf",
@@ -546,7 +554,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 331
+        "line": 333
       }
     },
     "null_resource.reset_api_key": {
@@ -558,7 +566,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 205
+        "line": 207
       }
     }
   },
@@ -576,7 +584,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 219
+        "line": 221
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {

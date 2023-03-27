@@ -55,7 +55,10 @@ locals {
 }
 
 module "ocp_base_cluster_1" {
-  source               = "../.."
+  source = "../.."
+  providers = {
+    ibm.access_tags = ibm.access_tags
+  }
   cluster_name         = "${var.prefix}-cluster-1"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
@@ -67,10 +70,14 @@ module "ocp_base_cluster_1" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
+  access_tags          = var.access_tags
 }
 
 module "ocp_base_cluster_2" {
-  source               = "../.."
+  source = "../.."
+  providers = {
+    ibm.access_tags = ibm.access_tags
+  }
   cluster_name         = "${var.prefix}-cluster-2"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
@@ -82,6 +89,7 @@ module "ocp_base_cluster_2" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
+  access_tags          = var.access_tags
 }
 
 ###############################################################################

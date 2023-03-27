@@ -3,8 +3,9 @@ terraform {
   required_providers {
     # Pin to the lowest provider version of the range defined in the main module to ensure lowest version still works
     ibm = {
-      source  = "ibm-cloud/ibm"
-      version = "1.49.0"
+      source                = "ibm-cloud/ibm"
+      version               = "1.49.0"
+      configuration_aliases = [ibm.access_tags]
     }
   }
 }

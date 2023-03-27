@@ -42,7 +42,10 @@ module "kp_all_inclusive" {
 # Base OCP Cluster
 ##############################################################################
 module "ocp_base" {
-  source                          = "../.."
+  source = "../.."
+  providers = {
+    ibm.access_tags = ibm.access_tags
+  }
   cluster_name                    = var.prefix
   ibmcloud_api_key                = var.ibmcloud_api_key
   resource_group_id               = module.resource_group.resource_group_id
@@ -60,6 +63,7 @@ module "ocp_base" {
     instance_id = module.kp_all_inclusive.key_protect_guid
     crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
   }
+  access_tags = var.access_tags
 }
 
 ##############################################################################
