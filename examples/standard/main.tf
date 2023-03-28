@@ -63,8 +63,9 @@ locals {
       zone       = module.vpc.subnet_zone_list[2].zone
       cidr_block = module.vpc.subnet_zone_list[2].cidr
     }]
+  }
 
-    worker_pools = [
+  worker_pools = [
       {
         subnet_prefix     = "zone-1"
         pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
@@ -90,7 +91,6 @@ locals {
         }
       }
     ]
-  }
 }
 
 module "ocp_base" {
