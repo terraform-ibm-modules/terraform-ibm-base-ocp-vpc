@@ -14,7 +14,7 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.2.0"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -45,33 +45,52 @@ module "kp_all_inclusive" {
 ##############################################################################
 # Base OCP Cluster
 ##############################################################################
+
 locals {
-  worker_pools = [
-    {
-      subnet_prefix     = "zone-1"
-      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      labels            = {}
-      resource_group_id = module.resource_group.resource_group_id
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
+  cluster_vpc_subnets = {
+    zone-1 = [{
+      id         = module.vpc.subnet_zone_list[0].id
+      zone       = module.vpc.subnet_zone_list[0].zone
+      cidr_block = module.vpc.subnet_zone_list[0].cidr
+    }],
+    zone-2 = [{
+      id         = module.vpc.subnet_zone_list[1].id
+      zone       = module.vpc.subnet_zone_list[1].zone
+      cidr_block = module.vpc.subnet_zone_list[1].cidr
+    }],
+    zone-3 = [{
+      id         = module.vpc.subnet_zone_list[2].id
+      zone       = module.vpc.subnet_zone_list[2].zone
+      cidr_block = module.vpc.subnet_zone_list[2].cidr
+    }]
+
+    worker_pools = [
+      {
+        subnet_prefix     = "zone-1"
+        pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+        machine_type      = "bx2.4x16"
+        workers_per_zone  = 2
+        labels            = {}
+        resource_group_id = module.resource_group.resource_group_id
+        boot_volume_encryption_kms_config = {
+          crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
+          kms_instance_id = module.kp_all_inclusive.key_protect_guid
+        }
+      },
+      {
+        subnet_prefix     = "zone-2"
+        pool_name         = "zone-2"
+        machine_type      = "bx2.4x16"
+        workers_per_zone  = 2
+        labels            = {}
+        resource_group_id = module.resource_group.resource_group_id
+        boot_volume_encryption_kms_config = {
+          crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
+          kms_instance_id = module.kp_all_inclusive.key_protect_guid
+        }
       }
-    },
-    {
-      subnet_prefix     = "zone-2"
-      pool_name         = "zone-2"
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      labels            = {}
-      resource_group_id = module.resource_group.resource_group_id
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
-    }
-  ]
+    ]
+  }
 }
 
 module "ocp_base" {
@@ -82,7 +101,7 @@ module "ocp_base" {
   region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = module.vpc.subnet_detail_map
+  vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : tolist(local.worker_pools)
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
