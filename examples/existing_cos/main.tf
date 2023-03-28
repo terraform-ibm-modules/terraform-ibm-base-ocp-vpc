@@ -13,6 +13,7 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = var.vpc_id
   vpc_subnets          = var.vpc_subnets
+  worker_pools         = var.worker_pools
   use_existing_cos     = true
   existing_cos_id      = var.existing_cos_id
 }

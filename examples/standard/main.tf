@@ -69,18 +69,6 @@ locals {
         crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
         kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
-    },
-    {
-      subnet_prefix     = "default"
-      pool_name         = "logging-worker-pool"
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      labels            = {}
-      resource_group_id = module.resource_group.resource_group_id
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
     }
   ]
 }
