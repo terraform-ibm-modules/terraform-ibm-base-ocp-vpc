@@ -66,31 +66,31 @@ locals {
   }
 
   worker_pools = [
-      {
-        subnet_prefix     = "zone-1"
-        pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-        machine_type      = "bx2.4x16"
-        workers_per_zone  = 2
-        labels            = {}
-        resource_group_id = module.resource_group.resource_group_id
-        boot_volume_encryption_kms_config = {
-          crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
-          kms_instance_id = module.kp_all_inclusive.key_protect_guid
-        }
-      },
-      {
-        subnet_prefix     = "zone-2"
-        pool_name         = "zone-2"
-        machine_type      = "bx2.4x16"
-        workers_per_zone  = 2
-        labels            = {}
-        resource_group_id = module.resource_group.resource_group_id
-        boot_volume_encryption_kms_config = {
-          crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
-          kms_instance_id = module.kp_all_inclusive.key_protect_guid
-        }
+    {
+      subnet_prefix     = "zone-1"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = {}
+      resource_group_id = module.resource_group.resource_group_id
+      boot_volume_encryption_kms_config = {
+        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
-    ]
+    },
+    {
+      subnet_prefix     = "zone-2"
+      pool_name         = "zone-2"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = {}
+      resource_group_id = module.resource_group.resource_group_id
+      boot_volume_encryption_kms_config = {
+        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
+      }
+    }
+  ]
 }
 
 module "ocp_base" {
