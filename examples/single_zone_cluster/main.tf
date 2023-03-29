@@ -14,7 +14,7 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.2.0"
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -31,15 +31,11 @@ module "vpc" {
 locals {
 
   cluster_vpc_subnets = {
-    zone-1 = [{
-      id         = module.vpc.subnet_zone_list[0].id
-      zone       = module.vpc.subnet_zone_list[0].zone
-      cidr_block = module.vpc.subnet_zone_list[0].cidr
-    }]
+    default = module.vpc.subnet_detail_map.zone-1
   }
   sz_pool = [
     {
-      subnet_prefix    = "zone-1"
+      subnet_prefix    = "default"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2

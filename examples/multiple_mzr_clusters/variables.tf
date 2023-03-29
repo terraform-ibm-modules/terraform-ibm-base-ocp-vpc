@@ -74,9 +74,9 @@ variable "addresses" {
     zone-3 = optional(list(string))
   })
   default = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
+    zone-1 = ["10.243.0.0/23", "10.243.5.0/24"]
+    zone-2 = ["10.243.64.0/23", "10.243.69.0/24"]
+    zone-3 = ["10.243.128.0/23", "10.243.133.0/24"]
   }
 }
 
@@ -107,22 +107,37 @@ variable "subnets" {
     zone-1 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
+        name     = "z1-subnet-a"
+        cidr     = "10.243.0.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z1-subnet-b"
+        cidr     = "10.243.5.0/24"
       }
     ],
     zone-2 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
+        name     = "z2-subnet-c"
+        cidr     = "10.243.64.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z2-subnet-d"
+        cidr     = "10.243.69.0/24"
       }
     ],
     zone-3 = [
       {
         acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
+        name     = "z3-subnet-e"
+        cidr     = "10.243.128.0/23"
+      },
+      {
+        acl_name = "vpc-acl"
+        name     = "z3-subnet-f"
+        cidr     = "10.243.133.0/24"
       }
     ]
   }
@@ -144,17 +159,17 @@ variable "worker_pools" {
   }))
   default = [
     {
-      subnet_prefix    = "zone-1"
+      subnet_prefix    = "default"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
     },
     {
-      subnet_prefix    = "zone-2"
-      pool_name        = "zone-2"
+      subnet_prefix    = "default"
+      pool_name        = "logging-worker-pool"
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      labels           = { "dedicated" : "zone-2" }
+      labels           = { "dedicated" : "logging-worker-pool" }
     }
   ]
   description = "List of worker pools"
@@ -166,9 +181,9 @@ variable "worker_pools_taints" {
 
   default = {
     all = []
-    zone-2 = [{
+    logging-worker-pool = [{
       key    = "dedicated"
-      value  = "zone-2"
+      value  = "logging-worker-pool"
       effect = "NoExecute"
     }]
     default = []

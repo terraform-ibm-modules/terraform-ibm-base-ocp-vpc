@@ -14,7 +14,7 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v4.2.0"
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -47,26 +47,19 @@ module "kp_all_inclusive" {
 ##############################################################################
 locals {
   cluster_vpc_subnets = {
-    zone-1 = [{
-      id         = module.vpc.subnet_zone_list[0].id
-      zone       = module.vpc.subnet_zone_list[0].zone
-      cidr_block = module.vpc.subnet_zone_list[0].cidr
-    }],
-    zone-2 = [{
-      id         = module.vpc.subnet_zone_list[1].id
-      zone       = module.vpc.subnet_zone_list[1].zone
-      cidr_block = module.vpc.subnet_zone_list[1].cidr
-    }],
-    zone-3 = [{
-      id         = module.vpc.subnet_zone_list[2].id
-      zone       = module.vpc.subnet_zone_list[2].zone
-      cidr_block = module.vpc.subnet_zone_list[2].cidr
-    }]
+    default = [
+      for subnet in module.vpc.subnet_zone_list :
+      {
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.cidr
+      }
+    ]
   }
 
   worker_pools = [
     {
-      subnet_prefix     = "zone-1"
+      subnet_prefix     = "default"
       pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type      = "bx2.4x16"
       workers_per_zone  = 2
@@ -74,18 +67,6 @@ locals {
       resource_group_id = module.resource_group.resource_group_id
       boot_volume_encryption_kms_config = {
         crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-default-pool-boot-volume-encryption-key"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
-    },
-    {
-      subnet_prefix     = "zone-2"
-      pool_name         = "zone-2"
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      labels            = {}
-      resource_group_id = module.resource_group.resource_group_id
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["ocp.${var.prefix}-other-pool-boot-volume-encryption-key"].key_id
         kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     }

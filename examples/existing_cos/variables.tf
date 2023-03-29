@@ -61,4 +61,21 @@ variable "existing_cos_id" {
   description = "The ID of an existing COS instance to use for cluster provisioning"
 }
 
+variable "worker_pools" {
+  type = list(object({
+    subnet_prefix     = string
+    pool_name         = string
+    machine_type      = string
+    workers_per_zone  = number
+    resource_group_id = optional(string)
+    labels            = optional(map(string))
+    boot_volume_encryption_kms_config = optional(object({
+      crk             = string
+      kms_instance_id = string
+      kms_account_id  = optional(string)
+    }))
+  }))
+  description = "List of worker pools."
+}
+
 ##############################################################################
