@@ -109,6 +109,12 @@ You need the following permissions to run this module.
         - `Administrator` platform access
         - `Manager` service access
 
+Optionally, you need the following permissions to attach Access Management tags to resources in this module.
+
+- IAM Services
+    - **Tagging** service
+        - `Administrator` platform access
+
 ## Note :
  - One worker pool should always be named as `default`. Refer [issue 2849](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849) for further details.
 

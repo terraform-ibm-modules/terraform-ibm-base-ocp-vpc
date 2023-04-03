@@ -3,10 +3,7 @@
 ##############################################################################
 
 module "ocp_base" {
-  source = "../.."
-  providers = {
-    ibm.access_tags = ibm.access_tags
-  }
+  source               = "../.."
   ibmcloud_api_key     = var.ibmcloud_api_key
   ocp_version          = var.ocp_version
   region               = var.region
