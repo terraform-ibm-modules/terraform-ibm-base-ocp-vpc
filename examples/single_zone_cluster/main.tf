@@ -54,7 +54,6 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   worker_pools         = local.sz_pool
-  access_tags          = var.access_tags
 }
 
 ##############################################################################

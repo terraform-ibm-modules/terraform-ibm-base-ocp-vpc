@@ -16,7 +16,6 @@ module "ocp_base" {
   worker_pools         = var.worker_pools
   use_existing_cos     = true
   existing_cos_id      = var.existing_cos_id
-  access_tags          = var.access_tags
 }
 
 ##############################################################################

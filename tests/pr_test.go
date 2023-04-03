@@ -19,6 +19,8 @@ const ocpVersion2 = "4.11"
 const ocpVersion3 = "4.10"
 const ocpVersion4 = "4.9"
 
+const accessTags = [2]string{"geretain-dev:permanent-test-tag-1", "geretain-dev:permanent-test-tag-2"}
+
 var sharedInfoSvc *cloudinfo.CloudInfoService
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
@@ -38,6 +40,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion1,
+			"access_tags": accessTags,
 		},
 	})
 
