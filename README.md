@@ -118,6 +118,7 @@ You need the following permissions to run this module.
 - [ Add Rules to Security Groups Example](examples/add_rules_to_sg)
 - [ Apply Taints Example](examples/apply_taints)
 - [ Existing COS](examples/existing_cos)
+- [ Standard Example With User Managed Boot Volume Encryption](examples/fscloud)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
 - [ Single Zone Cluster](examples/single_zone_cluster)
 - [ Standard Example With User Managed Boot Volume Encryption](examples/standard)
@@ -129,7 +130,7 @@ You need the following permissions to run this module.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.49.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.51.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 
 ## Modules
