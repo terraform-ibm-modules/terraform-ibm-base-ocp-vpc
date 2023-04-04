@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 168
+        "line": 148
       },
       "min_length": 1,
       "max_length": 128,
@@ -122,7 +122,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 86
+        "line": 66
       },
       "min_length": 1,
       "max_length": 1024,
@@ -240,7 +240,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 187
+        "line": 167
       }
     },
     "vpc_id": {
@@ -256,7 +256,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 182
+        "line": 162
       },
       "immutable": true
     },
@@ -427,7 +427,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 121
+        "line": 120
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -450,7 +450,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 59
+        "line": 58
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -466,7 +466,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 273
+        "line": 271
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -482,7 +482,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 232
+        "line": 230
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -511,12 +511,11 @@
         "tags": "access_tags"
       },
       "provider": {
-        "name": "ibm",
-        "alias": "access_tags"
+        "name": "ibm"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 185
+        "line": 184
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -528,8 +527,7 @@
         "tags": "access_tags"
       },
       "provider": {
-        "name": "ibm",
-        "alias": "access_tags"
+        "name": "ibm"
       },
       "pos": {
         "filename": "main.tf",
@@ -548,7 +546,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 333
+        "line": 331
       }
     },
     "null_resource.reset_api_key": {
@@ -560,7 +558,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 207
+        "line": 205
       }
     }
   },
@@ -578,7 +576,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 221
+        "line": 219
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
