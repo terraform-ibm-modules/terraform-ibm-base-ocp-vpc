@@ -19,7 +19,7 @@ const ocpVersion2 = "4.11"
 const ocpVersion3 = "4.10"
 const ocpVersion4 = "4.9"
 
-var accessTags = [2]string{"geretain-dev:permanent-test-tag-1", "geretain-dev:permanent-test-tag-2"}
+var accessTags = []string{"geretain-dev:permanent-test-tag-1", "geretain-dev:permanent-test-tag-2"}
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 
