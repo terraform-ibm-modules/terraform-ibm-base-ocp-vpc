@@ -45,7 +45,7 @@ resource "ibm_resource_instance" "cos_instance" {
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
-  count       = var.use_existing_cos && length(var.access_tags) == 0 ? 0 : 1
+  count       = var.use_existing_cos || length(var.access_tags) == 0 ? 0 : 1
   resource_id = ibm_resource_instance.cos_instance[0].crn
   tags        = var.access_tags
   tag_type    = "access"
