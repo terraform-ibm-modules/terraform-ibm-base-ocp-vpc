@@ -48,6 +48,9 @@ variable "worker_pools" {
     workers_per_zone  = number
     resource_group_id = optional(string)
     labels            = optional(map(string))
+    minSize           = optional(number)
+    maxSize           = optional(number)
+    enableAutoscaling = optional(bool)
     boot_volume_encryption_kms_config = optional(object({
       crk             = string
       kms_instance_id = string
@@ -155,6 +158,18 @@ variable "verify_worker_network_readiness" {
   type        = bool
   description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
   default     = true
+}
+
+variable "enable_autoscaling" {
+  type        = bool
+  description = "Flag indicating whether or not to enable autoscaling."
+  default     = false
+}
+
+variable "cluster_autoscaler_version" {
+  type        = string
+  description = "Version of the cluster-autoscaler addon"
+  default     = "1.0.8"
 }
 
 ##############################################################################

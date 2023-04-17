@@ -28,7 +28,9 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+  cluster_id   = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+  cluster_name = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name
+
 }
 
 # Lookup the current default kube version
@@ -323,4 +325,49 @@ resource "null_resource" "confirm_network_healthy" {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
+}
+
+
+resource "ibm_container_addons" "addons" {
+  count   = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
+  cluster = local.cluster_name
+
+  addons {
+    name    = "cluster-autoscaler"
+    version = var.cluster_autoscaler_version
+  }
+}
+
+resource "time_sleep" "wait_operators" {
+  depends_on      = [ibm_container_addons.addons]
+  create_duration = "5s"
+}
+
+locals {
+  worker_pool_config = [
+    for worker in var.worker_pools :
+    {
+      name    = worker.pool_name
+      minSize = worker.minSize
+      maxSize = worker.maxSize
+      enabled = worker.enableAutoscaling
+    }
+  ]
+
+}
+
+resource "kubernetes_config_map_v1_data" "set_autoscaling" {
+  count      = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
+  depends_on = [ibm_container_addons.addons, time_sleep.wait_operators]
+
+  metadata {
+    name      = "iks-ca-configmap"
+    namespace = "kube-system"
+  }
+
+  data = {
+    "workerPoolsConfig.json" = jsonencode(local.worker_pool_config)
+  }
+
+  force = true
 }

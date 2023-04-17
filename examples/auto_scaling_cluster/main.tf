@@ -35,30 +35,35 @@ locals {
   }
   sz_pool = [
     {
-      subnet_prefix      = "default"
-      pool_name          = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type       = "bx2.4x16"
-      workers_per_zone   = 2
-      minSize            = 1
-      maxSize            = 5
-      enable_autoscaling = true
+      subnet_prefix    = "default"
+      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+          minSize           = 1
+    maxSize           = 5
+    enable_autoscaling = false
   }]
 }
 
 module "ocp_base" {
-  source                          = "../.."
-  cluster_name                    = var.prefix
-  ibmcloud_api_key                = var.ibmcloud_api_key
-  resource_group_id               = module.resource_group.resource_group_id
-  region                          = var.region
-  force_delete_storage            = true
-  vpc_id                          = module.vpc.vpc_id
-  vpc_subnets                     = local.cluster_vpc_subnets
-  ocp_version                     = var.ocp_version
-  enable_autoscaling              = true
-  ignore_worker_pool_size_changes = true
-  tags                            = var.resource_tags
-  worker_pools                    = local.sz_pool
+  source               = "../.."
+  cluster_name         = var.prefix
+  ibmcloud_api_key     = var.ibmcloud_api_key
+  resource_group_id    = module.resource_group.resource_group_id
+  region               = var.region
+  force_delete_storage = true
+  vpc_id               = module.vpc.vpc_id
+  vpc_subnets          = local.cluster_vpc_subnets
+  ocp_version          = var.ocp_version
+  tags                 = var.resource_tags
+  enable_autoscaling   = true
+  worker_pools         = local.sz_pool
+}
+
+data "ibm_container_cluster_config" "cluster_config" {
+  cluster_name_id   = module.ocp_base.cluster_id
+  resource_group_id = module.ocp_base.resource_group_id
+  
 }
 
 ##############################################################################
