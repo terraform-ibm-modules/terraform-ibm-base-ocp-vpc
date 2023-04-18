@@ -34,9 +34,10 @@ locals {
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {}
 
-resource "ibm_resource_instance" "cos_instance" {
+module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
 
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0"
   name              = local.cos_name
   resource_group_id = var.resource_group_id
   service           = "cloud-object-storage"
