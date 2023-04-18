@@ -329,12 +329,17 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
-  count   = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
-  cluster = local.cluster_name
+  count             = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
+  cluster           = local.cluster_name
+  resource_group_id = var.resource_group_id
 
   addons {
     name    = "cluster-autoscaler"
     version = var.cluster_autoscaler_version
+  }
+
+  lifecycle {
+    ignore_changes = [addons]
   }
 }
 
