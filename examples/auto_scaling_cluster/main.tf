@@ -35,13 +35,10 @@ locals {
   }
   sz_pool = [
     {
-      subnet_prefix     = "default"
-      pool_name         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      minSize           = 1
-      maxSize           = 5
-      enableAutoscaling = false
+      subnet_prefix    = "default"
+      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
     },
     {
       subnet_prefix     = "default"
@@ -53,10 +50,13 @@ locals {
       enableAutoscaling = true
     },
     {
-      subnet_prefix    = "default"
-      pool_name        = "sample"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
+      subnet_prefix     = "default"
+      pool_name         = "sample"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 4
+      minSize           = 1
+      maxSize           = 6
+      enableAutoscaling = true
   }]
 }
 

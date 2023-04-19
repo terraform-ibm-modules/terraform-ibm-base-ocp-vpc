@@ -356,7 +356,7 @@ locals {
       minSize = worker.minSize
       maxSize = worker.maxSize
       enabled = worker.enableAutoscaling
-    } if worker.enableAutoscaling != null
+    } if worker.enableAutoscaling != null && worker.minSize != null && worker.maxSize != null
   ]
 
 }
