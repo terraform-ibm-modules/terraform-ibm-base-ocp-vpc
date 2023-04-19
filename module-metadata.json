@@ -27,7 +27,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 90
+        "line": 99
       }
     },
     "cos_name": {
@@ -36,7 +36,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 120
+        "line": 129
       }
     },
     "disable_public_endpoint": {
@@ -50,7 +50,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 102
+        "line": 111
       }
     },
     "existing_cos_id": {
@@ -59,7 +59,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 132
+        "line": 141
       }
     },
     "force_delete_storage": {
@@ -73,7 +73,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 114
+        "line": 123
       }
     },
     "ibmcloud_api_key": {
@@ -98,7 +98,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 66
+        "line": 75
       }
     },
     "kms_config": {
@@ -107,7 +107,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 138
+        "line": 147
       }
     },
     "ocp_entitlement": {
@@ -121,7 +121,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 108
+        "line": 117
       }
     },
     "ocp_version": {
@@ -130,7 +130,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 72
+        "line": 81
       }
     },
     "region": {
@@ -198,7 +198,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 135
       }
     },
     "verify_worker_network_readiness": {
@@ -212,7 +212,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 154
+        "line": 163
       }
     },
     "vpc_id": {
@@ -228,7 +228,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 149
+        "line": 158
       },
       "immutable": true
     },
@@ -244,7 +244,7 @@
     },
     "worker_pools": {
       "name": "worker_pools",
-      "type": "list(object({\n    subnet_prefix     = string\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
+      "type": "list(object({\n    subnet_prefix = optional(string)\n    vpc_subnets = optional(list(object({\n      id         = string\n      zone       = string\n      cidr_block = string\n    })))\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
       "description": "List of worker pools",
       "required": true,
       "pos": {
@@ -258,7 +258,7 @@
       "description": "Optional, Map of lists containing node taints by node-pool name",
       "pos": {
         "filename": "variables.tf",
-        "line": 60
+        "line": 69
       }
     }
   },
