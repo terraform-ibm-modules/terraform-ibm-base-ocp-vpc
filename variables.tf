@@ -170,6 +170,13 @@ variable "cluster_autoscaler_version" {
   type        = string
   description = "Version of the cluster-autoscaler addon"
   default     = "1.0.8"
+  validation {
+    condition = anytrue([
+      var.cluster_autoscaler_version == "1.0.7",
+      var.cluster_autoscaler_version == "1.0.8",
+    ])
+    error_message = "The specified cluster_autoscaler_version is not of the valid versions."
+  }
 }
 
 ##############################################################################
