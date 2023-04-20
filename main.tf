@@ -16,7 +16,7 @@ locals {
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location     = "global"
   cos_plan         = "standard"
-  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].id
+  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id
 
   # Validation approach based on https://stackoverflow.com/a/66682419
   validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
