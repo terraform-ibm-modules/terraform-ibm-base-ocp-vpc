@@ -399,7 +399,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 118
+        "line": 120
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -422,7 +422,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 56
+        "line": 58
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -438,7 +438,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 258
+        "line": 260
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -454,7 +454,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 217
+        "line": 219
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -469,7 +469,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 318
+        "line": 320
       }
     },
     "null_resource.reset_api_key": {
@@ -481,7 +481,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 192
+        "line": 194
       }
     }
   },
@@ -499,7 +499,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 206
+        "line": 208
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
