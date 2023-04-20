@@ -44,6 +44,11 @@ module "cos_instance" {
   cos_location      = local.cos_location
 }
 
+moved {
+  from = ibm_resource_instance.cos_instance
+  to   = module.cos_instance.ibm_resource_instance.cos_instance
+}
+
 ##############################################################################
 # Create a OCP Cluster
 ##############################################################################
