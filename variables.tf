@@ -62,7 +62,7 @@ variable "worker_pools" {
   description = "List of worker pools"
   validation {
     condition     = length([for worker_pool in var.worker_pools : worker_pool if(worker_pool.subnet_prefix == null && worker_pool.vpc_subnets == null) || (worker_pool.subnet_prefix != null && worker_pool.vpc_subnets != null)]) == 0
-    error_message = "Duplicate worker_pool name in list var.cluster.worker_pools. Please provide unique worker_pool names."
+    error_message = "Please provide either the subnet_prefix or vpc_subnets. Passing values for both is invalid."
   }
 }
 
