@@ -62,7 +62,7 @@ variable "worker_pools" {
   description = "List of worker pools"
   validation {
     condition     = length([for worker_pool in var.worker_pools : worker_pool if(worker_pool.subnet_prefix == null && worker_pool.vpc_subnets == null) || (worker_pool.subnet_prefix != null && worker_pool.vpc_subnets != null)]) == 0
-    error_message = "Please provide either the subnet_prefix or vpc_subnets. Passing values for both is invalid."
+    error_message = "Please provide exactly one of subnet_prefix or vpc_subnets. Passing neither or both is invalid."
   }
 }
 
