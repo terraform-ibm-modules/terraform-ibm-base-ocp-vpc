@@ -43,12 +43,12 @@ variable "ocp_version" {
 }
 
 variable "primary_existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from"
+  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from, used by the COS instance"
   type        = string
 }
 
 variable "secondary_existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from"
+  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from, used by the COS instance"
   type        = string
 }
 
@@ -185,6 +185,12 @@ variable "subnets" {
       }
     ]
   }
+}
+
+variable "verify_worker_network_readiness" {
+  type        = bool
+  description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
+  default     = false
 }
 
 ##############################################################################

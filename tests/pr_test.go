@@ -2,9 +2,12 @@
 package test
 
 import (
+	"fmt"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -84,7 +87,7 @@ func TestFSCloudExample(t *testing.T) {
 		Testing:          t,
 		TerraformDir:     fscloudExampleTerraformDir,
 		Prefix:           "base-ocp-fscloud",
-		ResourceGroup:    resourceGroup,
+		ResourceGroup:    fmt.Sprintf("%s-%s", resourceGroup, strings.ToLower(random.UniqueId())), // unique rg to avoid dup policy
 		Region:           "us-south",
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{

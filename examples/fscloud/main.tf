@@ -138,8 +138,8 @@ module "cos_fscloud" {
 # Base OCP Cluster
 ##############################################################################
 locals {
-  cluster_hpcs_worker_pool_id = regex("key:(.*)", var.hpcs_key_crn_worker_pool)[0]
-  cluster_hpcs_cluster_id     = regex("key:(.*)", var.hpcs_key_crn_cluster)[0]
+  cluster_hpcs_worker_pool_key_id = regex("key:(.*)", var.hpcs_key_crn_worker_pool)[0]
+  cluster_hpcs_cluster_key_id     = regex("key:(.*)", var.hpcs_key_crn_cluster)[0]
   cluster_vpc_subnets = {
     default = [
       for subnet in module.vpc.subnet_zone_list :
@@ -160,7 +160,7 @@ locals {
       labels            = {}
       resource_group_id = module.resource_group.resource_group_id
       boot_volume_encryption_kms_config = {
-        crk              = local.cluster_hpcs_worker_pool_id
+        crk              = local.cluster_hpcs_worker_pool_key_id
         kms_instance_id  = var.hpcs_instance_guid
         private_endpoint = true
       }
@@ -169,22 +169,23 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../../profiles/fscloud"
-  cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = "us-south"
-  force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
-  existing_cos_id      = module.cos_fscloud.cos_instance_id
-  use_existing_cos     = true
-  worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
+  source                          = "../../profiles/fscloud"
+  cluster_name                    = var.prefix
+  ibmcloud_api_key                = var.ibmcloud_api_key
+  resource_group_id               = module.resource_group.resource_group_id
+  region                          = "us-south"
+  force_delete_storage            = true
+  vpc_id                          = module.vpc.vpc_id
+  vpc_subnets                     = local.cluster_vpc_subnets
+  existing_cos_id                 = module.cos_fscloud.cos_instance_id
+  use_existing_cos                = true
+  worker_pools                    = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
+  verify_worker_network_readiness = var.verify_worker_network_readiness
+  ocp_version                     = var.ocp_version
+  tags                            = var.resource_tags
   kms_config = {
     instance_id      = var.hpcs_instance_guid
-    crk_id           = local.cluster_hpcs_cluster_id
+    crk_id           = local.cluster_hpcs_cluster_key_id
     private_endpoint = true
   }
 }

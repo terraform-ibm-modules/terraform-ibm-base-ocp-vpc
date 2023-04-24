@@ -4,14 +4,11 @@ locals {
   #  validate_different_regions = var.primary_region == var.secondary_region ? tobool("primary and secondary bucket regions must not match") : true
 }
 
-
-# TODO: fix this policy
-# Create IAM Authorization Policies to allow COS to access kms for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
   count               = var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name = "??? ocp"
-  #  scope to resource group
-
+  source_service_name = "containers-kubernetes"
+  #  TODO: Restrict scope as much as possible. Support case open(CS3338005) to investigate why it cannot be applied to the resource group
+  #  source_resource_group_id    = var.resource_group_id
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.kms_config.instance_id
   roles                       = ["Reader"]
