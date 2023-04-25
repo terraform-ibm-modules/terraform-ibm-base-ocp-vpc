@@ -29,6 +29,10 @@ module "vpc" {
 # Base OCP
 ###############################################################################
 locals {
+  addons = {
+    "vpc-block-csi-driver" = "5.0"
+    "cluster-autoscaler"   = "1.0.8"
+  }
 
   cluster_vpc_subnets = {
     default = module.vpc.subnet_detail_map.zone-1
@@ -57,22 +61,24 @@ locals {
       minSize           = 1
       maxSize           = 6
       enableAutoscaling = true
-  }]
+    }
+  ]
 }
 
 module "ocp_base" {
-  source               = "../.."
-  cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  enable_autoscaling   = true
-  worker_pools         = local.sz_pool
+  source                          = "../.."
+  cluster_name                    = var.prefix
+  ibmcloud_api_key                = var.ibmcloud_api_key
+  resource_group_id               = module.resource_group.resource_group_id
+  region                          = var.region
+  force_delete_storage            = true
+  vpc_id                          = module.vpc.vpc_id
+  vpc_subnets                     = local.cluster_vpc_subnets
+  ocp_version                     = var.ocp_version
+  tags                            = var.resource_tags
+  ignore_worker_pool_size_changes = true
+  worker_pools                    = local.sz_pool
+  addons                          = local.addons
 }
 
 data "ibm_container_cluster_config" "cluster_config" {

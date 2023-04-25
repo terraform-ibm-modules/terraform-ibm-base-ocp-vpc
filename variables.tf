@@ -58,6 +58,24 @@ variable "worker_pools" {
     }))
   }))
   description = "List of worker pools"
+  validation {
+    error_message = "Please provide value for minSize and maxSize while enableAutoscaling is set to true."
+    condition = length(
+      flatten(
+        [
+          for worker in var.worker_pools :
+          worker if worker.enableAutoscaling == true && worker.minSize != null && worker.maxSize != null
+        ]
+      )
+      ) == length(
+      flatten(
+        [
+          for worker in var.worker_pools :
+          worker if worker.enableAutoscaling == true
+        ]
+      )
+    )
+  }
 }
 
 variable "worker_pools_taints" {
@@ -160,22 +178,15 @@ variable "verify_worker_network_readiness" {
   default     = true
 }
 
-variable "enable_autoscaling" {
-  type        = bool
+variable "addons" {
+  type = object({
+    cluster-autoscaler   = string
+    vpc-block-csi-driver = string
+  })
   description = "Flag indicating whether or not to enable autoscaling."
-  default     = false
-}
-
-variable "cluster_autoscaler_version" {
-  type        = string
-  description = "Version of the cluster-autoscaler addon"
-  default     = "1.0.8"
-  validation {
-    condition = anytrue([
-      var.cluster_autoscaler_version == "1.0.7",
-      var.cluster_autoscaler_version == "1.0.8",
-    ])
-    error_message = "The specified cluster_autoscaler_version is not of the valid versions."
+  default = {
+    cluster-autoscaler   = "1.0.8"
+    vpc-block-csi-driver = "5.0"
   }
 }
 

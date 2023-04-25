@@ -28,9 +28,7 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id   = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
-  cluster_name = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name
-
+  cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
 }
 
 # Lookup the current default kube version
@@ -329,17 +327,16 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
-  count             = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
-  cluster           = local.cluster_name
+  count             = var.ignore_worker_pool_size_changes && !(var.disable_public_endpoint) ? 1 : 0
+  cluster           = ibm_container_vpc_cluster.autoscaling_cluster[0].id
   resource_group_id = var.resource_group_id
 
-  addons {
-    name    = "cluster-autoscaler"
-    version = var.cluster_autoscaler_version
-  }
-
-  lifecycle {
-    ignore_changes = [addons]
+  dynamic "addons" {
+    for_each = var.addons
+    content {
+      name    = addons.key
+      version = addons.value
+    }
   }
 }
 
@@ -362,7 +359,7 @@ locals {
 }
 
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
-  count      = var.enable_autoscaling && !(var.disable_public_endpoint) ? 1 : 0
+  count      = var.ignore_worker_pool_size_changes && !(var.disable_public_endpoint) ? 1 : 0
   depends_on = [ibm_container_addons.addons, time_sleep.wait_operators]
 
   metadata {
