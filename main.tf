@@ -47,8 +47,8 @@ module "cos_instance" {
 }
 
 moved {
-  from = ibm_resource_instance.cos_instance
-  to   = module.cos_instance.ibm_resource_instance.cos_instance
+  from = module.cos_instance.ibm_resource_instance.cos_instance
+  to   = ibm_resource_instance.cos_instance
 }
 
 ##############################################################################
