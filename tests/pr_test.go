@@ -87,7 +87,7 @@ func TestFSCloudExample(t *testing.T) {
 		Testing:          t,
 		TerraformDir:     fscloudExampleTerraformDir,
 		Prefix:           "base-ocp-fscloud",
-		ResourceGroup:    fmt.Sprintf("%s-%s", resourceGroup, strings.ToLower(random.UniqueId())), // unique rg to avoid dup policy
+		ResourceGroup:    fmt.Sprintf("test-base-ocp-vpc-%s", strings.ToLower(random.UniqueId())), // unique rg to avoid dup policy
 		Region:           "us-south",
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{

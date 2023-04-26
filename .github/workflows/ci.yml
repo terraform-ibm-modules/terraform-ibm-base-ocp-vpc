@@ -13,9 +13,10 @@ on:
 
 jobs:
   call-terraform-ci-pipeline:
-    uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@v1.8.1
+    uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@crav2
     secrets: inherit
     with:
+      craSCCv2: true
       craTarget: "examples/fscloud"
-      craGoalIgnoreFile: "cra-tf-validate-ignore-goals.json"
+      craRuleIgnoreFile: "cra-tf-validate-ignore-rules.json"
       craEnvironmentVariables: "TF_VAR_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_hpcs_key_crn_cluster=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_hpcs_key_crn_worker_pool=${{ vars.HPCS_SOUTH_KEY_CRN }}"
