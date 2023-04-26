@@ -17,6 +17,7 @@ on:
 jobs:
   call-terraform-ci-pipeline:
     uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@crav2
+
     secrets: inherit
     with:
       craSCCv2: true
