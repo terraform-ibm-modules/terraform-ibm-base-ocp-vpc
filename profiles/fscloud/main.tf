@@ -1,8 +1,3 @@
-locals {
-  #  Validation
-  # tflint-ignore: terraform_unused_declarations
-  #  validate_different_regions = var.primary_region == var.secondary_region ? tobool("primary and secondary bucket regions must not match") : true
-}
 
 resource "ibm_iam_authorization_policy" "kms_policy" {
   count               = var.skip_iam_authorization_policy ? 0 : 1
