@@ -20,4 +20,4 @@ jobs:
       craSCCv2: true
       craTarget: "examples/fscloud"
       craRuleIgnoreFile: "cra-tf-validate-ignore-rules.json"
-      craEnvironmentVariables: "TF_VAR_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_hpcs_key_crn_cluster=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_hpcs_key_crn_worker_pool=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_primary_existing_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_primary_hpcs_key_crn=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_secondary_existing_hpcs_instance_guid=${{ vars.HPCS_EAST_GUID }},TF_VAR_secondary_hpcs_key_crn=${{ vars.HPCS_EAST_KEY_CRN }}"
+      craEnvironmentVariables: "TF_VAR_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_hpcs_key_crn_cluster=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_hpcs_key_crn_worker_pool=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_primary_existing_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_primary_hpcs_key_crn=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_secondary_existing_hpcs_instance_guid=${{ vars.HPCS_EAST_GUID }},TF_VAR_secondary_hpcs_key_crn=${{ vars.HPCS_EAST_KEY_CRN }},TF_VAR_existing_at_instance_crn=${{ vars.AT_INSTANCE_CRN }}"
