@@ -1,1 +1,10 @@
-{}
+{
+  "scc_rules": [
+    {
+      "scc_rule_id": "rule-8cbd597c-7471-42bd-9c88-36b2696456e9",
+      "description": "Check whether Cloud Object Storage network access is restricted to a specific IP range",
+      "ignore_reason": "This is restricting by CBR, not IP range. This is not yet checked by the scan Tracked: AHA SCC-961",
+      "is_valid": true
+    }
+  ]
+}
