@@ -89,6 +89,7 @@ module "ocp_base" {
     instance_id = module.kp_all_inclusive.key_protect_guid
     crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
   }
+  access_tags = var.access_tags
 }
 
 ##############################################################################
