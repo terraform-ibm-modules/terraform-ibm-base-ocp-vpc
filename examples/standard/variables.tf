@@ -60,6 +60,12 @@ variable "worker_pools" {
   default     = []
 }
 
+variable "access_tags" {
+  type        = list(string)
+  description = "Optional list of access management tags to be added to the created resources."
+  default     = []
+}
+
 ##############################################################################
 # VPC variables
 ##############################################################################
