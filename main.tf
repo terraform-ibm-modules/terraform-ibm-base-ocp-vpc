@@ -24,6 +24,9 @@ locals {
   # tflint-ignore: terraform_unused_declarations
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
 
+  addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
+  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.0" }) : local.addons_list
+
   delete_timeout = "2h"
   create_timeout = "3h"
   update_timeout = "3h"
@@ -345,12 +348,11 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
-  count             = var.ignore_worker_pool_size_changes && !(var.disable_public_endpoint) ? 1 : 0
-  cluster           = ibm_container_vpc_cluster.autoscaling_cluster[0].id
+  cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
   dynamic "addons" {
-    for_each = var.addons
+    for_each = local.addons
     content {
       name    = addons.key
       version = addons.value
@@ -377,8 +379,8 @@ locals {
 }
 
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
-  count      = var.ignore_worker_pool_size_changes && !(var.disable_public_endpoint) ? 1 : 0
-  depends_on = [ibm_container_addons.addons, time_sleep.wait_operators]
+  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  depends_on = [time_sleep.wait_operators]
 
   metadata {
     name      = "iks-ca-configmap"

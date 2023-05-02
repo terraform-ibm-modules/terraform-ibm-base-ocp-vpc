@@ -25,12 +25,8 @@
     },
     "addons": {
       "name": "addons",
-      "type": "object({\n    cluster-autoscaler   = string\n    vpc-block-csi-driver = string\n  })",
-      "description": "Flag indicating whether or not to enable autoscaling.",
-      "default": {
-        "cluster-autoscaler": "1.0.8",
-        "vpc-block-csi-driver": "5.0"
-      },
+      "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
+      "description": "List of all addons supported by the ocp cluster.",
       "pos": {
         "filename": "variables.tf",
         "line": 194
@@ -81,7 +77,8 @@
       "default": false,
       "source": [
         "ibm_container_vpc_cluster.autoscaling_cluster.disable_public_service_endpoint",
-        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint"
+        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint",
+        "kubernetes_config_map_v1_data.set_autoscaling.count"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -129,11 +126,9 @@
       "default": false,
       "required": true,
       "source": [
-        "ibm_container_addons.addons.count",
         "ibm_container_vpc_cluster.autoscaling_cluster.count",
         "ibm_container_vpc_cluster.cluster.count",
-        "ibm_resource_tag.cluster_access_tag.resource_id",
-        "kubernetes_config_map_v1_data.set_autoscaling.count"
+        "ibm_resource_tag.cluster_access_tag.resource_id"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -439,7 +434,6 @@
       "type": "ibm_container_addons",
       "name": "addons",
       "attributes": {
-        "count": "ignore_worker_pool_size_changes",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
@@ -447,7 +441,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 347
+        "line": 350
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -470,7 +464,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 120
+        "line": 123
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -493,7 +487,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 58
+        "line": 61
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -509,7 +503,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 271
+        "line": 274
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -525,7 +519,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 230
+        "line": 233
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -541,7 +535,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 37
+        "line": 40
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -558,7 +552,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 184
+        "line": 187
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -574,7 +568,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 47
+        "line": 50
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -582,14 +576,14 @@
       "type": "kubernetes_config_map_v1_data",
       "name": "set_autoscaling",
       "attributes": {
-        "count": "ignore_worker_pool_size_changes"
+        "count": "disable_public_endpoint"
       },
       "provider": {
         "name": "kubernetes"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 379
+        "line": 381
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -604,7 +598,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 331
+        "line": 334
       }
     },
     "null_resource.reset_api_key": {
@@ -616,7 +610,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 205
+        "line": 208
       }
     },
     "time_sleep.wait_operators": {
@@ -628,7 +622,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 361
+        "line": 363
       }
     }
   },
@@ -646,7 +640,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 219
+        "line": 222
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -658,7 +652,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 35
+        "line": 38
       }
     }
   },

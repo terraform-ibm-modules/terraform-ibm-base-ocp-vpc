@@ -193,14 +193,17 @@ variable "verify_worker_network_readiness" {
 
 variable "addons" {
   type = object({
-    cluster-autoscaler   = string
-    vpc-block-csi-driver = string
+    alb-oauth-proxy           = optional(string)
+    debug-tool                = optional(string)
+    image-key-synchronizer    = optional(string)
+    istio                     = optional(string)
+    openshift-data-foundation = optional(string)
+    static-route              = optional(string)
+    cluster-autoscaler        = optional(string)
+    vpc-block-csi-driver      = optional(string)
   })
-  description = "Flag indicating whether or not to enable autoscaling."
-  default = {
-    cluster-autoscaler   = "1.0.8"
-    vpc-block-csi-driver = "5.0"
-  }
+  description = "List of all addons supported by the ocp cluster."
+  default     = null
 }
 
 ##############################################################################
