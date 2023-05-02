@@ -32,7 +32,10 @@ locals {
 }
 
 # Lookup the current default kube version
-data "ibm_container_cluster_versions" "cluster_versions" {}
+data "ibm_container_cluster_versions" "cluster_versions" {
+  resource_group_id = var.resource_group_id
+  region            = var.region
+}
 
 resource "ibm_resource_instance" "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
