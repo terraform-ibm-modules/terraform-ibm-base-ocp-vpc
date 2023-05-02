@@ -51,6 +51,13 @@ moved {
   to   = ibm_resource_instance.cos_instance
 }
 
+resource "ibm_resource_tag" "cos_access_tag" {
+  count       = var.use_existing_cos || length(var.access_tags) == 0 ? 0 : 1
+  resource_id = ibm_resource_instance.cos_instance[0].crn
+  tags        = var.access_tags
+  tag_type    = "access"
+}
+
 ##############################################################################
 # Create a OCP Cluster
 ##############################################################################
@@ -175,6 +182,17 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
     create = local.create_timeout
     update = local.update_timeout
   }
+}
+
+##############################################################################
+# Cluster Access Tag
+##############################################################################
+
+resource "ibm_resource_tag" "cluster_access_tag" {
+  count       = length(var.access_tags) == 0 ? 0 : 1
+  resource_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn
+  tags        = var.access_tags
+  tag_type    = "access"
 }
 
 # Cluster provisioning will automatically create an IAM API key called "containers-kubernetes-key" if one does not exist
