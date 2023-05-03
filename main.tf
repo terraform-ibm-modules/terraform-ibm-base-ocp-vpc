@@ -47,8 +47,8 @@ module "cos_instance" {
 }
 
 moved {
-  from   = ibm_resource_instance.cos_instance
-  to     = module.cos_instance.ibm_resource_instance.cos_instance
+  from = ibm_resource_instance.cos_instance[0]
+  to   = module.cos_instance[0].ibm_resource_instance.cos_instance[0]
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
