@@ -42,7 +42,12 @@ variable "vpc_subnets" {
 
 variable "worker_pools" {
   type = list(object({
-    subnet_prefix     = string
+    subnet_prefix = optional(string)
+    vpc_subnets = optional(list(object({
+      id         = string
+      zone       = string
+      cidr_block = string
+    })))
     pool_name         = string
     machine_type      = string
     workers_per_zone  = number
@@ -75,6 +80,10 @@ variable "worker_pools" {
         ]
       )
     )
+  }
+  validation {
+    condition     = length([for worker_pool in var.worker_pools : worker_pool if(worker_pool.subnet_prefix == null && worker_pool.vpc_subnets == null) || (worker_pool.subnet_prefix != null && worker_pool.vpc_subnets != null)]) == 0
+    error_message = "Please provide exactly one of subnet_prefix or vpc_subnets. Passing neither or both is invalid."
   }
 }
 
