@@ -32,7 +32,10 @@ locals {
 }
 
 # Lookup the current default kube version
-data "ibm_container_cluster_versions" "cluster_versions" {}
+data "ibm_container_cluster_versions" "cluster_versions" {
+  resource_group_id = var.resource_group_id
+  region            = var.region
+}
 
 module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
@@ -88,7 +91,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
   # default workers are mapped to the subnets that are "private"
   dynamic "zones" {
-    for_each = var.vpc_subnets[local.default_pool.subnet_prefix]
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -149,7 +152,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
   # default workers are mapped to the subnets that are "private"
   dynamic "zones" {
-    for_each = var.vpc_subnets[local.default_pool.subnet_prefix]
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -248,7 +251,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   dynamic "zones" {
-    for_each = var.vpc_subnets[each.value.subnet_prefix]
+    for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -293,7 +296,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   dynamic "zones" {
-    for_each = var.vpc_subnets[each.value.subnet_prefix]
+    for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
