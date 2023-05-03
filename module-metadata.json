@@ -175,10 +175,15 @@
       "type": "string",
       "description": "The IBM Cloud region where the cluster will be provisioned.",
       "required": true,
+      "source": [
+        "data.ibm_container_cluster_versions.cluster_versions.region"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 17
-      }
+      },
+      "cloud_data_type": "region",
+      "deprecated": "This field is deprecated"
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -187,6 +192,7 @@
       "required": true,
       "source": [
         "data.ibm_container_cluster_config.cluster_config.resource_group_id",
+        "data.ibm_container_cluster_versions.cluster_versions.resource_group_id",
         "ibm_container_addons.addons.resource_group_id",
         "ibm_container_vpc_cluster.autoscaling_cluster.resource_group_id",
         "ibm_container_vpc_cluster.cluster.resource_group_id",
@@ -374,7 +380,8 @@
         "filename": "outputs.tf",
         "line": 43
       },
-      "type": "string"
+      "type": "string",
+      "cloud_data_type": "region"
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -441,7 +448,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 350
+        "line": 353
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -464,7 +471,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 123
+        "line": 126
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -487,7 +494,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 61
+        "line": 64
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -503,7 +510,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 274
+        "line": 277
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -519,7 +526,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 233
+        "line": 236
       }
     },
     "ibm_resource_instance.cos_instance": {
@@ -535,7 +542,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 40
+        "line": 43
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -552,7 +559,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 187
+        "line": 190
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -568,7 +575,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 50
+        "line": 53
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -583,7 +590,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 381
+        "line": 384
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -598,7 +605,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 334
+        "line": 337
       }
     },
     "null_resource.reset_api_key": {
@@ -610,7 +617,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 208
+        "line": 211
       }
     },
     "time_sleep.wait_operators": {
@@ -622,7 +629,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 363
+        "line": 366
       }
     }
   },
@@ -640,13 +647,17 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 222
+        "line": 225
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
       "mode": "data",
       "type": "ibm_container_cluster_versions",
       "name": "cluster_versions",
+      "attributes": {
+        "region": "region",
+        "resource_group_id": "resource_group_id"
+      },
       "provider": {
         "name": "ibm"
       },
