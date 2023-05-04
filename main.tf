@@ -16,7 +16,7 @@ locals {
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location     = "global"
   cos_plan         = "standard"
-  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : ibm_resource_instance.cos_instance[0].id
+  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id
 
   # Validation approach based on https://stackoverflow.com/a/66682419
   validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
@@ -40,19 +40,26 @@ data "ibm_container_cluster_versions" "cluster_versions" {
   region            = var.region
 }
 
-resource "ibm_resource_instance" "cos_instance" {
+module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
 
-  name              = local.cos_name
-  resource_group_id = var.resource_group_id
-  service           = "cloud-object-storage"
-  plan              = local.cos_plan
-  location          = local.cos_location
+  source             = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0"
+  cos_instance_name  = local.cos_name
+  resource_group_id  = var.resource_group_id
+  cos_plan           = local.cos_plan
+  cos_location       = local.cos_location
+  encryption_enabled = false
+  create_cos_bucket  = false
+}
+
+moved {
+  from = ibm_resource_instance.cos_instance[0]
+  to   = module.cos_instance[0].ibm_resource_instance.cos_instance[0]
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
   count       = var.use_existing_cos || length(var.access_tags) == 0 ? 0 : 1
-  resource_id = ibm_resource_instance.cos_instance[0].crn
+  resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
 }
