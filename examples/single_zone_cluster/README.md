@@ -1,3 +1,3 @@
-# Single Zone Cluster
+# Single zone cluster example
 
-This is an example of creating a single zone VPC Gen2 OpenShift cluster with cluster autoscaler addon.
+This example creates a VPC with a Red Hat OpenShift cluster in a single zone. The example includes autoscaling for the cluster.

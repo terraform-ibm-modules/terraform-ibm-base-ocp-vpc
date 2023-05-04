@@ -16,11 +16,6 @@ A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. Th
 - Make sure that you have a recent version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli)
 
-## Addons
-
-Support to enable, update or disable a single add-on or a set of add-ons. This [example](examples/single_zone_cluster) showcase the use of cluster-autoscaler addon.
-
-
 ## Usage
 ```hcl
 # Replace "master" with a GIT release version to lock into a specific release
@@ -128,7 +123,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 - [ Apply Taints Example](examples/apply_taints)
 - [ Existing COS](examples/existing_cos)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
-- [ Single Zone Cluster](examples/single_zone_cluster)
+- [ Single zone cluster example](examples/single_zone_cluster)
 - [ Standard Example With User Managed Boot Volume Encryption](examples/standard)
 <!-- END EXAMPLES HOOK -->
 
