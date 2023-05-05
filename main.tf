@@ -16,13 +16,16 @@ locals {
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location     = "global"
   cos_plan         = "standard"
-  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : ibm_resource_instance.cos_instance[0].id
+  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id
 
   # Validation approach based on https://stackoverflow.com/a/66682419
   validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
   validate_msg       = "A value for 'existing_cos_id' variable must be passed when 'use_existing_cos = true'"
   # tflint-ignore: terraform_unused_declarations
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
+
+  addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
+  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.0" }) : local.addons_list
 
   delete_timeout = "2h"
   create_timeout = "3h"
@@ -32,21 +35,31 @@ locals {
 }
 
 # Lookup the current default kube version
-data "ibm_container_cluster_versions" "cluster_versions" {}
+data "ibm_container_cluster_versions" "cluster_versions" {
+  resource_group_id = var.resource_group_id
+  region            = var.region
+}
 
-resource "ibm_resource_instance" "cos_instance" {
+module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
 
-  name              = local.cos_name
-  resource_group_id = var.resource_group_id
-  service           = "cloud-object-storage"
-  plan              = local.cos_plan
-  location          = local.cos_location
+  source             = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0"
+  cos_instance_name  = local.cos_name
+  resource_group_id  = var.resource_group_id
+  cos_plan           = local.cos_plan
+  cos_location       = local.cos_location
+  encryption_enabled = false
+  create_cos_bucket  = false
+}
+
+moved {
+  from = ibm_resource_instance.cos_instance[0]
+  to   = module.cos_instance[0].ibm_resource_instance.cos_instance[0]
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
   count       = var.use_existing_cos || length(var.access_tags) == 0 ? 0 : 1
-  resource_id = ibm_resource_instance.cos_instance[0].crn
+  resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
 }
@@ -81,7 +94,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
   # default workers are mapped to the subnets that are "private"
   dynamic "zones" {
-    for_each = var.vpc_subnets[local.default_pool.subnet_prefix]
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -142,7 +155,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
   # default workers are mapped to the subnets that are "private"
   dynamic "zones" {
-    for_each = var.vpc_subnets[local.default_pool.subnet_prefix]
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -241,7 +254,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   dynamic "zones" {
-    for_each = var.vpc_subnets[each.value.subnet_prefix]
+    for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -286,7 +299,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   dynamic "zones" {
-    for_each = var.vpc_subnets[each.value.subnet_prefix]
+    for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
       subnet_id = zones.value.id
       name      = zones.value.zone
@@ -341,4 +354,52 @@ resource "null_resource" "confirm_network_healthy" {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
+}
+
+
+resource "ibm_container_addons" "addons" {
+  cluster           = local.cluster_id
+  resource_group_id = var.resource_group_id
+
+  dynamic "addons" {
+    for_each = local.addons
+    content {
+      name    = addons.key
+      version = addons.value
+    }
+  }
+}
+
+resource "time_sleep" "wait_operators" {
+  depends_on      = [ibm_container_addons.addons]
+  create_duration = "5s"
+}
+
+locals {
+  worker_pool_config = [
+    for worker in var.worker_pools :
+    {
+      name    = worker.pool_name
+      minSize = worker.minSize
+      maxSize = worker.maxSize
+      enabled = worker.enableAutoscaling
+    } if worker.enableAutoscaling != null && worker.minSize != null && worker.maxSize != null
+  ]
+
+}
+
+resource "kubernetes_config_map_v1_data" "set_autoscaling" {
+  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  depends_on = [time_sleep.wait_operators]
+
+  metadata {
+    name      = "iks-ca-configmap"
+    namespace = "kube-system"
+  }
+
+  data = {
+    "workerPoolsConfig.json" = jsonencode(local.worker_pool_config)
+  }
+
+  force = true
 }
