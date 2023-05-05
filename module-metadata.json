@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 157
+        "line": 178
       },
       "min_length": 1,
       "max_length": 128,
@@ -21,6 +21,15 @@
       "computed": true,
       "elem": {
         "type": "TypeString"
+      }
+    },
+    "addons": {
+      "name": "addons",
+      "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
+      "description": "List of all addons supported by the ocp cluster.",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 203
       }
     },
     "cluster_name": {
@@ -49,7 +58,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 99
+        "line": 120
       }
     },
     "cos_name": {
@@ -58,7 +67,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 129
+        "line": 150
       }
     },
     "disable_public_endpoint": {
@@ -68,11 +77,12 @@
       "default": false,
       "source": [
         "ibm_container_vpc_cluster.autoscaling_cluster.disable_public_service_endpoint",
-        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint"
+        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint",
+        "kubernetes_config_map_v1_data.set_autoscaling.count"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 111
+        "line": 132
       }
     },
     "existing_cos_id": {
@@ -81,7 +91,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 141
+        "line": 162
       }
     },
     "force_delete_storage": {
@@ -95,7 +105,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 123
+        "line": 144
       }
     },
     "ibmcloud_api_key": {
@@ -122,7 +132,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 75
+        "line": 96
       },
       "min_length": 1,
       "max_length": 1024,
@@ -134,7 +144,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 147
+        "line": 168
       }
     },
     "ocp_entitlement": {
@@ -148,7 +158,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 117
+        "line": 138
       }
     },
     "ocp_version": {
@@ -157,7 +167,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 81
+        "line": 102
       }
     },
     "region": {
@@ -183,6 +193,7 @@
       "source": [
         "data.ibm_container_cluster_config.cluster_config.resource_group_id",
         "data.ibm_container_cluster_versions.cluster_versions.resource_group_id",
+        "ibm_container_addons.addons.resource_group_id",
         "ibm_container_vpc_cluster.autoscaling_cluster.resource_group_id",
         "ibm_container_vpc_cluster.cluster.resource_group_id",
         "ibm_container_vpc_worker_pool.autoscaling_pool.resource_group_id",
@@ -232,7 +243,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 135
+        "line": 156
       }
     },
     "verify_worker_network_readiness": {
@@ -246,7 +257,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 176
+        "line": 197
       }
     },
     "vpc_id": {
@@ -262,7 +273,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 171
+        "line": 192
       },
       "immutable": true
     },
@@ -278,7 +289,7 @@
     },
     "worker_pools": {
       "name": "worker_pools",
-      "type": "list(object({\n    subnet_prefix = optional(string)\n    vpc_subnets = optional(list(object({\n      id         = string\n      zone       = string\n      cidr_block = string\n    })))\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
+      "type": "list(object({\n    subnet_prefix = optional(string)\n    vpc_subnets = optional(list(object({\n      id         = string\n      zone       = string\n      cidr_block = string\n    })))\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    minSize           = optional(number)\n    maxSize           = optional(number)\n    enableAutoscaling = optional(bool)\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
       "description": "List of worker pools",
       "required": true,
       "pos": {
@@ -292,7 +303,7 @@
       "description": "Optional, Map of lists containing node taints by node-pool name",
       "pos": {
         "filename": "variables.tf",
-        "line": 69
+        "line": 90
       }
     }
   },
@@ -407,13 +418,39 @@
         "\u003e= 1.51.0"
       ]
     },
+    "kubernetes": {
+      "source": "hashicorp/kubernetes",
+      "version_constraints": [
+        "2.16.1"
+      ]
+    },
     "null": {
       "version_constraints": [
         "\u003e= 3.2.1"
       ]
+    },
+    "time": {
+      "version_constraints": [
+        "0.9.1"
+      ]
     }
   },
   "managed_resources": {
+    "ibm_container_addons.addons": {
+      "mode": "managed",
+      "type": "ibm_container_addons",
+      "name": "addons",
+      "attributes": {
+        "resource_group_id": "resource_group_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 360
+      }
+    },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
       "mode": "managed",
       "type": "ibm_container_vpc_cluster",
@@ -434,7 +471,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 130
+        "line": 133
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -457,7 +494,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 68
+        "line": 71
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -473,7 +510,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 281
+        "line": 284
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -489,7 +526,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 240
+        "line": 243
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -506,7 +543,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 194
+        "line": 197
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -522,7 +559,22 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 57
+        "line": 60
+      }
+    },
+    "kubernetes_config_map_v1_data.set_autoscaling": {
+      "mode": "managed",
+      "type": "kubernetes_config_map_v1_data",
+      "name": "set_autoscaling",
+      "attributes": {
+        "count": "disable_public_endpoint"
+      },
+      "provider": {
+        "name": "kubernetes"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 391
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -537,7 +589,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 341
+        "line": 344
       }
     },
     "null_resource.reset_api_key": {
@@ -549,7 +601,19 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 215
+        "line": 218
+      }
+    },
+    "time_sleep.wait_operators": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_operators",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 373
       }
     }
   },
@@ -567,7 +631,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 229
+        "line": 232
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -583,7 +647,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 35
+        "line": 38
       }
     }
   },
@@ -791,7 +855,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 40
+        "line": 43
       }
     }
   }

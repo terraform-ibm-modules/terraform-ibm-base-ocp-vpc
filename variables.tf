@@ -53,6 +53,9 @@ variable "worker_pools" {
     workers_per_zone  = number
     resource_group_id = optional(string)
     labels            = optional(map(string))
+    minSize           = optional(number)
+    maxSize           = optional(number)
+    enableAutoscaling = optional(bool)
     boot_volume_encryption_kms_config = optional(object({
       crk             = string
       kms_instance_id = string
@@ -60,6 +63,24 @@ variable "worker_pools" {
     }))
   }))
   description = "List of worker pools"
+  validation {
+    error_message = "Please provide value for minSize and maxSize while enableAutoscaling is set to true."
+    condition = length(
+      flatten(
+        [
+          for worker in var.worker_pools :
+          worker if worker.enableAutoscaling == true && worker.minSize != null && worker.maxSize != null
+        ]
+      )
+      ) == length(
+      flatten(
+        [
+          for worker in var.worker_pools :
+          worker if worker.enableAutoscaling == true
+        ]
+      )
+    )
+  }
   validation {
     condition     = length([for worker_pool in var.worker_pools : worker_pool if(worker_pool.subnet_prefix == null && worker_pool.vpc_subnets == null) || (worker_pool.subnet_prefix != null && worker_pool.vpc_subnets != null)]) == 0
     error_message = "Please provide exactly one of subnet_prefix or vpc_subnets. Passing neither or both is invalid."
@@ -177,6 +198,21 @@ variable "verify_worker_network_readiness" {
   type        = bool
   description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
   default     = true
+}
+
+variable "addons" {
+  type = object({
+    alb-oauth-proxy           = optional(string)
+    debug-tool                = optional(string)
+    image-key-synchronizer    = optional(string)
+    istio                     = optional(string)
+    openshift-data-foundation = optional(string)
+    static-route              = optional(string)
+    cluster-autoscaler        = optional(string)
+    vpc-block-csi-driver      = optional(string)
+  })
+  description = "List of all addons supported by the ocp cluster."
+  default     = null
 }
 
 ##############################################################################
