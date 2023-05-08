@@ -48,11 +48,11 @@ func TestRunMultiClusterExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunSzClusterExample(t *testing.T) {
+func TestRunSzAutoScaleClusterExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  "examples/single_zone_cluster",
+		TerraformDir:  "examples/single_zone_autoscale_cluster",
 		Prefix:        "sz-cluster",
 		ResourceGroup: resourceGroup,
 		ImplicitDestroy: []string{
