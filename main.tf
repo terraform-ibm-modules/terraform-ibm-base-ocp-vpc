@@ -370,6 +370,10 @@ resource "ibm_container_addons" "addons" {
       version = addons.value
     }
   }
+
+  timeouts {
+    create = "30m"
+  }
 }
 
 resource "time_sleep" "wait_operators" {

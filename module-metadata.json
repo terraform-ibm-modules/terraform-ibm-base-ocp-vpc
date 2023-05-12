@@ -574,7 +574,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 393
+        "line": 397
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -613,7 +613,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 375
+        "line": 379
       }
     }
   },
