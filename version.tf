@@ -10,11 +10,11 @@ terraform {
       version = ">= 3.2.1"
     }
     time = {
-      version = "0.9.1"
+      version = ">= 0.9.1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.16.1"
+      version = ">= 2.16.1"
     }
   }
 }

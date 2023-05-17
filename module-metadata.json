@@ -421,7 +421,7 @@
     "kubernetes": {
       "source": "hashicorp/kubernetes",
       "version_constraints": [
-        "2.16.1"
+        "\u003e= 2.16.1"
       ]
     },
     "null": {
@@ -431,7 +431,7 @@
     },
     "time": {
       "version_constraints": [
-        "0.9.1"
+        "\u003e= 0.9.1"
       ]
     }
   },
