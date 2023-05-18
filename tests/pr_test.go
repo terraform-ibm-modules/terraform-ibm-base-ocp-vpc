@@ -2,10 +2,11 @@
 package test
 
 import (
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
@@ -96,7 +97,7 @@ func TestFSCloudExample(t *testing.T) {
 		TerraformDir:     fscloudExampleTerraformDir,
 		Prefix:           "base-ocp-fscloud",
 		Region:           "us-south",
-		CloudInfoService: sharedInfoSvc,
+		SkipTestTearDown: true,
 		TerraformVars: map[string]interface{}{
 			"existing_at_instance_crn":              permanentResources["activityTrackerFrankfurtCrn"],
 			"hpcs_instance_guid":                    permanentResources["hpcs_south"],
@@ -114,4 +115,9 @@ func TestFSCloudExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
+	// Check master
+	// Wait until kms is configured
+	// continue teardown
+
+	options.TestTearDown()
 }
