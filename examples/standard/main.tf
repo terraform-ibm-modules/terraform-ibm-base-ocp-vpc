@@ -14,7 +14,7 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
+  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.2.0"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -30,7 +30,7 @@ module "vpc" {
 ##############################################################################
 
 module "kp_all_inclusive" {
-  source                    = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
+  source                    = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.1.0"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
