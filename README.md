@@ -134,9 +134,9 @@ Optionally, you need the following permissions to attach Access Management tags 
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.51.0 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.16.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
-| <a name="requirement_time"></a> [time](#requirement\_time) | 0.9.1 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |
 
 ## Modules
 
@@ -155,10 +155,10 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_container_vpc_worker_pool.pool](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_worker_pool) | resource |
 | [ibm_resource_tag.cluster_access_tag](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/resource_tag) | resource |
 | [ibm_resource_tag.cos_access_tag](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/resource_tag) | resource |
-| [kubernetes_config_map_v1_data.set_autoscaling](https://registry.terraform.io/providers/hashicorp/kubernetes/2.16.1/docs/resources/config_map_v1_data) | resource |
+| [kubernetes_config_map_v1_data.set_autoscaling](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map_v1_data) | resource |
 | [null_resource.confirm_network_healthy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.reset_api_key](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [time_sleep.wait_operators](https://registry.terraform.io/providers/hashicorp/time/0.9.1/docs/resources/sleep) | resource |
+| [time_sleep.wait_operators](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [ibm_container_cluster_config.cluster_config](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_config) | data source |
 | [ibm_container_cluster_versions.cluster_versions](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_versions) | data source |
 
