@@ -358,6 +358,8 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
+  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
@@ -367,6 +369,10 @@ resource "ibm_container_addons" "addons" {
       name    = addons.key
       version = addons.value
     }
+  }
+
+  timeouts {
+    create = "40m"
   }
 }
 
