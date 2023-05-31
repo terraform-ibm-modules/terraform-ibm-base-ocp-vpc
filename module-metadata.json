@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 148
+        "line": 178
       },
       "min_length": 1,
       "max_length": 128,
@@ -21,6 +21,15 @@
       "computed": true,
       "elem": {
         "type": "TypeString"
+      }
+    },
+    "addons": {
+      "name": "addons",
+      "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
+      "description": "List of all addons supported by the ocp cluster.",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 203
       }
     },
     "cluster_name": {
@@ -49,7 +58,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 90
+        "line": 120
       }
     },
     "cos_name": {
@@ -58,7 +67,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 120
+        "line": 150
       }
     },
     "disable_public_endpoint": {
@@ -68,11 +77,12 @@
       "default": false,
       "source": [
         "ibm_container_vpc_cluster.autoscaling_cluster.disable_public_service_endpoint",
-        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint"
+        "ibm_container_vpc_cluster.cluster.disable_public_service_endpoint",
+        "kubernetes_config_map_v1_data.set_autoscaling.count"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 102
+        "line": 132
       }
     },
     "existing_cos_id": {
@@ -81,7 +91,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 132
+        "line": 162
       }
     },
     "force_delete_storage": {
@@ -95,7 +105,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 114
+        "line": 144
       }
     },
     "ibmcloud_api_key": {
@@ -122,7 +132,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 66
+        "line": 96
       },
       "min_length": 1,
       "max_length": 1024,
@@ -134,7 +144,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 138
+        "line": 168
       }
     },
     "ocp_entitlement": {
@@ -148,7 +158,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 108
+        "line": 138
       }
     },
     "ocp_version": {
@@ -157,7 +167,7 @@
       "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
       "pos": {
         "filename": "variables.tf",
-        "line": 72
+        "line": 102
       }
     },
     "region": {
@@ -165,10 +175,15 @@
       "type": "string",
       "description": "The IBM Cloud region where the cluster will be provisioned.",
       "required": true,
+      "source": [
+        "data.ibm_container_cluster_versions.cluster_versions.region"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 17
-      }
+      },
+      "cloud_data_type": "region",
+      "deprecated": "This field is deprecated"
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -177,11 +192,13 @@
       "required": true,
       "source": [
         "data.ibm_container_cluster_config.cluster_config.resource_group_id",
+        "data.ibm_container_cluster_versions.cluster_versions.resource_group_id",
+        "ibm_container_addons.addons.resource_group_id",
         "ibm_container_vpc_cluster.autoscaling_cluster.resource_group_id",
         "ibm_container_vpc_cluster.cluster.resource_group_id",
         "ibm_container_vpc_worker_pool.autoscaling_pool.resource_group_id",
         "ibm_container_vpc_worker_pool.pool.resource_group_id",
-        "ibm_resource_instance.cos_instance.resource_group_id"
+        "module.cos_instance.ibm_resource_instance.cos_instance.resource_group_id"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -221,12 +238,12 @@
       "description": "Flag indicating whether or not to use an existing COS instance",
       "default": false,
       "source": [
-        "ibm_resource_instance.cos_instance.count",
-        "ibm_resource_tag.cos_access_tag.count"
+        "ibm_resource_tag.cos_access_tag.count",
+        "module.cos_instance"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 156
       }
     },
     "verify_worker_network_readiness": {
@@ -240,7 +257,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 167
+        "line": 197
       }
     },
     "vpc_id": {
@@ -256,7 +273,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 162
+        "line": 192
       },
       "immutable": true
     },
@@ -272,7 +289,7 @@
     },
     "worker_pools": {
       "name": "worker_pools",
-      "type": "list(object({\n    subnet_prefix     = string\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
+      "type": "list(object({\n    subnet_prefix = optional(string)\n    vpc_subnets = optional(list(object({\n      id         = string\n      zone       = string\n      cidr_block = string\n    })))\n    pool_name         = string\n    machine_type      = string\n    workers_per_zone  = number\n    resource_group_id = optional(string)\n    labels            = optional(map(string))\n    minSize           = optional(number)\n    maxSize           = optional(number)\n    enableAutoscaling = optional(bool)\n    boot_volume_encryption_kms_config = optional(object({\n      crk             = string\n      kms_instance_id = string\n      kms_account_id  = optional(string)\n    }))\n  }))",
       "description": "List of worker pools",
       "required": true,
       "pos": {
@@ -286,7 +303,7 @@
       "description": "Optional, Map of lists containing node taints by node-pool name",
       "pos": {
         "filename": "variables.tf",
-        "line": 60
+        "line": 90
       }
     }
   },
@@ -363,7 +380,8 @@
         "filename": "outputs.tf",
         "line": 43
       },
-      "type": "string"
+      "type": "string",
+      "cloud_data_type": "region"
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -400,13 +418,39 @@
         "\u003e= 1.51.0"
       ]
     },
+    "kubernetes": {
+      "source": "hashicorp/kubernetes",
+      "version_constraints": [
+        "\u003e= 2.16.1"
+      ]
+    },
     "null": {
       "version_constraints": [
         "\u003e= 3.2.1"
       ]
+    },
+    "time": {
+      "version_constraints": [
+        "\u003e= 0.9.1"
+      ]
     }
   },
   "managed_resources": {
+    "ibm_container_addons.addons": {
+      "mode": "managed",
+      "type": "ibm_container_addons",
+      "name": "addons",
+      "attributes": {
+        "resource_group_id": "resource_group_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 360
+      }
+    },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
       "mode": "managed",
       "type": "ibm_container_vpc_cluster",
@@ -427,7 +471,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 120
+        "line": 133
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -450,7 +494,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 58
+        "line": 71
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -466,7 +510,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 271
+        "line": 284
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -482,23 +526,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 230
-      }
-    },
-    "ibm_resource_instance.cos_instance": {
-      "mode": "managed",
-      "type": "ibm_resource_instance",
-      "name": "cos_instance",
-      "attributes": {
-        "count": "use_existing_cos",
-        "resource_group_id": "resource_group_id"
-      },
-      "provider": {
-        "name": "ibm"
-      },
-      "pos": {
-        "filename": "main.tf",
-        "line": 37
+        "line": 243
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -515,7 +543,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 184
+        "line": 197
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -531,7 +559,22 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 47
+        "line": 60
+      }
+    },
+    "kubernetes_config_map_v1_data.set_autoscaling": {
+      "mode": "managed",
+      "type": "kubernetes_config_map_v1_data",
+      "name": "set_autoscaling",
+      "attributes": {
+        "count": "disable_public_endpoint"
+      },
+      "provider": {
+        "name": "kubernetes"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 397
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -546,7 +589,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 331
+        "line": 344
       }
     },
     "null_resource.reset_api_key": {
@@ -558,7 +601,19 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 205
+        "line": 218
+      }
+    },
+    "time_sleep.wait_operators": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_operators",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 379
       }
     }
   },
@@ -576,21 +631,232 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 219
+        "line": 232
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
       "mode": "data",
       "type": "ibm_container_cluster_versions",
       "name": "cluster_versions",
+      "attributes": {
+        "region": "region",
+        "resource_group_id": "resource_group_id"
+      },
       "provider": {
         "name": "ibm"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 35
+        "line": 38
       }
     }
   },
-  "module_calls": {}
+  "module_calls": {
+    "cos_instance": {
+      "name": "cos_instance",
+      "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0",
+      "attributes": {
+        "count": "use_existing_cos",
+        "resource_group_id": "resource_group_id"
+      },
+      "managed_resources": {
+        "ibm_cos_bucket.cos_bucket": {
+          "mode": "managed",
+          "type": "ibm_cos_bucket",
+          "name": "cos_bucket",
+          "attributes": {
+            "bucket_name": "bucket_name",
+            "count": "encryption_enabled",
+            "cross_region_location": "cross_region_location",
+            "key_protect": "kms_key_crn",
+            "region_location": "region",
+            "storage_class": "bucket_storage_class"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 85
+          }
+        },
+        "ibm_cos_bucket.cos_bucket1": {
+          "mode": "managed",
+          "type": "ibm_cos_bucket",
+          "name": "cos_bucket1",
+          "attributes": {
+            "bucket_name": "bucket_name",
+            "count": "encryption_enabled",
+            "cross_region_location": "cross_region_location",
+            "endpoint_type": "management_endpoint_type_for_bucket",
+            "region_location": "region",
+            "storage_class": "bucket_storage_class"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 161
+          }
+        },
+        "ibm_iam_authorization_policy.policy": {
+          "mode": "managed",
+          "type": "ibm_iam_authorization_policy",
+          "name": "policy",
+          "attributes": {
+            "target_resource_instance_id": "existing_kms_instance_guid"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 69
+          }
+        },
+        "ibm_resource_instance.cos_instance": {
+          "mode": "managed",
+          "type": "ibm_resource_instance",
+          "name": "cos_instance",
+          "attributes": {
+            "count": "create_cos_instance",
+            "location": "cos_location",
+            "name": "cos_instance_name",
+            "plan": "cos_plan",
+            "resource_group_id": "resource_group_id",
+            "tags": "cos_tags"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 35
+          }
+        },
+        "ibm_resource_key.resource_key": {
+          "mode": "managed",
+          "type": "ibm_resource_key",
+          "name": "resource_key",
+          "attributes": {
+            "count": "create_hmac_key",
+            "name": "hmac_key_name",
+            "parameters": "resource_key_existing_serviceid_crn",
+            "role": "hmac_key_role"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 45
+          }
+        }
+      },
+      "data_resources": {},
+      "outputs": {
+        "bucket_crn": {
+          "name": "bucket_crn",
+          "description": "Bucket CRN",
+          "value": "local.bucket_crn",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 24
+          }
+        },
+        "bucket_id": {
+          "name": "bucket_id",
+          "description": "Bucket id",
+          "value": "local.bucket_id",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 19
+          }
+        },
+        "bucket_name": {
+          "name": "bucket_name",
+          "description": "Bucket Name",
+          "value": "local.bucket_name",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 29
+          }
+        },
+        "bucket_storage_class": {
+          "name": "bucket_storage_class",
+          "description": "Bucket Storage Class",
+          "value": "local.bucket_storage_class",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 34
+          }
+        },
+        "cos_instance_guid": {
+          "name": "cos_instance_guid",
+          "description": "The GUID of the Cloud Object Storage Instance where the buckets are created",
+          "value": "local.cos_instance_guid",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 49
+          }
+        },
+        "cos_instance_id": {
+          "name": "cos_instance_id",
+          "description": "The ID of the Cloud Object Storage Instance where the buckets are created",
+          "value": "local.cos_instance_id",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 44
+          }
+        },
+        "kms_key_crn": {
+          "name": "kms_key_crn",
+          "description": "CRN of the KMS Key to use to encrypt the data in the COS Bucket. Required if var.encryption_enabled and var.create_cos_bucket are true.",
+          "value": "var.kms_key_crn",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 39
+          },
+          "type": "string"
+        },
+        "resource_group_id": {
+          "name": "resource_group_id",
+          "description": "The resource group ID where resources will be provisioned.",
+          "value": "var.resource_group_id",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 4
+          },
+          "type": "string",
+          "cloud_data_type": "resource_group",
+          "cloud_data_range": [
+            "resolved_to:id"
+          ]
+        },
+        "s3_endpoint_private": {
+          "name": "s3_endpoint_private",
+          "description": "S3 private endpoint",
+          "value": "local.s3_endpoint_private",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 9
+          }
+        },
+        "s3_endpoint_public": {
+          "name": "s3_endpoint_public",
+          "description": "S3 public endpoint",
+          "value": "local.s3_endpoint_public",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 14
+          }
+        }
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 43
+      }
+    }
+  }
 }
