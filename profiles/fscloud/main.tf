@@ -1,9 +1,8 @@
 
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count               = var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name = "containers-kubernetes"
-  #  TODO: Restrict scope as much as possible. Support case open(CS3338005) to investigate why it cannot be applied to the resource group
-  #  source_resource_group_id    = var.resource_group_id
+  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "containers-kubernetes"
+  source_resource_group_id    = var.resource_group_id
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.kms_config.instance_id
   roles                       = ["Reader"]
@@ -27,8 +26,7 @@ module "fscloud" {
   ignore_worker_pool_size_changes = var.ignore_worker_pool_size_changes
   verify_worker_network_readiness = var.verify_worker_network_readiness
   worker_pools_taints             = var.worker_pools_taints
-  cos_name                        = var.cos_name
-  use_existing_cos                = var.use_existing_cos
+  use_existing_cos                = true
   existing_cos_id                 = var.existing_cos_id
   tags                            = var.tags
   kms_config                      = var.kms_config

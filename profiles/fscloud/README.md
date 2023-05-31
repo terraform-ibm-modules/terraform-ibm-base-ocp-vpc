@@ -1,13 +1,12 @@
 # Financial Services Cloud Profile
+## Note: OCP is not Financial Services Cloud Compliant
+:exclamation: **Important:** Currently, OCP provisions a COS bucket, but you cannot use your own encryption keys. This will fail the requirement for Cloud Object Storage to be enabled with customer-managed encryption and Keep Your Own Key (KYOK).
+Once the service supports this the profile will be updated. Until that time it is for educational purposes only.
 
 This is a profile for IBM Cloud Red Hat OpenShift cluster on VPC Gen2 that meets FS Cloud requirements. This profile assumes you are deploying into an already compliant account.
 It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals with the following exceptions:
 
-[//]: # (TODO: REVIEW IF THESE ARE TRUE)
-- 3000107 - Check whether Cloud Object Storage network access is restricted to a specific IP range
+- rule-8cbd597c-7471-42bd-9c88-36b2696456e9 - Check whether Cloud Object Storage network access is restricted to a specific IP range
     - This is ignored because the CBR locks this down and CRA does not check this
-- 3000116 - Check whether Cloud Object Storage bucket resiliency is set to cross region
-    - This is ignored because cross-regional buckets and KYOK encryption (HPCS) are not compatible. The solution is to provision two buckets with replication in separate regions. This gives us
-      cross region support and KYOK encryption but CRA does not pick this up.
 
 ## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally to be compliant.

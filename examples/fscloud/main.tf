@@ -82,20 +82,15 @@ module "cbr_zone" {
 }
 
 module "cos_fscloud" {
-  source                                = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos//profiles/fscloud?ref=v6.0.0"
-  resource_group_id                     = module.resource_group.resource_group_id
-  cos_instance_name                     = "${var.prefix}-cos"
-  cos_tags                              = var.resource_tags
-  primary_bucket_name                   = "${var.prefix}-bucket-primary"
-  primary_region                        = "us-south"
-  primary_existing_hpcs_instance_guid   = var.primary_existing_hpcs_instance_guid
-  primary_hpcs_key_crn                  = var.primary_hpcs_key_crn
-  secondary_bucket_name                 = "${var.prefix}-bucket-secondary"
-  secondary_existing_hpcs_instance_guid = var.secondary_existing_hpcs_instance_guid
-  secondary_region                      = "us-east"
-  secondary_hpcs_key_crn                = var.secondary_hpcs_key_crn
-  sysdig_crn                            = module.observability_instances.sysdig_crn
-  activity_tracker_crn                  = local.at_crn
+  source                        = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos?ref=v6.0.0"
+  resource_group_id             = module.resource_group.resource_group_id
+  cos_instance_name             = "${var.prefix}-cos"
+  cos_tags                      = var.resource_tags
+  create_cos_bucket             = false
+  skip_iam_authorization_policy = true
+
+  sysdig_crn           = module.observability_instances.sysdig_crn
+  activity_tracker_crn = local.at_crn
   bucket_cbr_rules = [
     {
       description      = "sample rule for bucket 1"
@@ -168,7 +163,7 @@ locals {
   ]
 }
 
-module "ocp_base" {
+module "ocp_fscloud" {
   source                          = "../../profiles/fscloud"
   cluster_name                    = var.prefix
   ibmcloud_api_key                = var.ibmcloud_api_key
@@ -178,7 +173,6 @@ module "ocp_base" {
   vpc_id                          = module.vpc.vpc_id
   vpc_subnets                     = local.cluster_vpc_subnets
   existing_cos_id                 = module.cos_fscloud.cos_instance_id
-  use_existing_cos                = true
   worker_pools                    = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
   verify_worker_network_readiness = var.verify_worker_network_readiness
   ocp_version                     = var.ocp_version

@@ -42,25 +42,6 @@ variable "ocp_version" {
   default     = null
 }
 
-variable "primary_existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from, used by the COS instance"
-  type        = string
-}
-
-variable "secondary_existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from, used by the COS instance"
-  type        = string
-}
-
-variable "primary_hpcs_key_crn" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the data in the COS Bucket"
-  type        = string
-}
-
-variable "secondary_hpcs_key_crn" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the data in the COS Bucket"
-  type        = string
-}
 
 variable "hpcs_instance_guid" {
   type        = string
@@ -77,6 +58,7 @@ variable "hpcs_key_crn_worker_pool" {
   description = "CRN of the Hyper Protect Crypto service to use to encrypt the worker pool boot volumes"
   type        = string
 }
+
 variable "existing_at_instance_crn" {
   type        = string
   description = "Optionally pass an existing activity tracker instance CRN to use in the example. If not passed, a new instance will be provisioned"

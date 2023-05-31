@@ -93,31 +93,21 @@ func TestFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     fscloudExampleTerraformDir,
-		Prefix:           "base-ocp-fscloud",
-		Region:           "us-south",
-		SkipTestTearDown: true,
+		Testing:       t,
+		TerraformDir:  fscloudExampleTerraformDir,
+		Prefix:        "base-ocp-fscloud",
+		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"existing_at_instance_crn":              permanentResources["activityTrackerFrankfurtCrn"],
-			"hpcs_instance_guid":                    permanentResources["hpcs_south"],
-			"hpcs_key_crn_cluster":                  permanentResources["hpcs_south_root_key_crn"],
-			"hpcs_key_crn_worker_pool":              permanentResources["hpcs_south_root_key_crn"],
-			"primary_existing_hpcs_instance_guid":   permanentResources["hpcs_south"],
-			"primary_hpcs_key_crn":                  permanentResources["hpcs_south_root_key_crn"],
-			"secondary_existing_hpcs_instance_guid": permanentResources["hpcs_east"],
-			"secondary_hpcs_key_crn":                permanentResources["hpcs_east_root_key_crn"],
+			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
+			"hpcs_instance_guid":       permanentResources["hpcs_south"],
+			"hpcs_key_crn_cluster":     permanentResources["hpcs_south_root_key_crn"],
+			"hpcs_key_crn_worker_pool": permanentResources["hpcs_south_root_key_crn"],
 		},
 	})
 
 	output, err := options.RunTestConsistency()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-	// Check master
-	// Wait until kms is configured
-	// continue teardown
 
-	options.TestTearDown()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+
 }

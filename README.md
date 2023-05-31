@@ -124,7 +124,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 - [ Add Rules to Security Groups Example](examples/add_rules_to_sg)
 - [ Apply Taints Example](examples/apply_taints)
 - [ Existing COS](examples/existing_cos)
-- [ Standard Example With User Managed Boot Volume Encryption](examples/fscloud)
+- [ Financial Services Cloud profile example](examples/fscloud)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
 - [ Single Zone Cluster](examples/single_zone_cluster)
 - [ Standard Example With User Managed Boot Volume Encryption](examples/standard)

@@ -111,23 +111,9 @@ variable "force_delete_storage" {
   description = "Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false"
   default     = false
 }
-
-variable "cos_name" {
-  type        = string
-  description = "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `<cluster_name>_cos`"
-  default     = null
-}
-
-variable "use_existing_cos" {
-  type        = bool
-  description = "Flag indicating whether or not to use an existing COS instance"
-  default     = false
-}
-
 variable "existing_cos_id" {
   type        = string
   description = "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'"
-  default     = null
 }
 
 variable "kms_config" {
@@ -154,7 +140,7 @@ variable "verify_worker_network_readiness" {
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits the COS instance created to read the encryption key from the KMS instance in `primary_existing_hpcs_instance_guid` and `secondary_existing_hpcs_instance_guid`. WARNING: An authorization policy must exist before an encrypted bucket can be created"
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the vpc instance  to use the encryption key from the KMS instance."
   default     = false
 }
 
