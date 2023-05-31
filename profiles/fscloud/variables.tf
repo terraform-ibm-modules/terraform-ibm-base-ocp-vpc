@@ -3,7 +3,7 @@
 ##############################################################################
 
 variable "ibmcloud_api_key" {
-  description = "APIkey that's associated with the account to use, set via environment variable TF_VAR_ibmcloud_api_key"
+  description = "APIkey that's associated with the account to use"
   type        = string
   sensitive   = true
 }
@@ -113,7 +113,7 @@ variable "force_delete_storage" {
 }
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'"
+  description = "The COS id of an already existing COS instance"
 }
 
 variable "kms_config" {
@@ -122,14 +122,13 @@ variable "kms_config" {
     instance_id      = string
     private_endpoint = optional(bool, true) # defaults to true
   })
-  description = "Use to attach a Key Protect instance to the cluster"
+  description = "Use to attach a HPCS instance to the cluster"
   default     = null
 }
 
-# VPC Variables
 variable "vpc_id" {
   type        = string
-  description = "Id of the VPC instance where this cluster will be provisioned"
+  description = "ID of the VPC instance where this cluster will be provisioned"
 }
 
 variable "verify_worker_network_readiness" {
