@@ -29,6 +29,9 @@ module "vpc" {
 # Base OCP
 ###############################################################################
 locals {
+  addons = {
+    "cluster-autoscaler" = "1.0.8"
+  }
 
   cluster_vpc_subnets = {
     default = module.vpc.subnet_detail_map.zone-1
@@ -39,7 +42,26 @@ locals {
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-  }]
+    },
+    {
+      subnet_prefix     = "default"
+      pool_name         = "logging"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      minSize           = 1
+      maxSize           = 6
+      enableAutoscaling = true
+    },
+    {
+      subnet_prefix     = "default"
+      pool_name         = "sample"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 4
+      minSize           = 1
+      maxSize           = 6
+      enableAutoscaling = true
+    }
+  ]
 }
 
 module "ocp_base" {
@@ -54,6 +76,13 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   worker_pools         = local.sz_pool
+  addons               = local.addons
+}
+
+data "ibm_container_cluster_config" "cluster_config" {
+  cluster_name_id   = module.ocp_base.cluster_id
+  resource_group_id = module.ocp_base.resource_group_id
+
 }
 
 ##############################################################################
