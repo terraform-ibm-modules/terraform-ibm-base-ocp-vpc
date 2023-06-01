@@ -39,6 +39,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion2,
+		},
 	})
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -58,6 +61,9 @@ func TestRunSzClusterExample(t *testing.T) {
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion3,
+		},
 	})
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -77,6 +83,9 @@ func TestRunApplyTaintsExample(t *testing.T) {
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion4,
+		},
 	})
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -96,6 +105,9 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion1,
+		},
 	})
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
