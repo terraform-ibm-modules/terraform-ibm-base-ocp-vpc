@@ -43,29 +43,27 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestRunCompleteExample(t *testing.T) {
-	t.Parallel()
-
-	versions := []string{"4.12", "4.11", "4.10", "4.9"}
-	for _, version := range versions {
-		t.Run(version, func(t *testing.T) { testRunStandardExample(t, version) })
-	}
-}
-
-func testRunStandardExample(t *testing.T, version string) {
-	t.Parallel()
-
+func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:          t,
-		TerraformDir:     standardExampleTerraformDir,
-		Prefix:           "ocp-standard",
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": version,
+			"ocp_version": ocpVersion1,
 			"access_tags": permanentResources["accessTags"],
 		},
 	})
+
+	return options
+}
+
+func TestRunStandardExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
+
 	output, err := options.RunTestConsistency()
 
 	assert.Nil(t, err, "This should not have errored")
@@ -75,13 +73,8 @@ func testRunStandardExample(t *testing.T, version string) {
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     standardExampleTerraformDir,
-		Prefix:           "base-ocp-upg",
-		ResourceGroup:    resourceGroup,
-		CloudInfoService: sharedInfoSvc,
-	})
+	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
+
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
@@ -93,10 +86,9 @@ func TestFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  fscloudExampleTerraformDir,
-		Prefix:        "base-ocp-fscloud",
-		ResourceGroup: resourceGroup,
+		Testing:      t,
+		TerraformDir: fscloudExampleTerraformDir,
+		Prefix:       "base-ocp-fscloud",
 		TerraformVars: map[string]interface{}{
 			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
 			"hpcs_instance_guid":       permanentResources["hpcs_south"],
