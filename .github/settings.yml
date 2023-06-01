@@ -20,3 +20,5 @@ repository:
   # organization page and in the 'About' section of the repository.
 
   description: "Provision an IBM Cloud Red Hat OpenShift cluster on VPC Gen2"
+
+  topics: "core-team"
