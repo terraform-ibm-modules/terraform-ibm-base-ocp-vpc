@@ -21,4 +21,4 @@ repository:
 
   description: "Provision an IBM Cloud Red Hat OpenShift cluster on VPC Gen2"
 
-  topics: core-team, terraform, ibm-cloud, terraform-module, openshift, vpc-gen2, red-hat, ocp
+  topics: core-team, terraform, ibm-cloud, terraform-module, openshift-cluster, vpc-cluster, ocp
