@@ -372,7 +372,7 @@ resource "ibm_container_addons" "addons" {
   }
 
   timeouts {
-    create = "40m"
+    create = "1h"
   }
 }
 
