@@ -126,7 +126,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 - [ Apply Taints Example](examples/apply_taints)
 - [ Existing COS](examples/existing_cos)
 - [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
-- [ Single zone cluster example](examples/single_zone_cluster)
+- [ Single zone autoscaling cluster example](examples/single_zone_autoscale_cluster)
 - [ Standard Example With User Managed Boot Volume Encryption](examples/standard)
 <!-- END EXAMPLES HOOK -->
 
