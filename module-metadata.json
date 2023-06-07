@@ -415,7 +415,7 @@
     "ibm": {
       "source": "ibm-cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.51.0"
+        "\u003e= 1.53.0"
       ]
     },
     "kubernetes": {
@@ -448,7 +448,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 360
+        "line": 361
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -471,7 +471,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 134
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -494,7 +494,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 71
+        "line": 72
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -510,7 +510,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 284
+        "line": 285
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -526,7 +526,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 243
+        "line": 244
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -543,7 +543,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 197
+        "line": 198
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -559,7 +559,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 60
+        "line": 61
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -574,7 +574,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 397
+        "line": 398
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -589,7 +589,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 344
+        "line": 345
       }
     },
     "null_resource.reset_api_key": {
@@ -601,7 +601,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 218
+        "line": 219
       }
     },
     "time_sleep.wait_operators": {
@@ -613,7 +613,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 379
+        "line": 380
       }
     }
   },
@@ -631,7 +631,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 232
+        "line": 233
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -654,7 +654,8 @@
   "module_calls": {
     "cos_instance": {
       "name": "cos_instance",
-      "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0",
+      "source": "terraform-ibm-modules/cos/ibm",
+      "version": "6.6.0",
       "attributes": {
         "count": "use_existing_cos",
         "resource_group_id": "resource_group_id"
@@ -665,9 +666,10 @@
           "type": "ibm_cos_bucket",
           "name": "cos_bucket",
           "attributes": {
-            "bucket_name": "bucket_name",
-            "count": "encryption_enabled",
+            "bucket_name": "add_bucket_name_suffix",
+            "count": "kms_encryption_enabled",
             "cross_region_location": "cross_region_location",
+            "endpoint_type": "management_endpoint_type_for_bucket",
             "key_protect": "kms_key_crn",
             "region_location": "region",
             "storage_class": "bucket_storage_class"
@@ -677,7 +679,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 85
+            "line": 101
           }
         },
         "ibm_cos_bucket.cos_bucket1": {
@@ -685,8 +687,8 @@
           "type": "ibm_cos_bucket",
           "name": "cos_bucket1",
           "attributes": {
-            "bucket_name": "bucket_name",
-            "count": "encryption_enabled",
+            "bucket_name": "add_bucket_name_suffix",
+            "count": "kms_encryption_enabled",
             "cross_region_location": "cross_region_location",
             "endpoint_type": "management_endpoint_type_for_bucket",
             "region_location": "region",
@@ -697,7 +699,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 161
+            "line": 178
           }
         },
         "ibm_iam_authorization_policy.policy": {
@@ -712,7 +714,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 69
+            "line": 78
           }
         },
         "ibm_resource_instance.cos_instance": {
@@ -732,7 +734,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 35
+            "line": 37
           }
         },
         "ibm_resource_key.resource_key": {
@@ -750,7 +752,38 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 45
+            "line": 54
+          }
+        },
+        "ibm_resource_tag.cos_access_tag": {
+          "mode": "managed",
+          "type": "ibm_resource_tag",
+          "name": "cos_access_tag",
+          "attributes": {
+            "count": "create_cos_instance",
+            "tags": "access_tags"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 47
+          }
+        },
+        "random_string.bucket_name_suffix": {
+          "mode": "managed",
+          "type": "random_string",
+          "name": "bucket_name_suffix",
+          "attributes": {
+            "count": "add_bucket_name_suffix"
+          },
+          "provider": {
+            "name": "random"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 88
           }
         }
       },
@@ -762,7 +795,7 @@
           "value": "local.bucket_crn",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 24
+            "line": 29
           }
         },
         "bucket_id": {
@@ -771,7 +804,7 @@
           "value": "local.bucket_id",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 19
+            "line": 24
           }
         },
         "bucket_name": {
@@ -780,7 +813,7 @@
           "value": "local.bucket_name",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 29
+            "line": 34
           }
         },
         "bucket_storage_class": {
@@ -789,7 +822,7 @@
           "value": "local.bucket_storage_class",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 34
+            "line": 39
           }
         },
         "cos_instance_guid": {
@@ -798,7 +831,7 @@
           "value": "local.cos_instance_guid",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 49
+            "line": 54
           }
         },
         "cos_instance_id": {
@@ -807,7 +840,7 @@
           "value": "local.cos_instance_id",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 44
+            "line": 49
           }
         },
         "kms_key_crn": {
@@ -816,7 +849,7 @@
           "value": "var.kms_key_crn",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
-            "line": 39
+            "line": 44
           },
           "type": "string"
         },
@@ -833,6 +866,15 @@
           "cloud_data_range": [
             "resolved_to:id"
           ]
+        },
+        "s3_endpoint_direct": {
+          "name": "s3_endpoint_direct",
+          "description": "S3 direct endpoint",
+          "value": "local.s3_endpoint_direct",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 19
+          }
         },
         "s3_endpoint_private": {
           "name": "s3_endpoint_private",
