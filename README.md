@@ -25,7 +25,8 @@ A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. Th
 module "ocp_base" {
   # update this value to the value of your IBM Cloud API key
   ibmcloud_api_key     = "ibm cloud api key" # pragma: allowlist secret
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=master"
+  source  = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  version = "latest" # Replace "latest" with a release version to lock into a specific release
   cluster_name         = "example-cluster-name"
   # modify the value for resource_group_id with and id of a group you own
   resource_group_id    = "id of existing resource group"
@@ -136,7 +137,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.53.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.51.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |

@@ -126,7 +126,8 @@ module "observability_instances" {
 ##############################################################################
 
 module "observability_agents_1" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.4.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -139,7 +140,8 @@ module "observability_agents_1" {
 }
 
 module "observability_agents_2" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.4.0"
   providers = {
     helm = helm.helm_cluster_2
   }
