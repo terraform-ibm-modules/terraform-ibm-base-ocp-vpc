@@ -12,8 +12,7 @@
 module "ocp_base" {
   # update this value to the value of your IBM Cloud API key
   ibmcloud_api_key     = "ibm cloud api key" # pragma: allowlist secret
-  source  = "terraform-ibm-modules/base-ocp-vpc/ibm"
-  version = "latest" # Replace "latest" with a release version to lock into a specific release
+  source  = "../.."
   cluster_name         = "example-cluster-name"
   # modify the value for resource_group_id with and id of a group you own
   resource_group_id    = "id of existing resource group"
