@@ -22,7 +22,7 @@ variable "region" {
 # Cluster Variables
 variable "tags" {
   type        = list(string)
-  description = "Metadata labels describing this cluster deployment, i.e. test"
+  description = "Metadata labels describing this cluster deployment"
   default     = []
 }
 
@@ -73,18 +73,6 @@ variable "ocp_version" {
   type        = string
   description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used."
   default     = null
-
-  validation {
-    condition = anytrue([
-      var.ocp_version == null,
-      var.ocp_version == "latest",
-      var.ocp_version == "4.9",
-      var.ocp_version == "4.10",
-      var.ocp_version == "4.11",
-      var.ocp_version == "4.12",
-    ])
-    error_message = "The specified ocp_version is not of the valid versions."
-  }
 }
 
 variable "cluster_ready_when" {
@@ -94,10 +82,6 @@ variable "cluster_ready_when" {
   # Set to "Normal" once provider fixes https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4214
   #   default     = "Normal"
 
-  validation {
-    condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
-    error_message = "The input variable cluster_ready_when must one of: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
-  }
 }
 
 variable "ocp_entitlement" {
@@ -123,7 +107,6 @@ variable "kms_config" {
     private_endpoint = optional(bool, true) # defaults to true
   })
   description = "Use to attach a HPCS instance to the cluster"
-  default     = null
 }
 
 variable "vpc_id" {

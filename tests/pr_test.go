@@ -85,6 +85,12 @@ func TestRunUpgradeExample(t *testing.T) {
 func TestFSCloudExample(t *testing.T) {
 	t.Parallel()
 
+	/*
+	 The 'ResourceGroup' is not set to force this tests to create a unique resource group to ensure tests do
+	 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
+	 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
+	 since this module scopes auth policies by resource group.
+	*/
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
 		TerraformDir: fscloudExampleTerraformDir,
