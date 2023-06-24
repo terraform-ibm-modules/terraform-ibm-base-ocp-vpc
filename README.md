@@ -145,7 +145,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git | v6.1.0 |
+| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git | v6.7.0 |
 
 ## Resources
 
