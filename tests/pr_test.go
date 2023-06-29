@@ -52,6 +52,12 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 			"ocp_version": ocpVersion1,
 			"access_tags": permanentResources["accessTags"],
 		},
+		IgnoreUpdates: testhelper.Exemptions{
+			List: []string{
+				// Workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4658
+				"module.ocp_base.ibm_container_addons.addons",
+			},
+		},
 	})
 
 	return options
