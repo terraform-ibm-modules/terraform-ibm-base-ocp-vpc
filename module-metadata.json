@@ -442,7 +442,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 359
+        "line": 358
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -465,7 +465,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 131
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -488,7 +488,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 70
+        "line": 69
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -504,7 +504,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 283
+        "line": 282
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -520,7 +520,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 242
+        "line": 241
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -537,7 +537,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 196
+        "line": 195
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -553,7 +553,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 59
+        "line": 58
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -568,7 +568,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 396
+        "line": 395
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -583,7 +583,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 343
+        "line": 342
       }
     },
     "null_resource.reset_api_key": {
@@ -595,7 +595,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 217
+        "line": 216
       }
     },
     "time_sleep.wait_operators": {
@@ -607,7 +607,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 378
+        "line": 377
       }
     }
   },
@@ -625,7 +625,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 231
+        "line": 230
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
