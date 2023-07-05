@@ -419,11 +419,13 @@
       ]
     },
     "null": {
+      "source": "hashicorp/null",
       "version_constraints": [
         "\u003e= 3.2.1"
       ]
     },
     "time": {
+      "source": "hashicorp/time",
       "version_constraints": [
         "\u003e= 0.9.1"
       ]
