@@ -108,10 +108,10 @@ variable "ocp_version" {
     condition = anytrue([
       var.ocp_version == null,
       var.ocp_version == "latest",
-      var.ocp_version == "4.9",
       var.ocp_version == "4.10",
       var.ocp_version == "4.11",
       var.ocp_version == "4.12",
+      var.ocp_version == "4.13",
     ])
     error_message = "The specified ocp_version is not of the valid versions."
   }

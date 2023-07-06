@@ -19,10 +19,10 @@ const standardExampleTerraformDir = "examples/standard"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.12"
-const ocpVersion2 = "4.11"
-const ocpVersion3 = "4.10"
-const ocpVersion4 = "4.9"
+const ocpVersion1 = "4.13" // used in pr_test
+const ocpVersion2 = "4.12" // used in other_test.go
+const ocpVersion3 = "4.11" // used in other_test.go
+const ocpVersion4 = "4.10" // used in other_test.go
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}
