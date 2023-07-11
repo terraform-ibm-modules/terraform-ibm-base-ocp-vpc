@@ -37,7 +37,6 @@ locals {
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
-  region            = var.region
 }
 
 module "cos_instance" {
