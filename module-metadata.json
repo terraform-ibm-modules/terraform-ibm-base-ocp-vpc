@@ -650,7 +650,7 @@
     "cos_instance": {
       "name": "cos_instance",
       "source": "terraform-ibm-modules/cos/ibm",
-      "version": "6.6.0",
+      "version": "6.10.0",
       "attributes": {
         "count": "use_existing_cos",
         "resource_group_id": "resource_group_id"
@@ -804,7 +804,7 @@
         },
         "bucket_name": {
           "name": "bucket_name",
-          "description": "Bucket Name",
+          "description": "Bucket name",
           "value": "local.bucket_name",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
@@ -840,7 +840,7 @@
         },
         "kms_key_crn": {
           "name": "kms_key_crn",
-          "description": "CRN of the KMS Key to use to encrypt the data in the COS Bucket. Required if var.encryption_enabled and var.create_cos_bucket are true.",
+          "description": "CRN of the KMS key to use to encrypt the data in the COS bucket. Required if var.encryption_enabled and var.create_cos_bucket are true.",
           "value": "var.kms_key_crn",
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
