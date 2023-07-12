@@ -40,14 +40,16 @@ data "ibm_container_cluster_versions" "cluster_versions" {
 }
 
 module "cos_instance" {
-  count              = var.use_existing_cos ? 0 : 1
-  source             = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0"
-  cos_instance_name  = local.cos_name
-  resource_group_id  = var.resource_group_id
-  cos_plan           = local.cos_plan
-  cos_location       = local.cos_location
-  encryption_enabled = false
-  create_cos_bucket  = false
+  count = var.use_existing_cos ? 0 : 1
+
+  source                 = "terraform-ibm-modules/cos/ibm"
+  version                = "6.6.0"
+  cos_instance_name      = local.cos_name
+  resource_group_id      = var.resource_group_id
+  cos_plan               = local.cos_plan
+  cos_location           = local.cos_location
+  kms_encryption_enabled = false
+  create_cos_bucket      = false
 }
 
 moved {

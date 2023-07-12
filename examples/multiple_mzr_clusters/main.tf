@@ -3,7 +3,8 @@
 ###############################################################################
 
 module "resource_group" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-resource-group.git?ref=v1.0.5"
+  source  = "terraform-ibm-modules/resource-group/ibm"
+  version = "1.0.5"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -14,7 +15,8 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
+  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version             = "7.2.0"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -102,7 +104,8 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ##############################################################################
 
 module "observability_instances" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.5.0"
+  source  = "terraform-ibm-modules/observability-instances/ibm"
+  version = "2.7.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -123,7 +126,8 @@ module "observability_instances" {
 ##############################################################################
 
 module "observability_agents_1" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.4.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -136,7 +140,8 @@ module "observability_agents_1" {
 }
 
 module "observability_agents_2" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.4.0"
   providers = {
     helm = helm.helm_cluster_2
   }
