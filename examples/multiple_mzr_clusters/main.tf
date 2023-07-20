@@ -136,7 +136,7 @@ module "observability_agents_1" {
   logdna_instance_name      = module.observability_instances.log_analysis_name
   logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
   sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
-  sysdig_access_key         = module.observability_instances.cloud_monitoring_manager_key_name
+  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
 }
 
 module "observability_agents_2" {
@@ -150,7 +150,7 @@ module "observability_agents_2" {
   logdna_instance_name      = module.observability_instances.log_analysis_name
   logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
   sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
-  sysdig_access_key         = module.observability_instances.cloud_monitoring_manager_key_name
+  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
 }
 
 ##############################################################################
