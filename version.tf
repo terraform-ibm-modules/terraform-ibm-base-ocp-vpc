@@ -4,12 +4,14 @@ terraform {
     # Use "greater than or equal to" range in modules
     ibm = {
       source  = "ibm-cloud/ibm"
-      version = ">= 1.51.0"
+      version = ">= 1.55.0, < 2.0.0"
     }
     null = {
+      source  = "hashicorp/null"
       version = ">= 3.2.1"
     }
     time = {
+      source  = "hashicorp/time"
       version = ">= 0.9.1"
     }
     kubernetes = {

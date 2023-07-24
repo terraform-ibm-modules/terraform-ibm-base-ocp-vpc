@@ -3,7 +3,8 @@
 ###############################################################################
 
 module "resource_group" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-resource-group.git?ref=v1.0.5"
+  source  = "terraform-ibm-modules/resource-group/ibm"
+  version = "1.0.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -14,7 +15,8 @@ module "resource_group" {
 ###############################################################################
 
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
+  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version             = "7.3.2"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -102,20 +104,21 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ##############################################################################
 
 module "observability_instances" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.5.0"
+  source  = "terraform-ibm-modules/observability-instances/ibm"
+  version = "2.8.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
   }
-  resource_group_id          = module.resource_group.resource_group_id
-  region                     = var.region
-  logdna_plan                = "7-day"
-  sysdig_plan                = "graduated-tier"
-  activity_tracker_provision = false
-  enable_platform_logs       = false
-  enable_platform_metrics    = false
-  logdna_instance_name       = "${var.prefix}-logdna"
-  sysdig_instance_name       = "${var.prefix}-sysdig"
+  resource_group_id              = module.resource_group.resource_group_id
+  region                         = var.region
+  log_analysis_plan              = "7-day"
+  cloud_monitoring_plan          = "graduated-tier"
+  activity_tracker_provision     = false
+  enable_platform_logs           = false
+  enable_platform_metrics        = false
+  log_analysis_instance_name     = "${var.prefix}-logdna"
+  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
 }
 
 ##############################################################################
@@ -123,29 +126,31 @@ module "observability_instances" {
 ##############################################################################
 
 module "observability_agents_1" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.6.3"
   providers = {
     helm = helm.helm_cluster_1
   }
   cluster_id                = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
-  logdna_instance_name      = module.observability_instances.logdna_name
-  logdna_ingestion_key      = module.observability_instances.logdna_ingestion_key
-  sysdig_instance_name      = module.observability_instances.sysdig_name
-  sysdig_access_key         = module.observability_instances.sysdig_access_key
+  logdna_instance_name      = module.observability_instances.log_analysis_name
+  logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
+  sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
+  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
 }
 
 module "observability_agents_2" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-agents.git?ref=v1.1.0"
+  source  = "terraform-ibm-modules/observability-agents/ibm"
+  version = "1.6.3"
   providers = {
     helm = helm.helm_cluster_2
   }
   cluster_id                = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id = module.ocp_base_cluster_2.resource_group_id
-  logdna_instance_name      = module.observability_instances.logdna_name
-  logdna_ingestion_key      = module.observability_instances.logdna_ingestion_key
-  sysdig_instance_name      = module.observability_instances.sysdig_name
-  sysdig_access_key         = module.observability_instances.sysdig_access_key
+  logdna_instance_name      = module.observability_instances.log_analysis_name
+  logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
+  sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
+  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
 }
 
 ##############################################################################

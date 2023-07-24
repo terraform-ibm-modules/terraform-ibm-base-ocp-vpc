@@ -27,7 +27,8 @@ A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. Th
 module "ocp_base" {
   # update this value to the value of your IBM Cloud API key
   ibmcloud_api_key     = "ibm cloud api key" # pragma: allowlist secret
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=master"
+  source  = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  version = "latest" # Replace "latest" with a release version to lock into a specific release
   cluster_name         = "example-cluster-name"
   # modify the value for resource_group_id with and id of a group you own
   resource_group_id    = "id of existing resource group"
@@ -134,23 +135,23 @@ Optionally, you need the following permissions to attach Access Management tags 
 <!-- END EXAMPLES HOOK -->
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.51.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.55.0, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |
 
-## Modules
+### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git | v6.1.0 |
+| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 6.10.0 |
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -168,7 +169,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_container_cluster_config.cluster_config](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_config) | data source |
 | [ibm_container_cluster_versions.cluster_versions](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_versions) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -195,7 +196,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools) | List of worker pools | <pre>list(object({<br>    subnet_prefix = optional(string)<br>    vpc_subnets = optional(list(object({<br>      id         = string<br>      zone       = string<br>      cidr_block = string<br>    })))<br>    pool_name         = string<br>    machine_type      = string<br>    workers_per_zone  = number<br>    resource_group_id = optional(string)<br>    labels            = optional(map(string))<br>    minSize           = optional(number)<br>    maxSize           = optional(number)<br>    enableAutoscaling = optional(bool)<br>    boot_volume_encryption_kms_config = optional(object({<br>      crk             = string<br>      kms_instance_id = string<br>      kms_account_id  = optional(string)<br>    }))<br>  }))</pre> | n/a | yes |
 | <a name="input_worker_pools_taints"></a> [worker\_pools\_taints](#input\_worker\_pools\_taints) | Optional, Map of lists containing node taints by node-pool name | `map(list(object({ key = string, value = string, effect = string })))` | `null` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|

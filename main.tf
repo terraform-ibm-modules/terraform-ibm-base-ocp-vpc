@@ -37,19 +37,19 @@ locals {
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
-  region            = var.region
 }
 
 module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
 
-  source             = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos.git?ref=v6.1.0"
-  cos_instance_name  = local.cos_name
-  resource_group_id  = var.resource_group_id
-  cos_plan           = local.cos_plan
-  cos_location       = local.cos_location
-  encryption_enabled = false
-  create_cos_bucket  = false
+  source                 = "terraform-ibm-modules/cos/ibm"
+  version                = "6.10.0"
+  cos_instance_name      = local.cos_name
+  resource_group_id      = var.resource_group_id
+  cos_plan               = local.cos_plan
+  cos_location           = local.cos_location
+  kms_encryption_enabled = false
+  create_cos_bucket      = false
 }
 
 moved {
@@ -358,7 +358,7 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
-  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
 
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
