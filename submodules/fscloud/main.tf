@@ -1,12 +1,4 @@
 
-resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "containers-kubernetes"
-  source_resource_group_id    = var.resource_group_id
-  target_service_name         = "hs-crypto"
-  target_resource_instance_id = var.kms_config.instance_id
-  roles                       = ["Reader"]
-}
 
 module "fscloud" {
   source = "../.."

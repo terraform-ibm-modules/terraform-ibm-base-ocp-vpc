@@ -22,5 +22,4 @@ provider "logdna" {
   servicekey = module.observability_instances.logdna_resource_key != null ? module.observability_instances.logdna_resource_key : ""
   url        = local.at_endpoint
 }
-
 ##############################################################################

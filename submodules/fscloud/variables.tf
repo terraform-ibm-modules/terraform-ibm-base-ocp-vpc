@@ -120,10 +120,5 @@ variable "verify_worker_network_readiness" {
   default     = true
 }
 
-variable "skip_iam_authorization_policy" {
-  type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits the vpc instance  to use the encryption key from the KMS instance."
-  default     = false
-}
 
 ##############################################################################

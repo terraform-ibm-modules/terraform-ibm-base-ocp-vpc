@@ -8,7 +8,8 @@ locals {
 ##############################################################################
 
 module "resource_group" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-resource-group.git?ref=v1.0.5"
+  source  = "terraform-ibm-modules/resource-group/ibm"
+  version = "1.0.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -18,7 +19,8 @@ module "resource_group" {
 # VPC
 ##############################################################################
 module "vpc" {
-  source              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v5.0.1"
+  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version             = "7.3.2"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   prefix              = var.prefix
@@ -38,9 +40,11 @@ locals {
   at_crn      = var.existing_at_instance_crn == null ? module.observability_instances.activity_tracker_crn : var.existing_at_instance_crn
 }
 
+
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-observability-instances?ref=v2.5.0"
+  source  = "terraform-ibm-modules/observability-instances/ibm"
+  version = "2.7.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -67,11 +71,13 @@ module "observability_instances" {
 data "ibm_iam_account_settings" "iam_account_settings" {
 }
 
+
 ##############################################################################
 # Create CBR Zone
 ##############################################################################
 module "cbr_zone" {
-  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-zone-module?ref=v1.2.0"
+  source           = "terraform-ibm-modules/cbr/ibm//cbr-zone-module"
+  version          = "1.2.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -81,8 +87,10 @@ module "cbr_zone" {
   }]
 }
 
+
 module "cos_fscloud" {
-  source                        = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cos?ref=v6.0.0"
+  source                        = "terraform-ibm-modules/cos/ibm"
+  version                       = "6.0.0"
   resource_group_id             = module.resource_group.resource_group_id
   cos_instance_name             = "${var.prefix}-cos"
   cos_tags                      = var.resource_tags
@@ -164,7 +172,7 @@ locals {
 }
 
 module "ocp_fscloud" {
-  source                          = "../../profiles/fscloud"
+  source                          = "../../submodules/fscloud"
   cluster_name                    = var.prefix
   ibmcloud_api_key                = var.ibmcloud_api_key
   resource_group_id               = module.resource_group.resource_group_id
