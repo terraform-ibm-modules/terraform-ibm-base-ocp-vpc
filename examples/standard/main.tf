@@ -2,29 +2,13 @@
 # Provision an OCP cluster with one extra worker pool inside a VPC
 ##############################################################################
 
+
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
   version = "1.0.5"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
-}
-
-###############################################################################
-# VPC
-###############################################################################
-
-module "vpc" {
-  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "7.2.0"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = var.addresses
-  subnets             = var.subnets
-  use_public_gateways = var.public_gateway
 }
 
 ##############################################################################
@@ -46,16 +30,15 @@ module "kp_all_inclusive" {
 }
 
 ##############################################################################
-# Base OCP Cluster
+# Base OCP Cluster in single zone
 ##############################################################################
 locals {
   cluster_vpc_subnets = {
     default = [
-      for subnet in module.vpc.subnet_zone_list :
       {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.cidr
+        id         = ibm_is_subnet.subnet.id
+        cidr_block = ibm_is_subnet.subnet.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet.zone
       }
     ]
   }
@@ -83,7 +66,7 @@ module "ocp_base" {
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
+  vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
   ocp_version          = var.ocp_version
