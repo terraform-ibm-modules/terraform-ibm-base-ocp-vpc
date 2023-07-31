@@ -12,7 +12,7 @@ module "resource_group" {
 
 ##############################################################################
 # Create a VPC with three subnets, across AZ zones, and public gateway in zone 1 only.
-# NOTE: this is a very simple VPC/Subnet configuration for example purposes only, 
+# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
 # that will allow all traffic ingress/egress by default.
 # For production use cases this would need to be enhanced by adding more subnets
 # and zones for resiliency, and ACLs/Security Groups for network security.
