@@ -345,7 +345,10 @@ resource "null_resource" "confirm_network_healthy" {
 
   count = var.verify_worker_network_readiness ? 1 : 0
 
-  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
+  # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
+  # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
@@ -358,7 +361,11 @@ resource "null_resource" "confirm_network_healthy" {
 
 
 resource "ibm_container_addons" "addons" {
-  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+
+  # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
+  # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
+  # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
 
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
