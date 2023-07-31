@@ -11,6 +11,7 @@ The example uses the IBM Cloud Terraform provider to create the following infras
 - OCP cluster in a VPC with the default worker pool deployed across 3 availability zones
 - Also uses Hyper Protect Crypto Service for the cluster and boot volume encryption
 
+
 :exclamation: **Important:** OCP provisions a COS bucket, but you cannot use your own encryption keys. This will fail the requirement for Cloud Object Storage to be enabled with customer-managed encryption and Keep Your Own Key (KYOK).
 Once the service supports this the profile will be updated. Until that time it is for educational purposes only.
 
@@ -19,3 +20,6 @@ Outside the OCP Cluster, other parts of the infrastructure do not necessarily co
 ## Before you begin
 
 - You need a Hyper Protect Crypto Services instance and keys for the worker and master encryption available in the region that you want to deploy your OCP Cluster instance to.
+
+
+TODO: Document machine access for OCP

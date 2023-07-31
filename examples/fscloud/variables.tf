@@ -39,7 +39,8 @@ variable "resource_tags" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
-  default     = null
+  default     = "4.12"
+
 }
 
 
@@ -91,20 +92,6 @@ variable "vpc_name" {
   type        = string
   description = "Name of the VPC"
   default     = "management"
-}
-
-variable "public_gateway" {
-  description = "Create a public gateway in any of the three zones with `true`."
-  type = object({
-    zone-1 = optional(bool)
-    zone-2 = optional(bool)
-    zone-3 = optional(bool)
-  })
-  default = {
-    zone-1 = true
-    zone-2 = false
-    zone-3 = false
-  }
 }
 
 variable "addresses" {

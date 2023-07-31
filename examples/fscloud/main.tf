@@ -15,20 +15,64 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
+module "cos_fscloud" {
+  source                        = "terraform-ibm-modules/cos/ibm"
+  version                       = "6.10.0"
+  resource_group_id             = module.resource_group.resource_group_id
+  create_cos_bucket             = false
+  cos_instance_name             = "${var.prefix}-cos"
+  cos_tags                      = var.resource_tags
+  skip_iam_authorization_policy = true
+
+  sysdig_crn           = module.observability_instances.sysdig_crn
+  activity_tracker_crn = local.at_crn
+  # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
+}
+
+module "flowlogs_bucket" {
+  source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
+  version = "6.10.0"
+
+  bucket_configs = [
+    {
+      bucket_name            = "${var.prefix}-vpc-flowlogs"
+      kms_encryption_enabled = true
+      kms_guid               = var.hpcs_instance_guid
+      kms_key_crn            = var.hpcs_key_crn_cluster
+      region_location        = var.region
+      resource_instance_id   = module.cos_fscloud.cos_instance_id
+      resource_group_id      = module.resource_group.resource_group_id
+    }
+  ]
+}
+
 ##############################################################################
 # VPC
 ##############################################################################
 module "vpc" {
-  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "7.3.2"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = var.addresses
-  subnets             = var.subnets
-  use_public_gateways = var.public_gateway
+  depends_on                             = [module.flowlogs_bucket]
+  source                                 = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version                                = "7.3.2"
+  resource_group_id                      = module.resource_group.resource_group_id
+  region                                 = var.region
+  prefix                                 = var.prefix
+  tags                                   = var.resource_tags
+  name                                   = var.vpc_name
+  address_prefixes                       = var.addresses
+  clean_default_acl                      = true
+  clean_default_security_group           = true
+  enable_vpc_flow_logs                   = true
+  create_authorization_policy_vpc_to_cos = true
+  existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
+  security_group_rules                   = []
+  existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
+  subnets                                = var.subnets
+  use_public_gateways = {
+    zone-1 = false
+    zone-2 = false
+    zone-3 = false
+  }
+  ibmcloud_api_key = var.ibmcloud_api_key
 }
 
 ##############################################################################
@@ -73,7 +117,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 
 ##############################################################################
-# Create CBR Zone
+# Create CBR Zone and Rules
 ##############################################################################
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//cbr-zone-module"
@@ -87,55 +131,49 @@ module "cbr_zone" {
   }]
 }
 
-
-module "cos_fscloud" {
-  source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "6.0.0"
-  resource_group_id             = module.resource_group.resource_group_id
-  cos_instance_name             = "${var.prefix}-cos"
-  cos_tags                      = var.resource_tags
-  create_cos_bucket             = false
-  skip_iam_authorization_policy = true
-
-  sysdig_crn           = module.observability_instances.sysdig_crn
-  activity_tracker_crn = local.at_crn
-  bucket_cbr_rules = [
-    {
-      description      = "sample rule for bucket 1"
-      enforcement_mode = "report"
-      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
-      rule_contexts = [{
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "private"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_zone.zone_id
-        }]
-      }]
-    }
-  ]
-  instance_cbr_rules = [
-    {
-      description      = "sample rule for the instance"
-      enforcement_mode = "report"
-      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
-      rule_contexts = [{
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "private"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_zone.zone_id
-        }]
-      }]
-    }
-  ]
+module "cbr_rules" {
+  source           = "terraform-ibm-modules/cbr/ibm//cbr-rule-module"
+  version          = "1.2.0"
+  rule_description = "${var.prefix} rule for vpc flow log access to cos"
+  enforcement_mode = "enabled"
+  resources = [{
+    attributes = [
+      {
+        name     = "accountId"
+        value    = data.ibm_iam_account_settings.iam_account_settings.account_id
+        operator = "stringEquals"
+      },
+      {
+        name     = "resourceGroupId",
+        value    = module.resource_group.resource_group_id
+        operator = "stringEquals"
+      },
+      {
+        name     = "serviceInstance"
+        value    = module.cos_fscloud.cos_instance_id
+        operator = "stringEquals"
+      },
+      {
+        name     = "serviceName"
+        value    = "cloud-object-storage"
+        operator = "stringEquals"
+      }
+    ],
+  }]
+  rule_contexts = [{
+    attributes = [
+      {
+        "name" : "endpointType",
+        "value" : "private"
+      },
+      {
+        name  = "networkZoneId"
+        value = module.cbr_zone.zone_id
+    }]
+  }]
 }
+
+
 
 ##############################################################################
 # Base OCP Cluster
@@ -172,7 +210,7 @@ locals {
 }
 
 module "ocp_fscloud" {
-  source                          = "../../submodules/fscloud"
+  source                          = "../../modules/fscloud"
   cluster_name                    = var.prefix
   ibmcloud_api_key                = var.ibmcloud_api_key
   resource_group_id               = module.resource_group.resource_group_id
