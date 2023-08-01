@@ -121,8 +121,6 @@ variable "cluster_ready_when" {
   type        = string
   description = "The cluster is ready when one of the following: MasterNodeReady (not recommended), OneWorkerNodeReady, Normal, IngressReady"
   default     = "IngressReady"
-  # Set to "Normal" once provider fixes https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4214
-  #   default     = "Normal"
 
   validation {
     condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
