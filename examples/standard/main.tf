@@ -2,29 +2,45 @@
 # Provision an OCP cluster with one extra worker pool inside a VPC
 ##############################################################################
 
+
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.0.6"
+  version = "1.0.5"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
 }
 
-###############################################################################
-# VPC
-###############################################################################
+##############################################################################
+# Create a VPC with single subnet and zone, and public gateway
+# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
+# that will allow all traffic ingress/egress by default.
+# For production use cases this would need to be enhanced by adding more subnets
+# and zones for resiliency, and ACLs/Security Groups for network security.
+##############################################################################
 
-module "vpc" {
-  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "7.4.0"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = var.addresses
-  subnets             = var.subnets
-  use_public_gateways = var.public_gateway
+resource "ibm_is_vpc" "vpc" {
+  name                      = "${var.prefix}-vpc"
+  resource_group            = module.resource_group.resource_group_id
+  address_prefix_management = "auto"
+  tags                      = var.resource_tags
+  access_tags               = var.access_tags
+}
+
+resource "ibm_is_public_gateway" "gateway" {
+  name           = "${var.prefix}-gateway-1"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = module.resource_group.resource_group_id
+  zone           = "${var.region}-1"
+}
+
+resource "ibm_is_subnet" "subnet_zone_1" {
+  name                     = "${var.prefix}-subnet-1"
+  vpc                      = ibm_is_vpc.vpc.id
+  resource_group           = module.resource_group.resource_group_id
+  zone                     = "${var.region}-1"
+  total_ipv4_address_count = 256
+  public_gateway           = ibm_is_public_gateway.gateway.id
 }
 
 ##############################################################################
@@ -46,16 +62,15 @@ module "kp_all_inclusive" {
 }
 
 ##############################################################################
-# Base OCP Cluster
+# Base OCP Cluster in single zone
 ##############################################################################
 locals {
   cluster_vpc_subnets = {
     default = [
-      for subnet in module.vpc.subnet_zone_list :
       {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.cidr
+        id         = ibm_is_subnet.subnet_zone_1.id
+        cidr_block = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet_zone_1.zone
       }
     ]
   }
@@ -83,7 +98,7 @@ module "ocp_base" {
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
+  vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
   ocp_version          = var.ocp_version

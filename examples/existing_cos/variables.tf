@@ -42,40 +42,4 @@ variable "ocp_version" {
   default     = null
 }
 
-variable "vpc_subnets" {
-  type = map(list(object({
-    id         = string
-    zone       = string
-    cidr_block = string
-  })))
-  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "Id of the VPC instance where this cluster will be provisioned"
-}
-
-variable "existing_cos_id" {
-  type        = string
-  description = "The ID of an existing COS instance to use for cluster provisioning"
-}
-
-variable "worker_pools" {
-  type = list(object({
-    subnet_prefix     = string
-    pool_name         = string
-    machine_type      = string
-    workers_per_zone  = number
-    resource_group_id = optional(string)
-    labels            = optional(map(string))
-    boot_volume_encryption_kms_config = optional(object({
-      crk             = string
-      kms_instance_id = string
-      kms_account_id  = optional(string)
-    }))
-  }))
-  description = "List of worker pools."
-}
-
 ##############################################################################
