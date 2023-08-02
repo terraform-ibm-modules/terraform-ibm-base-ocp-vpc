@@ -1,3 +1,16 @@
 {
-    "scc_rules": []
+    "scc_rules": [
+        {
+            "scc_rule_id": "rule-ded212fe-7def-44ce-9480-0487067b64c4",
+            "description": "Check whether Kubernetes Service is accessible only by using private endpoints",
+            "ignore_reason": "This is a valid issue - tracking in https://github.ibm.com/GoldenEye/issues/issues/174",
+            "is_valid": true
+        },
+        {
+            "scc_rule_id": "rule-216e2449-27d7-4afc-929a-b66e196a9cf9",
+            "description": "Check whether Flow Logs for VPC are enabled",
+            "ignore_reason": "Rule is related to VPC, not OCP Clusters",
+            "is_valid": true
+        }
+    ]
 }
