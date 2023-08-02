@@ -6,6 +6,7 @@
             "ignore_reason": "This is a valid issue - tracking in https://github.ibm.com/GoldenEye/issues/issues/174",
             "is_valid": true
         },
+
         {
             "scc_rule_id": "rule-216e2449-27d7-4afc-929a-b66e196a9cf9",
             "description": "Check whether Flow Logs for VPC are enabled",
