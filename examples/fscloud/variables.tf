@@ -30,6 +30,13 @@ variable "resource_group" {
   default     = null
 }
 
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to created resources"
+  default     = []
+}
+
+
 variable "hpcs_instance_guid" {
   type        = string
   description = "The GUID of the Hyper Protect Crypto service to provision the encryption keys"

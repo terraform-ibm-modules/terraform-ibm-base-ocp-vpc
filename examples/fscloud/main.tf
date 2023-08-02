@@ -237,6 +237,7 @@ module "ocp_fscloud" {
   vpc_subnets                     = local.cluster_vpc_subnets
   existing_cos_id                 = module.cos_fscloud.cos_instance_id
   worker_pools                    = local.worker_pools
+  tags                            = var.resource_tags
   verify_worker_network_readiness = false # No access from public internet to check worker network readiness
   kms_config = {
     instance_id      = var.hpcs_instance_guid
