@@ -1,7 +1,3 @@
-locals {
-  #  Validation
-  #  Validate input worker pool inputs , must use private endpoints
-}
 
 ##############################################################################
 # Provision an OCP cluster with one extra worker pool inside a VPC
@@ -21,7 +17,6 @@ module "cos_fscloud" {
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
-  cos_tags                      = var.resource_tags
   skip_iam_authorization_policy = true
 
   sysdig_crn           = module.observability_instances.sysdig_crn
@@ -50,15 +45,19 @@ module "flowlogs_bucket" {
 # VPC
 ##############################################################################
 module "vpc" {
-  depends_on                             = [module.flowlogs_bucket]
-  source                                 = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version                                = "7.3.2"
-  resource_group_id                      = module.resource_group.resource_group_id
-  region                                 = var.region
-  prefix                                 = var.prefix
-  tags                                   = var.resource_tags
-  name                                   = var.vpc_name
-  address_prefixes                       = var.addresses
+  depends_on        = [module.flowlogs_bucket]
+  source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version           = "7.3.2"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  prefix            = var.prefix
+  tags              = []
+  name              = var.vpc_name
+  address_prefixes = {
+    zone-1 = ["10.10.10.0/24"]
+    zone-2 = ["10.20.10.0/24"]
+    zone-3 = ["10.30.10.0/24"]
+  }
   clean_default_acl                      = true
   clean_default_security_group           = true
   enable_vpc_flow_logs                   = true
@@ -66,7 +65,28 @@ module "vpc" {
   existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
   security_group_rules                   = []
   existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
-  subnets                                = var.subnets
+  subnets = {
+    zone-1 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-1"
+        cidr     = "10.10.10.0/24"
+      }
+    ],
+    zone-2 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-2"
+        cidr     = "10.20.10.0/24"
+      }
+    ],
+    zone-3 = [
+      {
+        acl_name = "vpc-acl"
+        name     = "zone-3"
+        cidr     = "10.30.10.0/24"
+      }
+  ] }
   use_public_gateways = {
     zone-1 = false
     zone-2 = false
@@ -101,11 +121,8 @@ module "observability_instances" {
   enable_platform_metrics        = false
   logdna_provision               = false
   activity_tracker_instance_name = "${var.prefix}-at"
-  activity_tracker_tags          = var.resource_tags
   activity_tracker_plan          = "7-day"
   activity_tracker_provision     = !local.existing_at
-  logdna_tags                    = var.resource_tags
-  sysdig_tags                    = var.resource_tags
 }
 
 ##############################################################################
@@ -195,7 +212,7 @@ locals {
   worker_pools = [
     {
       subnet_prefix     = "default"
-      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type      = "bx2.4x16"
       workers_per_zone  = 2
       labels            = {}
@@ -219,10 +236,8 @@ module "ocp_fscloud" {
   vpc_id                          = module.vpc.vpc_id
   vpc_subnets                     = local.cluster_vpc_subnets
   existing_cos_id                 = module.cos_fscloud.cos_instance_id
-  worker_pools                    = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
-  verify_worker_network_readiness = var.verify_worker_network_readiness
-  ocp_version                     = var.ocp_version
-  tags                            = var.resource_tags
+  worker_pools                    = local.worker_pools
+  verify_worker_network_readiness = false # No access from public internet to check worker network readiness
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id

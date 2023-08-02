@@ -1,6 +1,6 @@
 # Financial Services Cloud profile example
 
-An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../submodules/fscloud/) to deploy an instance of the base OCP VPC module.
+An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../modules/fscloud) to deploy an instance of the base OCP VPC module.
 
 The example uses the IBM Cloud Terraform provider to create the following infrastructure:
 
@@ -20,6 +20,3 @@ Outside the OCP Cluster, other parts of the infrastructure do not necessarily co
 ## Before you begin
 
 - You need a Hyper Protect Crypto Services instance and keys for the worker and master encryption available in the region that you want to deploy your OCP Cluster instance to.
-
-
-TODO: Document machine access for OCP

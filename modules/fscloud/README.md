@@ -4,12 +4,9 @@
 Once the service supports this the profile will be updated. Until that time it is for educational purposes only.
 
 This is a profile for IBM Cloud Red Hat OpenShift cluster on VPC Gen2 that meets FS Cloud requirements. This profile assumes you are deploying into an already compliant account.
-It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals with the following exceptions:
+It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals.
 
-- rule-8cbd597c-7471-42bd-9c88-36b2696456e9 - Check whether Cloud Object Storage network access is restricted to a specific IP range
-    - This is ignored because the CBR locks this down and CRA does not check this
-
-## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally to be compliant.
+## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally or an IP allow list to be compliant.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

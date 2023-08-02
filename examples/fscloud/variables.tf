@@ -30,20 +30,6 @@ variable "resource_group" {
   default     = null
 }
 
-variable "resource_tags" {
-  type        = list(string)
-  description = "Optional list of tags to be added to created resources"
-  default     = []
-}
-
-variable "ocp_version" {
-  type        = string
-  description = "Version of the OCP cluster to provision"
-  default     = "4.12"
-
-}
-
-
 variable "hpcs_instance_guid" {
   type        = string
   description = "The GUID of the Hyper Protect Crypto service to provision the encryption keys"
@@ -66,100 +52,8 @@ variable "existing_at_instance_crn" {
   default     = null
 }
 
-variable "worker_pools" {
-  type = list(object({
-    subnet_prefix     = string
-    pool_name         = string
-    machine_type      = string
-    workers_per_zone  = number
-    resource_group_id = optional(string)
-    labels            = optional(map(string))
-    boot_volume_encryption_kms_config = optional(object({
-      crk             = string
-      kms_instance_id = string
-      kms_account_id  = optional(string)
-    }))
-  }))
-  description = "List of worker pools."
-  default     = []
-}
-
-##############################################################################
-# VPC variables
-##############################################################################
-
 variable "vpc_name" {
   type        = string
   description = "Name of the VPC"
   default     = "management"
 }
-
-variable "addresses" {
-  description = "OPTIONAL - IP range that will be defined for the VPC for a certain location. Use only with manual address prefixes"
-  type = object({
-    zone-1 = optional(list(string))
-    zone-2 = optional(list(string))
-    zone-3 = optional(list(string))
-  })
-  default = {
-    zone-1 = ["10.10.10.0/24"]
-    zone-2 = ["10.20.10.0/24"]
-    zone-3 = ["10.30.10.0/24"]
-  }
-}
-
-variable "subnets" {
-  description = "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created"
-  type = object({
-    zone-1 = list(object({
-      acl_name       = string
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-    }))
-    zone-2 = list(object({
-      acl_name       = string
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-    }))
-    zone-3 = list(object({
-      acl_name       = string
-      name           = string
-      cidr           = string
-      public_gateway = optional(bool)
-    }))
-  })
-
-  default = {
-    zone-1 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-1"
-        cidr     = "10.10.10.0/24"
-      }
-    ],
-    zone-2 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-2"
-        cidr     = "10.20.10.0/24"
-      }
-    ],
-    zone-3 = [
-      {
-        acl_name = "vpc-acl"
-        name     = "zone-3"
-        cidr     = "10.30.10.0/24"
-      }
-    ]
-  }
-}
-
-variable "verify_worker_network_readiness" {
-  type        = bool
-  description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
-  default     = false
-}
-
-##############################################################################
