@@ -10,27 +10,48 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
-###############################################################################
-# VPC
-###############################################################################
+##############################################################################
+# Create a VPC with single subnet and zone, and public gateway
+# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
+# that will allow all traffic ingress/egress by default.
+# For production use cases this would need to be enhanced by adding more subnets
+# and zones for resiliency, and ACLs/Security Groups for network security.
+##############################################################################
 
-module "vpc" {
-  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "7.4.0"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = var.addresses
-  subnets             = var.subnets
-  use_public_gateways = var.public_gateway
+resource "ibm_is_vpc" "vpc" {
+  name                      = "${var.prefix}-vpc"
+  resource_group            = module.resource_group.resource_group_id
+  address_prefix_management = "auto"
+  tags                      = var.resource_tags
 }
 
+resource "ibm_is_public_gateway" "gateway" {
+  name           = "${var.prefix}-gateway-1"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = module.resource_group.resource_group_id
+  zone           = "${var.region}-1"
+}
+
+resource "ibm_is_subnet" "subnet_zone_1" {
+  name                     = "${var.prefix}-subnet-1"
+  vpc                      = ibm_is_vpc.vpc.id
+  resource_group           = module.resource_group.resource_group_id
+  zone                     = "${var.region}-1"
+  total_ipv4_address_count = 256
+  public_gateway           = ibm_is_public_gateway.gateway.id
+}
 
 ##############################################################################
 # Security Group Rules addition.
 ##############################################################################
+
+locals {
+  standard_cluster_allow_rules = [
+    { name = "allow-port-8080", direction = "inbound", tcp = { port_max = 8080, port_min = 8080 }, udp = null, icmp = null, remote = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block },
+    { name = "allow-port-443", direction = "inbound", tcp = { port_max = 443, port_min = 443 }, udp = null, icmp = null, remote = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block },
+    { name = "udp-range", direction = "inbound", udp = { port_max = 30103, port_min = 30103 }, tcp = null, icmp = null, remote = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block },
+  ]
+}
 
 # Kube-<vpc id> Security Group
 data "ibm_is_security_group" "kube_vpc_sg" {
@@ -39,7 +60,7 @@ data "ibm_is_security_group" "kube_vpc_sg" {
 
 resource "ibm_is_security_group_rule" "kube_vpc_rules" {
 
-  for_each  = { for rule in var.sg_rules_vpc : rule.name => rule }
+  for_each  = { for rule in local.standard_cluster_allow_rules : rule.name => rule }
   group     = data.ibm_is_security_group.kube_vpc_sg.id
   direction = each.value.direction
   remote    = each.value.remote
@@ -76,7 +97,7 @@ data "ibm_is_security_group" "kube_cluster_sg" {
 
 resource "ibm_is_security_group_rule" "kube_cluster_rules" {
 
-  for_each  = { for rule in var.sg_rules_cluster : rule.name => rule }
+  for_each  = { for rule in local.standard_cluster_allow_rules : rule.name => rule }
   group     = data.ibm_is_security_group.kube_cluster_sg.id
   direction = each.value.direction
   remote    = each.value.remote
@@ -124,6 +145,29 @@ module "kp_all_inclusive" {
 # Base OCP Cluster
 ##############################################################################
 
+locals {
+  cluster_vpc_subnets = {
+    default = [
+      {
+        id         = ibm_is_subnet.subnet_zone_1.id
+        cidr_block = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet_zone_1.zone
+      }
+    ]
+  }
+
+  worker_pools = [
+    {
+      subnet_prefix     = "default"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = {}
+      resource_group_id = module.resource_group.resource_group_id
+    }
+  ]
+}
+
 module "ocp_base" {
   source               = "../.."
   cluster_name         = var.prefix
@@ -131,9 +175,9 @@ module "ocp_base" {
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = module.vpc.subnet_detail_map
-  worker_pools         = var.worker_pools
+  vpc_id               = ibm_is_vpc.vpc.id
+  vpc_subnets          = local.cluster_vpc_subnets
+  worker_pools         = local.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   kms_config = {

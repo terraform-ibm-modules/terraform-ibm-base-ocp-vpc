@@ -10,21 +10,47 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
-###############################################################################
-# VPC
-###############################################################################
+##############################################################################
+# Create a VPC with two sets of subnets, across AZ zones, and public gateway in each zone.
+# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
+# that will allow all traffic ingress/egress by default.
+# For production use cases this would need to be enhanced by adding more subnets
+# and zones for resiliency, and ACLs/Security Groups for network security.
+##############################################################################
 
-module "vpc" {
-  source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "7.4.0"
-  resource_group_id   = module.resource_group.resource_group_id
-  region              = var.region
-  prefix              = var.prefix
-  tags                = var.resource_tags
-  name                = var.vpc_name
-  address_prefixes    = var.addresses
-  subnets             = var.subnets
-  use_public_gateways = var.public_gateway
+resource "ibm_is_vpc" "vpc" {
+  name                      = "${var.prefix}-vpc"
+  resource_group            = module.resource_group.resource_group_id
+  address_prefix_management = "auto"
+  tags                      = var.resource_tags
+}
+
+resource "ibm_is_public_gateway" "gateway" {
+  for_each       = toset(["1", "2"])
+  name           = "${var.prefix}-gateway-${each.key}"
+  vpc            = ibm_is_vpc.vpc.id
+  resource_group = module.resource_group.resource_group_id
+  zone           = "${var.region}-${each.key}"
+}
+
+resource "ibm_is_subnet" "subnet_cluster_1" {
+  for_each                 = toset(["1", "2"])
+  name                     = "${var.prefix}-subnet-1-${each.key}"
+  vpc                      = ibm_is_vpc.vpc.id
+  resource_group           = module.resource_group.resource_group_id
+  zone                     = "${var.region}-${each.key}"
+  total_ipv4_address_count = 256
+  public_gateway           = ibm_is_public_gateway.gateway[each.key].id
+}
+
+resource "ibm_is_subnet" "subnet_cluster_2" {
+  for_each                 = toset(["1", "2"])
+  name                     = "${var.prefix}-subnet-2-${each.key}"
+  vpc                      = ibm_is_vpc.vpc.id
+  resource_group           = module.resource_group.resource_group_id
+  zone                     = "${var.region}-${each.key}"
+  total_ipv4_address_count = 256
+  public_gateway           = ibm_is_public_gateway.gateway[each.key].id
 }
 
 ###############################################################################
@@ -34,22 +60,22 @@ module "vpc" {
 locals {
   cluster_1_vpc_subnets = {
     default = [
-      for subnet in module.vpc.subnet_detail_map :
+      for subnet in ibm_is_subnet.subnet_cluster_1 :
       {
-        id         = subnet[0].id
-        zone       = subnet[0].zone
-        cidr_block = subnet[0].cidr_block
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.ipv4_cidr_block
       }
     ]
   }
 
   cluster_2_vpc_subnets = {
     default = [
-      for subnet in module.vpc.subnet_detail_map :
+      for subnet in ibm_is_subnet.subnet_cluster_2 :
       {
-        id         = subnet[1].id
-        zone       = subnet[1].zone
-        cidr_block = subnet[1].cidr_block
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.ipv4_cidr_block
       }
     ]
   }
@@ -62,7 +88,7 @@ module "ocp_base_cluster_1" {
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
+  vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_1_vpc_subnets
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
@@ -77,7 +103,7 @@ module "ocp_base_cluster_2" {
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
+  vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_2_vpc_subnets
   worker_pools         = var.worker_pools
   worker_pools_taints  = var.worker_pools_taints
@@ -92,11 +118,13 @@ module "ocp_base_cluster_2" {
 data "ibm_container_cluster_config" "cluster_config_c1" {
   cluster_name_id   = module.ocp_base_cluster_1.cluster_id
   resource_group_id = module.ocp_base_cluster_1.resource_group_id
+  config_dir        = "${path.module}/../../kubeconfig"
 }
 
 data "ibm_container_cluster_config" "cluster_config_c2" {
   cluster_name_id   = module.ocp_base_cluster_2.cluster_id
   resource_group_id = module.ocp_base_cluster_2.resource_group_id
+  config_dir        = "${path.module}/../../kubeconfig"
 }
 
 ##############################################################################

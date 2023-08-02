@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 178
+        "line": 176
       },
       "min_length": 1,
       "max_length": 128,
@@ -29,7 +29,7 @@
       "description": "List of all addons supported by the ocp cluster.",
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 201
       }
     },
     "cluster_name": {
@@ -67,7 +67,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 150
+        "line": 148
       }
     },
     "disable_public_endpoint": {
@@ -82,7 +82,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 132
+        "line": 130
       }
     },
     "existing_cos_id": {
@@ -91,7 +91,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 162
+        "line": 160
       }
     },
     "force_delete_storage": {
@@ -105,7 +105,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 144
+        "line": 142
       }
     },
     "ibmcloud_api_key": {
@@ -144,7 +144,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 168
+        "line": 166
       }
     },
     "ocp_entitlement": {
@@ -158,7 +158,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 138
+        "line": 136
       }
     },
     "ocp_version": {
@@ -238,7 +238,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 156
+        "line": 154
       }
     },
     "verify_worker_network_readiness": {
@@ -252,7 +252,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 197
+        "line": 195
       }
     },
     "vpc_id": {
@@ -268,7 +268,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 192
+        "line": 190
       },
       "immutable": true
     },
@@ -444,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 360
+        "line": 363
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -570,7 +570,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 397
+        "line": 404
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -609,7 +609,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 379
+        "line": 386
       }
     }
   },
