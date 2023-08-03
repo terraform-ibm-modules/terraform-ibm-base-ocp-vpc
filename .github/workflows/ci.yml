@@ -11,5 +11,4 @@ jobs:
     secrets: inherit
     with:
       craSCCv2: true
-      craEnvironmentVariables: "TF_VAR_existing_at_instance_crn=${{ vars.AT_INSTANCE_CRN }},TF_VAR_hpcs_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_hpcs_key_crn_cluster=${{ vars.HPCS_SOUTH_KEY_CRN }},TF_VAR_hpcs_key_crn_worker_pool=${{ vars.HPCS_SOUTH_KEY_CRN }}"
       craConfigYamlFile: "cra-config.yaml"
