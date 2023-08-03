@@ -6,14 +6,16 @@ import (
 	"os"
 	"testing"
 
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
 const resourceGroup = "geretain-test-base-ocp-vpc"
 const standardExampleTerraformDir = "examples/standard"
+const fscloudExampleTerraformDir = "examples/fscloud"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -78,4 +80,32 @@ func TestRunUpgradeExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
+}
+
+func TestFSCloudExample(t *testing.T) {
+	t.Parallel()
+
+	/*
+	 The 'ResourceGroup' is not set to force this tests to create a unique resource group to ensure tests do
+	 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
+	 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
+	 since this module scopes auth policies by resource group.
+	*/
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: fscloudExampleTerraformDir,
+		Prefix:       "base-ocp-fscloud",
+		TerraformVars: map[string]interface{}{
+			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
+			"hpcs_instance_guid":       permanentResources["hpcs_south"],
+			"hpcs_key_crn_cluster":     permanentResources["hpcs_south_root_key_crn"],
+			"hpcs_key_crn_worker_pool": permanentResources["hpcs_south_root_key_crn"],
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+
 }
