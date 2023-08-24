@@ -19,8 +19,6 @@ A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. Th
 - Make sure that you have a recent version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli)
 
-
-
 ## Usage
 ```hcl
 # Replace "master" with a GIT release version to lock into a specific release
@@ -91,8 +89,23 @@ module "ocp_base" {
     ]
   }
 }
-
 ```
+
+## Troubleshooting
+
+### New kube_version message
+
+- When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
+
+    ```terraform
+    kube_version = "4.12.16_openshift" -> "4.12.20_openshift"
+
+    Unless you have made equivalent changes to your configuration, or ignored the relevant attributes using ignore_changes, the following plan may include actions to undo or respond to these changes.
+    ```
+
+    A new version is detected because the Kubernetes master node is updated outside of Terraform, and the Terraform state is out of date with that version.
+
+    The Kubernetes version is ignored in the module code, so the infrastructure will not be changed. The message identifies only that drift exists in the versions, and after you run a `terraform apply` command, the state will be refreshed.
 
 ## Required IAM access policies
 You need the following permissions to run this module.
