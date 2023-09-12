@@ -19,7 +19,7 @@ module "cos_fscloud" {
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
 
-  sysdig_crn           = module.observability_instances.sysdig_crn
+  sysdig_crn           = module.observability_instances.cloud_monitoring_crn
   activity_tracker_crn = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
@@ -47,7 +47,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.3.2"
+  version           = "7.4.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -108,18 +108,18 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.7.0"
+  version = "2.8.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
   }
   region                         = var.region
   resource_group_id              = module.resource_group.resource_group_id
-  sysdig_instance_name           = "${var.prefix}-sysdig"
-  sysdig_plan                    = "graduated-tier"
+  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
+  cloud_monitoring_plan          = "graduated-tier"
   enable_platform_logs           = false
   enable_platform_metrics        = false
-  logdna_provision               = false
+  log_analysis_provision         = false
   activity_tracker_instance_name = "${var.prefix}-at"
   activity_tracker_plan          = "7-day"
   activity_tracker_provision     = !local.existing_at
@@ -137,8 +137,8 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 # Create CBR Zone and Rules
 ##############################################################################
 module "cbr_zone" {
-  source           = "terraform-ibm-modules/cbr/ibm//cbr-zone-module"
-  version          = "1.2.0"
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
+  version          = "1.9.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -149,8 +149,8 @@ module "cbr_zone" {
 }
 
 module "cbr_rules" {
-  source           = "terraform-ibm-modules/cbr/ibm//cbr-rule-module"
-  version          = "1.2.0"
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
+  version          = "1.9.0"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
