@@ -650,7 +650,7 @@
     "cos_instance": {
       "name": "cos_instance",
       "source": "terraform-ibm-modules/cos/ibm",
-      "version": "6.10.0",
+      "version": "6.11.2",
       "attributes": {
         "count": "use_existing_cos",
         "resource_group_id": "resource_group_id"
@@ -674,7 +674,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 101
+            "line": 109
           }
         },
         "ibm_cos_bucket.cos_bucket1": {
@@ -694,7 +694,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 178
+            "line": 186
           }
         },
         "ibm_iam_authorization_policy.policy": {
@@ -709,7 +709,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 78
+            "line": 85
           }
         },
         "ibm_resource_instance.cos_instance": {
@@ -729,7 +729,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 37
+            "line": 44
           }
         },
         "ibm_resource_key.resource_key": {
@@ -747,7 +747,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 54
+            "line": 61
           }
         },
         "ibm_resource_tag.cos_access_tag": {
@@ -763,7 +763,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 47
+            "line": 54
           }
         },
         "random_string.bucket_name_suffix": {
@@ -778,7 +778,19 @@
           },
           "pos": {
             "filename": ".terraform/modules/cos_instance/main.tf",
-            "line": 88
+            "line": 96
+          }
+        },
+        "time_sleep.wait_for_authorization_policy": {
+          "mode": "managed",
+          "type": "time_sleep",
+          "name": "wait_for_authorization_policy",
+          "provider": {
+            "name": "time"
+          },
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/main.tf",
+            "line": 37
           }
         }
       },

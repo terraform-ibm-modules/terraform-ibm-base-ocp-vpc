@@ -162,7 +162,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 6.10.0 |
+| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 6.11.2 |
 
 ### Resources
 
