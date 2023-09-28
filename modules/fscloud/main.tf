@@ -22,5 +22,4 @@ module "fscloud" {
   existing_cos_id                 = var.existing_cos_id
   tags                            = var.tags
   kms_config                      = var.kms_config
-
 }
