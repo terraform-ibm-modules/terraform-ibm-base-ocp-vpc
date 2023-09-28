@@ -58,8 +58,7 @@ module "vpc" {
     zone-2 = ["10.20.10.0/24"]
     zone-3 = ["10.30.10.0/24"]
   }
-  clean_default_acl                      = true
-  clean_default_security_group           = true
+  clean_default_sg_acl                   = true
   enable_vpc_flow_logs                   = true
   create_authorization_policy_vpc_to_cos = true
   existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
@@ -92,7 +91,6 @@ module "vpc" {
     zone-2 = false
     zone-3 = false
   }
-  ibmcloud_api_key = var.ibmcloud_api_key
 }
 
 ##############################################################################
