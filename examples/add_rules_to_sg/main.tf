@@ -133,7 +133,7 @@ resource "ibm_is_security_group_rule" "kube_cluster_rules" {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
-  version                   = "4.2.0"
+  version                   = "4.3.0"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
