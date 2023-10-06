@@ -11,7 +11,7 @@ locals {
   other_autoscaling_pools = [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
   latest_kube_version  = "${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions[length(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions) - 1]}_openshift"
-  default_kube_version = "${data.ibm_container_cluster_versions.cluster_versions.default_kube_version}_openshift"
+  default_kube_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   kube_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_kube_version : (var.ocp_version == "latest" ? local.latest_kube_version : "${var.ocp_version}_openshift")
 
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
