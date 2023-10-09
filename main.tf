@@ -25,7 +25,7 @@ locals {
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
 
   addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
-  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.0" }) : local.addons_list
+  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.2" }) : local.addons_list
 
   delete_timeout = "2h"
   create_timeout = "3h"
