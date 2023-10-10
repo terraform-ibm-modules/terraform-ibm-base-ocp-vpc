@@ -107,6 +107,7 @@ variable "ocp_version" {
   validation {
     condition = anytrue([
       var.ocp_version == null,
+      var.ocp_version == "default",
       var.ocp_version == "latest",
       var.ocp_version == "4.10",
       var.ocp_version == "4.11",
