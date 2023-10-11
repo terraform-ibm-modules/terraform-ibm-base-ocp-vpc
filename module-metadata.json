@@ -26,7 +26,7 @@
     "addons": {
       "name": "addons",
       "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
-      "description": "List of all addons supported by the ocp cluster.",
+      "description": "List of all addons supported by the ocp cluster. For information on supported versions, see https://cloud.ibm.com/docs/openshift?topic=openshift-supported-cluster-addon-versions",
       "pos": {
         "filename": "variables.tf",
         "line": 201

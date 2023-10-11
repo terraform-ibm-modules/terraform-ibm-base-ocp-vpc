@@ -128,7 +128,7 @@ variable "addons" {
     cluster-autoscaler        = optional(string)
     vpc-block-csi-driver      = optional(string)
   })
-  description = "List of all addons supported by the ocp cluster."
+  description = "List of all addons supported by the ocp cluster. For information on supported versions, see https://cloud.ibm.com/docs/openshift?topic=openshift-supported-cluster-addon-versions"
   default     = null
 }
 ##############################################################################
