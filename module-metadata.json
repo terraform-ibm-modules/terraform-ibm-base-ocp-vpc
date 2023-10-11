@@ -32,6 +32,19 @@
         "line": 202
       }
     },
+    "cluster_config_endpoint_type": {
+      "name": "cluster_config_endpoint_type",
+      "type": "string",
+      "description": "Specify which type of endpoint to use for for cluster config access: 'default', 'private', 'vpe', 'link'. 'default' value will use the default endpoint of the cluster.",
+      "default": "default",
+      "source": [
+        "data.ibm_container_cluster_config.cluster_config.endpoint_type"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 217
+      }
+    },
     "cluster_name": {
       "name": "cluster_name",
       "type": "string",
@@ -444,7 +457,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 364
+        "line": 365
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -506,7 +519,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 285
+        "line": 286
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -522,7 +535,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 244
+        "line": 245
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -570,7 +583,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 405
+        "line": 406
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -585,7 +598,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 345
+        "line": 346
       }
     },
     "null_resource.reset_api_key": {
@@ -609,7 +622,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 387
+        "line": 388
       }
     }
   },
@@ -620,6 +633,7 @@
       "name": "cluster_config",
       "attributes": {
         "count": "verify_worker_network_readiness",
+        "endpoint_type": "cluster_config_endpoint_type",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
