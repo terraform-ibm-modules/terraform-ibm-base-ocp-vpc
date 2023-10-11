@@ -444,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 363
+        "line": 371
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -467,7 +467,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 137
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -490,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 71
+        "line": 75
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -506,7 +506,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 284
+        "line": 288
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -522,7 +522,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 243
+        "line": 247
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -539,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 197
+        "line": 201
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -555,7 +555,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 60
+        "line": 64
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -570,7 +570,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 404
+        "line": 412
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -585,7 +585,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 344
+        "line": 348
       }
     },
     "null_resource.reset_api_key": {
@@ -597,7 +597,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 218
+        "line": 222
       }
     },
     "time_sleep.wait_operators": {
@@ -609,11 +609,23 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 386
+        "line": 394
       }
     }
   },
   "data_resources": {
+    "data.ibm_container_addons.existing_addons": {
+      "mode": "data",
+      "type": "ibm_container_addons",
+      "name": "existing_addons",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 367
+      }
+    },
     "data.ibm_container_cluster_config.cluster_config": {
       "mode": "data",
       "type": "ibm_container_cluster_config",
@@ -627,7 +639,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 232
+        "line": 236
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -642,7 +654,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 38
+        "line": 42
       }
     }
   },
@@ -904,7 +916,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 46
       }
     }
   }

@@ -117,5 +117,18 @@ variable "verify_worker_network_readiness" {
   default     = true
 }
 
-
+variable "addons" {
+  type = object({
+    alb-oauth-proxy           = optional(string)
+    debug-tool                = optional(string)
+    image-key-synchronizer    = optional(string)
+    istio                     = optional(string)
+    openshift-data-foundation = optional(string)
+    static-route              = optional(string)
+    cluster-autoscaler        = optional(string)
+    vpc-block-csi-driver      = optional(string)
+  })
+  description = "List of all addons supported by the ocp cluster."
+  default     = null
+}
 ##############################################################################
