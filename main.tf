@@ -10,8 +10,9 @@ locals {
   other_pools             = [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
   other_autoscaling_pools = [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
-  latest_kube_version = "${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions[length(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions) - 1]}_openshift"
-  kube_version        = var.ocp_version == null || var.ocp_version == "latest" ? local.latest_kube_version : "${var.ocp_version}_openshift"
+  latest_ocp_version  = "${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions[length(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions) - 1]}_openshift"
+  default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
+  ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : (var.ocp_version == "latest" ? local.latest_ocp_version : "${var.ocp_version}_openshift")
 
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location     = "global"
@@ -25,7 +26,7 @@ locals {
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
 
   addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
-  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.0" }) : local.addons_list
+  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.1" }) : local.addons_list
 
   delete_timeout = "2h"
   create_timeout = "3h"
@@ -74,7 +75,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   name                            = var.cluster_name
   vpc_id                          = var.vpc_id
   tags                            = var.tags
-  kube_version                    = local.kube_version
+  kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
   cos_instance_crn                = local.cos_instance_crn
@@ -135,7 +136,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   name                            = var.cluster_name
   vpc_id                          = var.vpc_id
   tags                            = var.tags
-  kube_version                    = local.kube_version
+  kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
   cos_instance_crn                = local.cos_instance_crn
