@@ -13,7 +13,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 176
+        "line": 177
       },
       "min_length": 1,
       "max_length": 128,
@@ -26,10 +26,10 @@
     "addons": {
       "name": "addons",
       "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
-      "description": "List of all addons supported by the ocp cluster.",
+      "description": "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions",
       "pos": {
         "filename": "variables.tf",
-        "line": 201
+        "line": 202
       }
     },
     "cluster_name": {
@@ -58,7 +58,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 120
+        "line": 121
       }
     },
     "cos_name": {
@@ -67,7 +67,7 @@
       "description": "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `\u003ccluster_name\u003e_cos`",
       "pos": {
         "filename": "variables.tf",
-        "line": 148
+        "line": 149
       }
     },
     "disable_public_endpoint": {
@@ -82,7 +82,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 130
+        "line": 131
       }
     },
     "existing_cos_id": {
@@ -91,7 +91,7 @@
       "description": "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'",
       "pos": {
         "filename": "variables.tf",
-        "line": 160
+        "line": 161
       }
     },
     "force_delete_storage": {
@@ -105,7 +105,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 142
+        "line": 143
       }
     },
     "ibmcloud_api_key": {
@@ -144,7 +144,7 @@
       "description": "Use to attach a Key Protect instance to the cluster",
       "pos": {
         "filename": "variables.tf",
-        "line": 166
+        "line": 167
       }
     },
     "ocp_entitlement": {
@@ -158,13 +158,13 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 136
+        "line": 137
       }
     },
     "ocp_version": {
       "name": "ocp_version",
       "type": "string",
-      "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used.",
+      "description": "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. Supports passing the string 'latest' (current latest available version) or 'default' (current IKS default recommended version). If no value is passed, it will default to 'default'.",
       "pos": {
         "filename": "variables.tf",
         "line": 102
@@ -238,7 +238,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 154
+        "line": 155
       }
     },
     "verify_worker_network_readiness": {
@@ -252,7 +252,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 195
+        "line": 196
       }
     },
     "vpc_id": {
@@ -268,7 +268,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 190
+        "line": 191
       },
       "immutable": true
     },
@@ -403,13 +403,13 @@
     }
   },
   "required_core": [
-    "\u003e= 1.3.0"
+    "\u003e= 1.3.0, \u003c 1.6.0"
   ],
   "required_providers": {
     "ibm": {
       "source": "ibm-cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.56.1, \u003c 2.0.0"
+        "\u003e= 1.58.1, \u003c 2.0.0"
       ]
     },
     "kubernetes": {
@@ -444,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 363
+        "line": 372
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -467,7 +467,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 138
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -490,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 71
+        "line": 76
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -506,7 +506,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 284
+        "line": 289
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -522,7 +522,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 243
+        "line": 248
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -539,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 197
+        "line": 202
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -555,7 +555,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 60
+        "line": 65
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -570,7 +570,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 404
+        "line": 413
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -585,7 +585,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 344
+        "line": 349
       }
     },
     "null_resource.reset_api_key": {
@@ -597,7 +597,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 218
+        "line": 223
       }
     },
     "time_sleep.wait_operators": {
@@ -609,11 +609,23 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 386
+        "line": 395
       }
     }
   },
   "data_resources": {
+    "data.ibm_container_addons.existing_addons": {
+      "mode": "data",
+      "type": "ibm_container_addons",
+      "name": "existing_addons",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 368
+      }
+    },
     "data.ibm_container_cluster_config.cluster_config": {
       "mode": "data",
       "type": "ibm_container_cluster_config",
@@ -627,7 +639,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 232
+        "line": 237
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -642,7 +654,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 38
+        "line": 43
       }
     }
   },
@@ -904,7 +916,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 47
       }
     }
   }

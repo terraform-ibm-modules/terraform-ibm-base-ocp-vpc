@@ -101,12 +101,13 @@ variable "ignore_worker_pool_size_changes" {
 
 variable "ocp_version" {
   type        = string
-  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. If no value is passed, or the string 'latest' is passed, the current latest OCP version will be used."
+  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. Supports passing the string 'latest' (current latest available version) or 'default' (current IKS default recommended version). If no value is passed, it will default to 'default'."
   default     = null
 
   validation {
     condition = anytrue([
       var.ocp_version == null,
+      var.ocp_version == "default",
       var.ocp_version == "latest",
       var.ocp_version == "4.10",
       var.ocp_version == "4.11",
@@ -209,7 +210,7 @@ variable "addons" {
     cluster-autoscaler        = optional(string)
     vpc-block-csi-driver      = optional(string)
   })
-  description = "List of all addons supported by the ocp cluster."
+  description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   default     = null
 }
 
