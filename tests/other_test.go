@@ -10,9 +10,6 @@ import (
 
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip()
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/multiple_mzr_clusters",
@@ -51,14 +48,11 @@ func TestRunMultiClusterExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunSzAutoScaleClusterExample(t *testing.T) {
+func TestRunSzClusterExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip()
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  "examples/single_zone_autoscale_cluster",
+		TerraformDir:  "examples/single_zone_cluster",
 		Prefix:        "sz-cluster",
 		ResourceGroup: resourceGroup,
 		ImplicitDestroy: []string{
@@ -78,9 +72,6 @@ func TestRunSzAutoScaleClusterExample(t *testing.T) {
 
 func TestRunApplyTaintsExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip()
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/apply_taints",
@@ -103,9 +94,6 @@ func TestRunApplyTaintsExample(t *testing.T) {
 
 func TestRunAddRulesToSGExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip()
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/add_rules_to_sg",
