@@ -662,7 +662,7 @@
     "cos_instance": {
       "name": "cos_instance",
       "source": "terraform-ibm-modules/cos/ibm",
-      "version": "6.12.2",
+      "version": "7.0.0",
       "attributes": {
         "count": "use_existing_cos",
         "resource_group_id": "resource_group_id"
@@ -808,6 +808,15 @@
       },
       "data_resources": {},
       "outputs": {
+        "bucket_cbr_rules": {
+          "name": "bucket_cbr_rules",
+          "description": "COS bucket rules",
+          "value": "module.bucket_cbr_rule",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 60
+          }
+        },
         "bucket_crn": {
           "name": "bucket_crn",
           "description": "Bucket CRN",
@@ -844,6 +853,15 @@
             "line": 40
           }
         },
+        "cbr_rule_ids": {
+          "name": "cbr_rule_ids",
+          "description": "List of all rule ids",
+          "value": "local.all_rule_ids",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 70
+          }
+        },
         "cos_instance_guid": {
           "name": "cos_instance_guid",
           "description": "The GUID of the Cloud Object Storage Instance where the buckets are created",
@@ -860,6 +878,15 @@
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
             "line": 50
+          }
+        },
+        "instance_cbr_rules": {
+          "name": "instance_cbr_rules",
+          "description": "COS instance rules",
+          "value": "module.instance_cbr_rule",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 65
           }
         },
         "kms_key_crn": {
