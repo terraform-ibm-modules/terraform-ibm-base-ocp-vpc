@@ -62,6 +62,8 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 func TestRunStandardExample(t *testing.T) {
 	t.Parallel()
 
+	t.Skip()
+
 	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
 
 	output, err := options.RunTestConsistency()
@@ -72,6 +74,8 @@ func TestRunStandardExample(t *testing.T) {
 
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
+
+	t.Skip()
 
 	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
 

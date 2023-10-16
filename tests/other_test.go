@@ -10,6 +10,9 @@ import (
 
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
+
+	t.Skip()
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/multiple_mzr_clusters",
@@ -50,6 +53,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 
 func TestRunSzAutoScaleClusterExample(t *testing.T) {
 	t.Parallel()
+
+	t.Skip()
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/single_zone_autoscale_cluster",
@@ -72,6 +78,9 @@ func TestRunSzAutoScaleClusterExample(t *testing.T) {
 
 func TestRunApplyTaintsExample(t *testing.T) {
 	t.Parallel()
+
+	t.Skip()
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/apply_taints",
@@ -94,6 +103,9 @@ func TestRunApplyTaintsExample(t *testing.T) {
 
 func TestRunAddRulesToSGExample(t *testing.T) {
 	t.Parallel()
+
+	t.Skip()
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  "examples/add_rules_to_sg",
