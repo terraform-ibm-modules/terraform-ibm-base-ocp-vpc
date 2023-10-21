@@ -155,7 +155,7 @@ module "observability_instances" {
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.9.3"
+  version = "1.10.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -169,7 +169,7 @@ module "observability_agents_1" {
 
 module "observability_agents_2" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.9.3"
+  version = "1.10.0"
   providers = {
     helm = helm.helm_cluster_2
   }
