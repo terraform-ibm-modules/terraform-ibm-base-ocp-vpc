@@ -25,8 +25,12 @@ locals {
   # tflint-ignore: terraform_unused_declarations
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
 
+  csi_driver_version = [
+    for addon in data.ibm_container_addons.existing_addons.addons :
+    addon.version if addon.name == "vpc-block-csi-driver"
+  ]
   addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
-  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = "5.1" }) : local.addons_list
+  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = local.csi_driver_version[0] }) : local.addons_list
 
   delete_timeout = "2h"
   create_timeout = "3h"
@@ -44,7 +48,7 @@ module "cos_instance" {
   count = var.use_existing_cos ? 0 : 1
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "6.12.2"
+  version                = "7.0.0"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -361,6 +365,10 @@ resource "null_resource" "confirm_network_healthy" {
   }
 }
 
+# Lookup the current default csi-driver version
+data "ibm_container_addons" "existing_addons" {
+  cluster = local.cluster_id
+}
 
 resource "ibm_container_addons" "addons" {
 

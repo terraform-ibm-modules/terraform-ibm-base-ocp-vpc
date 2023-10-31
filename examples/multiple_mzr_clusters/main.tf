@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.0.6"
+  version = "1.1.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -133,7 +133,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.9.2"
+  version = "2.10.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -155,7 +155,7 @@ module "observability_instances" {
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.7.4"
+  version = "1.10.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -169,7 +169,7 @@ module "observability_agents_1" {
 
 module "observability_agents_2" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.7.4"
+  version = "1.10.0"
   providers = {
     helm = helm.helm_cluster_2
   }

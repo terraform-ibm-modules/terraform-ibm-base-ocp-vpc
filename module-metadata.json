@@ -26,23 +26,10 @@
     "addons": {
       "name": "addons",
       "type": "object({\n    alb-oauth-proxy           = optional(string)\n    debug-tool                = optional(string)\n    image-key-synchronizer    = optional(string)\n    istio                     = optional(string)\n    openshift-data-foundation = optional(string)\n    static-route              = optional(string)\n    cluster-autoscaler        = optional(string)\n    vpc-block-csi-driver      = optional(string)\n  })",
-      "description": "List of all addons supported by the ocp cluster.",
+      "description": "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions",
       "pos": {
         "filename": "variables.tf",
         "line": 202
-      }
-    },
-    "cluster_config_endpoint_type": {
-      "name": "cluster_config_endpoint_type",
-      "type": "string",
-      "description": "Specify which type of endpoint to use for for cluster config access: 'default', 'private', 'vpe', 'link'. 'default' value will use the default endpoint of the cluster.",
-      "default": "default",
-      "source": [
-        "data.ibm_container_cluster_config.cluster_config.endpoint_type"
-      ],
-      "pos": {
-        "filename": "variables.tf",
-        "line": 217
       }
     },
     "cluster_name": {
@@ -457,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 365
+        "line": 372
       }
     },
     "ibm_container_vpc_cluster.autoscaling_cluster": {
@@ -480,7 +467,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 134
+        "line": 138
       }
     },
     "ibm_container_vpc_cluster.cluster": {
@@ -503,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 72
+        "line": 76
       }
     },
     "ibm_container_vpc_worker_pool.autoscaling_pool": {
@@ -519,7 +506,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 286
+        "line": 289
       }
     },
     "ibm_container_vpc_worker_pool.pool": {
@@ -535,7 +522,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 245
+        "line": 248
       }
     },
     "ibm_resource_tag.cluster_access_tag": {
@@ -552,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 198
+        "line": 202
       }
     },
     "ibm_resource_tag.cos_access_tag": {
@@ -568,7 +555,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 61
+        "line": 65
       }
     },
     "kubernetes_config_map_v1_data.set_autoscaling": {
@@ -583,7 +570,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 406
+        "line": 413
       }
     },
     "null_resource.confirm_network_healthy": {
@@ -598,7 +585,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 346
+        "line": 349
       }
     },
     "null_resource.reset_api_key": {
@@ -610,7 +597,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 219
+        "line": 223
       }
     },
     "time_sleep.wait_operators": {
@@ -622,18 +609,29 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 388
+        "line": 395
       }
     }
   },
   "data_resources": {
+    "data.ibm_container_addons.existing_addons": {
+      "mode": "data",
+      "type": "ibm_container_addons",
+      "name": "existing_addons",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 368
+      }
+    },
     "data.ibm_container_cluster_config.cluster_config": {
       "mode": "data",
       "type": "ibm_container_cluster_config",
       "name": "cluster_config",
       "attributes": {
         "count": "verify_worker_network_readiness",
-        "endpoint_type": "cluster_config_endpoint_type",
         "resource_group_id": "resource_group_id"
       },
       "provider": {
@@ -641,7 +639,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 233
+        "line": 237
       }
     },
     "data.ibm_container_cluster_versions.cluster_versions": {
@@ -656,7 +654,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 39
+        "line": 43
       }
     }
   },
@@ -664,7 +662,7 @@
     "cos_instance": {
       "name": "cos_instance",
       "source": "terraform-ibm-modules/cos/ibm",
-      "version": "6.12.2",
+      "version": "7.0.0",
       "attributes": {
         "count": "use_existing_cos",
         "resource_group_id": "resource_group_id"
@@ -810,6 +808,15 @@
       },
       "data_resources": {},
       "outputs": {
+        "bucket_cbr_rules": {
+          "name": "bucket_cbr_rules",
+          "description": "COS bucket rules",
+          "value": "module.bucket_cbr_rule",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 60
+          }
+        },
         "bucket_crn": {
           "name": "bucket_crn",
           "description": "Bucket CRN",
@@ -846,6 +853,15 @@
             "line": 40
           }
         },
+        "cbr_rule_ids": {
+          "name": "cbr_rule_ids",
+          "description": "List of all rule ids",
+          "value": "local.all_rule_ids",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 70
+          }
+        },
         "cos_instance_guid": {
           "name": "cos_instance_guid",
           "description": "The GUID of the Cloud Object Storage Instance where the buckets are created",
@@ -862,6 +878,15 @@
           "pos": {
             "filename": ".terraform/modules/cos_instance/outputs.tf",
             "line": 50
+          }
+        },
+        "instance_cbr_rules": {
+          "name": "instance_cbr_rules",
+          "description": "COS instance rules",
+          "value": "module.instance_cbr_rule",
+          "pos": {
+            "filename": ".terraform/modules/cos_instance/outputs.tf",
+            "line": 65
           }
         },
         "kms_key_crn": {
@@ -918,7 +943,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 43
+        "line": 47
       }
     }
   }
