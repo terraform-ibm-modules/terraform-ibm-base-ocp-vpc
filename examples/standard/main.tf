@@ -49,7 +49,7 @@ resource "ibm_is_subnet" "subnet_zone_1" {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
-  version                   = "4.4.0"
+  version                   = "4.4.1"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
