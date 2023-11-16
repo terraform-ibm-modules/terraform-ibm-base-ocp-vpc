@@ -1,0 +1,62 @@
+{
+    "products": [
+        {
+            "name": "terraform-ibm-base-ocp-vpc",
+            "label": "IBM Cloud OpenShift module",
+            "product_kind": "module",
+            "tags": [
+                "dev_ops",
+                "target_terraform",
+                "terraform",
+                "module"
+            ],
+            "keywords": [
+                "terraform",
+                "ocp",
+                "openshift",
+                "containers"
+            ],
+            "short_description": "Creates an IBM Cloud Red Hat OpenShift cluster on VPC Gen2",
+            "long_description": "A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption and boot volume encryption",
+            "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
+            "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-cos/main/images/openshift_icon.svg",
+            "features": [
+                {
+                    "title": "Create an IBM Cloud Red Hat OpenShift cluster in existing VPC",
+                    "description": "Create an IBM Cloud Red Hat OpenShift cluster in existing VPC."
+                },
+                {
+                    "title": "Optionally create an Object Storage bucket for cluster backups",
+                    "description": "Will create a needed CoS bucket to support cluster backups, if existing instance is not supplied."
+                },
+                {
+                    "title": "Worker node boot-level encrypt with key management services",
+                    "description": "Supports key management encryption (BYOK and KYOK), including service-to-service authorization policies with KMS."
+                },
+                {
+                    "title": "Worker Pool configuration",
+                    "description": "Full configuration of cluster worker pools."
+                }
+            ],
+            "flavors": [
+                {
+                    "label": "Basic",
+                    "name": "basic",
+                    "working_directory": "examples/standard",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Basic example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "A simple example that shows how to provision an IBM OpenShift cluster on VPC."
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
