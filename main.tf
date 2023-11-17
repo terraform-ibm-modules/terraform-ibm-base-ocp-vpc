@@ -380,6 +380,9 @@ resource "ibm_container_addons" "addons" {
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
+  # we do not want Terraform to manage addons that are managed elsewhere
+  manage_all_addons = false
+
   dynamic "addons" {
     for_each = local.addons
     content {
