@@ -214,6 +214,13 @@ variable "addons" {
   default     = null
 }
 
+variable "manage_all_addons" {
+  type        = bool
+  default     = false
+  nullable    = false # null values are set to default value
+  description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources."
+}
+
 variable "cluster_config_endpoint_type" {
   description = "Specify which type of endpoint to use for for cluster config access: 'default', 'private', 'vpe', 'link'. 'default' value will use the default endpoint of the cluster."
   type        = string
