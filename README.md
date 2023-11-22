@@ -1,10 +1,4 @@
-<!-- BEGIN MODULE HOOK -->
-
-<!-- Update the title to match the module name and add a description -->
-
-# terraform-ibm-base-ocp-vpc module
-
-<!-- UPDATE BADGE: Update the link for the badge below-->
+# Red Hat OpenShift VPC cluster on IBM Cloud module
 
 [![Stable (With quality checks)](https://img.shields.io/badge/Status-Stable%20(With%20quality%20checks)-green)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/releases/latest)
@@ -12,29 +6,45 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption and boot volume encryption
+A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption and boot volume encryption.
 
-## Before you begin
+### Before you begin
 
 - Make sure that you have a recent version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli)
 
-## Usage
+<!-- Below content is automatically populated via pre-commit hook -->
+<!-- BEGIN OVERVIEW HOOK -->
+## Overview
+* [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
+* [Submodules](./modules)
+    * [fscloud](./modules/fscloud)
+* [Examples](./examples)
+    * [2 MZR clusters in same VPC](./examples/multiple_mzr_clusters)
+    * [Add Rules to Security Groups Example](./examples/add_rules_to_sg)
+    * [Apply Taints Example](./examples/apply_taints)
+    * [Existing COS](./examples/existing_cos)
+    * [Financial Services Cloud profile example](./examples/fscloud)
+    * [Single zone autoscaling cluster example](./examples/single_zone_autoscale_cluster)
+    * [Standard Example With User Managed Boot Volume Encryption](./examples/standard)
+* [Contributing](#contributing)
+<!-- END OVERVIEW HOOK -->
+
+<!-- This heading should always match the name of the root level module (aka the repo name) -->
+## terraform-ibm-base-ocp-vpc
+
+### Usage
 ```hcl
-# Replace "master" with a GIT release version to lock into a specific release
 module "ocp_base" {
-  # update this value to the value of your IBM Cloud API key
-  ibmcloud_api_key     = "ibm cloud api key" # pragma: allowlist secret
-  source  = "terraform-ibm-modules/base-ocp-vpc/ibm"
-  version = "latest" # Replace "latest" with a release version to lock into a specific release
+  ibmcloud_api_key     = "XXXXXXXXXXXXXXXXXXX"
+  source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  version              = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
   cluster_name         = "example-cluster-name"
-  # modify the value for resource_group_id with and id of a group you own
-  resource_group_id    = "id of existing resource group"
+  resource_group_id    = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   region               = "us-south"
   force_delete_storage = true
-  vpc_id               = "id of existing VPC"
-  ## obtain the below values from the targeted VPC and adjust to the number of zones,
-  ## subnets, subnet name, cidr_block, id, zone
+  vpc_id               = "79cxxxx-xxxx-xxxx-xxxx-xxxxxXX8667"
+  # obtain the below values from the targeted VPC and adjust to the number of zones, subnets, subnet name, cidr_block, id, zone
   vpc_subnets          = {
     zone-1    = [
         {
@@ -91,9 +101,9 @@ module "ocp_base" {
 }
 ```
 
-## Troubleshooting
+### Troubleshooting
 
-### New kube_version message
+#### New kube_version message
 
 - When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
 
@@ -107,7 +117,7 @@ module "ocp_base" {
 
     The Kubernetes version is ignored in the module code, so the infrastructure will not be changed. The message identifies only that drift exists in the versions, and after you run a `terraform apply` command, the state will be refreshed.
 
-## Required IAM access policies
+### Required IAM access policies
 You need the following permissions to run this module.
 
 - Account Management
@@ -132,20 +142,8 @@ Optionally, you need the following permissions to attach Access Management tags 
     - **Tagging** service
         - `Administrator` platform access
 
-## Note :
+### Note :
  - One worker pool should always be named as `default`. Refer [issue 2849](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849) for further details.
-
-<!-- BEGIN EXAMPLES HOOK -->
-## Examples
-
-- [ Add Rules to Security Groups Example](examples/add_rules_to_sg)
-- [ Apply Taints Example](examples/apply_taints)
-- [ Existing COS](examples/existing_cos)
-- [ Financial Services Cloud profile example](examples/fscloud)
-- [ 2 MZR clusters in same VPC](examples/multiple_mzr_clusters)
-- [ Single zone autoscaling cluster example](examples/single_zone_autoscale_cluster)
-- [ Standard Example With User Managed Boot Volume Encryption](examples/standard)
-<!-- END EXAMPLES HOOK -->
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -230,12 +228,9 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_workerpools"></a> [workerpools](#output\_workerpools) | Worker pools created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-<!-- BEGIN CONTRIBUTING HOOK -->
-
 <!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
 ## Contributing
 
 You can report issues and request features for this module in GitHub issues in the module repo. See [Report an issue or request a feature](https://github.com/terraform-ibm-modules/.github/blob/main/.github/SUPPORT.md).
 
 To set up your local development environment, see [Local development setup](https://terraform-ibm-modules.github.io/documentation/#/local-dev-setup) in the project documentation.
-<!-- END CONTRIBUTING HOOK -->
