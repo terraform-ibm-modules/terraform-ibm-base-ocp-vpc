@@ -16,6 +16,7 @@ import (
 const resourceGroup = "geretain-test-base-ocp-vpc"
 const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
+const fscloudExampleDir = "examples/fscloud"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -92,7 +93,7 @@ func TestFSCloudExample(t *testing.T) {
 	*/
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
-		TerraformDir: fscloudExampleTerraformDir,
+		TerraformDir: fscloudExampleDir,
 		Prefix:       "base-ocp-fscloud",
 		TerraformVars: map[string]interface{}{
 			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
