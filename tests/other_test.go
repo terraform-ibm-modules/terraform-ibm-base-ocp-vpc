@@ -11,7 +11,7 @@ import (
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", basicExampleDir)
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion3)
 
 	output, err := options.RunTestConsistency()
 

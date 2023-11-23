@@ -15,7 +15,7 @@ module "resource_group" {
 ########################################################################################################################
 
 locals {
-  cluster_key = "${var.prefix}-cluster-data-encryption-key"
+  cluster_key     = "${var.prefix}-cluster-data-encryption-key"
   boot_volume_key = "${var.prefix}-boot-volume-encryption-key"
 }
 
@@ -27,8 +27,8 @@ module "kp_all_inclusive" {
   region                    = var.region
   resource_tags             = var.resource_tags
   key_map = { "ocp" = [
-    "${local.cluster_key}",
-    "${local.boot_volume_key}",
+    local.cluster_key,
+    local.boot_volume_key,
   ] }
 }
 
@@ -93,16 +93,16 @@ locals {
 
   worker_pools = [
     {
-      subnet_prefix    = "zone-1"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 1
+      subnet_prefix     = "zone-1"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 1
       enableAutoscaling = true
       minSize           = 1
       maxSize           = 6
       boot_volume_encryption_kms_config = {
-        crk              = module.kp_all_inclusive.keys["${local.boot_volume_key}"].key_id
-        kms_instance_id  = module.kp_all_inclusive.key_protect_guid
+        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     },
     {
@@ -111,8 +111,8 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 1
       boot_volume_encryption_kms_config = {
-        crk              = module.kp_all_inclusive.keys["${local.boot_volume_key}"].key_id
-        kms_instance_id  = module.kp_all_inclusive.key_protect_guid
+        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     },
     {
@@ -121,8 +121,8 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 1
       boot_volume_encryption_kms_config = {
-        crk              = module.kp_all_inclusive.keys["${local.boot_volume_key}"].key_id
-        kms_instance_id  = module.kp_all_inclusive.key_protect_guid
+        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     }
   ]
