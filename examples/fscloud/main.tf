@@ -1,7 +1,7 @@
 
-##############################################################################
-# Provision an OCP cluster with one extra worker pool inside a VPC
-##############################################################################
+########################################################################################################################
+# Resource Group
+########################################################################################################################
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
@@ -11,6 +11,10 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
+########################################################################################################################
+# COS instance
+########################################################################################################################
+
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
   version                       = "7.0.5"
@@ -18,11 +22,14 @@ module "cos_fscloud" {
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-
-  sysdig_crn           = module.observability_instances.cloud_monitoring_crn
-  activity_tracker_crn = local.at_crn
+  sysdig_crn                    = module.observability_instances.cloud_monitoring_crn
+  activity_tracker_crn          = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
+
+########################################################################################################################
+# COS bucket for VPC Flow logs
+########################################################################################################################
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
@@ -41,9 +48,10 @@ module "flowlogs_bucket" {
   ]
 }
 
-##############################################################################
+########################################################################################################################
 # VPC
-##############################################################################
+########################################################################################################################
+
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
@@ -93,9 +101,9 @@ module "vpc" {
   }
 }
 
-##############################################################################
+########################################################################################################################
 # Observability Instances (Sysdig + AT)
-##############################################################################
+########################################################################################################################
 
 locals {
   existing_at = var.existing_at_instance_crn != null ? true : false
@@ -123,17 +131,18 @@ module "observability_instances" {
   activity_tracker_provision     = !local.existing_at
 }
 
-##############################################################################
+########################################################################################################################
 # Get Cloud Account ID
-##############################################################################
+########################################################################################################################
 
 data "ibm_iam_account_settings" "iam_account_settings" {
 }
 
 
-##############################################################################
+########################################################################################################################
 # Create CBR Zone and Rules
-##############################################################################
+########################################################################################################################
+
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
   version          = "1.16.0"
@@ -189,10 +198,10 @@ module "cbr_rules" {
 }
 
 
+########################################################################################################################
+# OCP VPC Cluster
+########################################################################################################################
 
-##############################################################################
-# Base OCP Cluster
-##############################################################################
 locals {
   cluster_hpcs_worker_pool_key_id = regex("key:(.*)", var.hpcs_key_crn_worker_pool)[0]
   cluster_hpcs_cluster_key_id     = regex("key:(.*)", var.hpcs_key_crn_cluster)[0]
@@ -236,6 +245,7 @@ module "ocp_fscloud" {
   existing_cos_id                 = module.cos_fscloud.cos_instance_id
   worker_pools                    = local.worker_pools
   tags                            = var.resource_tags
+  access_tags                     = var.access_tags
   verify_worker_network_readiness = false # No access from public internet to check worker network readiness
   kms_config = {
     instance_id      = var.hpcs_instance_guid
@@ -243,5 +253,3 @@ module "ocp_fscloud" {
     private_endpoint = true
   }
 }
-
-##############################################################################

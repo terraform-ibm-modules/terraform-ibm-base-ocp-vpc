@@ -109,7 +109,6 @@ variable "ocp_version" {
       var.ocp_version == null,
       var.ocp_version == "default",
       var.ocp_version == "latest",
-      var.ocp_version == "4.10",
       var.ocp_version == "4.11",
       var.ocp_version == "4.12",
       var.ocp_version == "4.13",

@@ -1,8 +1,8 @@
 ########################################################################################################################
-# Outputs
+# Provider config
 ########################################################################################################################
 
-output "cluster_name" {
-  value       = module.ocp_fscloud.cluster_name
-  description = "The name of the provisioned cluster."
+provider "ibm" {
+  ibmcloud_api_key = var.ibmcloud_api_key
+  region           = var.region
 }

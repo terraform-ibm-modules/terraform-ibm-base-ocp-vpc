@@ -1,6 +1,6 @@
-###############################################################################
+########################################################################################################################
 # Resource Group
-###############################################################################
+########################################################################################################################
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
@@ -10,13 +10,9 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
-##############################################################################
-# Create a VPC with two sets of subnets, across AZ zones, and public gateway in each zone.
-# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
-# that will allow all traffic ingress/egress by default.
-# For production use cases this would need to be enhanced by adding more subnets
-# and zones for resiliency, and ACLs/Security Groups for network security.
-##############################################################################
+########################################################################################################################
+# VPC
+########################################################################################################################
 
 resource "ibm_is_vpc" "vpc" {
   name                      = "${var.prefix}-vpc"
@@ -25,6 +21,10 @@ resource "ibm_is_vpc" "vpc" {
   tags                      = var.resource_tags
 }
 
+########################################################################################################################
+# Public gw in 2 zones
+########################################################################################################################
+
 resource "ibm_is_public_gateway" "gateway" {
   for_each       = toset(["1", "2"])
   name           = "${var.prefix}-gateway-${each.key}"
@@ -32,6 +32,10 @@ resource "ibm_is_public_gateway" "gateway" {
   resource_group = module.resource_group.resource_group_id
   zone           = "${var.region}-${each.key}"
 }
+
+########################################################################################################################
+# Subnets accross the 2 zones
+########################################################################################################################
 
 resource "ibm_is_subnet" "subnet_cluster_1" {
   for_each                 = toset(["1", "2"])
@@ -53,9 +57,9 @@ resource "ibm_is_subnet" "subnet_cluster_2" {
   public_gateway           = ibm_is_public_gateway.gateway[each.key].id
 }
 
-###############################################################################
-# Base OCP Clusters
-###############################################################################
+########################################################################################################################
+# 2 x multi zone (2 zone) OCP Clusters
+########################################################################################################################
 
 locals {
   cluster_1_vpc_subnets = {
@@ -80,6 +84,31 @@ locals {
     ]
   }
 
+  worker_pools = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+    },
+    {
+      subnet_prefix    = "default"
+      pool_name        = "logging-worker-pool"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+      labels           = { "dedicated" : "logging-worker-pool" }
+    }
+  ]
+
+  worker_pool_taints = {
+    all = []
+    logging-worker-pool = [{
+      key    = "dedicated"
+      value  = "logging-worker-pool"
+      effect = "NoExecute"
+    }]
+    default = []
+  }
 }
 
 module "ocp_base_cluster_1" {
@@ -90,8 +119,8 @@ module "ocp_base_cluster_1" {
   force_delete_storage = true
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_1_vpc_subnets
-  worker_pools         = var.worker_pools
-  worker_pools_taints  = var.worker_pools_taints
+  worker_pools         = local.worker_pools
+  worker_pools_taints  = local.worker_pool_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
@@ -105,16 +134,17 @@ module "ocp_base_cluster_2" {
   force_delete_storage = true
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_2_vpc_subnets
-  worker_pools         = var.worker_pools
-  worker_pools_taints  = var.worker_pools_taints
+  worker_pools         = local.worker_pools
+  worker_pools_taints  = local.worker_pool_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
 }
 
-###############################################################################
+########################################################################################################################
 # Init cluster config for helm and kubernetes providers
-###############################################################################
+########################################################################################################################
+
 data "ibm_container_cluster_config" "cluster_config_c1" {
   cluster_name_id   = module.ocp_base_cluster_1.cluster_id
   resource_group_id = module.ocp_base_cluster_1.resource_group_id
@@ -127,9 +157,9 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
   config_dir        = "${path.module}/../../kubeconfig"
 }
 
-##############################################################################
+########################################################################################################################
 # Observability instances : Create logdna and sysdig instances.
-##############################################################################
+########################################################################################################################
 
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
@@ -149,9 +179,9 @@ module "observability_instances" {
   cloud_monitoring_instance_name = "${var.prefix}-sysdig"
 }
 
-##############################################################################
+########################################################################################################################
 # Observability agents
-##############################################################################
+########################################################################################################################
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
@@ -180,5 +210,3 @@ module "observability_agents_2" {
   sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
   sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
 }
-
-##############################################################################

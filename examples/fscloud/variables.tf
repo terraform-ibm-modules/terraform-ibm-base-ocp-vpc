@@ -1,10 +1,10 @@
-##############################################################################
+########################################################################################################################
 # Input Variables
-##############################################################################
+########################################################################################################################
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api token"
+  description = "The IBM Cloud api key"
   sensitive   = true
 }
 
@@ -63,4 +63,10 @@ variable "vpc_name" {
   type        = string
   description = "Name of the VPC"
   default     = "management"
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the resources created by the module"
+  default     = []
 }

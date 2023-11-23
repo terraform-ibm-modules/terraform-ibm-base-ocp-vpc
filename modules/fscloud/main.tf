@@ -23,4 +23,5 @@ module "fscloud" {
   tags                            = var.tags
   kms_config                      = var.kms_config
   addons                          = var.addons
+  access_tags                     = var.access_tags
 }

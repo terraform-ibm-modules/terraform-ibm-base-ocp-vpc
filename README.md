@@ -21,12 +21,10 @@ A module for provisioning an IBM Cloud Red Hat OpenShift cluster on VPC Gen2. Th
     * [fscloud](./modules/fscloud)
 * [Examples](./examples)
     * [2 MZR clusters in same VPC](./examples/multiple_mzr_clusters)
-    * [Add Rules to Security Groups Example](./examples/add_rules_to_sg)
-    * [Apply Taints Example](./examples/apply_taints)
-    * [Existing COS](./examples/existing_cos)
-    * [Financial Services Cloud profile example](./examples/fscloud)
-    * [Single zone autoscaling cluster example](./examples/single_zone_autoscale_cluster)
-    * [Standard Example With User Managed Boot Volume Encryption](./examples/standard)
+    * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
+    * [Basic single zone example](./examples/basic)
+    * [Cluster security group rules example](./examples/add_rules_to_sg)
+    * [Financial Services compliant example](./examples/fscloud)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 

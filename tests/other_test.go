@@ -8,6 +8,17 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", basicExampleDir)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -40,51 +51,7 @@ func TestRunMultiClusterExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
-		},
-	})
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestRunSzAutoScaleClusterExample(t *testing.T) {
-	t.Parallel()
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  "examples/single_zone_autoscale_cluster",
-		Prefix:        "sz-cluster",
-		ResourceGroup: resourceGroup,
-		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
-		},
-		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
-		ImplicitRequired: false,
-		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion3,
-		},
-	})
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestRunApplyTaintsExample(t *testing.T) {
-	t.Parallel()
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  "examples/apply_taints",
-		Prefix:        "std-taint",
-		ResourceGroup: resourceGroup,
-		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
-		},
-		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
-		ImplicitRequired: false,
-		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion4,
+			"ocp_version": ocpVersion1,
 		},
 	})
 	output, err := options.RunTestConsistency()
@@ -106,7 +73,7 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion1,
+			"ocp_version": ocpVersion2,
 		},
 	})
 	output, err := options.RunTestConsistency()

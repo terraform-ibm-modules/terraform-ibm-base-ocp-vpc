@@ -13,9 +13,9 @@ module "resource_group" {
 ########################################################################################################################
 # VPC + Subnet + Public Gateway
 #
-# NOTE: This is a very simple VPC with single subnet in a single zone with a public gateway enabled, that will allow 
+# NOTE: This is a very simple VPC with single subnet in a single zone with a public gateway enabled, that will allow
 # all traffic ingress/egress by default.
-# For production use cases this would need to be enhanced by adding more subnets and zones for resiliency, and 
+# For production use cases this would need to be enhanced by adding more subnets and zones for resiliency, and
 # ACLs/Security Groups for network security.
 ########################################################################################################################
 
@@ -43,8 +43,29 @@ resource "ibm_is_subnet" "subnet_zone_1" {
 }
 
 ########################################################################################################################
-# OCP VPC cluster
+# OCP VPC cluster (single zone)
 ########################################################################################################################
+
+locals {
+  cluster_vpc_subnets = {
+    default = [
+      {
+        id         = ibm_is_subnet.subnet_zone_1.id
+        cidr_block = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block
+        zone       = ibm_is_subnet.subnet_zone_1.zone
+      }
+    ]
+  }
+
+  worker_pools = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+    }
+  ]
+}
 
 module "ocp_base" {
   source               = "../.."
@@ -53,17 +74,10 @@ module "ocp_base" {
   region               = var.region
   tags                 = var.resource_tags
   cluster_name         = var.prefix
-  
-  
   force_delete_storage = true
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = length(var.worker_pools) > 0 ? var.worker_pools : local.worker_pools
   ocp_version          = var.ocp_version
-  
-  kms_config = {
-    instance_id = module.kp_all_inclusive.key_protect_guid
-    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
-  }
-  access_tags = var.access_tags
+  worker_pools         = local.worker_pools
+  access_tags          = var.access_tags
 }
