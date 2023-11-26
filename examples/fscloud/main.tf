@@ -246,6 +246,7 @@ module "ocp_fscloud" {
   worker_pools                    = local.worker_pools
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
+  ocp_version                     = var.ocp_version
   verify_worker_network_readiness = false # No access from public internet to check worker network readiness
   kms_config = {
     instance_id      = var.hpcs_instance_guid

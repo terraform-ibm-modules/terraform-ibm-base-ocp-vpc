@@ -70,3 +70,9 @@ variable "access_tags" {
   description = "A list of access tags to apply to the resources created by the module"
   default     = []
 }
+
+variable "ocp_version" {
+  type        = string
+  description = "Version of the OCP cluster to provision"
+  default     = null
+}

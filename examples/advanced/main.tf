@@ -15,6 +15,7 @@ module "resource_group" {
 ########################################################################################################################
 
 locals {
+  key_ring        = "ocp"
   cluster_key     = "${var.prefix}-cluster-data-encryption-key"
   boot_volume_key = "${var.prefix}-boot-volume-encryption-key"
 }
@@ -26,7 +27,7 @@ module "kp_all_inclusive" {
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   resource_tags             = var.resource_tags
-  key_map = { "ocp" = [
+  key_map = { (local.key_ring) = [
     local.cluster_key,
     local.boot_volume_key,
   ] }
@@ -101,7 +102,7 @@ locals {
       minSize           = 1
       maxSize           = 6
       boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
         kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     },
@@ -111,7 +112,7 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 1
       boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
         kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     },
@@ -121,7 +122,7 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 1
       boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys[local.boot_volume_key].key_id
+        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
         kms_instance_id = module.kp_all_inclusive.key_protect_guid
       }
     }
@@ -162,6 +163,6 @@ module "ocp_base" {
   }
   kms_config = {
     instance_id = module.kp_all_inclusive.key_protect_guid
-    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
+    crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
   }
 }
