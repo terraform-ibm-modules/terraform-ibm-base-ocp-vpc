@@ -8,5 +8,9 @@ terraform {
       source  = "IBM-Cloud/ibm"
       version = ">= 1.59.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.16.1"
+    }
   }
 }
