@@ -75,56 +75,52 @@ resource "ibm_is_subnet" "subnets" {
 ########################################################################################################################
 
 locals {
-  # Use zone-1, zone-2, zone-3 subnets for cluster
+  # list of subnets in all zones
+  subnets = [
+    for subnet in ibm_is_subnet.subnets :
+    {
+      id         = subnet.id
+      zone       = subnet.zone
+      cidr_block = subnet.ipv4_cidr_block
+    }
+  ]
+
+  # mapping of cluster worker pool names to subnets
   cluster_vpc_subnets = {
-    for zone_name in distinct([
-      for subnet in ibm_is_subnet.subnets :
-      subnet.zone
-    ]) :
-    "zone-${substr(zone_name, -1, length(zone_name))}" => [
-      for subnet in ibm_is_subnet.subnets :
-      {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.ipv4_cidr_block
-        crn        = subnet.crn
-      } if subnet.zone == zone_name
-    ]
+    zone-1 = local.subnets,
+    zone-2 = local.subnets,
+    zone-3 = local.subnets
+  }
+
+  boot_volume_encryption_kms_config = {
+    crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
+    kms_instance_id = module.kp_all_inclusive.key_protect_guid
   }
 
   worker_pools = [
     {
-      subnet_prefix     = "zone-1"
-      pool_name         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 1
-      enableAutoscaling = true
-      minSize           = 1
-      maxSize           = 6
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
+      subnet_prefix                     = "zone-1"
+      pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 1
+      enableAutoscaling                 = true
+      minSize                           = 1
+      maxSize                           = 6
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {
-      subnet_prefix    = "zone-2"
-      pool_name        = "zone-2"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 1
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
+      subnet_prefix                     = "zone-2"
+      pool_name                         = "zone-2"
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 1
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {
-      subnet_prefix    = "zone-3"
-      pool_name        = "zone-3"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 1
-      boot_volume_encryption_kms_config = {
-        crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
-        kms_instance_id = module.kp_all_inclusive.key_protect_guid
-      }
+      subnet_prefix                     = "zone-3"
+      pool_name                         = "zone-3"
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 1
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
 
@@ -158,6 +154,8 @@ module "ocp_base" {
   tags                 = var.resource_tags
   access_tags          = var.access_tags
   worker_pools_taints  = local.worker_pools_taints
+  # Enable if using worker autoscaling. Stops Terraform managing worker count.
+  ignore_worker_pool_size_changes = true
   addons = {
     "cluster-autoscaler" = "1.0.8"
   }
