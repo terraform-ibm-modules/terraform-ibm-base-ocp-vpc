@@ -1,10 +1,10 @@
 ########################################################################################################################
-# Input Variables
+# Input variables
 ########################################################################################################################
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api key"
+  description = "The IBM Cloud api token"
   sensitive   = true
 }
 
@@ -21,7 +21,7 @@ variable "prefix" {
 variable "region" {
   type        = string
   description = "Region where resources are created"
-  default     = "us-south"
+  default     = "eu-gb"
 }
 
 variable "resource_group" {
@@ -36,43 +36,14 @@ variable "resource_tags" {
   default     = []
 }
 
-
-variable "hpcs_instance_guid" {
-  type        = string
-  description = "The GUID of the Hyper Protect Crypto service to provision the encryption keys"
-
-}
-
-variable "hpcs_key_crn_cluster" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the cluster boot volume"
-  type        = string
-}
-
-variable "hpcs_key_crn_worker_pool" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the worker pool boot volumes"
-  type        = string
-}
-
-variable "existing_at_instance_crn" {
-  type        = string
-  description = "Optionally pass an existing activity tracker instance CRN to use in the example. If not passed, a new instance will be provisioned"
-  default     = null
-}
-
-variable "vpc_name" {
-  type        = string
-  description = "Name of the VPC"
-  default     = "management"
-}
-
-variable "access_tags" {
-  type        = list(string)
-  description = "A list of access tags to apply to the resources created by the module"
-  default     = []
-}
-
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
   default     = null
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply"
+  default     = []
 }

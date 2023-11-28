@@ -1,10 +1,10 @@
-##############################################################################
+########################################################################################################################
 # Input Variables
-##############################################################################
+########################################################################################################################
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api token"
+  description = "The IBM Cloud api key"
   sensitive   = true
 }
 
@@ -41,52 +41,3 @@ variable "ocp_version" {
   description = "Version of the OCP cluster to provision"
   default     = null
 }
-
-variable "worker_pools" {
-  type = list(object({
-    subnet_prefix     = string
-    pool_name         = string
-    machine_type      = string
-    workers_per_zone  = number
-    resource_group_id = optional(string)
-    labels            = optional(map(string))
-    boot_volume_encryption_kms_config = optional(object({
-      crk             = string
-      kms_instance_id = string
-      kms_account_id  = optional(string)
-    }))
-  }))
-  default = [
-    {
-      subnet_prefix    = "default"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    },
-    {
-      subnet_prefix    = "default"
-      pool_name        = "logging-worker-pool"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      labels           = { "dedicated" : "logging-worker-pool" }
-    }
-  ]
-  description = "List of worker pools"
-}
-
-variable "worker_pools_taints" {
-  type        = map(list(object({ key = string, value = string, effect = string })))
-  description = "Map of lists containing node taints by node-pool name"
-
-  default = {
-    all = []
-    logging-worker-pool = [{
-      key    = "dedicated"
-      value  = "logging-worker-pool"
-      effect = "NoExecute"
-    }]
-    default = []
-  }
-}
-
-##############################################################################

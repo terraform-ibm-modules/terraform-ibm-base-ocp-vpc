@@ -1,6 +1,6 @@
-##############################################################################
+########################################################################################################################
 # Terraform providers
-##############################################################################
+########################################################################################################################
 
 provider "ibm" {
   ibmcloud_api_key = var.ibmcloud_api_key
@@ -39,9 +39,6 @@ provider "kubernetes" {
   cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config_c2.ca_certificate
 }
 
-##############################################################################
-# Observability instances
-##############################################################################
 locals {
   at_endpoint = "https://api.${var.region}.logging.cloud.ibm.com"
 }
@@ -57,4 +54,3 @@ provider "logdna" {
   servicekey = module.observability_instances.log_analysis_resource_key != null ? module.observability_instances.log_analysis_resource_key : ""
   url        = local.at_endpoint
 }
-##############################################################################

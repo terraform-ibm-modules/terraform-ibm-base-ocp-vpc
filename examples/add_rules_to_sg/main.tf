@@ -1,6 +1,6 @@
-##############################################################################
-# Provision an OCP cluster with one extra worker pool inside a VPC
-##############################################################################
+########################################################################################################################
+# Resource Group
+########################################################################################################################
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
@@ -10,13 +10,9 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
-##############################################################################
-# Create a VPC with single subnet and zone, and public gateway
-# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
-# that will allow all traffic ingress/egress by default.
-# For production use cases this would need to be enhanced by adding more subnets
-# and zones for resiliency, and ACLs/Security Groups for network security.
-##############################################################################
+########################################################################################################################
+# VPC
+########################################################################################################################
 
 resource "ibm_is_vpc" "vpc" {
   name                      = "${var.prefix}-vpc"
@@ -25,12 +21,20 @@ resource "ibm_is_vpc" "vpc" {
   tags                      = var.resource_tags
 }
 
+########################################################################################################################
+# Public Gateway in zone-1
+########################################################################################################################
+
 resource "ibm_is_public_gateway" "gateway" {
   name           = "${var.prefix}-gateway-1"
   vpc            = ibm_is_vpc.vpc.id
   resource_group = module.resource_group.resource_group_id
   zone           = "${var.region}-1"
 }
+
+########################################################################################################################
+# Subnet in zone-1
+########################################################################################################################
 
 resource "ibm_is_subnet" "subnet_zone_1" {
   name                     = "${var.prefix}-subnet-1"
@@ -41,9 +45,9 @@ resource "ibm_is_subnet" "subnet_zone_1" {
   public_gateway           = ibm_is_public_gateway.gateway.id
 }
 
-##############################################################################
-# Security Group Rules addition.
-##############################################################################
+########################################################################################################################
+# Security Group Rules addition
+########################################################################################################################
 
 locals {
   standard_cluster_allow_rules = [
@@ -127,23 +131,9 @@ resource "ibm_is_security_group_rule" "kube_cluster_rules" {
   }
 }
 
-##############################################################################
-# Key Protect
-##############################################################################
-
-module "kp_all_inclusive" {
-  source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
-  version                   = "4.4.1"
-  key_protect_instance_name = "${var.prefix}-kp-instance"
-  resource_group_id         = module.resource_group.resource_group_id
-  region                    = var.region
-  resource_tags             = var.resource_tags
-  key_map                   = { "ocp" = ["${var.prefix}-cluster-key"] }
-}
-
-##############################################################################
-# Base OCP Cluster
-##############################################################################
+########################################################################################################################
+# OCP VPC single zone cluster
+########################################################################################################################
 
 locals {
   cluster_vpc_subnets = {
@@ -180,10 +170,4 @@ module "ocp_base" {
   worker_pools         = local.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
-  kms_config = {
-    instance_id = module.kp_all_inclusive.key_protect_guid
-    crk_id      = module.kp_all_inclusive.keys["ocp.${var.prefix}-cluster-key"].key_id
-  }
 }
-
-##############################################################################

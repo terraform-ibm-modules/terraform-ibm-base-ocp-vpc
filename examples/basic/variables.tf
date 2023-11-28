@@ -1,6 +1,6 @@
-##############################################################################
-# Input Variables
-##############################################################################
+########################################################################################################################
+# Input variables
+########################################################################################################################
 
 variable "ibmcloud_api_key" {
   type        = string
@@ -42,28 +42,8 @@ variable "ocp_version" {
   default     = null
 }
 
-variable "worker_pools" {
-  type = list(object({
-    subnet_prefix     = string
-    pool_name         = string
-    machine_type      = string
-    workers_per_zone  = number
-    resource_group_id = optional(string)
-    labels            = optional(map(string))
-    boot_volume_encryption_kms_config = optional(object({
-      crk             = string
-      kms_instance_id = string
-      kms_account_id  = optional(string)
-    }))
-  }))
-  description = "List of worker pools."
-  default     = []
-}
-
 variable "access_tags" {
   type        = list(string)
-  description = "Optional list of access management tags to be added to the created resources."
+  description = "A list of access tags to apply to the resources created by the module."
   default     = []
 }
-
-##############################################################################

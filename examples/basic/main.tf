@@ -1,22 +1,23 @@
-###############################################################################
+########################################################################################################################
 # Resource Group
-###############################################################################
+########################################################################################################################
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
   version = "1.1.4"
-  # if an existing resource group is not set (i.e. null) create a new one using prefix
+  # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
 }
 
-##############################################################################
-# Create a VPC with single subnet and zone, and public gateway
-# NOTE: this is a very simple VPC/Subnet configuration for example purposes only,
-# that will allow all traffic ingress/egress by default.
-# For production use cases this would need to be enhanced by adding more subnets
-# and zones for resiliency, and ACLs/Security Groups for network security.
-##############################################################################
+########################################################################################################################
+# VPC + Subnet + Public Gateway
+#
+# NOTE: This is a very simple VPC with single subnet in a single zone with a public gateway enabled, that will allow
+# all traffic ingress/egress by default.
+# For production use cases this would need to be enhanced by adding more subnets and zones for resiliency, and
+# ACLs/Security Groups for network security.
+########################################################################################################################
 
 resource "ibm_is_vpc" "vpc" {
   name                      = "${var.prefix}-vpc"
@@ -41,14 +42,11 @@ resource "ibm_is_subnet" "subnet_zone_1" {
   public_gateway           = ibm_is_public_gateway.gateway.id
 }
 
-###############################################################################
-# Base OCP
-###############################################################################
-locals {
-  addons = {
-    "cluster-autoscaler" = "1.0.8"
-  }
+########################################################################################################################
+# OCP VPC cluster (single zone)
+########################################################################################################################
 
+locals {
   cluster_vpc_subnets = {
     default = [
       {
@@ -59,53 +57,27 @@ locals {
     ]
   }
 
-  sz_pool = [
+  worker_pools = [
     {
       subnet_prefix    = "default"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-    },
-    {
-      subnet_prefix     = "default"
-      pool_name         = "logging"
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 2
-      minSize           = 1
-      maxSize           = 6
-      enableAutoscaling = true
-    },
-    {
-      subnet_prefix     = "default"
-      pool_name         = "sample"
-      machine_type      = "bx2.4x16"
-      workers_per_zone  = 4
-      minSize           = 1
-      maxSize           = 6
-      enableAutoscaling = true
+      workers_per_zone = 2 # minimum of 2 is allowed when using single zone
     }
   ]
 }
 
 module "ocp_base" {
   source               = "../.."
-  cluster_name         = var.prefix
   ibmcloud_api_key     = var.ibmcloud_api_key
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
+  tags                 = var.resource_tags
+  cluster_name         = var.prefix
   force_delete_storage = true
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_vpc_subnets
   ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  worker_pools         = local.sz_pool
-  addons               = local.addons
+  worker_pools         = local.worker_pools
+  access_tags          = var.access_tags
 }
-
-data "ibm_container_cluster_config" "cluster_config" {
-  cluster_name_id   = module.ocp_base.cluster_id
-  resource_group_id = module.ocp_base.resource_group_id
-  config_dir        = "${path.module}/../../kubeconfig"
-}
-
-##############################################################################

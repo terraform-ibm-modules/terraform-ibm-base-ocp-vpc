@@ -14,17 +14,17 @@ import (
 )
 
 const resourceGroup = "geretain-test-base-ocp-vpc"
-const standardExampleTerraformDir = "examples/standard"
-const fscloudExampleTerraformDir = "examples/fscloud"
+const advancedExampleDir = "examples/advanced"
+const basicExampleDir = "examples/basic"
+const fscloudExampleDir = "examples/fscloud"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.13" // used in pr_test
-const ocpVersion2 = "4.12" // used in other_test.go
-const ocpVersion3 = "4.11" // used in other_test.go
-const ocpVersion4 = "4.10" // used in other_test.go
+const ocpVersion1 = "4.13" // used by TestRunUpgradeAdvancedExample, TestFSCloudExample and TestRunMultiClusterExample
+const ocpVersion2 = "4.12" // used by TestRunAdvancedExample and TestRunAddRulesToSGExample
+const ocpVersion3 = "4.11" // used by TestRunBasicExample
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}
@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.TestOptions {
+func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:          t,
 		TerraformDir:     terraformDir,
@@ -51,7 +51,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion1,
+			"ocp_version": ocpVersion,
 			"access_tags": permanentResources["accessTags"],
 		},
 	})
@@ -59,10 +59,10 @@ func setupOptions(t *testing.T, prefix string, terraformDir string) *testhelper.
 	return options
 }
 
-func TestRunStandardExample(t *testing.T) {
+func TestRunAdvancedExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", standardExampleTerraformDir)
+	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion2)
 
 	output, err := options.RunTestConsistency()
 
@@ -70,10 +70,10 @@ func TestRunStandardExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunUpgradeExample(t *testing.T) {
+func TestRunUpgradeAdvancedExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-upg", standardExampleTerraformDir)
+	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion1)
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {
@@ -86,25 +86,26 @@ func TestFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	/*
-	 The 'ResourceGroup' is not set to force this tests to create a unique resource group to ensure tests do
+	 The 'ResourceGroup' is not set to force this test to create a unique resource group to ensure tests do
 	 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
 	 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
 	 since this module scopes auth policies by resource group.
 	*/
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
-		TerraformDir: fscloudExampleTerraformDir,
+		TerraformDir: fscloudExampleDir,
 		Prefix:       "base-ocp-fscloud",
 		TerraformVars: map[string]interface{}{
 			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
 			"hpcs_instance_guid":       permanentResources["hpcs_south"],
 			"hpcs_key_crn_cluster":     permanentResources["hpcs_south_root_key_crn"],
 			"hpcs_key_crn_worker_pool": permanentResources["hpcs_south_root_key_crn"],
+			"ocp_version":              ocpVersion1,
 		},
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
-	// "jp-osa" is currently not allowing hs-crypto be used for encrypting buckets in that region.
+	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
 	currentRegion, ok := options.TerraformVars["region"]
 	if ok && currentRegion == "jp-osa" {
 		options.TerraformVars["region"] = "us-south"

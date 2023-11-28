@@ -1,21 +1,18 @@
-# Financial Services Cloud profile example
+# Financial Services compliant example
 
-An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../modules/fscloud) to deploy an instance of the base OCP VPC module.
+This example uses the [Profile for IBM Cloud Framework for Financial Services](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/modules/fscloud) to provision an instance of the base OCP VPC module in a compliant manner.
 
-The example uses the IBM Cloud Terraform provider to create the following infrastructure:
-
-- A resource group, if one is not passed in
-- A sample virtual private cloud (VPC)
-- A COS instance for use by the OCP cluster
+The following resources are provisioned by this example:
+- A new resource group, if an existing one is not passed in.
+- A Cloud Object Storage instance
+- An Object Storage bucket (for VPC Flow logs)
+- A secure Virtual Private Cloud (VPC)
+- An IBM Cloud Monitoring (Sysdig) instance
+- An IBM Cloud Activity Tracker instance, if existing ones is not passed in
 - A context-based restriction (CBR) rule to only allow COS Instance to be accessible from within the VPC
-- OCP cluster in a VPC with the default worker pool deployed across 3 availability zones
-- Also uses Hyper Protect Crypto Service for the cluster and boot volume encryption
+- An OCP cluster in a VPC with the default worker pool deployed across 3 availability zones with cluster and boot volume encrypted with the given Hyper Protect Crypto Service root key
 
-
-:exclamation: **Important:** OCP provisions a COS bucket, but you cannot use your own encryption keys. This will fail the requirement for Cloud Object Storage to be enabled with customer-managed encryption and Keep Your Own Key (KYOK).
-Once the service supports this the profile will be updated. Until that time it is for educational purposes only.
-
-Outside the OCP Cluster, other parts of the infrastructure do not necessarily comply.
+:exclamation: **Important:** OCP provisions a COS bucket, but you cannot use your own encryption keys. This will fail the requirement for Cloud Object Storage to be enabled with customer-managed encryption and Keep Your Own Key (KYOK). In OCP 4.14, COS will become optional to provision a cluster.
 
 ## Before you begin
 
