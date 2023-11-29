@@ -1,0 +1,138 @@
+{
+    "products": [
+        {
+            "name": "terraform-ibm-base-ocp-vpc",
+            "label": "Red Hat OpenShift VPC cluster on IBM Cloud module",
+            "product_kind": "module",
+            "tags": [
+                "dev_ops",
+                "target_terraform",
+                "terraform",
+                "module"
+            ],
+            "keywords": [
+                "terraform",
+                "ocp",
+                "cluster"
+            ],
+            "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
+            "long_description": "Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https:\/\/cloud.ibm.com\/docs\/openshift?topic=openshift-getting-started) on VPC Gen2. The module either creates the required Cloud Object Storage instance or uses an existing instance. The module also supports optionally passing a key management configuration for secret encryption and boot volume encryption.\r\n\r\n### Before you begin\r\n\r\n- Make sure that you have a recent version of the [IBM Cloud CLI](https:\/\/cloud.ibm.com\/docs\/cli?topic=cli-getting-started)\r\n- Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https:\/\/cloud.ibm.com\/docs\/containers?topic=containers-kubernetes-service-cli)\r\n\r\n### Usage\r\n```hcl\r\nmodule \"ocp_base\" {\r\n  # Replace \"X.X.X\" with a release version to lock into a specific release\r\n  source               = \"https:\/\/cm.globalcatalog.cloud.ibm.com\/api\/v1-beta\/offering\/source?archive=tgz&kind=terraform&name=terraform-ibm-base-ocp-vpc&version=X.X.X\"\r\n  ibmcloud_api_key     = \"XXXXXXXXXXXXXXXXXXX\"\r\n  cluster_name         = \"example-cluster-name\"\r\n  resource_group_id    = \"xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX\"\r\n  region               = \"us-south\"\r\n  force_delete_storage = true\r\n  vpc_id               = \"79cxxxx-xxxx-xxxx-xxxx-xxxxxXX8667\"\r\n  # obtain the below values from the targeted VPC and adjust to the number of zones, subnets, subnet name, cidr_block, id, zone\r\n  vpc_subnets          = {\r\n    zone-1    = [\r\n        {\r\n            cidr_block = \"192.168.32.0\/22\"\r\n            id         = \"0717-afc29fbb-0dbe-493a-a5b9-f3c5899cb8b9\"\r\n            zone       = \"us-south-1\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.36.0\/22\"\r\n            id         = \"0727-d65c1eda-9e38-4200-8452-cb8ff5bb3140\"\r\n            zone       = \"us-south-2\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.40.0\/22\"\r\n            id         = \"0737-9a823cd3-16bf-4ba4-a429-9e1fc7db74b8\"\r\n            zone       = \"us-south-3\"\r\n        }\r\n    ]\r\n    zone-2 = [\r\n        {\r\n            cidr_block = \"192.168.0.0\/22\"\r\n            id         = \"0717-846b9490-34ae-4a6c-8288-28112dca1ba3\"\r\n            zone       = \"us-south-1\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.4.0\/22\"\r\n            id         = \"0727-ef8db7f6-ffa5-4d8b-a317-4631741a45ee\"\r\n            zone       = \"us-south-2\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.8.0\/22\"\r\n            id         = \"0737-c9a6d871-d95b-4914-abf5-82c22f4161d1\"\r\n            zone       = \"us-south-3\"\r\n        }\r\n    ]\r\n    zone-3 = [\r\n        {\r\n            cidr_block = \"192.168.16.0\/22\"\r\n            id         = \"0717-d46e227c-89d4-4b02-9008-d03907a275b6\"\r\n            zone       = \"us-south-1\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.20.0\/22\"\r\n            id         = \"0727-93b1edcb-966c-4517-a7af-6ac63cd93adf\"\r\n            zone       = \"us-south-2\"\r\n        },\r\n        {\r\n            cidr_block = \"192.168.24.0\/22\"\r\n            id         = \"0737-807ec4f1-4d84-484e-b2f4-62dd5e431065\"\r\n            zone       = \"us-south-3\"\r\n        }\r\n    ]\r\n  }\r\n}\r\n```",
+            "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
+            "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
+            "provider_name": "IBM",
+            "features": [
+                {
+                    "title": "Create a Red Hat OpenShift VPC cluster on IBM Cloud",
+                    "description": "Create a Red Hat OpenShift VPC cluster on IBM Cloud."
+                },
+                {
+                    "title": "Autoscaling",
+                    "description": "Configure worker autoscaling."
+                },
+                {
+                    "title": "Optionally create a Cloud Object Storage instance",
+                    "description": "Optionally create a Cloud Object Storage instance which is required by OCP VPC clusters. Also supports using existing instance."
+                },
+                {
+                    "title": "Attach access tags",
+                    "description": "Attach access tags to the cluster resources."
+                },
+                {
+                    "title": "Enable cluster managed add-ons",
+                    "description": "Enable any of the supported [managed cluster addons](https://cloud.ibm.com/docs/containers?topic=containers-managed-addons)."
+                },
+                {
+                    "title": "Encrypt data with key management services",
+                    "description": "Supports key management encryption (BYOK and KYOK) for boot volumes and cluster data."
+                }
+            ],
+            "flavors": [
+                {
+                    "label": "Basic",
+                    "name": "basic",
+                    "working_directory": "examples/basic",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Basic example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "A simple example that shows how to provision a basic single zone OCP VPC cluster."
+                            }
+                        ]
+                    }
+                },
+                {
+                    "label": "Advanced",
+                    "name": "advanced",
+                    "working_directory": "examples/advanced",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Advanced example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "An advanced example which shows how to create a multi-zone KMS encrypted OCP VPC cluster with custom worker node taints."
+                            }
+                        ]
+                    }
+                },
+                {
+                    "label": "Financial Services compliant",
+                    "name": "fscloud",
+                    "working_directory": "examples/fscloud",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Financial Services compliant example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "This example uses the Profile for IBM Cloud Framework for Financial Services to provision an instance of the base OCP VPC module in a compliant manner."
+                            }
+                        ]
+                    }
+                },
+                {
+                    "label": "2 MZR clusters in same VPC",
+                    "name": "multiple_mzr_clusters",
+                    "working_directory": "examples/multiple_mzr_clusters",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "2 MZR clusters in same VPC example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "This is an example of creating 2 MZR clusters in same VPC, and deploying the observability agents in the clusters."
+                            }
+                        ]
+                    }
+                },
+                {
+                    "label": "Cluster security group rules",
+                    "name": "add_rules_to_sg",
+                    "working_directory": "examples/add_rules_to_sg",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Cluster security group rules example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "This example will add security rules to the `kube-<vpcid>` and `kube-<clusterId>` security groups."
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
