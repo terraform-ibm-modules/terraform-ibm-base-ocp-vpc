@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+offerings:
+  - name: terraform-ibm-base-ocp-vpc
+    kind: module
+    catalog_id: 7df1e4ca-d54c-4fd0-82ce-3d13247308cd
+    offering_id: TBC
+    examples:
+      - name: basic
+        mark_ready: true
+      - name: advanced
+        mark_ready: true
+      - name: fscloud
+        mark_ready: true
+      - name: multiple_mzr_clusters
+        mark_ready: true
+      - name: add_rules_to_sg
+        mark_ready: true
