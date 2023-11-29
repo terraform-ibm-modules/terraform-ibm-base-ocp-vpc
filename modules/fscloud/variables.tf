@@ -102,6 +102,7 @@ variable "kms_config" {
     crk_id           = string
     instance_id      = string
     private_endpoint = optional(bool, true) # defaults to true
+    account_id       = optional(string)     # To attach HPCS instance from another account
   })
   description = "Use to attach a HPCS instance to the cluster"
 }
