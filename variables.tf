@@ -170,7 +170,7 @@ variable "kms_config" {
     private_endpoint = optional(bool, true) # defaults to true
     account_id       = optional(string)     # To attach KMS instance from another account
   })
-  description = "Use to attach a KMS instance to the cluster"
+  description = "Use to attach a KMS instance to the cluster. If account_id is not provided, defaults to the account in use."
   default     = null
 }
 
