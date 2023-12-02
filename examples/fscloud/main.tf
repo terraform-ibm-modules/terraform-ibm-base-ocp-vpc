@@ -55,7 +55,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.11.0"
+  version           = "7.13.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -114,7 +114,7 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.10.0"
+  version = "2.10.1"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
