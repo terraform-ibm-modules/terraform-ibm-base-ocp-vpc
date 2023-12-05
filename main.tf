@@ -17,7 +17,7 @@ locals {
   cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location     = "global"
   cos_plan         = "standard"
-  cos_instance_crn = var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id
+  cos_instance_crn = var.enable_registry_backup ? var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id : null
 
   # Validation approach based on https://stackoverflow.com/a/66682419
   validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
@@ -82,7 +82,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = var.enable_registry_backup ? local.cos_instance_crn : null
+  cos_instance_crn                = local.cos_instance_crn
   worker_count                    = local.default_pool.workers_per_zone
   resource_group_id               = var.resource_group_id
   wait_till                       = var.cluster_ready_when
@@ -143,7 +143,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = var.enable_registry_backup ? local.cos_instance_crn : null
+  cos_instance_crn                = local.cos_instance_crn
   worker_count                    = local.default_pool.workers_per_zone
   resource_group_id               = var.resource_group_id
   wait_till                       = var.cluster_ready_when
