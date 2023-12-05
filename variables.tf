@@ -163,6 +163,12 @@ variable "existing_cos_id" {
   default     = null
 }
 
+variable "enable_registry_backup" {
+  type        = bool
+  description = "Enable backup of OpenShift internal registry to standard Cloud Object Storage bucket"
+  default     = true
+}
+
 variable "kms_config" {
   type = object({
     crk_id           = string

@@ -45,7 +45,7 @@ data "ibm_container_cluster_versions" "cluster_versions" {
 }
 
 module "cos_instance" {
-  count = var.use_existing_cos ? 0 : 1
+  count = var.enable_registry_backup && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
   version                = "7.0.5"
@@ -63,7 +63,7 @@ moved {
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
-  count       = var.use_existing_cos || length(var.access_tags) == 0 ? 0 : 1
+  count       = var.enable_registry_backup && !var.use_existing_cos && length(var.access_tags) > 0 ? 1 : 0
   resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
@@ -82,7 +82,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
+  cos_instance_crn                = var.enable_registry_backup ? local.cos_instance_crn : null
   worker_count                    = local.default_pool.workers_per_zone
   resource_group_id               = var.resource_group_id
   wait_till                       = var.cluster_ready_when
@@ -143,7 +143,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   kube_version                    = local.ocp_version
   flavor                          = local.default_pool.machine_type
   entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
+  cos_instance_crn                = var.enable_registry_backup ? local.cos_instance_crn : null
   worker_count                    = local.default_pool.workers_per_zone
   resource_group_id               = var.resource_group_id
   wait_till                       = var.cluster_ready_when
