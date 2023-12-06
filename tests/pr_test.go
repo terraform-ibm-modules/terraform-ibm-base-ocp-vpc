@@ -17,6 +17,7 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
+const crossKmsSupportExampleDir = "examples/cross_kms_support"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -110,6 +111,27 @@ func TestFSCloudExample(t *testing.T) {
 	if ok && currentRegion == "jp-osa" {
 		options.TerraformVars["region"] = "us-south"
 	}
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+
+}
+
+func TestCrossKmsSupportExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: crossKmsSupportExampleDir,
+		Prefix:       "cross-kp",
+		TerraformVars: map[string]interface{}{
+			"kms_instance_guid":    permanentResources["kp_south"],
+			"kms_key_crn":          permanentResources["kp_south_root_key_crn"],
+			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
+		},
+	})
 
 	output, err := options.RunTestConsistency()
 

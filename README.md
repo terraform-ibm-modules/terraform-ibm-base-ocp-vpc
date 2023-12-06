@@ -10,8 +10,8 @@ Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https://cl
 
 ### Before you begin
 
-- Make sure that you have a recent version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
-- Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli)
+- Make sure that you have a recent version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started).
+- Make sure that you have a recent version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli).
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -22,6 +22,7 @@ Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https://cl
 * [Examples](./examples)
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
+    * [Basic example shows cross account KMS support](./examples/cross_kms_support)
     * [Basic single zone example](./examples/basic)
     * [Cluster security group rules example](./examples/add_rules_to_sg)
     * [Financial Services compliant example](./examples/fscloud)

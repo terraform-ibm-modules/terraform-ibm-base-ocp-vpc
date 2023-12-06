@@ -104,7 +104,7 @@ variable "kms_config" {
     private_endpoint = optional(bool, true) # defaults to true
     account_id       = optional(string)     # To attach HPCS instance from another account
   })
-  description = "Use to attach a HPCS instance to the cluster. if account_id is not provided, defaults to the account in use."
+  description = "Use to attach a HPCS instance to the cluster. If account_id is not provided, defaults to the account in use."
 }
 
 variable "vpc_id" {
