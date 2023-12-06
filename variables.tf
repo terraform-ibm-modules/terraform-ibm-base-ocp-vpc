@@ -147,25 +147,25 @@ variable "force_delete_storage" {
 
 variable "cos_name" {
   type        = string
-  description = "Name of the COS instance to provision. New instance only provisioned if `use_existing_cos = false`. Default: `<cluster_name>_cos`"
+  description = "Name of the COS instance to provision for OpenShift internal registry storage. New instance only provisioned if 'enable_registry_storage' is true and 'use_existing_cos' is false. Default: '<cluster_name>_cos'"
   default     = null
 }
 
 variable "use_existing_cos" {
   type        = bool
-  description = "Flag indicating whether or not to use an existing COS instance"
+  description = "Flag indicating whether or not to use an existing COS instance for OpenShift internal registry storage. Only applicable if 'enable_registry_storage' is true"
   default     = false
 }
 
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance. Only required if 'use_existing_cos = true'"
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' and 'use_existing_cos' are true"
   default     = null
 }
 
-variable "enable_registry_backup" {
+variable "enable_registry_storage" {
   type        = bool
-  description = "Enable backup of OpenShift internal registry to standard Cloud Object Storage bucket"
+  description = "Enable storage of the OpenShift internal registry to a standard Cloud Object Storage bucket (recommended)"
   default     = true
 }
 

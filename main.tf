@@ -14,13 +14,14 @@ locals {
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : (var.ocp_version == "latest" ? local.latest_ocp_version : "${var.ocp_version}_openshift")
 
-  cos_name         = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
-  cos_location     = "global"
-  cos_plan         = "standard"
-  cos_instance_crn = var.enable_registry_backup ? var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id : null
+  cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
+  cos_location = "global"
+  cos_plan     = "standard"
+  # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
+  cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
   # Validation approach based on https://stackoverflow.com/a/66682419
-  validate_condition = var.use_existing_cos == true && var.existing_cos_id == null
+  validate_condition = var.enable_registry_storage == true && var.use_existing_cos == true && var.existing_cos_id == null
   validate_msg       = "A value for 'existing_cos_id' variable must be passed when 'use_existing_cos = true'"
   # tflint-ignore: terraform_unused_declarations
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
@@ -45,7 +46,7 @@ data "ibm_container_cluster_versions" "cluster_versions" {
 }
 
 module "cos_instance" {
-  count = var.enable_registry_backup && !var.use_existing_cos ? 1 : 0
+  count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
   version                = "7.0.5"
@@ -63,7 +64,7 @@ moved {
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
-  count       = var.enable_registry_backup && !var.use_existing_cos && length(var.access_tags) > 0 ? 1 : 0
+  count       = var.enable_registry_storage && !var.use_existing_cos && length(var.access_tags) > 0 ? 1 : 0
   resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
