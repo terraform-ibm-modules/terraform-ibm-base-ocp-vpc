@@ -47,8 +47,8 @@ resource "ibm_is_subnet" "subnet_zone_1" {
 ########################################################################################################################
 
 locals {
-  kp_key_id     = regex("key:(.*)", var.kms_key_crn)[0] 
-  
+  kp_key_id = regex("key:(.*)", var.kms_key_crn)[0]
+
   cluster_vpc_subnets = {
     default = [
       {
