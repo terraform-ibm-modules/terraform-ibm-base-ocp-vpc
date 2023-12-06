@@ -127,8 +127,8 @@ func TestCrossKmsSupportExample(t *testing.T) {
 		TerraformDir: crossKmsSupportExampleDir,
 		Prefix:       "cross-kp",
 		TerraformVars: map[string]interface{}{
-			"kms_instance_guid":    permanentResources["kp_south"],
-			"kms_key_crn":          permanentResources["kp_south_root_key_crn"],
+			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
+			"kms_key_crn":          permanentResources["kp_us_south_root_key_crn"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
 		},
 	})
