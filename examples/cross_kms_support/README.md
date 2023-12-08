@@ -10,4 +10,5 @@ The following resources are provisioned by this example:
 - For production use cases this would need to be enhanced by adding more subnets and zones for resiliency and ACLs/Security Groups for network security.
 
 ## Note:
+- This requires an `account_id` (IBM account ID where KMS instance is deployed) value in the `kms_config` input variable.
 - An IBM IAM service to service authorization policy between VPC cluster and KMS instance is required to set up in the IBM account where KMS instance is created.
