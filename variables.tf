@@ -165,7 +165,7 @@ variable "existing_cos_id" {
 
 variable "enable_registry_storage" {
   type        = bool
-  description = "Enable storage of the OpenShift internal registry to a standard Cloud Object Storage bucket (recommended)"
+  description = "Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature."
   default     = true
 }
 
