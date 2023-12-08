@@ -51,7 +51,6 @@ variable "access_tags" {
 variable "kms_instance_guid" {
   type        = string
   description = "The GUID of the KMS instance to provision the encryption keys"
-
 }
 
 variable "kms_key_crn" {

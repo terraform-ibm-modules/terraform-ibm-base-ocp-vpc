@@ -20,10 +20,9 @@ module "resource_group" {
 ########################################################################################################################
 
 resource "ibm_is_vpc" "vpc" {
-  name                      = "${var.prefix}-vpc"
-  resource_group            = module.resource_group.resource_group_id
-  address_prefix_management = "auto"
-  tags                      = var.resource_tags
+  name           = "${var.prefix}-vpc"
+  resource_group = module.resource_group.resource_group_id
+  tags           = var.resource_tags
 }
 
 resource "ibm_is_public_gateway" "gateway" {
@@ -49,6 +48,12 @@ resource "ibm_is_subnet" "subnet_zone_1" {
 locals {
   kp_key_id = regex("key:(.*)", var.kms_key_crn)[0]
 
+  boot_volume_encryption_kms_config = {
+    crk             = local.kp_key_id
+    kms_instance_id = var.kms_instance_guid
+    kms_account_id  = var.kms_cross_account_id
+  }
+
   cluster_vpc_subnets = {
     default = [
       {
@@ -61,10 +66,11 @@ locals {
 
   worker_pools = [
     {
-      subnet_prefix    = "default"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+      subnet_prefix                     = "default"
+      pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 2 # minimum of 2 is allowed when using single zone
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
 }
@@ -88,4 +94,6 @@ module "ocp_base" {
     crk_id      = local.kp_key_id
     account_id  = var.kms_cross_account_id
   }
+
+
 }

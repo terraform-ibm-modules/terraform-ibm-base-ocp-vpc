@@ -23,9 +23,9 @@ Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https://cl
 * [Examples](./examples)
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
-    * [Basic example shows cross account KMS support](./examples/cross_kms_support)
     * [Basic single zone example](./examples/basic)
     * [Cluster security group rules example](./examples/add_rules_to_sg)
+    * [Cross account KMS encryption example](./examples/cross_kms_support)
     * [Financial Services compliant example](./examples/fscloud)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
@@ -219,6 +219,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the created cluster |
 | <a name="output_cos_crn"></a> [cos\_crn](#output\_cos\_crn) | CRN of the COS instance |
 | <a name="output_ingress_hostname"></a> [ingress\_hostname](#output\_ingress\_hostname) | Ingress hostname |
+| <a name="output_kms_config"></a> [kms\_config](#output\_kms\_config) | KMS configuration details |
 | <a name="output_ocp_version"></a> [ocp\_version](#output\_ocp\_version) | Openshift Version of the cluster |
 | <a name="output_private_service_endpoint_url"></a> [private\_service\_endpoint\_url](#output\_private\_service\_endpoint\_url) | Private service endpoint URL |
 | <a name="output_public_service_endpoint_url"></a> [public\_service\_endpoint\_url](#output\_public\_service\_endpoint\_url) | Public service endpoint URL |

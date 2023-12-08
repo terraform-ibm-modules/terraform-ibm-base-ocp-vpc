@@ -1,0 +1,9 @@
+{
+  "ibmcloud_api_key": $VALIDATION_APIKEY,
+  "region": "au-syd",
+  "resource_tags": $TAGS,
+  "prefix": $PREFIX
+  "kms_instance_guid": $KMS_INSTANCE_GUID
+  "kms_key_crn": $KMS_KEY_CRN
+  "kms_cross_account_id": $KMS_ACCOUNT_ID
+}

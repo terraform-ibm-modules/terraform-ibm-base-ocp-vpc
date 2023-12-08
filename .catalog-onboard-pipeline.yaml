@@ -16,3 +16,5 @@ offerings:
         mark_ready: true
       - name: add_rules_to_sg
         mark_ready: true
+      - name: cross_kms_support
+        mark_ready: true

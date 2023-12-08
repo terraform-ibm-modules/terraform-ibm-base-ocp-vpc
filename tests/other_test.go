@@ -80,3 +80,24 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
+
+func TestCrossKmsSupportExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: crossKmsSupportExampleDir,
+		Prefix:       "cross-kp",
+		TerraformVars: map[string]interface{}{
+			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
+			"kms_key_crn":          permanentResources["kp_us_south_root_key_crn"],
+			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+
+}

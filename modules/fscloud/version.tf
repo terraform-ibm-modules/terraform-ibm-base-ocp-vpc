@@ -14,5 +14,20 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = ">= 1.60.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
+    null = {
+      source  = "hashicorp/null"
+      version = ">= 3.2.1"
+    }
+    # tflint-ignore: terraform_unused_required_providers
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.9.1"
+    }
+    # tflint-ignore: terraform_unused_required_providers
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.16.1"
+    }
   }
 }
