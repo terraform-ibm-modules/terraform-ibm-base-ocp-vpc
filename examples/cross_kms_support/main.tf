@@ -94,6 +94,4 @@ module "ocp_base" {
     crk_id      = local.kp_key_id
     account_id  = var.kms_cross_account_id
   }
-
-
 }

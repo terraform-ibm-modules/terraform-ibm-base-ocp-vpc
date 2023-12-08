@@ -2,8 +2,8 @@
   "ibmcloud_api_key": $VALIDATION_APIKEY,
   "region": "au-syd",
   "resource_tags": $TAGS,
-  "prefix": $PREFIX
-  "kms_instance_guid": $GE_OPS_KP_US_SOUTH_GUID
-  "kms_key_crn": $GE_OPS_KP_US_ROOT_KEY_CRN
+  "prefix": $PREFIX,
+  "kms_instance_guid": $GE_OPS_KP_US_SOUTH_GUID,
+  "kms_key_crn": $GE_OPS_KP_US_ROOT_KEY_CRN,
   "kms_cross_account_id": $GE_OPS_ACCOUNT_ID
 }
