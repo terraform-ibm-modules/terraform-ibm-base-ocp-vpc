@@ -1,15 +1,10 @@
 # Cross account KMS encryption example
 
-A simple example that shows how to provision a basic single zone OCP VPC cluster with cross account KMS encryption.
+A simple example that shows how to provision a VPC with single subnet in a single zone with a public gateway enabled OCP VPC cluster with cross account KMS encryption.
 
 The following resources are provisioned by this example:
 - A new resource group, if an existing one is not passed in.
 - A basic VPC and subnet with public gateway enabled.
 - A single zone OCP VPC cluster configured with KMS encryption for cluster data and worker block storage using a KMS encryption key from another account.
-
-
-## NOTE:
-### This is a very simple VPC with single subnet in a single zone with a public gateway enabled, that will allow
-- All traffic ingress/egress by default.
-- For production use cases this would need to be enhanced by adding more subnets and zones for resiliency, and
-- ACLs/Security Groups for network security.
+- Will allow all traffic ingress/egress by default.
+- For production use cases this would need to be enhanced by adding more subnets and zones for resiliency and ACLs/Security Groups for network security.

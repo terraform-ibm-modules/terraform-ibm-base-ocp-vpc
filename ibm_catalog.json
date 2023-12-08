@@ -133,14 +133,14 @@
                     }
                 },
                 {
-                    "label": "Cross account KMS encryption example",
+                    "label": "Cross account KMS encryption",
                     "name": "cross_kms_support",
                     "working_directory": "examples/cross_kms_support",
                     "architecture": {
                         "diagrams": [
                             {
                                 "diagram": {
-                                    "caption": "Cluster security group rules example",
+                                    "caption": "Cross account KMS encryption example",
                                     "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
                                     "type": "image/svg+xml"
                                 },
