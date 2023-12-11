@@ -46,10 +46,8 @@ resource "ibm_is_subnet" "subnet_zone_1" {
 ########################################################################################################################
 
 locals {
-  kp_key_id = regex("key:(.*)", var.kms_key_crn)[0]
-
   boot_volume_encryption_kms_config = {
-    crk             = local.kp_key_id
+    crk             = var.kms_key_id
     kms_instance_id = var.kms_instance_guid
     kms_account_id  = var.kms_cross_account_id
   }
@@ -91,7 +89,7 @@ module "ocp_base" {
 
   kms_config = {
     instance_id = var.kms_instance_guid
-    crk_id      = local.kp_key_id
+    crk_id      = var.kms_key_id
     account_id  = var.kms_cross_account_id
   }
 }

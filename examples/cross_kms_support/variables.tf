@@ -53,9 +53,9 @@ variable "kms_instance_guid" {
   description = "The GUID of the KMS instance to provision the encryption keys"
 }
 
-variable "kms_key_crn" {
+variable "kms_key_id" {
   type        = string
-  description = "CRN of the KMS instance to encrypt the cluster"
+  description = "The id of the root key in the KMS instance that will be used to encrypt the cluster."
 }
 
 variable "kms_cross_account_id" {
