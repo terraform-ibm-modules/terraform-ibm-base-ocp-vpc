@@ -131,6 +131,23 @@
                             }
                         ]
                     }
+                },
+                {
+                    "label": "Cross account KMS encryption",
+                    "name": "cross_kms_support",
+                    "working_directory": "examples/cross_kms_support",
+                    "architecture": {
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Cross account KMS encryption example",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/ModuleExampleDiagram.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "A single zone OCP VPC cluster configured with KMS encryption for cluster data and worker block storage using a KMS encryption key from another account."
+                            }
+                        ]
+                    }
                 }
             ]
         }

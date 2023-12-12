@@ -64,3 +64,8 @@ output "public_service_endpoint_url" {
   description = "Public service endpoint URL"
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].public_service_endpoint_url : ibm_container_vpc_cluster.cluster[0].public_service_endpoint_url
 }
+
+output "kms_config" {
+  description = "KMS configuration details"
+  value       = var.kms_config
+}

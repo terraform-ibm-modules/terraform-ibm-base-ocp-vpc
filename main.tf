@@ -124,6 +124,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
       crk_id           = var.kms_config.crk_id
       instance_id      = var.kms_config.instance_id
       private_endpoint = var.kms_config.private_endpoint == null ? true : var.kms_config.private_endpoint
+      account_id       = var.kms_config.account_id
     }
   }
 
@@ -185,6 +186,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
       crk_id           = var.kms_config.crk_id
       instance_id      = var.kms_config.instance_id
       private_endpoint = var.kms_config.private_endpoint
+      account_id       = var.kms_config.account_id
     }
   }
 
