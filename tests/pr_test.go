@@ -17,6 +17,7 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
+const crossKmsSupportExampleDir = "examples/cross_kms_support"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
