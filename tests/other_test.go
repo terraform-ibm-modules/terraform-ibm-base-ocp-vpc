@@ -92,6 +92,7 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
 			"kms_key_id":           permanentResources["kp_us_south_root_key_id"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
+			"ocp_version":          ocpVersion2,
 		},
 	})
 
