@@ -79,9 +79,8 @@ locals {
   subnets = [
     for subnet in ibm_is_subnet.subnets :
     {
-      id         = subnet.id
-      zone       = subnet.zone
-      cidr_block = subnet.ipv4_cidr_block
+      id   = subnet.id
+      zone = subnet.zone
     }
   ]
 

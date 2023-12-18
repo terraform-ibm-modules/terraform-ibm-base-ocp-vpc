@@ -66,9 +66,8 @@ locals {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
       {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.ipv4_cidr_block
+        id   = subnet.id
+        zone = subnet.zone
       }
     ]
   }
@@ -77,9 +76,8 @@ locals {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_2 :
       {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.ipv4_cidr_block
+        id   = subnet.id
+        zone = subnet.zone
       }
     ]
   }

@@ -209,9 +209,8 @@ locals {
     default = [
       for subnet in module.vpc.subnet_zone_list :
       {
-        id         = subnet.id
-        zone       = subnet.zone
-        cidr_block = subnet.cidr
+        id   = subnet.id
+        zone = subnet.zone
       }
     ]
   }

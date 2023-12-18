@@ -139,9 +139,8 @@ locals {
   cluster_vpc_subnets = {
     default = [
       {
-        id         = ibm_is_subnet.subnet_zone_1.id
-        cidr_block = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block
-        zone       = ibm_is_subnet.subnet_zone_1.zone
+        id   = ibm_is_subnet.subnet_zone_1.id
+        zone = ibm_is_subnet.subnet_zone_1.zone
       }
     ]
   }

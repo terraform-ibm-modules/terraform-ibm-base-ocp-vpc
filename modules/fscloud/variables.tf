@@ -33,9 +33,8 @@ variable "cluster_name" {
 
 variable "vpc_subnets" {
   type = map(list(object({
-    id         = string
-    zone       = string
-    cidr_block = string
+    id   = string
+    zone = string
   })))
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
 }

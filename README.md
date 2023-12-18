@@ -44,55 +44,46 @@ module "ocp_base" {
   region               = "us-south"
   force_delete_storage = true
   vpc_id               = "79cxxxx-xxxx-xxxx-xxxx-xxxxxXX8667"
-  # obtain the below values from the targeted VPC and adjust to the number of zones, subnets, subnet name, cidr_block, id, zone
+  # obtain the below values from the targeted VPC and adjust to the number of zones, subnets, subnet name, id, zone
   vpc_subnets          = {
     zone-1    = [
         {
-            cidr_block = "192.168.32.0/22"
             id         = "0717-afc29fbb-0dbe-493a-a5b9-f3c5899cb8b9"
             zone       = "us-south-1"
         },
         {
-            cidr_block = "192.168.36.0/22"
             id         = "0727-d65c1eda-9e38-4200-8452-cb8ff5bb3140"
             zone       = "us-south-2"
         },
         {
-            cidr_block = "192.168.40.0/22"
             id         = "0737-9a823cd3-16bf-4ba4-a429-9e1fc7db74b8"
             zone       = "us-south-3"
         }
     ]
     zone-2 = [
         {
-            cidr_block = "192.168.0.0/22"
             id         = "0717-846b9490-34ae-4a6c-8288-28112dca1ba3"
             zone       = "us-south-1"
         },
         {
-            cidr_block = "192.168.4.0/22"
             id         = "0727-ef8db7f6-ffa5-4d8b-a317-4631741a45ee"
             zone       = "us-south-2"
         },
         {
-            cidr_block = "192.168.8.0/22"
             id         = "0737-c9a6d871-d95b-4914-abf5-82c22f4161d1"
             zone       = "us-south-3"
         }
     ]
     zone-3 = [
         {
-            cidr_block = "192.168.16.0/22"
             id         = "0717-d46e227c-89d4-4b02-9008-d03907a275b6"
             zone       = "us-south-1"
         },
         {
-            cidr_block = "192.168.20.0/22"
             id         = "0727-93b1edcb-966c-4517-a7af-6ac63cd93adf"
             zone       = "us-south-2"
         },
         {
-            cidr_block = "192.168.24.0/22"
             id         = "0737-807ec4f1-4d84-484e-b2f4-62dd5e431065"
             zone       = "us-south-3"
         }
@@ -207,8 +198,8 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_use_existing_cos"></a> [use\_existing\_cos](#input\_use\_existing\_cos) | Flag indicating whether or not to use an existing COS instance for OpenShift internal registry storage. Only applicable if 'enable\_registry\_storage' is true | `bool` | `false` | no |
 | <a name="input_verify_worker_network_readiness"></a> [verify\_worker\_network\_readiness](#input\_verify\_worker\_network\_readiness) | By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false. | `bool` | `true` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Id of the VPC instance where this cluster will be provisioned | `string` | n/a | yes |
-| <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created | <pre>map(list(object({<br>    id         = string<br>    zone       = string<br>    cidr_block = string<br>  })))</pre> | n/a | yes |
-| <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools) | List of worker pools | <pre>list(object({<br>    subnet_prefix = optional(string)<br>    vpc_subnets = optional(list(object({<br>      id         = string<br>      zone       = string<br>      cidr_block = string<br>    })))<br>    pool_name         = string<br>    machine_type      = string<br>    workers_per_zone  = number<br>    resource_group_id = optional(string)<br>    labels            = optional(map(string))<br>    minSize           = optional(number)<br>    maxSize           = optional(number)<br>    enableAutoscaling = optional(bool)<br>    boot_volume_encryption_kms_config = optional(object({<br>      crk             = string<br>      kms_instance_id = string<br>      kms_account_id  = optional(string)<br>    }))<br>  }))</pre> | n/a | yes |
+| <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created | <pre>map(list(object({<br>    id   = string<br>    zone = string<br>  })))</pre> | n/a | yes |
+| <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools) | List of worker pools | <pre>list(object({<br>    subnet_prefix = optional(string)<br>    vpc_subnets = optional(list(object({<br>      id   = string<br>      zone = string<br>    })))<br>    pool_name         = string<br>    machine_type      = string<br>    workers_per_zone  = number<br>    resource_group_id = optional(string)<br>    labels            = optional(map(string))<br>    minSize           = optional(number)<br>    maxSize           = optional(number)<br>    enableAutoscaling = optional(bool)<br>    boot_volume_encryption_kms_config = optional(object({<br>      crk             = string<br>      kms_instance_id = string<br>      kms_account_id  = optional(string)<br>    }))<br>  }))</pre> | n/a | yes |
 | <a name="input_worker_pools_taints"></a> [worker\_pools\_taints](#input\_worker\_pools\_taints) | Optional, Map of lists containing node taints by node-pool name | `map(list(object({ key = string, value = string, effect = string })))` | `null` | no |
 
 ### Outputs
