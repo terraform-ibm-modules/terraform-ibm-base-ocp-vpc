@@ -157,7 +157,7 @@ module "ocp_base" {
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
-    "cluster-autoscaler" = "1.0.8"
+    "cluster-autoscaler" = "1.2.0"
   }
   kms_config = {
     instance_id = module.kp_all_inclusive.key_protect_guid
