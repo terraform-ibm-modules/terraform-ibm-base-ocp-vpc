@@ -185,28 +185,28 @@ module "observability_instances" {
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.15.3"
+  version = "1.16.0"
   providers = {
     helm = helm.helm_cluster_1
   }
-  cluster_id                = module.ocp_base_cluster_1.cluster_id
-  cluster_resource_group_id = module.resource_group.resource_group_id
-  logdna_instance_name      = module.observability_instances.log_analysis_name
-  logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
-  sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
-  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
+  cluster_id                     = module.ocp_base_cluster_1.cluster_id
+  cluster_resource_group_id      = module.resource_group.resource_group_id
+  log_analysis_instance_name     = module.observability_instances.log_analysis_name
+  log_analysis_ingestion_key     = module.observability_instances.log_analysis_ingestion_key
+  cloud_monitoring_instance_name = module.observability_instances.cloud_monitoring_name
+  cloud_monitoring_access_key    = module.observability_instances.cloud_monitoring_access_key
 }
 
 module "observability_agents_2" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.15.3"
+  version = "1.16.0"
   providers = {
     helm = helm.helm_cluster_2
   }
-  cluster_id                = module.ocp_base_cluster_2.cluster_id
-  cluster_resource_group_id = module.ocp_base_cluster_2.resource_group_id
-  logdna_instance_name      = module.observability_instances.log_analysis_name
-  logdna_ingestion_key      = module.observability_instances.log_analysis_ingestion_key
-  sysdig_instance_name      = module.observability_instances.cloud_monitoring_name
-  sysdig_access_key         = module.observability_instances.cloud_monitoring_access_key
+  cluster_id                     = module.ocp_base_cluster_2.cluster_id
+  cluster_resource_group_id      = module.ocp_base_cluster_2.resource_group_id
+  log_analysis_instance_name     = module.observability_instances.log_analysis_name
+  log_analysis_ingestion_key     = module.observability_instances.log_analysis_ingestion_key
+  cloud_monitoring_instance_name = module.observability_instances.cloud_monitoring_name
+  cloud_monitoring_access_key    = module.observability_instances.cloud_monitoring_access_key
 }
