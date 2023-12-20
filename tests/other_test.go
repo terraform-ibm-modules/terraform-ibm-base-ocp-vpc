@@ -40,6 +40,10 @@ func TestRunMultiClusterExample(t *testing.T) {
 				"module.observability_agents_1.helm_release.sysdig_agent",
 				"module.observability_agents_2.helm_release.logdna_agent",
 				"module.observability_agents_2.helm_release.sysdig_agent",
+				"module.observability_agents_1.helm_release.log_analysis_agent",
+				"module.observability_agents_1.helm_release.cloud_monitoring_agent",
+				"module.observability_agents_2.helm_release.log_analysis_agent",
+				"module.observability_agents_2.helm_release.cloud_monitoring_agent",
 			},
 		},
 		ImplicitDestroy: []string{ // Ignore full destroy to speed up tests
@@ -47,6 +51,10 @@ func TestRunMultiClusterExample(t *testing.T) {
 			"module.observability_agents_1.helm_release.sysdig_agent",
 			"module.observability_agents_2.helm_release.logdna_agent",
 			"module.observability_agents_2.helm_release.sysdig_agent",
+			"module.observability_agents_1.helm_release.log_analysis_agent",
+			"module.observability_agents_1.helm_release.cloud_monitoring_agent",
+			"module.observability_agents_2.helm_release.log_analysis_agent",
+			"module.observability_agents_2.helm_release.cloud_monitoring_agent",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
