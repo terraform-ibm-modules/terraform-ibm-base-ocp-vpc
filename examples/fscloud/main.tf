@@ -17,7 +17,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "7.1.3"
+  version                       = "7.1.4"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -33,7 +33,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "7.1.3"
+  version = "7.1.4"
 
   bucket_configs = [
     {
@@ -55,7 +55,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.13.3"
+  version           = "7.15.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -114,7 +114,7 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.10.3"
+  version = "2.11.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
