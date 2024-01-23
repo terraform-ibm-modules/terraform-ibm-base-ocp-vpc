@@ -38,6 +38,17 @@ locals {
   update_timeout = "3h"
 
   cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+
+  # security group attached to worker pool
+  # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
+  # see https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui#vpc-sg-cluster
+
+  # attach_ibm_managed_security_group is true and custom_security_group_ids is not set => default behavior, so set to null
+  # attach_ibm_managed_security_group is true and custom_security_group_ids is set => add "cluster" to the list of custom security group ids
+
+  # attach_ibm_managed_security_group is false and custom_security_group_ids is not set => default behavior, so set to null
+  # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
+  cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 }
 
 # Lookup the current default kube version
@@ -93,6 +104,8 @@ resource "ibm_container_vpc_cluster" "cluster" {
   crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
 
   lifecycle {
     ignore_changes = [kube_version]
@@ -155,6 +168,8 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
 
   lifecycle {
     ignore_changes = [worker_count, kube_version]
@@ -262,6 +277,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
+  security_groups = each.value.additional_security_groups
+
   dynamic "zones" {
     for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
@@ -271,7 +288,6 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # Apply taints to worker pools i.e. other_pools
-
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
     content {

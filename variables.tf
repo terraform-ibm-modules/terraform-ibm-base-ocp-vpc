@@ -61,6 +61,7 @@ variable "worker_pools" {
       kms_instance_id = string
       kms_account_id  = optional(string)
     }))
+    additional_security_groups = optional(list(string))
   }))
   description = "List of worker pools"
   validation {
@@ -91,6 +92,22 @@ variable "worker_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
   description = "Optional, Map of lists containing node taints by node-pool name"
   default     = null
+}
+
+variable "attach_ibm_managed_security_group" {
+  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if custom_security_group_ids is set."
+  type        = bool
+  default     = true
+}
+
+variable "custom_security_group_ids" {
+  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if use_ibm_managed_security_group is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
+  type        = list(string)
+  default     = null
+  validation {
+    condition     = length(var.custom_security_group_ids) <= 4
+    error_message = "Please provide at most 4 additional security groups."
+  }
 }
 
 variable "ignore_worker_pool_size_changes" {
