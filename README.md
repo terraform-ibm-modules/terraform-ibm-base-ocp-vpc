@@ -23,7 +23,7 @@ Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https://cl
 * [Examples](./examples)
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
-    * [Attaching custom security groups](./examples/basic_custom_sg)
+    * [Attaching custom security groups](./examples/custom_sg)
     * [Basic single zone example](./examples/basic)
     * [Cluster security group rules example](./examples/add_rules_to_sg)
     * [Cross account KMS encryption example](./examples/cross_kms_support)
@@ -152,7 +152,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, < 1.6.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.60.0, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.62.0-beta0, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |

@@ -105,7 +105,7 @@ variable "custom_security_group_ids" {
   type        = list(string)
   default     = null
   validation {
-    condition     = length(var.custom_security_group_ids) <= 4
+    condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
     error_message = "Please provide at most 4 additional security groups."
   }
 }
