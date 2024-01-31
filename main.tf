@@ -464,7 +464,7 @@ data "ibm_is_lbs" "all_lbs" {
 }
 
 locals {
-  lbs_associated_with_cluster = var.additional_lb_security_group_ids != null ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
+  lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
 module "attach_sg_to_lb" {
