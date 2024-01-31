@@ -37,6 +37,17 @@ locals {
   update_timeout = "3h"
 
   cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+
+  # security group attached to worker pool
+  # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
+  # see https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui#vpc-sg-cluster
+
+  # attach_ibm_managed_security_group is true and custom_security_group_ids is not set => default behavior, so set to null
+  # attach_ibm_managed_security_group is true and custom_security_group_ids is set => add "cluster" to the list of custom security group ids
+
+  # attach_ibm_managed_security_group is false and custom_security_group_ids is not set => default behavior, so set to null
+  # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
+  cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 }
 
 # Lookup the current default kube version
@@ -92,6 +103,8 @@ resource "ibm_container_vpc_cluster" "cluster" {
   crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
 
   lifecycle {
     ignore_changes = [kube_version]
@@ -154,6 +167,8 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
 
   lifecycle {
     ignore_changes = [worker_count, kube_version]
@@ -261,6 +276,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
+  security_groups = each.value.additional_security_group_ids
+
   dynamic "zones" {
     for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
     content {
@@ -270,7 +287,6 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # Apply taints to worker pools i.e. other_pools
-
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
     content {
@@ -430,4 +446,78 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
   }
 
   force = true
+}
+
+
+##############################################################################
+# Attach additional security groups to the load balancers managed by this
+# cluster. Note that the module attaches security group to existing loadbalancer
+# only. Re-run the module to attach security groups to new load balancers created
+# after the initial run of this module. The module detects new load balancers.
+# https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui#vpc-sg-vpe-alb
+##############################################################################
+
+data "ibm_is_lbs" "all_lbs" {
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  count      = length(var.additional_lb_security_group_ids) > 0 ? 1 : 0
+}
+
+locals {
+  lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
+}
+
+module "attach_sg_to_lb" {
+  count                          = length(var.additional_lb_security_group_ids)
+  source                         = "terraform-ibm-modules/security-group/ibm"
+  version                        = "2.4.0"
+  existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
+  use_existing_security_group_id = true
+  target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
+}
+
+
+##############################################################################
+# Attach additional security groups to the load balancers managed by this
+# cluster. Note that the module attaches security group to existing loadbalancer
+# only. Re-run the module to attach security groups to new load balancers created
+# after the initial run of this module. The module detects new load balancers.
+# https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui#vpc-sg-vpe-alb
+##############################################################################
+
+data "ibm_is_virtual_endpoint_gateways" "all_vpes" {
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  count      = var.additional_vpe_security_group_ids != {} ? 1 : 0
+}
+
+locals {
+  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
+  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
+}
+
+module "attach_sg_to_master_vpe" {
+  count                          = length(var.additional_vpe_security_group_ids["master"])
+  source                         = "terraform-ibm-modules/security-group/ibm"
+  version                        = "2.4.0"
+  existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
+  use_existing_security_group_id = true
+  target_ids                     = [local.master_vpe_id]
+}
+
+module "attach_sg_to_api_vpe" {
+  count                          = length(var.additional_vpe_security_group_ids["api"])
+  source                         = "terraform-ibm-modules/security-group/ibm"
+  version                        = "2.4.0"
+  existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
+  use_existing_security_group_id = true
+  target_ids                     = [local.api_vpe_id]
+}
+
+module "attach_sg_to_registry_vpe" {
+  count                          = length(var.additional_vpe_security_group_ids["registry"])
+  source                         = "terraform-ibm-modules/security-group/ibm"
+  version                        = "2.4.0"
+  existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
+  use_existing_security_group_id = true
+  target_ids                     = [local.registry_vpe_id]
 }

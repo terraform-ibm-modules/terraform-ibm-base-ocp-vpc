@@ -61,6 +61,7 @@ variable "worker_pools" {
       kms_instance_id = string
       kms_account_id  = optional(string)
     }))
+    additional_security_group_ids = optional(list(string))
   }))
   description = "List of worker pools"
   validation {
@@ -91,6 +92,54 @@ variable "worker_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
   description = "Optional, Map of lists containing node taints by node-pool name"
   default     = null
+}
+
+variable "attach_ibm_managed_security_group" {
+  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if custom_security_group_ids is set."
+  type        = bool
+  default     = true
+}
+
+variable "custom_security_group_ids" {
+  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if use_ibm_managed_security_group is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
+  type        = list(string)
+  default     = null
+  validation {
+    condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
+    error_message = "Please provide at most 4 additional security groups."
+  }
+}
+
+variable "additional_lb_security_group_ids" {
+  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the number_of_lbs is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  type        = list(string)
+  default     = []
+  nullable    = false
+  validation {
+    condition     = var.additional_lb_security_group_ids == null ? true : length(var.additional_lb_security_group_ids) <= 4
+    error_message = "Please provide at most 4 additional security groups."
+  }
+}
+
+variable "number_of_lbs" {
+  description = "The number of LBs to associated the additional_lb_security_group_names security group with."
+  type        = number
+  default     = 1
+  nullable    = false
+  validation {
+    condition     = var.number_of_lbs >= 1
+    error_message = "Please set the number_of_lbs to a minumum of."
+  }
+}
+
+variable "additional_vpe_security_group_ids" {
+  description = "Additional security groups to add to all existing load balancers. This comes in addition to the IBM maintained security group."
+  type = object({
+    master   = optional(list(string), [])
+    registry = optional(list(string), [])
+    api      = optional(list(string), [])
+  })
+  default = {}
 }
 
 variable "ignore_worker_pool_size_changes" {
