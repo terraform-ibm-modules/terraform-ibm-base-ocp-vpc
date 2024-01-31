@@ -9,4 +9,4 @@ The following resources are provisioned by this example:
 - Security rules to the `kube-<vpcid>` and `kube-<clusterId>` security groups.
 - A basic single zone OCP VPC cluster.
 
-You may also be interested in the [example](./custom_sg) that attaches separate security groups to worker nodes, as opposed to adding rules to existing IBM managed security groups.
+You may also be interested in the [example](../custom_sg) that attaches separate security groups to worker nodes, as opposed to adding rules to existing IBM managed security groups.

@@ -109,11 +109,11 @@ module "ocp_base" {
 
 The Terraform module provides options to attach additional security groups to the worker nodes, VPE, and load balancer associated with the cluster.
 
-The [custom_sg examples](./examples/custom_sg/) demonstrates how to use these capabilities.
+The [custom_sg example](./examples/custom_sg/) demonstrates how to use these capabilities.
 
 See the IBM Cloud documentation on this topic [here](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui)
 
-:information: Tip: The [terraform-ibm-security-groups](https://github.com/terraform-ibm-modules/terraform-ibm-security-group) module can be used to create security groups and rules.
+Tip: The [terraform-ibm-security-groups](https://github.com/terraform-ibm-modules/terraform-ibm-security-group) module can be used to create security groups and rules.
 
 #### Worker nodes
 
@@ -192,7 +192,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, < 1.6.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.62.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.62.0, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1 |

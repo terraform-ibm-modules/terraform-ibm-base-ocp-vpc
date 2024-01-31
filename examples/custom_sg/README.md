@@ -1,6 +1,6 @@
 # Attaching custom security groups
 
-An example showing how to create a cluster with the following security group attachment:
+An example showing how to attach additional security groups to the worker pools, VPE and load balancers:
 
 1. A custom security group, named `custom-cluster-sg`, is specified at cluster creation. This security group is attached to all worker nodes of the cluster, including the worker nodes created after the creation of the cluster.
 2. A second custom security group, named `custom-worker-pool-sg`, is specified for one of the `custom-sg` worker pools. This security group is not applied to other worker pools.

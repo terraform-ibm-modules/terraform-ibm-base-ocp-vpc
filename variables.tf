@@ -140,11 +140,6 @@ variable "additional_vpe_security_group_ids" {
     api      = optional(list(string), [])
   })
   default = {}
-  #nullable = false
-  # validation {
-  #   condition     = var.additional_lb_security_group_names == null ? true : length(var.additional_lb_security_group_names) <= 4
-  #   error_message = "Please provide at most 4 additional security groups."
-  # }
 }
 
 variable "ignore_worker_pool_size_changes" {
