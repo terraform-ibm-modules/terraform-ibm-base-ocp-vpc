@@ -492,8 +492,8 @@ data "ibm_is_virtual_endpoint_gateways" "all_vpes" {
 
 locals {
   master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
-  api_vpe_id      = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0]
-  registry_vpe_id = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0]
+  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
 }
 
 module "attach_sg_to_master_vpe" {
