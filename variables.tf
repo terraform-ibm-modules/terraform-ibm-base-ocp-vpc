@@ -61,7 +61,7 @@ variable "worker_pools" {
       kms_instance_id = string
       kms_account_id  = optional(string)
     }))
-    additional_security_groups = optional(list(string))
+    additional_security_group_ids = optional(list(string))
   }))
   description = "List of worker pools"
   validation {
@@ -108,6 +108,43 @@ variable "custom_security_group_ids" {
     condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
     error_message = "Please provide at most 4 additional security groups."
   }
+}
+
+variable "additional_lb_security_group_ids" {
+  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the number_of_lbs is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  type        = list(string)
+  default     = []
+  nullable    = false
+  validation {
+    condition     = var.additional_lb_security_group_ids == null ? true : length(var.additional_lb_security_group_ids) <= 4
+    error_message = "Please provide at most 4 additional security groups."
+  }
+}
+
+variable "number_of_lbs" {
+  description = "The number of LBs to associated the additional_lb_security_group_names security group with."
+  type        = number
+  default     = 1
+  nullable    = false
+  validation {
+    condition     = var.number_of_lbs >= 1
+    error_message = "Please set the number_of_lbs to a minumum of."
+  }
+}
+
+variable "additional_vpe_security_group_ids" {
+  description = "Additional security groups to add to all existing load balancers. This comes in addition to the IBM maintained security group."
+  type = object({
+    master   = optional(list(string), [])
+    registry = optional(list(string), [])
+    api      = optional(list(string), [])
+  })
+  default = {}
+  #nullable = false
+  # validation {
+  #   condition     = var.additional_lb_security_group_names == null ? true : length(var.additional_lb_security_group_names) <= 4
+  #   error_message = "Please provide at most 4 additional security groups."
+  # }
 }
 
 variable "ignore_worker_pool_size_changes" {
