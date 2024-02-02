@@ -417,7 +417,7 @@ resource "ibm_container_addons" "addons" {
 
 resource "time_sleep" "wait_operators" {
   depends_on      = [ibm_container_addons.addons]
-  create_duration = "5s"
+  create_duration = "30s"
 }
 
 locals {
