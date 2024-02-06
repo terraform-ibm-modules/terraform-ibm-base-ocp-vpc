@@ -33,7 +33,7 @@ done
 # run api-key reset command if apikey for given region + resource group does not already exist
 reset=true
 key_descriptions=()
-while IFS='' read -r line; do key_descriptions+=("$line"); done < <(ibmcloud iam api-keys --all --output json | jq -r --arg name "${APIKEY_KEY_NAME}"'.[] | select(.name == $name) | .description')
+while IFS='' read -r line; do key_descriptions+=("$line"); done < <(ibmcloud iam api-keys --all --output json | jq -r --arg name "${APIKEY_KEY_NAME}" '.[] | select(.name == $name) | .description')
 for i in "${key_descriptions[@]}"; do
   if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
     echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
