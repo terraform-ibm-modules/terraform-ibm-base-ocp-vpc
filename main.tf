@@ -429,7 +429,9 @@ locals {
 }
 
 resource "null_resource" "config_map_status" {
-  count = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  depends_on = [ibm_container_addons.addons]
+
   provisioner "local-exec" {
     command     = "${path.module}/scripts/get_config_map_status.sh"
     interpreter = ["/bin/bash", "-c"]
