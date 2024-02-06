@@ -442,6 +442,7 @@ resource "null_resource" "config_map_status" {
 }
 
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
+  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
   depends_on = [null_resource.config_map_status]
 
   metadata {
