@@ -253,7 +253,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.verify_worker_network_readiness ? 1 : 0
+  count             = var.verify_worker_network_readiness || !(var.disable_public_endpoint) ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   resource_group_id = var.resource_group_id
