@@ -10,9 +10,8 @@ locals {
   other_pools             = [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
   other_autoscaling_pools = [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
-  latest_ocp_version  = "${data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions[length(data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions) - 1]}_openshift"
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
-  ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : (var.ocp_version == "latest" ? local.latest_ocp_version : "${var.ocp_version}_openshift")
+  ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
 
   cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
@@ -151,6 +150,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
+  depends_on                      = [null_resource.reset_api_key]
   count                           = var.ignore_worker_pool_size_changes ? 1 : 0
   name                            = var.cluster_name
   vpc_id                          = var.vpc_id
@@ -253,7 +253,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.verify_worker_network_readiness ? 1 : 0
+  count             = var.verify_worker_network_readiness || lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   resource_group_id = var.resource_group_id
@@ -373,7 +373,7 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
@@ -394,7 +394,7 @@ resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
 
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
@@ -415,11 +415,6 @@ resource "ibm_container_addons" "addons" {
   }
 }
 
-resource "time_sleep" "wait_operators" {
-  depends_on      = [ibm_container_addons.addons]
-  create_duration = "5s"
-}
-
 locals {
   worker_pool_config = [
     for worker in var.worker_pools :
@@ -433,9 +428,22 @@ locals {
 
 }
 
+resource "null_resource" "config_map_status" {
+  count      = lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  depends_on = [ibm_container_addons.addons]
+
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/get_config_map_status.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+    }
+  }
+}
+
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
-  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [time_sleep.wait_operators]
+  count      = lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  depends_on = [null_resource.config_map_status]
 
   metadata {
     name      = "iks-ca-configmap"
