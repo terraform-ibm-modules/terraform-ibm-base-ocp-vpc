@@ -415,11 +415,6 @@ resource "ibm_container_addons" "addons" {
   }
 }
 
-resource "time_sleep" "wait_operators" {
-  depends_on      = [ibm_container_addons.addons]
-  create_duration = "30s"
-}
-
 locals {
   worker_pool_config = [
     for worker in var.worker_pools :
@@ -433,9 +428,19 @@ locals {
 
 }
 
+resource "null_resource" "config_map_status" {
+  count = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/get_config_map_status.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+    }
+  }
+}
+
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
-  count      = !(var.disable_public_endpoint) && lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [time_sleep.wait_operators]
+  depends_on = [null_resource.config_map_status]
 
   metadata {
     name      = "iks-ca-configmap"
