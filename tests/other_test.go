@@ -89,6 +89,28 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+func TestCustomSGExample(t *testing.T) {
+	t.Parallel()
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  "examples/custom_sg",
+		Prefix:        "cust-sg",
+		ResourceGroup: resourceGroup,
+		ImplicitDestroy: []string{
+			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.null_resource.reset_api_key",
+		},
+		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
+		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version": ocpVersion2,
+		},
+	})
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestCrossKmsSupportExample(t *testing.T) {
 	t.Parallel()
 
