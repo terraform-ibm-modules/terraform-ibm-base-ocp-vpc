@@ -14,6 +14,7 @@ module "fscloud" {
   vpc_subnets                     = var.vpc_subnets
   worker_pools                    = var.worker_pools
   disable_public_endpoint         = true
+  cluster_config_endpoint_type    = var.cluster_config_endpoint_type
   cluster_ready_when              = var.cluster_ready_when
   ignore_worker_pool_size_changes = var.ignore_worker_pool_size_changes
   verify_worker_network_readiness = var.verify_worker_network_readiness
