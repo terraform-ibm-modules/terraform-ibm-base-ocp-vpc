@@ -103,7 +103,7 @@ func TestCustomSGExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
+			"ocp_version": ocpVersion1,
 		},
 	})
 	output, err := options.RunTestConsistency()
