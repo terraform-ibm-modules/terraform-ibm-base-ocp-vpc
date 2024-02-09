@@ -10,7 +10,7 @@ MAX_ATTEMPTS=40
 while [[ $COUNTER -lt $MAX_ATTEMPTS ]] && ! kubectl get configmap $CONFIGMAP_NAME -n $NAMESPACE &>/dev/null; do
   COUNTER=$((COUNTER + 1))
   echo "Attempt $COUNTER: ConfigMap '$CONFIGMAP_NAME' not found in namespace '$NAMESPACE', retrying..."
-  sleep 30
+  sleep 60
 done
 
 if [[ $COUNTER -eq $MAX_ATTEMPTS ]]; then
