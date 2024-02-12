@@ -9,15 +9,15 @@ function run_checks() {
 
   # Get list of calico-node pods (There will be 1 pod per worker node)
   PODS=()
-  while IFS='' read -r line; do PODS+=("$line"); done < <(oc get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' ')
+  while IFS='' read -r line; do PODS+=("$line"); done < <(kubectl get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' ')
 
   # Iterate through pods to check health
   healthy=true
   for pod in "${PODS[@]}"; do
-    command="oc logs ${pod} -n ${namespace} --tail=0"
+    command="kubectl logs ${pod} -n ${namespace} --tail=0"
     # If it is the last attempt then print the output
     if [ "${last_attempt}" == true ]; then
-      node=$(oc get pod "$pod" -n "${namespace}" -o=jsonpath='{.spec.nodeName}')
+      node=$(kubectl get pod "$pod" -n "${namespace}" -o=jsonpath='{.spec.nodeName}')
       echo "Checking node: $node"
       if ! ${command}; then
         healthy=false
