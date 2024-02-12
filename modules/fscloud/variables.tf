@@ -138,4 +138,15 @@ variable "access_tags" {
   default     = []
 }
 
+variable "cluster_config_endpoint_type" {
+  description = "Specify which type of endpoint to use for for cluster config access: 'private', 'vpe', 'link'."
+  type        = string
+  default     = "private"
+  nullable    = false # use default if null is passed in
+  validation {
+    error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+    condition     = contains(["private", "vpe", "link"], var.cluster_config_endpoint_type)
+  }
+}
+
 ##############################################################################
