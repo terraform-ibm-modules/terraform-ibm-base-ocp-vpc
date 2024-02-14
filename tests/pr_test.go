@@ -2,6 +2,7 @@
 package test
 
 import (
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 	"log"
 	"os"
 	"testing"
@@ -23,7 +24,7 @@ const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.14" // used by TestRunUpgradeAdvancedExample, TestFSCloudExample and TestRunMultiClusterExample
+const ocpVersion1 = "4.14" // used by TestRunUpgradeAdvancedExample, TestFSCloudInSchematic and TestRunMultiClusterExample
 const ocpVersion2 = "4.13" // used by TestRunAdvancedExample, TestCrossKmsSupportExample and TestRunAddRulesToSGExample
 const ocpVersion3 = "4.12" // used by TestRunBasicExample
 
@@ -83,38 +84,44 @@ func TestRunUpgradeAdvancedExample(t *testing.T) {
 	}
 }
 
-func TestFSCloudExample(t *testing.T) {
+func TestFSCloudInSchematic(t *testing.T) {
 	t.Parallel()
 
-	/*
-	 The 'ResourceGroup' is not set to force this test to create a unique resource group to ensure tests do
-	 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
-	 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
-	 since this module scopes auth policies by resource group.
-	*/
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: fscloudExampleDir,
-		Prefix:       "base-ocp-fscloud",
-		TerraformVars: map[string]interface{}{
-			"existing_at_instance_crn": permanentResources["activityTrackerFrankfurtCrn"],
-			"hpcs_instance_guid":       permanentResources["hpcs_south"],
-			"hpcs_key_crn_cluster":     permanentResources["hpcs_south_root_key_crn"],
-			"hpcs_key_crn_worker_pool": permanentResources["hpcs_south_root_key_crn"],
-			"ocp_version":              ocpVersion1,
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "base-ocp-fscloud",
+		TarIncludePatterns: []string{
+			"*.tf",
+			"scripts/*.sh",
+			"examples/fscloud/*.tf",
+			"modules/*/*.tf",
+			"kubeconfig/README.md",
 		},
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         fscloudExampleDir,
+		Tags:                   []string{"test-schematic"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
 	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
-	currentRegion, ok := options.TerraformVars["region"]
-	if ok && currentRegion == "jp-osa" {
-		options.TerraformVars["region"] = "us-south"
+	if options.Region == "jp-osa" {
+		options.Region = "us-south"
 	}
 
-	output, err := options.RunTestConsistency()
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "region", Value: options.Region, DataType: "string"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
+		{Name: "existing_at_instance_crn", Value: permanentResources["activityTrackerFrankfurtCrn"], DataType: "string"},
+		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
+		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+	}
 
+	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-
 }
