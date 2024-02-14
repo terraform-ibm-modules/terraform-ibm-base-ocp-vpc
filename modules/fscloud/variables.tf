@@ -71,7 +71,7 @@ variable "ignore_worker_pool_size_changes" {
 
 variable "ocp_version" {
   type        = string
-  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. Supports passing the string 'latest' (current latest available version) or 'default' (current IKS default recommended version). If no value is passed, it will default to 'default'."
+  description = "The version of the OpenShift cluster that should be provisioned (format 4.x). This is only used during initial cluster provisioning, but ignored for future updates. Supports passing the string 'default' (current IKS default recommended version). If no value is passed, it will default to 'default'."
   default     = null
 }
 
@@ -136,6 +136,17 @@ variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details"
   default     = []
+}
+
+variable "cluster_config_endpoint_type" {
+  description = "Specify which type of endpoint to use for for cluster config access: 'private', 'vpe', 'link'."
+  type        = string
+  default     = "private"
+  nullable    = false # use default if null is passed in
+  validation {
+    error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+    condition     = contains(["private", "vpe", "link"], var.cluster_config_endpoint_type)
+  }
 }
 
 ##############################################################################

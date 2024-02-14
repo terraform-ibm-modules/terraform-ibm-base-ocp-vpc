@@ -65,7 +65,22 @@ output "public_service_endpoint_url" {
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].public_service_endpoint_url : ibm_container_vpc_cluster.cluster[0].public_service_endpoint_url
 }
 
+output "master_url" {
+  description = "The URL of the Kubernetes master."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_url : ibm_container_vpc_cluster.cluster[0].master_url
+}
+
 output "kms_config" {
   description = "KMS configuration details"
   value       = var.kms_config
+}
+
+output "operating_system" {
+  description = "The operating system of the workers in the default worker pool."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].operating_system : ibm_container_vpc_cluster.cluster[0].operating_system
+}
+
+output "master_status" {
+  description = "The status of the Kubernetes master."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_status : ibm_container_vpc_cluster.cluster[0].master_status
 }

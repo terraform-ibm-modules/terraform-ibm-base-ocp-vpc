@@ -8,11 +8,11 @@ terraform {
     }
     null = {
       source  = "hashicorp/null"
-      version = ">= 3.2.1"
+      version = ">= 3.2.1, < 4.0.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.16.1"
+      version = ">= 2.16.1, < 3.0.0"
     }
   }
 }
