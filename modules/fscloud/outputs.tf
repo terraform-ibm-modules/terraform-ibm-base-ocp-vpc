@@ -56,3 +56,18 @@ output "private_service_endpoint_url" {
   description = "Private service endpoint URL"
   value       = module.fscloud.private_service_endpoint_url
 }
+
+output "master_url" {
+  description = "The URL of the Kubernetes master."
+  value       = module.fscloud.master_url
+}
+
+output "operating_system" {
+  description = "The operating system of the workers in the default worker pool."
+  value       = module.fscloud.operating_system
+}
+
+output "master_status" {
+  description = "The status of the Kubernetes master."
+  value       = module.fscloud.master_status
+}
