@@ -83,7 +83,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-cluster-sg", "custom-worker-pool-sg", "custom-lb-sg", "custom-master-vpe-sg", "custom-registry-vpe-sg", "custom-kube-api-vpe-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.3.1"
+  version                      = "2.6.0"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
