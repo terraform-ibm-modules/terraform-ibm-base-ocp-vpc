@@ -167,7 +167,7 @@ module "ocp_base" {
     "cluster-autoscaler" = "1.2.0"
   }
   kms_config = {
-    instance_id = module.kp_all_inclusive.key_protect_guid
+    instance_id = module.kp_all_inclusive.kms_guid
     crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
   }
 }
