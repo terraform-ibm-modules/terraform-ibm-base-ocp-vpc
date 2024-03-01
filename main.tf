@@ -256,6 +256,7 @@ data "ibm_container_cluster_config" "cluster_config" {
   count             = var.verify_worker_network_readiness || lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
+  admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
   resource_group_id = var.resource_group_id
   endpoint_type     = var.cluster_config_endpoint_type != "default" ? var.cluster_config_endpoint_type : null # null value represents default
 }
