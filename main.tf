@@ -264,6 +264,11 @@ data "ibm_container_cluster_config" "cluster_config" {
 # Worker Pools
 ##############################################################################
 
+data "ibm_container_vpc_worker_pool" "default_pool" {
+  cluster          = local.cluster_id
+  worker_pool_name = "default"
+}
+
 resource "ibm_container_vpc_worker_pool" "pool" {
   for_each          = { for pool in local.other_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id

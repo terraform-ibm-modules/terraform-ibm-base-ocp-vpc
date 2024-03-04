@@ -22,7 +22,7 @@ output "cluster_crn" {
 
 output "workerpools" {
   description = "Worker pools created"
-  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_worker_pool.autoscaling_pool : ibm_container_vpc_worker_pool.pool
+  value       = merge(data.ibm_container_vpc_worker_pool.default_pool, var.ignore_worker_pool_size_changes ? ibm_container_vpc_worker_pool.autoscaling_pool : ibm_container_vpc_worker_pool.pool)
 }
 
 output "ocp_version" {
