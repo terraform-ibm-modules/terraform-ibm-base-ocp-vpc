@@ -238,7 +238,7 @@ module "ocp_fscloud" {
   cluster_name         = var.prefix
   ibmcloud_api_key     = var.ibmcloud_api_key
   resource_group_id    = module.resource_group.resource_group_id
-  region               = "us-south"
+  region               = var.region
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
