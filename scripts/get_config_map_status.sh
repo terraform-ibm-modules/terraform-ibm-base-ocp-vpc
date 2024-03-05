@@ -15,6 +15,8 @@ done
 
 if [[ $COUNTER -eq $MAX_ATTEMPTS ]]; then
   echo "ConfigMap '$CONFIGMAP_NAME' did not become available within $MAX_ATTEMPTS attempts."
+  #  Output for debugging
+  kubectl get configmaps -n $NAMESPACE
   exit 1
 else
   echo "ConfigMap '$CONFIGMAP_NAME' is now available." >&2
