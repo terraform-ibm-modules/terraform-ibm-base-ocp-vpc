@@ -21,7 +21,7 @@ locals {
 }
 
 module "kp_all_inclusive" {
-  source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
+  source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                   = "4.4.2"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
