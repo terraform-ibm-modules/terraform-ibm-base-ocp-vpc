@@ -7,9 +7,31 @@ function run_checks() {
   last_attempt=$1
   namespace=calico-system
 
-  # Get list of calico-node pods (There will be 1 pod per worker node)
+  MAX_ATTEMPTS=10
+  attempt=0
   PODS=()
-  while IFS='' read -r line; do PODS+=("$line"); done < <(kubectl get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' ')
+  while [ $attempt -lt $MAX_ATTEMPTS ]; do
+    # Get list of calico-node pods (There will be 1 pod per worker node)
+    if while IFS='' read -r line; do PODS+=("$line"); done < <(kubectl get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' '); then
+      if [ ${#PODS[@]} -eq 0 ]; then
+        echo "No calico-node pods found. Retrying in 10s. (Attempt $((attempt+1)) / $MAX_ATTEMPTS)"
+        sleep 10
+        ((attempt=attempt+1))
+      else
+        # Pods found, break out of loop
+        break
+      fi
+    else
+      echo "Error getting calico-node pods. Retrying in 10s. (Attempt $((attempt+1)) / $MAX_ATTEMPTS)"
+      sleep 10
+      ((attempt=attempt+1))
+    fi
+  done
+
+  if [ ${#PODS[@]} -eq 0 ]; then
+    echo "No calico-node pods found after $MAX_ATTEMPTS attempts. Exiting."
+    exit 1
+  fi
 
   # Iterate through pods to check health
   healthy=true
