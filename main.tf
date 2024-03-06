@@ -267,7 +267,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 locals {
   additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.other_autoscaling_pools : pool.pool_name] : [for pool in local.other_pools : pool.pool_name]
-  pool_names            = flatten([["default"], local.additional_pool_names])
+  pool_names            = toset(flatten([["default"], local.additional_pool_names]))
 }
 
 data "ibm_container_vpc_worker_pool" "all_pools" {
