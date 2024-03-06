@@ -22,15 +22,24 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.4.2"
+  version                   = "4.8.3"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   resource_tags             = var.resource_tags
-  key_map = { (local.key_ring) = [
-    local.cluster_key,
-    local.boot_volume_key,
-  ] }
+  keys = [
+    {
+      key_ring_name = (local.key_ring)
+      keys = [
+        {
+          key_name = local.cluster_key
+        },
+        {
+          key_name = local.boot_volume_key
+        }
+      ]
+    }
+  ]
 }
 
 ########################################################################################################################
@@ -94,7 +103,7 @@ locals {
 
   boot_volume_encryption_kms_config = {
     crk             = module.kp_all_inclusive.keys["${local.key_ring}.${local.boot_volume_key}"].key_id
-    kms_instance_id = module.kp_all_inclusive.key_protect_guid
+    kms_instance_id = module.kp_all_inclusive.kms_guid
   }
 
   worker_pools = [
@@ -160,7 +169,7 @@ module "ocp_base" {
     "cluster-autoscaler" = "1.2.0"
   }
   kms_config = {
-    instance_id = module.kp_all_inclusive.key_protect_guid
+    instance_id = module.kp_all_inclusive.kms_guid
     crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
   }
 }
