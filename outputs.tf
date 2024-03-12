@@ -70,6 +70,11 @@ output "master_url" {
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_url : ibm_container_vpc_cluster.cluster[0].master_url
 }
 
+output "vpe_url" {
+  description = "The virtual private endpoint URL of the Kubernetes cluster."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].vpe_service_endpoint_url : ibm_container_vpc_cluster.cluster[0].vpe_service_endpoint_url
+}
+
 output "kms_config" {
   description = "KMS configuration details"
   value       = var.kms_config
