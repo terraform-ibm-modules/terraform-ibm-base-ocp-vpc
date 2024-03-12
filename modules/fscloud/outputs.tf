@@ -62,6 +62,11 @@ output "master_url" {
   value       = module.fscloud.master_url
 }
 
+output "vpe_url" {
+  description = "The virtual private endpoint URL of the Kubernetes cluster."
+  value       = module.fscloud.vpe_url
+}
+
 output "operating_system" {
   description = "The operating system of the workers in the default worker pool."
   value       = module.fscloud.operating_system
