@@ -21,23 +21,25 @@ locals {
 }
 
 module "kp_all_inclusive" {
-  source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
+  source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                   = "4.8.4"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   resource_tags             = var.resource_tags
-  keys = [{
-    key_ring_name = local.key_ring
-    keys = [
-      {
-        key_name = local.cluster_key
-      },
-      {
-        key_name = local.boot_volume_key
-      }
-    ]
-  }]
+  keys = [
+    {
+      key_ring_name = (local.key_ring)
+      keys = [
+        {
+          key_name = local.cluster_key
+        },
+        {
+          key_name = local.boot_volume_key
+        }
+      ]
+    }
+  ]
 }
 
 ########################################################################################################################
