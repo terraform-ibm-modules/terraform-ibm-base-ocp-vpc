@@ -266,6 +266,18 @@ data "ibm_container_cluster_config" "cluster_config" {
 # Worker Pools
 ##############################################################################
 
+locals {
+  additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.other_autoscaling_pools : pool.pool_name] : [for pool in local.other_pools : pool.pool_name]
+  pool_names            = toset(flatten([["default"], local.additional_pool_names]))
+}
+
+data "ibm_container_vpc_worker_pool" "all_pools" {
+  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool]
+  for_each         = local.pool_names
+  cluster          = local.cluster_id
+  worker_pool_name = each.value
+}
+
 resource "ibm_container_vpc_worker_pool" "pool" {
   for_each          = { for pool in local.other_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id
