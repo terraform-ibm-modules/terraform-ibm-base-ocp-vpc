@@ -22,7 +22,7 @@ output "cluster_crn" {
 
 output "workerpools" {
   description = "Worker pools created"
-  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_worker_pool.autoscaling_pool : ibm_container_vpc_worker_pool.pool
+  value       = data.ibm_container_vpc_worker_pool.all_pools
 }
 
 output "ocp_version" {
@@ -68,6 +68,11 @@ output "public_service_endpoint_url" {
 output "master_url" {
   description = "The URL of the Kubernetes master."
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_url : ibm_container_vpc_cluster.cluster[0].master_url
+}
+
+output "vpe_url" {
+  description = "The virtual private endpoint URL of the Kubernetes cluster."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].vpe_service_endpoint_url : ibm_container_vpc_cluster.cluster[0].vpe_service_endpoint_url
 }
 
 output "kms_config" {

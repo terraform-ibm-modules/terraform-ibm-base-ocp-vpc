@@ -59,13 +59,14 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "7.1.5"
+  version                = "7.5.1"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
   cos_location           = local.cos_location
   kms_encryption_enabled = false
   create_cos_bucket      = false
+  create_resource_key    = false
 }
 
 moved {
@@ -264,6 +265,18 @@ data "ibm_container_cluster_config" "cluster_config" {
 ##############################################################################
 # Worker Pools
 ##############################################################################
+
+locals {
+  additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.other_autoscaling_pools : pool.pool_name] : [for pool in local.other_pools : pool.pool_name]
+  pool_names            = toset(flatten([["default"], local.additional_pool_names]))
+}
+
+data "ibm_container_vpc_worker_pool" "all_pools" {
+  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool]
+  for_each         = local.pool_names
+  cluster          = local.cluster_id
+  worker_pool_name = each.value
+}
 
 resource "ibm_container_vpc_worker_pool" "pool" {
   for_each          = { for pool in local.other_pools : pool.pool_name => pool }
@@ -479,7 +492,7 @@ locals {
 module "attach_sg_to_lb" {
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -508,7 +521,7 @@ locals {
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -517,7 +530,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -526,7 +539,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]
