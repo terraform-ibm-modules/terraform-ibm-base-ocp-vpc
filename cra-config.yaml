@@ -6,3 +6,6 @@ CRA_TARGETS:
       TF_VAR_hpcs_instance_guid: "e6dce284-e80f-46e1-a3c1-830f7adff7a9"
       TF_VAR_hpcs_key_crn_cluster: "crn:v1:bluemix:public:hs-crypto:us-south:a/abac0df06b644a9cabc6e44f55b3880e:e6dce284-e80f-46e1-a3c1-830f7adff7a9:key:1368d2eb-3ed0-4a8b-b09c-2155895f01ea"
       TF_VAR_hpcs_key_crn_worker_pool: "crn:v1:bluemix:public:hs-crypto:us-south:a/abac0df06b644a9cabc6e44f55b3880e:e6dce284-e80f-46e1-a3c1-830f7adff7a9:key:1368d2eb-3ed0-4a8b-b09c-2155895f01ea"
+      TF_VAR_regions: "us-south"
+      TF_VAR_prefix: "base-ocp-std"
+      TF_VAR_vpc_name: "management"

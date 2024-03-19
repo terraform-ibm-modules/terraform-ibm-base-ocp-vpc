@@ -11,7 +11,6 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
-  default     = "base-ocp-std"
   validation {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
@@ -21,7 +20,6 @@ variable "prefix" {
 variable "region" {
   type        = string
   description = "Region where resources are created"
-  default     = "us-south"
 }
 
 variable "resource_group" {
@@ -40,16 +38,15 @@ variable "resource_tags" {
 variable "hpcs_instance_guid" {
   type        = string
   description = "The GUID of the Hyper Protect Crypto service to provision the encryption keys"
-
 }
 
 variable "hpcs_key_crn_cluster" {
-  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the cluster boot volume"
+  description = "CRN of the Hyper Protect Crypto service to use to encrypt the cluster boot volume"
   type        = string
 }
 
 variable "hpcs_key_crn_worker_pool" {
-  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the worker pool boot volumes"
+  description = "CRN of the Hyper Protect Crypto service to use to encrypt the worker pool boot volumes"
   type        = string
 }
 
@@ -62,7 +59,6 @@ variable "existing_at_instance_crn" {
 variable "vpc_name" {
   type        = string
   description = "Name of the VPC"
-  default     = "management"
 }
 
 variable "access_tags" {
