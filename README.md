@@ -282,6 +282,8 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_region"></a> [region](#output\_region) | Region cluster is deployed in |
 | <a name="output_resource_group_id"></a> [resource\_group\_id](#output\_resource\_group\_id) | Resource group ID the cluster is deployed in |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the clusters VPC |
+| <a name="output_vpe_fqdns"></a> [vpe\_fqdns](#output\_vpe\_fqdns) | A list of all VPEs with their fully qualified domain names. |
+| <a name="output_vpe_ips"></a> [vpe\_ips](#output\_vpe\_ips) | A list of all VPEs with their IPs. |
 | <a name="output_vpe_url"></a> [vpe\_url](#output\_vpe\_url) | The virtual private endpoint URL of the Kubernetes cluster. |
 | <a name="output_workerpools"></a> [workerpools](#output\_workerpools) | Worker pools created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

@@ -89,3 +89,17 @@ output "master_status" {
   description = "The status of the Kubernetes master."
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_status : ibm_container_vpc_cluster.cluster[0].master_status
 }
+
+output "vpe_fqdns" {
+  description = "A list of all VPEs with their fully qualified domain names."
+  value = {
+    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.name => vpe.service_endpoints
+  }
+}
+
+output "vpe_ips" {
+  description = "A list of all VPEs with their IPs."
+  value = {
+    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.name => vpe.ips
+  }
+}
