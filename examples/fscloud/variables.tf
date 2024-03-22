@@ -41,12 +41,12 @@ variable "hpcs_instance_guid" {
 }
 
 variable "hpcs_key_crn_cluster" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the cluster boot volume"
+  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the cluster boot volume"
   type        = string
 }
 
 variable "hpcs_key_crn_worker_pool" {
-  description = "CRN of the Hyper Protect Crypto service to use to encrypt the worker pool boot volumes"
+  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the worker pool boot volumes"
   type        = string
 }
 
