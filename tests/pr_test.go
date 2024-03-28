@@ -2,10 +2,11 @@
 package test
 
 import (
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 
@@ -89,8 +90,10 @@ func TestFSCloudInSchematic(t *testing.T) {
 	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		Prefix:  "base-ocp-fscloud",
+		Testing:  t,
+		Prefix:   "base-ocp-fscloud",
+		Vpc_Name: "vpc-instance",
+
 		TarIncludePatterns: []string{
 			"*.tf",
 			"scripts/*.sh",
