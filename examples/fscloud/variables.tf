@@ -56,11 +56,6 @@ variable "existing_at_instance_crn" {
   default     = null
 }
 
-variable "vpc_name" {
-  type        = string
-  description = "Name of the VPC"
-}
-
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module"
