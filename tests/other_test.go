@@ -19,6 +19,17 @@ func TestRunBasicExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+func TestRunCustomsgExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp-customsg", customsgExampleDir, ocpVersion1)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
