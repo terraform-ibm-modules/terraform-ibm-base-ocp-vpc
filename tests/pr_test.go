@@ -90,10 +90,8 @@ func TestFSCloudInSchematic(t *testing.T) {
 	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:  t,
-		Prefix:   "base-ocp-fscloud",
-		Vpc_Name: "vpc-instance",
-
+		Testing: t,
+		Prefix:  "base-ocp-fscloud",
 		TarIncludePatterns: []string{
 			"*.tf",
 			"scripts/*.sh",
