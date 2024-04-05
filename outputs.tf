@@ -93,13 +93,13 @@ output "master_status" {
 output "vpe_fqdns" {
   description = "A list of all VPEs with their fully qualified domain names."
   value = {
-    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.name => vpe.service_endpoints
+    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.name => vpe.service_endpoints
   }
 }
 
 output "vpe_ips" {
   description = "A list of all VPEs with their IPs."
   value = {
-    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.name => vpe.ips
+    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.name => vpe.ips
   }
 }
