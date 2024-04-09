@@ -2,10 +2,11 @@
 package test
 
 import (
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 
@@ -19,6 +20,7 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
+const customsgExampleDir = "examples/custom_sg"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
