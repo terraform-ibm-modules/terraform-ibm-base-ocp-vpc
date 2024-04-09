@@ -90,16 +90,17 @@ output "master_status" {
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_status : ibm_container_vpc_cluster.cluster[0].master_status
 }
 
-output "vpe_fqdns" {
-  description = "A list of all VPEs with their fully qualified domain names."
-  value = {
-    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.name => vpe.service_endpoints
-  }
+output "master_vpe" {
+  description = "Info about the master, or default, VPE. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
 }
 
-output "vpe_ips" {
-  description = "A list of all VPEs with their IPs."
-  value = {
-    for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.name => vpe.ips
-  }
+output "api_vpe" {
+  description = "Info about the api VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+}
+
+output "registry_vpe" {
+  description = "Info about the registry VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
 }
