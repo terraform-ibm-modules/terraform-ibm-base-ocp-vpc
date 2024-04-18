@@ -489,7 +489,21 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+resource "null_resource" "confirm_lb_active" {
+  count = length(var.additional_lb_security_group_ids)
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]}"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+    }
+  }
+}
+
 module "attach_sg_to_lb" {
+  depends_on                     = [null_resource.confirm_lb_active]
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
   version                        = "2.6.1"
