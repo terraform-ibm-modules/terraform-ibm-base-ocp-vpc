@@ -33,17 +33,16 @@ done
 lb_attempts=1
 while true; do
     status=$(ibmcloud is load-balancer "$LB_ID" --output json | jq -r .provisioning_status)
-    echo "$status"
+    echo "Load balancer status: $status"
     if [[ "$status" == "active" ]]; then
-        echo "LB Status Active"
         break
     else
         lb_attempts=$((lb_attempts + 1))
         if [ $lb_attempts -ge 10 ]; then
-            echo "LB Status Unknown"
+            echo "Load balancer status: $status"
             break
         fi
-        echo "LB Updating"
+        echo "Sleeping for 30 secs.."
         sleep 30
     fi
     status=""
