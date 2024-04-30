@@ -160,6 +160,7 @@ variable "ocp_version" {
       var.ocp_version == "4.12",
       var.ocp_version == "4.13",
       var.ocp_version == "4.14",
+      var.ocp_version == "4.15",
     ])
     error_message = "The specified ocp_version is not of the valid versions."
   }
@@ -239,6 +240,12 @@ variable "access_tags" {
     ])
     error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\", see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits for more details"
   }
+}
+
+variable "disable_outbound_traffic_protection" {
+  type        = bool
+  description = "Whether to allow public outbound access from the cluster workers."
+  default     = false
 }
 
 # VPC Variables
