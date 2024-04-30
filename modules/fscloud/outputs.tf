@@ -48,7 +48,7 @@ output "resource_group_id" {
 }
 
 output "ingress_hostname" {
-  description = "Ingress hostname"
+  description = "The hostname that was assigned to your Ingress subdomain."
   value       = module.fscloud.ingress_hostname
 }
 

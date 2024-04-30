@@ -273,7 +273,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of cluster created |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the created cluster |
 | <a name="output_cos_crn"></a> [cos\_crn](#output\_cos\_crn) | CRN of the COS instance |
-| <a name="output_ingress_hostname"></a> [ingress\_hostname](#output\_ingress\_hostname) | Ingress hostname |
+| <a name="output_ingress_hostname"></a> [ingress\_hostname](#output\_ingress\_hostname) | The hostname that was assigned to your Ingress subdomain. |
 | <a name="output_kms_config"></a> [kms\_config](#output\_kms\_config) | KMS configuration details |
 | <a name="output_master_status"></a> [master\_status](#output\_master\_status) | The status of the Kubernetes master. |
 | <a name="output_master_url"></a> [master\_url](#output\_master\_url) | The URL of the Kubernetes master. |
