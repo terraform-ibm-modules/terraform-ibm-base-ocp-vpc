@@ -92,15 +92,15 @@ output "master_status" {
 
 output "master_vpe" {
   description = "Info about the master, or default, VPE. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
-  value       = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-${local.cluster_id}")])
 }
 
 output "api_vpe" {
   description = "Info about the api VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
-  value       = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-api-${var.vpc_id}")])
 }
 
 output "registry_vpe" {
   description = "Info about the registry VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
-  value       = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-registry-${var.vpc_id}")])
 }
