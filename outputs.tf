@@ -51,7 +51,7 @@ output "resource_group_id" {
 }
 
 output "ingress_hostname" {
-  description = "Ingress hostname"
+  description = "The hostname that was assigned to your Ingress subdomain."
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].ingress_hostname : ibm_container_vpc_cluster.cluster[0].ingress_hostname
 }
 
