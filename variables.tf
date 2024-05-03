@@ -244,7 +244,7 @@ variable "access_tags" {
 
 variable "disable_outbound_traffic_protection" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers."
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for `ocp_version` 4.15"
   default     = false
 }
 
