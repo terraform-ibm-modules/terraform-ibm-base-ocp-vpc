@@ -86,24 +86,25 @@ resource "ibm_resource_tag" "cos_access_tag" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                      = [null_resource.reset_api_key]
-  count                           = var.ignore_worker_pool_size_changes ? 0 : 1
-  name                            = var.cluster_name
-  vpc_id                          = var.vpc_id
-  tags                            = var.tags
-  kube_version                    = local.ocp_version
-  flavor                          = local.default_pool.machine_type
-  entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
-  worker_count                    = local.default_pool.workers_per_zone
-  resource_group_id               = var.resource_group_id
-  wait_till                       = var.cluster_ready_when
-  force_delete_storage            = var.force_delete_storage
-  disable_public_service_endpoint = var.disable_public_endpoint
-  worker_labels                   = local.default_pool.labels
-  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
-  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.ignore_worker_pool_size_changes ? 0 : 1
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
 
@@ -151,24 +152,25 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
-  depends_on                      = [null_resource.reset_api_key]
-  count                           = var.ignore_worker_pool_size_changes ? 1 : 0
-  name                            = var.cluster_name
-  vpc_id                          = var.vpc_id
-  tags                            = var.tags
-  kube_version                    = local.ocp_version
-  flavor                          = local.default_pool.machine_type
-  entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
-  worker_count                    = local.default_pool.workers_per_zone
-  resource_group_id               = var.resource_group_id
-  wait_till                       = var.cluster_ready_when
-  force_delete_storage            = var.force_delete_storage
-  disable_public_service_endpoint = var.disable_public_endpoint
-  worker_labels                   = local.default_pool.labels
-  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
-  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.ignore_worker_pool_size_changes ? 1 : 0
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
 
