@@ -525,13 +525,12 @@ module "attach_sg_to_lb" {
 
 data "ibm_is_virtual_endpoint_gateways" "all_vpes" {
   depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
-  count      = var.additional_vpe_security_group_ids != {} ? 1 : 0
 }
 
 locals {
-  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
-  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
-  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
+  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
+  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
 }
 
 module "attach_sg_to_master_vpe" {
