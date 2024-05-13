@@ -66,7 +66,6 @@ module "cos_instance" {
   cos_location           = local.cos_location
   kms_encryption_enabled = false
   create_cos_bucket      = false
-  create_resource_key    = false
 }
 
 moved {
