@@ -98,6 +98,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
+  operating_system                    = var.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
   disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
@@ -164,6 +165,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
+  operating_system                    = var.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
   disable_outbound_traffic_protection = var.disable_outbound_traffic_protection

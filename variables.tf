@@ -248,6 +248,11 @@ variable "disable_outbound_traffic_protection" {
   default     = false
 }
 
+variable "operating_system" {
+  type        = string
+  description = "The operating system of the workers in the default worker pool."
+  default     = null
+}
 # VPC Variables
 variable "vpc_id" {
   type        = string
