@@ -224,6 +224,7 @@ variable "kms_config" {
     instance_id      = string
     private_endpoint = optional(bool, true) # defaults to true
     account_id       = optional(string)     # To attach KMS instance from another account
+    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed
   })
   description = "Use to attach a KMS instance to the cluster. If account_id is not provided, defaults to the account in use."
   default     = null
