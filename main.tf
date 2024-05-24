@@ -33,7 +33,7 @@ locals {
   addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = local.csi_driver_version[0] }) : local.addons_list
 
   delete_timeout = "2h"
-  create_timeout = "3h"
+  create_timeout = "5h"
   update_timeout = "3h"
 
   cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
