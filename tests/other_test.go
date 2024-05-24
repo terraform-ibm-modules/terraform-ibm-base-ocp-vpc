@@ -11,7 +11,18 @@ import (
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion3)
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunCustomsgExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp-customsg", customsgExampleDir, ocpVersion1)
 
 	output, err := options.RunTestConsistency()
 
@@ -122,7 +133,7 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
 			"kms_key_id":           permanentResources["kp_us_south_root_key_id"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
-			"ocp_version":          ocpVersion2,
+			"ocp_version":          ocpVersion3,
 		},
 	})
 

@@ -2,10 +2,11 @@
 package test
 
 import (
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 
@@ -19,14 +20,16 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
+const customsgExampleDir = "examples/custom_sg"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.14" // used by TestRunUpgradeAdvancedExample, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.13" // used by TestRunAdvancedExample, TestCrossKmsSupportExample and TestRunAddRulesToSGExample
-const ocpVersion3 = "4.12" // used by TestRunBasicExample
+const ocpVersion1 = "4.15" // used by TestRunUpgradeAdvancedExample, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.14" // used by TestRunAdvancedExample and TestRunAddRulesToSGExample
+const ocpVersion3 = "4.13" // used by TestCrossKmsSupportExample
+const ocpVersion4 = "4.12" // used by TestRunBasicExample
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}

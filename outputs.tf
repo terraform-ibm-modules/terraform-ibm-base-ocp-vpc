@@ -22,7 +22,7 @@ output "cluster_crn" {
 
 output "workerpools" {
   description = "Worker pools created"
-  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_worker_pool.autoscaling_pool : ibm_container_vpc_worker_pool.pool
+  value       = data.ibm_container_vpc_worker_pool.all_pools
 }
 
 output "ocp_version" {
@@ -51,7 +51,7 @@ output "resource_group_id" {
 }
 
 output "ingress_hostname" {
-  description = "Ingress hostname"
+  description = "The hostname that was assigned to your Ingress subdomain."
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].ingress_hostname : ibm_container_vpc_cluster.cluster[0].ingress_hostname
 }
 
@@ -70,6 +70,11 @@ output "master_url" {
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_url : ibm_container_vpc_cluster.cluster[0].master_url
 }
 
+output "vpe_url" {
+  description = "The virtual private endpoint URL of the Kubernetes cluster."
+  value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].vpe_service_endpoint_url : ibm_container_vpc_cluster.cluster[0].vpe_service_endpoint_url
+}
+
 output "kms_config" {
   description = "KMS configuration details"
   value       = var.kms_config
@@ -83,4 +88,19 @@ output "operating_system" {
 output "master_status" {
   description = "The status of the Kubernetes master."
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].master_status : ibm_container_vpc_cluster.cluster[0].master_status
+}
+
+output "master_vpe" {
+  description = "Info about the master, or default, VPE. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-${local.cluster_id}")])
+}
+
+output "api_vpe" {
+  description = "Info about the api VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-api-${var.vpc_id}")])
+}
+
+output "registry_vpe" {
+  description = "Info about the registry VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
+  value       = one([for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe if strcontains(vpe.name, "iks-registry-${var.vpc_id}")])
 }

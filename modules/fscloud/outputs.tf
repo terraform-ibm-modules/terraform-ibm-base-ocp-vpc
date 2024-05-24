@@ -48,7 +48,7 @@ output "resource_group_id" {
 }
 
 output "ingress_hostname" {
-  description = "Ingress hostname"
+  description = "The hostname that was assigned to your Ingress subdomain."
   value       = module.fscloud.ingress_hostname
 }
 
@@ -60,6 +60,11 @@ output "private_service_endpoint_url" {
 output "master_url" {
   description = "The URL of the Kubernetes master."
   value       = module.fscloud.master_url
+}
+
+output "vpe_url" {
+  description = "The virtual private endpoint URL of the Kubernetes cluster."
+  value       = module.fscloud.vpe_url
 }
 
 output "operating_system" {

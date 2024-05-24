@@ -59,7 +59,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "7.1.5"
+  version                = "8.2.8"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -85,24 +85,25 @@ resource "ibm_resource_tag" "cos_access_tag" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                      = [null_resource.reset_api_key]
-  count                           = var.ignore_worker_pool_size_changes ? 0 : 1
-  name                            = var.cluster_name
-  vpc_id                          = var.vpc_id
-  tags                            = var.tags
-  kube_version                    = local.ocp_version
-  flavor                          = local.default_pool.machine_type
-  entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
-  worker_count                    = local.default_pool.workers_per_zone
-  resource_group_id               = var.resource_group_id
-  wait_till                       = var.cluster_ready_when
-  force_delete_storage            = var.force_delete_storage
-  disable_public_service_endpoint = var.disable_public_endpoint
-  worker_labels                   = local.default_pool.labels
-  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
-  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.ignore_worker_pool_size_changes ? 0 : 1
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
 
@@ -150,24 +151,25 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
-  depends_on                      = [null_resource.reset_api_key]
-  count                           = var.ignore_worker_pool_size_changes ? 1 : 0
-  name                            = var.cluster_name
-  vpc_id                          = var.vpc_id
-  tags                            = var.tags
-  kube_version                    = local.ocp_version
-  flavor                          = local.default_pool.machine_type
-  entitlement                     = var.ocp_entitlement
-  cos_instance_crn                = local.cos_instance_crn
-  worker_count                    = local.default_pool.workers_per_zone
-  resource_group_id               = var.resource_group_id
-  wait_till                       = var.cluster_ready_when
-  force_delete_storage            = var.force_delete_storage
-  disable_public_service_endpoint = var.disable_public_endpoint
-  worker_labels                   = local.default_pool.labels
-  crk                             = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
-  kms_instance_id                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id                  = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.ignore_worker_pool_size_changes ? 1 : 0
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
 
@@ -264,6 +266,18 @@ data "ibm_container_cluster_config" "cluster_config" {
 ##############################################################################
 # Worker Pools
 ##############################################################################
+
+locals {
+  additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.other_autoscaling_pools : pool.pool_name] : [for pool in local.other_pools : pool.pool_name]
+  pool_names            = toset(flatten([["default"], local.additional_pool_names]))
+}
+
+data "ibm_container_vpc_worker_pool" "all_pools" {
+  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool]
+  for_each         = local.pool_names
+  cluster          = local.cluster_id
+  worker_pool_name = each.value
+}
 
 resource "ibm_container_vpc_worker_pool" "pool" {
   for_each          = { for pool in local.other_pools : pool.pool_name => pool }
@@ -476,10 +490,24 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+resource "null_resource" "confirm_lb_active" {
+  count      = length(var.additional_lb_security_group_ids)
+  depends_on = [data.ibm_is_lbs.all_lbs]
+
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]}"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+    }
+  }
+}
+
 module "attach_sg_to_lb" {
+  depends_on                     = [null_resource.confirm_lb_active]
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -496,19 +524,18 @@ module "attach_sg_to_lb" {
 
 data "ibm_is_virtual_endpoint_gateways" "all_vpes" {
   depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
-  count      = var.additional_vpe_security_group_ids != {} ? 1 : 0
 }
 
 locals {
-  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
-  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
-  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes[0].virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
+  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
+  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
+  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
 }
 
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -517,7 +544,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -526,7 +553,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.4.0"
+  version                        = "2.6.1"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]
