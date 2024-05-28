@@ -490,6 +490,18 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+locals {
+  subnet_zone_list = local.default_pool.subnet_prefix != null ? [for zone in var.vpc_subnets[local.default_pool.subnet_prefix] : {
+    name = zone.zone
+    id   = zone.id
+    }] : [
+    for zone in local.default_pool.vpc_subnets : {
+      name = zone.zone
+      id   = zone.id
+    }
+  ]
+}
+
 data "ibm_is_vpc" "vpc" {
   name = var.vpc_id
 }
@@ -501,7 +513,7 @@ module "vpes" {
   region             = var.region
   prefix             = "${var.cluster_name}-vpc-vpe"
   vpc_id             = var.vpc_id
-  subnet_zone_list   = data.ibm_is_vpc.vpc.subnets
+  subnet_zone_list   = local.subnet_zone_list
   resource_group_id  = var.resource_group_id
   security_group_ids = [data.ibm_is_vpc.vpc.default_security_group]
   cloud_services = [
