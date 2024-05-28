@@ -19,6 +19,12 @@ variable "region" {
   description = "The IBM Cloud region where the cluster will be provisioned."
 }
 
+variable "private_environment" {
+  type        = bool
+  description = "set it to true if using private agents to deploy ocp"
+  default     = false
+}
+
 # Cluster Variables
 variable "tags" {
   type        = list(string)

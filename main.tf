@@ -490,12 +490,38 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+data "ibm_is_vpc" "vpc" {
+  name = var.vpc_id
+}
+
+module "vpes" {
+  count              = var.private_environment ? 1 : 0
+  source             = "terraform-ibm-modules/vpe-module/ibm"
+  version            = "4.1.3"
+  region             = var.region
+  prefix             = "${var.cluster_name}-vpc-vpe"
+  vpc_id             = var.vpc_id
+  subnet_zone_list   = data.ibm_is_vpc.vpc.subnets
+  resource_group_id  = var.resource_group_id
+  security_group_ids = [data.ibm_is_vpc.vpc.default_security_group]
+  cloud_services = [
+    {
+      service_name = "is"
+    }
+  ]
+  service_endpoints = "private"
+}
+
+data "ibm_is_virtual_endpoint_gateway" "vpc_vpe" {
+  name = "${var.cluster_name}-vpc-vpe"
+}
+
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs]
+  depends_on = [data.ibm_is_lbs.all_lbs, module.vpes]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${data.ibm_is_virtual_endpoint_gateway.vpc_vpe.service_endpoints}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
