@@ -513,7 +513,8 @@ module "vpes" {
 }
 
 data "ibm_is_virtual_endpoint_gateway" "vpc_vpe" {
-  name = "${var.cluster_name}-vpc-vpe"
+  depends_on = [module.vpes]
+  name       = "${var.cluster_name}-vpc-vpe"
 }
 
 resource "null_resource" "confirm_lb_active" {
