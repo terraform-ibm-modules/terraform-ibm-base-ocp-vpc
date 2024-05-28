@@ -506,35 +506,47 @@ data "ibm_is_vpc" "vpc" {
   name = var.vpc_id
 }
 
-module "vpes" {
-  count              = var.private_environment ? 1 : 0
-  source             = "terraform-ibm-modules/vpe-module/ibm"
-  version            = "4.1.3"
-  region             = var.region
-  prefix             = "${var.cluster_name}-vpc-vpe"
-  vpc_id             = var.vpc_id
-  subnet_zone_list   = local.subnet_zone_list
-  resource_group_id  = var.resource_group_id
-  security_group_ids = [data.ibm_is_vpc.vpc.default_security_group]
-  cloud_services = [
-    {
-      service_name = "is"
-    }
-  ]
-  service_endpoints = "private"
-}
+# module "vpes" {
+#   count              = var.private_environment ? 1 : 0
+#   source             = "terraform-ibm-modules/vpe-module/ibm"
+#   version            = "4.1.3"
+#   region             = var.region
+#   prefix             = "${var.cluster_name}-vpc-vpe"
+#   vpc_id             = var.vpc_id
+#   subnet_zone_list   = local.subnet_zone_list
+#   resource_group_id  = var.resource_group_id
+#   security_group_ids = [data.ibm_is_vpc.vpc.default_security_group]
+#   cloud_services = [
+#     {
+#       service_name = "is"
+#     }
+#   ]
+#   service_endpoints = "private"
+# }
 
-data "ibm_is_virtual_endpoint_gateway" "vpc_vpe" {
-  depends_on = [module.vpes]
-  name       = "${var.cluster_name}-vpc-vpe"
+# data "ibm_is_virtual_endpoint_gateway" "vpc_vpe" {
+#   depends_on = [module.vpes]
+#   name       = "${var.cluster_name}-vpc-vpe"
+# }
+
+resource "ibm_is_virtual_endpoint_gateway" "example" {
+
+  name = "example-endpoint-gateway"
+  target {
+    name          = data.ibm_is_vpc.vpc.name
+    resource_type = "provider_cloud_service"
+  }
+  vpc            = var.vpc_id
+  resource_group = var.resource_group_id
+  security_groups = [data.ibm_is_vpc.vpc.default_security_group]
 }
 
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs, module.vpes]
+  depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.example]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${data.ibm_is_virtual_endpoint_gateway.vpc_vpe.service_endpoints}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.example.service_endpoints[0]}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
