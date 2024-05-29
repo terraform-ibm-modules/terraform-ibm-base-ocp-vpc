@@ -533,11 +533,11 @@ resource "ibm_is_virtual_endpoint_gateway" "example" {
 
   name = "example-endpoint-gateway"
   target {
-    name          = data.ibm_is_vpc.vpc.name
+    name          = "is"
     resource_type = "provider_cloud_service"
   }
-  vpc            = var.vpc_id
-  resource_group = var.resource_group_id
+  vpc             = var.vpc_id
+  resource_group  = var.resource_group_id
   security_groups = [data.ibm_is_vpc.vpc.default_security_group]
 }
 
