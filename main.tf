@@ -490,18 +490,6 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
-locals {
-  subnet_zone_list = local.default_pool.subnet_prefix != null ? [for zone in var.vpc_subnets[local.default_pool.subnet_prefix] : {
-    name = zone.zone
-    id   = zone.id
-    }] : [
-    for zone in local.default_pool.vpc_subnets : {
-      name = zone.zone
-      id   = zone.id
-    }
-  ]
-}
-
 data "ibm_is_vpc" "vpc" {
   identifier = var.vpc_id
 }
@@ -524,7 +512,7 @@ resource "null_resource" "confirm_lb_active" {
   depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.private_is_vpe]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.example.service_endpoints[0]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.private_is_vpe.service_endpoints[0]}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
