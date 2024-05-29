@@ -503,7 +503,7 @@ locals {
 }
 
 data "ibm_is_vpc" "vpc" {
-  name = var.vpc_id
+  identifier = var.vpc_id
 }
 
 # module "vpes" {
