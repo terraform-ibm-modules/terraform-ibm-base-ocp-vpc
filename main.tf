@@ -496,7 +496,7 @@ data "ibm_is_vpc" "vpc" {
 
 resource "ibm_is_virtual_endpoint_gateway" "private_is_vpe" {
   count = var.private_environment ? 1 : 0
-  name  = "is-vpe-${local.cluster_id}"
+  name  = "${local.cluster_id}-vpc-vpe"
   target {
     name          = "${local.cluster_id}-vpc-vpe"
     resource_type = "provider_cloud_service"
