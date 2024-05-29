@@ -506,34 +506,11 @@ data "ibm_is_vpc" "vpc" {
   identifier = var.vpc_id
 }
 
-# module "vpes" {
-#   count              = var.private_environment ? 1 : 0
-#   source             = "terraform-ibm-modules/vpe-module/ibm"
-#   version            = "4.1.3"
-#   region             = var.region
-#   prefix             = "${var.cluster_name}-vpc-vpe"
-#   vpc_id             = var.vpc_id
-#   subnet_zone_list   = local.subnet_zone_list
-#   resource_group_id  = var.resource_group_id
-#   security_group_ids = [data.ibm_is_vpc.vpc.default_security_group]
-#   cloud_services = [
-#     {
-#       service_name = "is"
-#     }
-#   ]
-#   service_endpoints = "private"
-# }
+resource "ibm_is_virtual_endpoint_gateway" "private_is_vpe" {
 
-# data "ibm_is_virtual_endpoint_gateway" "vpc_vpe" {
-#   depends_on = [module.vpes]
-#   name       = "${var.cluster_name}-vpc-vpe"
-# }
-
-resource "ibm_is_virtual_endpoint_gateway" "example" {
-
-  name = "example-endpoint-gateway"
+  name = "is-vpe-${local.cluster_id}"
   target {
-    name          = "${var.cluster_name}-vpc-vpe"
+    name          = "${local.cluster_id}-vpc-vpe"
     resource_type = "provider_cloud_service"
     crn           = "crn:v1:bluemix:public:is:${var.region}:::endpoint:${var.region}.private.iaas.cloud.ibm.com"
   }
@@ -544,7 +521,7 @@ resource "ibm_is_virtual_endpoint_gateway" "example" {
 
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.example]
+  depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.private_is_vpe]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.example.service_endpoints[0]}"

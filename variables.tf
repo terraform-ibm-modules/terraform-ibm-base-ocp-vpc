@@ -21,7 +21,7 @@ variable "region" {
 
 variable "private_environment" {
   type        = bool
-  description = "set it to true if using private agents to deploy ocp"
+  description = "Enable if using private schematics agents."
   default     = false
 }
 
