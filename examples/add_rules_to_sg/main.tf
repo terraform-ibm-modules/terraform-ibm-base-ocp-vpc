@@ -55,11 +55,16 @@ locals {
     { name = "allow-port-443", direction = "inbound", tcp = { port_max = 443, port_min = 443 }, udp = null, icmp = null, remote = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block },
     { name = "udp-range", direction = "inbound", udp = { port_max = 30103, port_min = 30103 }, tcp = null, icmp = null, remote = ibm_is_subnet.subnet_zone_1.ipv4_cidr_block },
   ]
+  vpc_security_group = [for group in data.ibm_is_security_groups.vpc_security_groups.security_groups : group if startswith(group.name, "kube-") && endswith(group.name, module.ocp_base.vpc_id)][0]
+}
+
+data "ibm_is_security_groups" "vpc_security_groups" {
+  vpc_id = module.ocp_base.vpc_id
 }
 
 # Kube-<vpc id> Security Group
 data "ibm_is_security_group" "kube_vpc_sg" {
-  name = "kube-${module.ocp_base.vpc_id}"
+  name = local.vpc_security_group.name
 }
 
 resource "ibm_is_security_group_rule" "kube_vpc_rules" {
