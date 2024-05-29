@@ -251,9 +251,10 @@ variable "disable_outbound_traffic_protection" {
 
 variable "operating_system" {
   type        = string
-  description = "The operating system of the workers in the default worker pool."
+  description = "The operating system of the workers in the default worker pool. If no value is specified, RHEL 8 will be used as the default."
   default     = null
 }
+
 # VPC Variables
 variable "vpc_id" {
   type        = string
