@@ -495,8 +495,8 @@ data "ibm_is_vpc" "vpc" {
 }
 
 resource "ibm_is_virtual_endpoint_gateway" "private_is_vpe" {
-
-  name = "is-vpe-${local.cluster_id}"
+  count = var.private_environment ? 1 : 0
+  name  = "is-vpe-${local.cluster_id}"
   target {
     name          = "${local.cluster_id}-vpc-vpe"
     resource_type = "provider_cloud_service"
@@ -512,7 +512,7 @@ resource "null_resource" "confirm_lb_active" {
   depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.private_is_vpe]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.private_is_vpe.service_endpoints[0]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.private_is_vpe[0].service_endpoints[0]}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
