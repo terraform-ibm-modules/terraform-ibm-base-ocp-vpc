@@ -533,7 +533,7 @@ resource "ibm_is_virtual_endpoint_gateway" "example" {
 
   name = "example-endpoint-gateway"
   target {
-    name          = "is"
+    name          = "${var.cluster_name}-vpc-vpe"
     resource_type = "provider_cloud_service"
     crn           = "crn:v1:bluemix:public:is:${var.region}:::endpoint:${var.region}.private.iaas.cloud.ibm.com"
   }
