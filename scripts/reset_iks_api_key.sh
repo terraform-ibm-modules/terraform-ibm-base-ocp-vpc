@@ -5,7 +5,7 @@ set -euo pipefail
 REGION="$1"
 RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
-PRIVATE_ENDPOINT="$3"
+PRIVATE_ENV="$3"
 
 # Expects the environment variable $IBMCLOUD_API_KEY to be set
 if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
