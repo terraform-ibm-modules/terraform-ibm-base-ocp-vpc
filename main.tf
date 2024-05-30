@@ -493,32 +493,35 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
-data "ibm_is_vpc" "vpc" {
-  identifier = var.vpc_id
-}
+# data "ibm_is_vpc" "vpc" {
+#   identifier = var.vpc_id
+# }
 
-resource "ibm_is_virtual_endpoint_gateway" "private_is_vpe" {
-  count = var.private_environment ? 1 : 0
-  name  = "${local.cluster_id}-vpc-vpe"
-  target {
-    name          = "${local.cluster_id}-vpc-vpe"
-    resource_type = "provider_cloud_service"
-    crn           = "crn:v1:bluemix:public:is:${var.region}:::endpoint:${var.region}.private.iaas.cloud.ibm.com"
-  }
-  vpc             = var.vpc_id
-  resource_group  = var.resource_group_id
-  security_groups = [data.ibm_is_vpc.vpc.default_security_group]
-}
+# resource "ibm_is_virtual_endpoint_gateway" "private_is_vpe" {
+#   count = var.private_environment ? 1 : 0
+#   name  = "${local.cluster_id}-vpc-vpe"
+#   target {
+#     name          = "${local.cluster_id}-vpc-vpe"
+#     resource_type = "provider_cloud_service"
+#     crn           = "crn:v1:bluemix:public:is:${var.region}:::endpoint:${var.region}.private.iaas.cloud.ibm.com"
+#   }
+#   vpc             = var.vpc_id
+#   resource_group  = var.resource_group_id
+#   security_groups = [data.ibm_is_vpc.vpc.default_security_group]
+# }
+
+data "ibm_iam_auth_token" "tokendata" {}
 
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs, ibm_is_virtual_endpoint_gateway.private_is_vpe]
+  depends_on = [data.ibm_is_lbs.all_lbs]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment} ${ibm_is_virtual_endpoint_gateway.private_is_vpe[0].service_endpoints[0]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      # IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
     }
   }
 }
