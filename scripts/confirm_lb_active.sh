@@ -39,7 +39,7 @@ if [ "$PRIVATE_ENV" ]; then
     done
     IAM_TOKEN=$(ibmcloud iam oauth-tokens --output json | jq -r '.iam_token')
 else
-    until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" || [ $attempts -ge 3 ]; do
+    until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" -a "cloud.ibm.com" || [ $attempts -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..." >&2
         sleep 5

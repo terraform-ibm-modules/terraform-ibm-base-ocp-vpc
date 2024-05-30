@@ -5,6 +5,7 @@ set -euo pipefail
 REGION="$1"
 RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
+PRIVATE_ENDPOINT="$3"
 
 # Expects the environment variable $IBMCLOUD_API_KEY to be set
 if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
@@ -22,13 +23,25 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
     exit 1
 fi
 
+if [[ -z "${PRIVATE_ENV}" ]]; then
+    PRIVATE_ENV=false
+fi
+
 # Login to ibmcloud with cli
 attempts=1
-until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" -a "cloud.ibm.com" || [ $attempts -ge 3 ]; do
-    attempts=$((attempts+1))
-    echo "Error logging in to IBM Cloud CLI..." >&2
-    sleep 5
-done
+if [ "$PRIVATE_ENV" ]; then
+    until ibmcloud login -q -r "us-south" -a private.cloud.ibm.com || [ $attempts -ge 3 ]; do
+        attempts=$((attempts + 1))
+        echo "Error logging in to IBM Cloud CLI..." >&2
+        sleep 5
+    done
+else
+    until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" || [ $attempts -ge 3 ]; do
+        attempts=$((attempts + 1))
+        echo "Error logging in to IBM Cloud CLI..." >&2
+        sleep 5
+    done
+fi
 
 # run api-key reset command if apikey for given region + resource group does not already exist
 reset=true
