@@ -19,9 +19,9 @@ variable "region" {
   description = "The IBM Cloud region where the cluster will be provisioned."
 }
 
-variable "private_environment" {
+variable "use_private_endpoint" {
   type        = bool
-  description = "Enable if using private schematics agents."
+  description = "Enable if the runtime has to have access to private endpoints."
   default     = false
 }
 

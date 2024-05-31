@@ -30,13 +30,13 @@ fi
 # Login to ibmcloud with cli
 attempts=1
 if [ "$PRIVATE_ENV" ]; then
-    until ibmcloud login -q -r "us-south" -a private.cloud.ibm.com || [ $attempts -ge 3 ]; do
+    until ibmcloud login -q -r "us-south" -g "${RESOURCE_GROUP_ID}" -a private.cloud.ibm.com || [ $attempts -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..." >&2
         sleep 5
     done
 else
-    until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" || [ $attempts -ge 3 ]; do
+    until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" -a cloud.ibm.com || [ $attempts -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..." >&2
         sleep 5

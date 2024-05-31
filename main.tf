@@ -49,7 +49,7 @@ locals {
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
   # tflint-ignore: terraform_unused_declarations
-  validate_private_env = var.private_environment == true && var.cluster_config_endpoint_type == "default" ? tobool("When passing 'private_environment' value is set to true, 'cluster_config_endpoint_type' must be accessed using a private endpoint.") : true
+  validate_private_env = var.use_private_endpoint == true && var.cluster_config_endpoint_type == "default" ? tobool("When passing 'use_private_endpoint' value is set to true, 'cluster_config_endpoint_type' must be accessed using a private endpoint.") : true
 
 }
 
@@ -245,7 +245,7 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.private_environment}"
+    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
@@ -494,17 +494,18 @@ locals {
 }
 
 
-data "ibm_iam_auth_token" "tokendata" {}
+data "ibm_iam_auth_token" "tokendata" {
+  depends_on = [data.ibm_is_lbs.all_lbs]
+}
 
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs]
+  depends_on = [data.ibm_iam_auth_token.tokendata]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.private_environment}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      # IBMCLOUD_API_KEY = var.ibmcloud_api_key
       IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
     }
   }

@@ -19,6 +19,12 @@ variable "region" {
   description = "The IBM Cloud region where the cluster will be provisioned."
 }
 
+variable "use_private_endpoint" {
+  type        = bool
+  description = "Enable if the runtime has to have access to private endpoints."
+  default     = false
+}
+
 # Cluster Variables
 variable "tags" {
   type        = list(string)
