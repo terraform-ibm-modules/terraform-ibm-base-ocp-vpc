@@ -21,7 +21,7 @@ variable "region" {
 
 variable "use_private_endpoint" {
   type        = bool
-  description = "Enable if the runtime has to have access to private endpoints."
+  description = "Enable if the Terraform execution environment requires access to private endpoints."
   default     = false
 }
 
