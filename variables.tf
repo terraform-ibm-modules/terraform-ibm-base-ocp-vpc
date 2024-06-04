@@ -251,7 +251,7 @@ variable "disable_outbound_traffic_protection" {
 
 variable "operating_system" {
   type        = string
-  description = "The operating system of the workers in the default worker pool. If no value is specified, RHEL 8 will be used as the default."
+  description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
   default     = null
 }
 
