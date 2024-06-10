@@ -205,4 +205,10 @@ variable "additional_vpe_security_group_ids" {
   default = {}
 }
 
+variable "operating_system" {
+  type        = string
+  description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
+  default     = null
+}
+
 ##############################################################################

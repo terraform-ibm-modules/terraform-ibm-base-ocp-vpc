@@ -255,6 +255,12 @@ variable "disable_outbound_traffic_protection" {
   default     = false
 }
 
+variable "operating_system" {
+  type        = string
+  description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
+  default     = null
+}
+
 # VPC Variables
 variable "vpc_id" {
   type        = string
