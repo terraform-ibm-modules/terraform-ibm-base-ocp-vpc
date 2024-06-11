@@ -51,6 +51,64 @@ module "flowlogs_bucket" {
 # VPC
 ########################################################################################################################
 
+locals {
+  # set of ACL rules to allow the openshift ingress healthcheck operator outbound and inbound traffic
+  acl_rules_ingress_check = [
+    {
+      name                         = "${var.prefix}-acls-enable-ingress-check"
+      add_ibm_cloud_internal_rules = true
+      add_vpc_connectivity_rules   = true
+      prepend_ibm_rules            = true
+      rules = [
+        {
+          name      = "https-inbound-tcp-to-443"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
+          }
+          destination = "10.0.0.0/8"
+          source      = "10.0.0.0/8"
+        },
+        {
+          name      = "https-inbound-tcp-from-443"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 443
+            source_port_max = 443
+          }
+          destination = "10.0.0.0/8"
+          source      = "10.0.0.0/8"
+        },
+        {
+          name      = "https-outbound-tcp-to-443"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
+          }
+          destination = "10.0.0.0/8"
+          source      = "10.0.0.0/8"
+        },
+        {
+          name      = "https-outbound-tcp-from-443"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            source_port_min = 443
+            source_port_max = 443
+          }
+          destination = "10.0.0.0/8"
+          source      = "10.0.0.0/8"
+        }
+      ]
+    }
+  ]
+}
+
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
@@ -71,6 +129,7 @@ module "vpc" {
   existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
   security_group_rules                   = []
   existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
+  network_acls                           = local.acl_rules_ingress_check
   subnets = {
     zone-1 = [
       {
@@ -250,5 +309,68 @@ module "ocp_fscloud" {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id
     private_endpoint = true
+  }
+}
+
+########################################################################################################################
+# The following blocks define the Security group rule to allow the openshift ingress healthcheck operator traffic
+########################################################################################################################
+
+locals {
+  security_group_rules_ingress_check = [
+    {
+      name      = "https-outbound-tcp-443"
+      direction = "outbound"
+      remote    = "0.0.0.0/0"
+      udp       = null
+      icmp      = null
+      tcp = {
+        port_max = 443
+        port_min = 443
+      }
+    },
+  ]
+
+  # Convert to object
+  security_group_rule_object = {
+    for rule in local.security_group_rules_ingress_check :
+    rule.name => rule
+  }
+
+}
+
+data "ibm_is_vpc" "vpc" {
+  identifier = module.vpc.vpc_id
+}
+
+# SG rules
+resource "ibm_is_security_group_rule" "ingress_check_sg_rules" {
+  for_each  = local.security_group_rule_object
+  group     = data.ibm_is_vpc.vpc.default_security_group
+  direction = each.value.direction
+  remote    = each.value.remote
+
+  dynamic "tcp" {
+    for_each = each.value.tcp == null ? [] : [each.value]
+    content {
+      port_min = each.value.tcp.port_min
+      port_max = each.value.tcp.port_max
+    }
+  }
+
+  dynamic "udp" {
+    for_each = each.value.udp == null ? [] : [each.value]
+    content {
+      port_min = each.value.udp.port_min
+      port_max = each.value.udp.port_max
+    }
+  }
+
+  dynamic "icmp" {
+    for_each = each.value.icmp == null ? [] : [each.value]
+    content {
+      type = lookup(each.value.icmp, "type", null)
+      code = lookup(each.value.icmp, "code", null)
+    }
   }
 }
