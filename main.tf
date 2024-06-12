@@ -48,6 +48,9 @@ locals {
   # attach_ibm_managed_security_group is false and custom_security_group_ids is not set => default behavior, so set to null
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
+
+  # for versions older than 4.15, this value must be null, or provider gives error
+  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
 # Lookup the current default kube version
@@ -101,7 +104,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   operating_system                    = var.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
@@ -168,7 +171,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   operating_system                    = var.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
