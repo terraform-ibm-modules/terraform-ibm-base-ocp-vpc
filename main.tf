@@ -247,11 +247,15 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
 # The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
+data "ibm_iam_auth_token" "reset_api_key_tokendata" {
+}
+
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
     command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
+      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
     }
   }
