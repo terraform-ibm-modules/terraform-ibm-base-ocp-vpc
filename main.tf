@@ -50,7 +50,7 @@ locals {
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
   # for versions older than 4.15, this value must be null, or provider gives error
-  disable_outbound_traffic_protection = local.ocp_version == "4.12_openshift" || local.ocp_version == "4.13_openshift" || local.ocp_version == "4.14_openshift" ? null : var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
 # Lookup the current default kube version
