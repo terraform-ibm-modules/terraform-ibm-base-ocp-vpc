@@ -12,12 +12,8 @@ if [[ -z "${REGION}" ]]; then
     exit 1
 fi
 
-if [[ -z "${PRIVATE_ENV}" ]]; then
-    PRIVATE_ENV=false
-fi
-
 lb_attempts=1
-if [ "$PRIVATE_ENV" ]; then
+if [ "$PRIVATE_ENV" = true ]; then
     URL="https://$REGION.private.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
 else
     URL="https://$REGION.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"

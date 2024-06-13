@@ -23,13 +23,9 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
     exit 1
 fi
 
-if [[ -z "${PRIVATE_ENV}" ]]; then
-    PRIVATE_ENV=false
-fi
-
 # Login to ibmcloud with cli
 attempts=1
-if [ "$PRIVATE_ENV" ]; then
+if [ "$PRIVATE_ENV" = true ]; then
     until ibmcloud login -q -r "us-south" -g "${RESOURCE_GROUP_ID}" -a private.cloud.ibm.com || [ $attempts -ge 3 ]; do # hard-coding region to "us-south" since ibmcloud cli supports private endpoints only in "us-south" and "us-east" regions.
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..." >&2
@@ -56,9 +52,9 @@ for i in "${key_descriptions[@]}"; do
 done
 
 if [ "${reset}" == true ]; then
-    if [ "$PRIVATE_ENV" ]; then
+    if [ "$PRIVATE_ENV" = true ]; then
         URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
-        curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -X POST "$URL"
+        curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -X POST "$URL"
     else
         URL="https://containers.cloud.ibm.com/global/v1/keys"
         curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -X POST "$URL" -d ''
