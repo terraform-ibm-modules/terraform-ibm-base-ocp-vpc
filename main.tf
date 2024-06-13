@@ -52,7 +52,7 @@ locals {
   validate_private_endpoint = var.use_private_endpoint == true && var.cluster_config_endpoint_type == "default" ? tobool("When setting 'var.use_private_endpoint' to true, 'var.cluster_config_endpoint_type' must be set to private.") : true
 
   # for versions older than 4.15, this value must be null, or provider gives error
-  disable_outbound_traffic_protection = local.ocp_version == "4.12_openshift" || local.ocp_version == "4.13_openshift" || local.ocp_version == "4.14_openshift" ? null : var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
 # Lookup the current default kube version
@@ -64,7 +64,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.2.13"
+  version                = "8.3.2"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
