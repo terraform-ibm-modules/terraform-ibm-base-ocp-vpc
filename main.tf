@@ -250,13 +250,16 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 data "ibm_iam_auth_token" "reset_api_key_tokendata" {
 }
 
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
     command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IAM_TOKEN        = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
+      ACCOUNT_ID = data.ibm_iam_account_settings.iam_account_settings.account_id
     }
   }
 }
