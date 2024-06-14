@@ -46,7 +46,6 @@ Optionally, the module supports advanced security group management for the worke
 module "ocp_base" {
   source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
   version              = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
-  ibmcloud_api_key     = "XXXXXXXXXXXXXXXXXXX"
   cluster_name         = "example-cluster-name"
   resource_group_id    = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   region               = "us-south"
