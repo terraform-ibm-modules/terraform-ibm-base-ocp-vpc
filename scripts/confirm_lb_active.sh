@@ -5,7 +5,7 @@ set -euo pipefail
 REGION="$1"
 LB_ID="$2"
 PRIVATE_ENV="$3"
-API_VERSION="2024-03-01"
+API_VERSION=$(date -d "yesterday" '+%Y-%m-%d' 2>/dev/null || date -v-1d '+%Y-%m-%d')
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -23,7 +23,7 @@ while true; do
     STATUS=$(curl -H "Authorization: $IAM_TOKEN" -X GET "$URL" | jq -r '.operating_status')
     echo "Load balancer status: $STATUS"
     if [[ "$STATUS" == "online" ]]; then
-        sleep 120
+        sleep 300
         STATUS=$(curl -H "Authorization: $IAM_TOKEN" -X GET "$URL" | jq -r '.operating_status')
         if [[ "$STATUS" == "online" ]]; then
             break

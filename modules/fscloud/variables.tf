@@ -2,12 +2,6 @@
 # Input Variables
 ##############################################################################
 
-variable "ibmcloud_api_key" {
-  description = "APIkey that's associated with the account to use"
-  type        = string
-  sensitive   = true
-}
-
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string
@@ -21,7 +15,7 @@ variable "region" {
 
 variable "use_private_endpoint" {
   type        = bool
-  description = "Enable if the Terraform execution environment requires access to private endpoints."
+  description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
   default     = false
 }
 

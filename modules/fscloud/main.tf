@@ -3,7 +3,6 @@
 module "fscloud" {
   source = "../.."
 
-  ibmcloud_api_key                  = var.ibmcloud_api_key
   cluster_name                      = var.cluster_name
   resource_group_id                 = var.resource_group_id
   region                            = var.region
