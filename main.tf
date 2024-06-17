@@ -48,9 +48,7 @@ locals {
   # attach_ibm_managed_security_group is false and custom_security_group_ids is not set => default behavior, so set to null
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
-  # tflint-ignore: terraform_unused_declarations
-  validate_private_endpoint = var.use_private_endpoint == true && var.cluster_config_endpoint_type == "default" ? tobool("When setting 'var.use_private_endpoint' to true, 'var.cluster_config_endpoint_type' must be set to private.") : true
-
+  
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }

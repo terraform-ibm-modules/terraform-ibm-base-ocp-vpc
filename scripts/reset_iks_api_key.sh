@@ -32,8 +32,6 @@ fetch_data() {
     local combined_data="$apikeys"
 
     while [ "$url" != "null" ]; do
-        # echo "Fetching data from: $url"
-
         # Fetch data from the API
         response=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
 

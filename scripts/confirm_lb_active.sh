@@ -5,7 +5,7 @@ set -euo pipefail
 REGION="$1"
 LB_ID="$2"
 PRIVATE_ENV="$3"
-API_VERSION=$(date -d "yesterday" '+%Y-%m-%d' 2>/dev/null || date -v-1d '+%Y-%m-%d')
+API_VERSION="2024-03-01"
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
