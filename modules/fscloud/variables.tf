@@ -203,6 +203,14 @@ variable "operating_system" {
   type        = string
   description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
   default     = null
+  validation {
+    condition = anytrue([
+      var.operating_system == null,
+      var.operating_system == "RHEL 8",
+      var.operating_system == "RHCOS",
+    ])
+    error_message = "The specified operating_system is not one of the validated OS versions."
+  }
 }
 
 ##############################################################################
