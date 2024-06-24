@@ -94,7 +94,6 @@ module "custom_sg" {
 
 module "ocp_base" {
   source                            = "../.."
-  ibmcloud_api_key                  = var.ibmcloud_api_key
   resource_group_id                 = module.resource_group.resource_group_id
   region                            = var.region
   tags                              = var.resource_tags

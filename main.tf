@@ -245,12 +245,19 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
 # The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
+data "ibm_iam_auth_token" "reset_api_key_tokendata" {
+}
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id}"
+    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
+      ACCOUNT_ID = data.ibm_iam_account_settings.iam_account_settings.account_id
     }
   }
 }
@@ -495,15 +502,20 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+
+data "ibm_iam_auth_token" "tokendata" {
+  depends_on = [data.ibm_is_lbs.all_lbs]
+}
+
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs]
+  depends_on = [data.ibm_iam_auth_token.tokendata]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
     }
   }
 }

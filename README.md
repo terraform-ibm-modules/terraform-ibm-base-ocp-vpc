@@ -46,7 +46,6 @@ Optionally, the module supports advanced security group management for the worke
 module "ocp_base" {
   source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
   version              = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
-  ibmcloud_api_key     = "XXXXXXXXXXXXXXXXXXX"
   cluster_name         = "example-cluster-name"
   resource_group_id    = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   region               = "us-south"
@@ -230,6 +229,9 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_container_cluster_config.cluster_config](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_config) | data source |
 | [ibm_container_cluster_versions.cluster_versions](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_versions) | data source |
 | [ibm_container_vpc_worker_pool.all_pools](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_vpc_worker_pool) | data source |
+| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_account_settings) | data source |
+| [ibm_iam_auth_token.reset_api_key_tokendata](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
+| [ibm_iam_auth_token.tokendata](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 | [ibm_is_lbs.all_lbs](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_lbs) | data source |
 | [ibm_is_virtual_endpoint_gateways.all_vpes](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateways) | data source |
 
@@ -252,7 +254,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_enable_registry_storage"></a> [enable\_registry\_storage](#input\_enable\_registry\_storage) | Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature. | `bool` | `true` | no |
 | <a name="input_existing_cos_id"></a> [existing\_cos\_id](#input\_existing\_cos\_id) | The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable\_registry\_storage' and 'use\_existing\_cos' are true | `string` | `null` | no |
 | <a name="input_force_delete_storage"></a> [force\_delete\_storage](#input\_force\_delete\_storage) | Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false | `bool` | `false` | no |
-| <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | APIkey that's associated with the account to use, set via environment variable TF\_VAR\_ibmcloud\_api\_key | `string` | n/a | yes |
 | <a name="input_ignore_worker_pool_size_changes"></a> [ignore\_worker\_pool\_size\_changes](#input\_ignore\_worker\_pool\_size\_changes) | Enable if using worker autoscaling. Stops Terraform managing worker count | `bool` | `false` | no |
 | <a name="input_kms_config"></a> [kms\_config](#input\_kms\_config) | Use to attach a KMS instance to the cluster. If account\_id is not provided, defaults to the account in use. | <pre>object({<br>    crk_id           = string<br>    instance_id      = string<br>    private_endpoint = optional(bool, true) # defaults to true<br>    account_id       = optional(string)     # To attach KMS instance from another account<br>    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed<br>  })</pre> | `null` | no |
 | <a name="input_manage_all_addons"></a> [manage\_all\_addons](#input\_manage\_all\_addons) | Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources. | `bool` | `false` | no |
@@ -264,6 +265,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The Id of an existing IBM Cloud resource group where the cluster will be grouped. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Metadata labels describing this cluster deployment, i.e. test | `list(string)` | `[]` | no |
 | <a name="input_use_existing_cos"></a> [use\_existing\_cos](#input\_use\_existing\_cos) | Flag indicating whether or not to use an existing COS instance for OpenShift internal registry storage. Only applicable if 'enable\_registry\_storage' is true | `bool` | `false` | no |
+| <a name="input_use_private_endpoint"></a> [use\_private\_endpoint](#input\_use\_private\_endpoint) | Set this to true to force all api calls to use the IBM Cloud private endpoints. | `bool` | `false` | no |
 | <a name="input_verify_worker_network_readiness"></a> [verify\_worker\_network\_readiness](#input\_verify\_worker\_network\_readiness) | By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false. | `bool` | `true` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Id of the VPC instance where this cluster will be provisioned | `string` | n/a | yes |
 | <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created | <pre>map(list(object({<br>    id         = string<br>    zone       = string<br>    cidr_block = string<br>  })))</pre> | n/a | yes |
