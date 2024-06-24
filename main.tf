@@ -291,6 +291,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
+  operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
@@ -333,6 +334,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
+  operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
