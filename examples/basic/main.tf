@@ -80,4 +80,5 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   worker_pools         = local.worker_pools
   access_tags          = var.access_tags
+  ocp_entitlement      = var.ocp_entitlement 
 }

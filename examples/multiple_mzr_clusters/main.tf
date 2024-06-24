@@ -124,6 +124,7 @@ module "ocp_base_cluster_1" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
+  ocp_entitlement      = var.ocp_entitlement
 }
 
 module "ocp_base_cluster_2" {
@@ -139,6 +140,7 @@ module "ocp_base_cluster_2" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   ibmcloud_api_key     = var.ibmcloud_api_key
+  ocp_entitlement      = var.ocp_entitlement 
 }
 
 ########################################################################################################################

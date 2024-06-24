@@ -45,3 +45,9 @@ variable "access_tags" {
   description = "A list of access tags to apply to the resources created by the module."
   default     = []
 }
+
+ variable "ocp_entitlement" {
+  type        = string
+  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  default     = null
+}

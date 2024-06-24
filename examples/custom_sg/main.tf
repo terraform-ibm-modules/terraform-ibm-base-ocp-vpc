@@ -108,6 +108,7 @@ module "ocp_base" {
   attach_ibm_managed_security_group = true # true is the default
   custom_security_group_ids         = [module.custom_sg["custom-cluster-sg"].security_group_id]
   additional_lb_security_group_ids  = [module.custom_sg["custom-lb-sg"].security_group_id]
+  ocp_entitlement                   = var.ocp_entitlement 
   additional_vpe_security_group_ids = {
     "master"   = [module.custom_sg["custom-master-vpe-sg"].security_group_id]
     "api"      = [module.custom_sg["custom-kube-api-vpe-sg"].security_group_id]

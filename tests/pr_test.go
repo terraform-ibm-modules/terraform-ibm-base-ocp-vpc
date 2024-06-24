@@ -58,6 +58,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion,
 			"access_tags": permanentResources["accessTags"],
+			"ocp_entitlement": "cloud_pak",
 		},
 	})
 
@@ -123,6 +124,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+		{Name:  "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 	}
 
 	err := options.RunSchematicTest()

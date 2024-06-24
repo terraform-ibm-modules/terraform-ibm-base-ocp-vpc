@@ -39,3 +39,9 @@ variable "ocp_version" {
   description = "Version of the OCP cluster to provision"
   default     = null
 }
+
+variable "ocp_entitlement" {
+  type        = string
+  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  default     = null
+}

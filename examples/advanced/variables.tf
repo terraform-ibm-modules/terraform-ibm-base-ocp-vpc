@@ -45,3 +45,9 @@ variable "access_tags" {
   description = "A list of access tags to apply"
   default     = []
 }
+
+variable "ocp_entitlement" {
+  type        = string
+  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  default     = null
+}

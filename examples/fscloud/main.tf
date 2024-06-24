@@ -246,6 +246,7 @@ module "ocp_fscloud" {
   tags                 = var.resource_tags
   access_tags          = var.access_tags
   ocp_version          = var.ocp_version
+  ocp_entitlement      = var.ocp_entitlement
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id

@@ -161,6 +161,7 @@ module "ocp_base" {
   tags                 = var.resource_tags
   access_tags          = var.access_tags
   worker_pools_taints  = local.worker_pools_taints
+  ocp_entitlement      = var.ocp_entitlement
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
