@@ -256,7 +256,7 @@ variable "operating_system" {
   validation {
     condition = anytrue([
       var.operating_system == null,
-      var.operating_system == "RHEL 8",
+      var.operating_system == "REDHAT_8_64",
       var.operating_system == "RHCOS",
     ])
     error_message = "The specified operating_system is not one of the validated OS versions."
