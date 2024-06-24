@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 1.3.0, < 1.7.0"
+  required_version = ">= 1.3.0"
   required_providers {
     # Use "greater than or equal to" range in modules
     ibm = {
       source  = "ibm-cloud/ibm"
-      version = ">= 1.64.0, < 2.0.0"
+      version = ">= 1.66.0, < 2.0.0"
     }
     null = {
       source  = "hashicorp/null"

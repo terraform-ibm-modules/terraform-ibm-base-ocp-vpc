@@ -46,7 +46,7 @@ variable "access_tags" {
   default     = []
 }
 
- variable "ocp_entitlement" {
+variable "ocp_entitlement" {
   type        = string
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
   default     = null

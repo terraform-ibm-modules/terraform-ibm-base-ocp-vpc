@@ -50,7 +50,7 @@ locals {
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
   # for versions older than 4.15, this value must be null, or provider gives error
-  disable_outbound_traffic_protection = local.ocp_version == "4.12_openshift" || local.ocp_version == "4.13_openshift" || local.ocp_version == "4.14_openshift" ? null : var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
 # Lookup the current default kube version
@@ -62,7 +62,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.2.13"
+  version                = "8.4.1"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -245,12 +245,19 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
 # The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
+data "ibm_iam_auth_token" "reset_api_key_tokendata" {
+}
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id}"
+    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
+      ACCOUNT_ID = data.ibm_iam_account_settings.iam_account_settings.account_id
     }
   }
 }
@@ -495,15 +502,20 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
+
+data "ibm_iam_auth_token" "tokendata" {
+  depends_on = [data.ibm_is_lbs.all_lbs]
+}
+
 resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_is_lbs.all_lbs]
+  depends_on = [data.ibm_iam_auth_token.tokendata]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${var.resource_group_id} ${local.lbs_associated_with_cluster[count.index]}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
     }
   }
 }
@@ -512,7 +524,7 @@ module "attach_sg_to_lb" {
   depends_on                     = [null_resource.confirm_lb_active]
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.1"
+  version                        = "2.6.2"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -540,7 +552,7 @@ locals {
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.1"
+  version                        = "2.6.2"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -549,7 +561,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.1"
+  version                        = "2.6.2"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -558,7 +570,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.1"
+  version                        = "2.6.2"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]

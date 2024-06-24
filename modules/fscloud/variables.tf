@@ -2,12 +2,6 @@
 # Input Variables
 ##############################################################################
 
-variable "ibmcloud_api_key" {
-  description = "APIkey that's associated with the account to use"
-  type        = string
-  sensitive   = true
-}
-
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string
@@ -17,6 +11,12 @@ variable "resource_group_id" {
 variable "region" {
   type        = string
   description = "The IBM Cloud region where the cluster will be provisioned."
+}
+
+variable "use_private_endpoint" {
+  type        = bool
+  description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
+  default     = false
 }
 
 # Cluster Variables

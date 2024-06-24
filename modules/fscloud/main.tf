@@ -3,7 +3,6 @@
 module "fscloud" {
   source = "../.."
 
-  ibmcloud_api_key                  = var.ibmcloud_api_key
   cluster_name                      = var.cluster_name
   resource_group_id                 = var.resource_group_id
   region                            = var.region
@@ -12,6 +11,7 @@ module "fscloud" {
   ocp_entitlement                   = var.ocp_entitlement
   vpc_id                            = var.vpc_id
   vpc_subnets                       = var.vpc_subnets
+  use_private_endpoint              = var.use_private_endpoint
   worker_pools                      = var.worker_pools
   disable_public_endpoint           = true
   cluster_config_endpoint_type      = var.cluster_config_endpoint_type

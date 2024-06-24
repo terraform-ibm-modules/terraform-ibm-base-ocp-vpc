@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.1.5"
+  version = "1.1.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -83,7 +83,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-cluster-sg", "custom-worker-pool-sg", "custom-lb-sg", "custom-master-vpe-sg", "custom-registry-vpe-sg", "custom-kube-api-vpe-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.6.1"
+  version                      = "2.6.2"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
@@ -94,7 +94,6 @@ module "custom_sg" {
 
 module "ocp_base" {
   source                            = "../.."
-  ibmcloud_api_key                  = var.ibmcloud_api_key
   resource_group_id                 = module.resource_group.resource_group_id
   region                            = var.region
   tags                              = var.resource_tags
@@ -108,7 +107,7 @@ module "ocp_base" {
   attach_ibm_managed_security_group = true # true is the default
   custom_security_group_ids         = [module.custom_sg["custom-cluster-sg"].security_group_id]
   additional_lb_security_group_ids  = [module.custom_sg["custom-lb-sg"].security_group_id]
-  ocp_entitlement                   = var.ocp_entitlement 
+  ocp_entitlement                   = var.ocp_entitlement
   additional_vpe_security_group_ids = {
     "master"   = [module.custom_sg["custom-master-vpe-sg"].security_group_id]
     "api"      = [module.custom_sg["custom-kube-api-vpe-sg"].security_group_id]
