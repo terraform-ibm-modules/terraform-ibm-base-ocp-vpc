@@ -5,12 +5,7 @@ set -euo pipefail
 REGION="$1"
 RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
-
-# Expects the environment variable $IBMCLOUD_API_KEY to be set
-if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
-    echo "API key must be set with IBMCLOUD_API_KEY environment variable" >&2
-    exit 1
-fi
+PRIVATE_ENV="$3"
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -22,29 +17,46 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
     exit 1
 fi
 
-# Login to ibmcloud with cli
-attempts=1
-until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" || [ $attempts -ge 3 ]; do
-    attempts=$((attempts+1))
-    echo "Error logging in to IBM Cloud CLI..." >&2
-    sleep 5
-done
+if [ "$PRIVATE_ENV" = true ]; then
+    IAM_URL="https://private.iam.cloud.ibm.com/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+else
+    IAM_URL="https://iam.cloud.ibm.com/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+fi
 
-# run api-key reset command if apikey for given region + resource group does not already exist
 reset=true
-key_descriptions=()
-while IFS='' read -r line; do key_descriptions+=("$line"); done < <(ibmcloud iam api-keys --all --output json | jq -r --arg name "${APIKEY_KEY_NAME}" '.[] | select(.name == $name) | .description')
-for i in "${key_descriptions[@]}"; do
-  if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
-    echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
-    reset=false
-    break
-  fi
-done
+
+# Function to fetch data and handle pagination
+fetch_data() {
+    local url="$IAM_URL"
+
+    while [ "$url" != "null" ]; do
+        # Fetch data from the API
+        response=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
+
+        # Extract next URL and current data
+        next_url=$(echo "$response" | jq -r '.next')
+        key_descriptions=$(echo "$response" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
+        for i in "${key_descriptions[@]}"; do
+            if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
+                echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
+                reset=false
+                break
+            fi
+        done
+        url=$next_url
+    done
+}
+
+fetch_data
 
 if [ "${reset}" == true ]; then
-  cmd="ibmcloud ks api-key reset --region ${REGION}"
-  yes | "${cmd}" || echo "Error executing command: ${cmd} && exit $?"
-  # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
-  sleep 10
+    if [ "$PRIVATE_ENV" = true ]; then
+        RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
+        curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+    else
+        RESET_URL="https://containers.cloud.ibm.com/global/v1/keys"
+        curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d ''
+    fi
+    # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
+    sleep 10
 fi

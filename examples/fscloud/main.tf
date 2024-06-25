@@ -232,20 +232,38 @@ locals {
   ]
 }
 
+########################################################################################################################
+# Security groups
+# Creating some security group for illustration purpose in this example.
+# Real-world sg would have your own rules set in the `security_group_rules` input.
+########################################################################################################################
+
+module "custom_sg" {
+  for_each                     = toset(["custom-lb-sg"])
+  source                       = "terraform-ibm-modules/security-group/ibm"
+  version                      = "2.6.1"
+  add_ibm_cloud_internal_rules = false
+  security_group_name          = each.key
+  security_group_rules         = []
+  resource_group               = module.resource_group.resource_group_id
+  vpc_id                       = module.vpc.vpc_id
+}
+
 module "ocp_fscloud" {
-  source               = "../../modules/fscloud"
-  cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
-  existing_cos_id      = module.cos_fscloud.cos_instance_id
-  worker_pools         = local.worker_pools
-  tags                 = var.resource_tags
-  access_tags          = var.access_tags
-  ocp_version          = var.ocp_version
+  source                           = "../../modules/fscloud"
+  cluster_name                     = var.prefix
+  resource_group_id                = module.resource_group.resource_group_id
+  region                           = var.region
+  force_delete_storage             = true
+  vpc_id                           = module.vpc.vpc_id
+  vpc_subnets                      = local.cluster_vpc_subnets
+  existing_cos_id                  = module.cos_fscloud.cos_instance_id
+  worker_pools                     = local.worker_pools
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  ocp_version                      = var.ocp_version
+  additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
+  use_private_endpoint             = true
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id
