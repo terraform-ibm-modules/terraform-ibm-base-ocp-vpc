@@ -264,6 +264,7 @@ module "ocp_fscloud" {
   ocp_version                      = var.ocp_version
   additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
   use_private_endpoint             = true
+  ocp_entitlement                  = var.ocp_entitlement
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id
