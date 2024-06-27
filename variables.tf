@@ -2,12 +2,6 @@
 # Input Variables
 ##############################################################################
 
-variable "ibmcloud_api_key" {
-  description = "APIkey that's associated with the account to use, set via environment variable TF_VAR_ibmcloud_api_key"
-  type        = string
-  sensitive   = true
-}
-
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string
@@ -17,6 +11,12 @@ variable "resource_group_id" {
 variable "region" {
   type        = string
   description = "The IBM Cloud region where the cluster will be provisioned."
+}
+
+variable "use_private_endpoint" {
+  type        = bool
+  description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
+  default     = false
 }
 
 # Cluster Variables
@@ -185,7 +185,7 @@ variable "disable_public_endpoint" {
 variable "ocp_entitlement" {
   type        = string
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
-  default     = "cloud_pak"
+  default     = null
 }
 
 variable "force_delete_storage" {

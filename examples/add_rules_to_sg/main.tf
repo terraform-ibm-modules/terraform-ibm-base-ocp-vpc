@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.1.5"
+  version = "1.1.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -111,6 +111,7 @@ resource "ibm_is_security_group_rule" "kube_cluster_rules" {
   direction = each.value.direction
   remote    = each.value.remote
 
+
   dynamic "tcp" {
     for_each = each.value.tcp == null ? [] : [each.value]
     content {
@@ -166,7 +167,6 @@ locals {
 module "ocp_base" {
   source               = "../.."
   cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   force_delete_storage = true
@@ -175,4 +175,5 @@ module "ocp_base" {
   worker_pools         = local.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
+  ocp_entitlement      = var.ocp_entitlement
 }

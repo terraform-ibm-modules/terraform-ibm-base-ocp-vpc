@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.1.5"
+  version = "1.1.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.2.13"
+  version                       = "8.4.1"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -32,7 +32,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.2.13"
+  version = "8.4.1"
 
   bucket_configs = [
     {
@@ -112,7 +112,7 @@ locals {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.18.1"
+  version           = "7.18.3"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -172,7 +172,7 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.12.2"
+  version = "2.13.1"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -203,7 +203,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.22.1"
+  version          = "1.22.2"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -215,7 +215,7 @@ module "cbr_zone" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.22.1"
+  version          = "1.22.2"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
@@ -291,20 +291,39 @@ locals {
   ]
 }
 
+########################################################################################################################
+# Security groups
+# Creating some security group for illustration purpose in this example.
+# Real-world sg would have your own rules set in the `security_group_rules` input.
+########################################################################################################################
+
+module "custom_sg" {
+  for_each                     = toset(["custom-lb-sg"])
+  source                       = "terraform-ibm-modules/security-group/ibm"
+  version                      = "2.6.1"
+  add_ibm_cloud_internal_rules = false
+  security_group_name          = each.key
+  security_group_rules         = []
+  resource_group               = module.resource_group.resource_group_id
+  vpc_id                       = module.vpc.vpc_id
+}
+
 module "ocp_fscloud" {
-  source               = "../../modules/fscloud"
-  cluster_name         = var.prefix
-  ibmcloud_api_key     = var.ibmcloud_api_key
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = module.vpc.vpc_id
-  vpc_subnets          = local.cluster_vpc_subnets
-  existing_cos_id      = module.cos_fscloud.cos_instance_id
-  worker_pools         = local.worker_pools
-  tags                 = var.resource_tags
-  access_tags          = var.access_tags
-  ocp_version          = var.ocp_version
+  source                           = "../../modules/fscloud"
+  cluster_name                     = var.prefix
+  resource_group_id                = module.resource_group.resource_group_id
+  region                           = var.region
+  force_delete_storage             = true
+  vpc_id                           = module.vpc.vpc_id
+  vpc_subnets                      = local.cluster_vpc_subnets
+  existing_cos_id                  = module.cos_fscloud.cos_instance_id
+  worker_pools                     = local.worker_pools
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  ocp_version                      = var.ocp_version
+  additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
+  use_private_endpoint             = true
+  ocp_entitlement                  = var.ocp_entitlement
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id

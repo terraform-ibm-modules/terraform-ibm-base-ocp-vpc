@@ -3,47 +3,39 @@
 set -euo pipefail
 
 REGION="$1"
-RESOURCE_GROUP_ID="$2"
-LB_ID="$3"
-
-# Expects the environment variable $IBMCLOUD_API_KEY to be set
-if [[ -z "${IBMCLOUD_API_KEY}" ]]; then
-    echo "API key must be set with IBMCLOUD_API_KEY environment variable" >&2
-    exit 1
-fi
+LB_ID="$2"
+PRIVATE_ENV="$3"
+API_VERSION="2024-03-01"
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
     exit 1
 fi
 
-if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
-    echo "Resource_group_id must be passed as second input script argument" >&2
-    exit 1
+lb_attempts=1
+if [ "$PRIVATE_ENV" = true ]; then
+    URL="https://$REGION.private.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+else
+    URL="https://$REGION.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
 fi
 
-# Login to ibmcloud with cli
-attempts=1
-until ibmcloud login -q -r "${REGION}" -g "${RESOURCE_GROUP_ID}" || [ $attempts -ge 3 ]; do
-    attempts=$((attempts + 1))
-    echo "Error logging in to IBM Cloud CLI..." >&2
-    sleep 5
-done
-
-lb_attempts=1
 while true; do
-    status=$(ibmcloud is load-balancer "$LB_ID" --output json | jq -r .provisioning_status)
-    echo "Load balancer status: $status"
-    if [[ "$status" == "active" ]]; then
-        break
+    STATUS=$(curl -H "Authorization: $IAM_TOKEN" -X GET "$URL" | jq -r '.operating_status')
+    echo "Load balancer status: $STATUS"
+    if [[ "$STATUS" == "online" ]]; then
+        sleep 300
+        STATUS=$(curl -H "Authorization: $IAM_TOKEN" -X GET "$URL" | jq -r '.operating_status')
+        if [[ "$STATUS" == "online" ]]; then
+            break
+        fi
     else
         lb_attempts=$((lb_attempts + 1))
         if [ $lb_attempts -ge 10 ]; then
-            echo "Load balancer status: $status"
+            echo "Load balancer status: $STATUS"
             break
         fi
         echo "Sleeping for 30 secs.."
         sleep 30
     fi
-    status=""
+    STATUS=""
 done
