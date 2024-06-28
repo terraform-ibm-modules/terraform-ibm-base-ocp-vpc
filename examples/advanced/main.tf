@@ -56,10 +56,11 @@ resource "ibm_is_vpc" "vpc" {
 ########################################################################################################################
 
 resource "ibm_is_public_gateway" "gateway" {
-  name           = "${var.prefix}-gateway-1"
+  for_each       = toset(["1", "2", "3"])
+  name           = "${var.prefix}-gateway-${each.key}"
   vpc            = ibm_is_vpc.vpc.id
   resource_group = module.resource_group.resource_group_id
-  zone           = "${var.region}-1"
+  zone           = "${var.region}-${each.key}"
 }
 
 ########################################################################################################################
