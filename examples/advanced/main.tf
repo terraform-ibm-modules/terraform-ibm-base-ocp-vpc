@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.13.2"
+  version                   = "4.13.4"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -56,14 +56,16 @@ resource "ibm_is_vpc" "vpc" {
 ########################################################################################################################
 
 resource "ibm_is_public_gateway" "gateway" {
-  name           = "${var.prefix}-gateway-1"
+  for_each       = toset(["1", "2", "3"])
+  name           = "${var.prefix}-gateway-${each.key}"
   vpc            = ibm_is_vpc.vpc.id
   resource_group = module.resource_group.resource_group_id
-  zone           = "${var.region}-1"
+  zone           = "${var.region}-${each.key}"
 }
 
 ########################################################################################################################
-# Subnets accross 3 zones (pub gw only attached to zone-1)
+# Subnets accross 3 zones
+# Public gateway attached to all the zones
 ########################################################################################################################
 
 resource "ibm_is_subnet" "subnets" {
@@ -73,8 +75,7 @@ resource "ibm_is_subnet" "subnets" {
   resource_group           = module.resource_group.resource_group_id
   zone                     = "${var.region}-${each.key}"
   total_ipv4_address_count = 256
-  # for this example, gateway only goes on zone-1
-  public_gateway = (each.key == "1") ? ibm_is_public_gateway.gateway.id : null
+  public_gateway           = ibm_is_public_gateway.gateway[each.key].id
 }
 
 ########################################################################################################################
@@ -160,6 +161,7 @@ module "ocp_base" {
   tags                 = var.resource_tags
   access_tags          = var.access_tags
   worker_pools_taints  = local.worker_pools_taints
+  ocp_entitlement      = var.ocp_entitlement
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {

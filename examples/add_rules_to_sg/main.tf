@@ -111,6 +111,7 @@ resource "ibm_is_security_group_rule" "kube_cluster_rules" {
   direction = each.value.direction
   remote    = each.value.remote
 
+
   dynamic "tcp" {
     for_each = each.value.tcp == null ? [] : [each.value]
     content {
@@ -174,4 +175,5 @@ module "ocp_base" {
   worker_pools         = local.worker_pools
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
+  ocp_entitlement      = var.ocp_entitlement
 }

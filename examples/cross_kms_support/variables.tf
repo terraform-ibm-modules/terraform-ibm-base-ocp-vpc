@@ -60,3 +60,9 @@ variable "kms_cross_account_id" {
   type        = string
   description = "Id of the account that owns the KMS instance to encrypt the cluster"
 }
+
+variable "ocp_entitlement" {
+  type        = string
+  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  default     = null
+}

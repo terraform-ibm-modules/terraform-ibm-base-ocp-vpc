@@ -85,7 +85,7 @@ variable "cluster_ready_when" {
 variable "ocp_entitlement" {
   type        = string
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
-  default     = "cloud_pak"
+  default     = null
 }
 
 variable "force_delete_storage" {

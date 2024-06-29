@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.4.1"
+  version                       = "8.5.3"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -32,7 +32,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.4.1"
+  version = "8.5.3"
 
   bucket_configs = [
     {
@@ -113,7 +113,7 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.13.1"
+  version = "2.13.2"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -144,7 +144,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.22.2"
+  version          = "1.23.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -156,7 +156,7 @@ module "cbr_zone" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.22.2"
+  version          = "1.23.0"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
@@ -241,7 +241,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-lb-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.6.1"
+  version                      = "2.6.2"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
@@ -264,6 +264,7 @@ module "ocp_fscloud" {
   ocp_version                      = var.ocp_version
   additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
   use_private_endpoint             = true
+  ocp_entitlement                  = var.ocp_entitlement
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id
