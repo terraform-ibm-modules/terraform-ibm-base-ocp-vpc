@@ -52,7 +52,7 @@ variable "worker_pools" {
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
-    operating_system = optional(string)
+    operating_system  = optional(string)
     labels            = optional(map(string))
     minSize           = optional(number)
     maxSize           = optional(number)

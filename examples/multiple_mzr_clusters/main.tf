@@ -62,6 +62,12 @@ resource "ibm_is_subnet" "subnet_cluster_2" {
 ########################################################################################################################
 
 locals {
+
+  # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
+  # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
+
+  pool_1_os = "RHCOS"
+  pool_2_os = "REDHAT_8_64"
   cluster_1_vpc_subnets = {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
@@ -120,6 +126,7 @@ module "ocp_base_cluster_1" {
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_1_vpc_subnets
   worker_pools         = local.worker_pools
+  operating_system     = local.pool_1_os
   worker_pools_taints  = local.worker_pool_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
@@ -135,6 +142,7 @@ module "ocp_base_cluster_2" {
   vpc_id               = ibm_is_vpc.vpc.id
   vpc_subnets          = local.cluster_2_vpc_subnets
   worker_pools         = local.worker_pools
+  operating_system     = local.pool_2_os
   worker_pools_taints  = local.worker_pool_taints
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
