@@ -118,35 +118,37 @@ locals {
 }
 
 module "ocp_base_cluster_1" {
-  source               = "../.."
-  cluster_name         = "${var.prefix}-cluster-1"
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_1_vpc_subnets
-  worker_pools         = local.worker_pools
-  operating_system     = local.pool_1_os
-  worker_pools_taints  = local.worker_pool_taints
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  ocp_entitlement      = var.ocp_entitlement
+  source                              = "../.."
+  cluster_name                        = "${var.prefix}-cluster-1"
+  resource_group_id                   = module.resource_group.resource_group_id
+  region                              = var.region
+  force_delete_storage                = true
+  vpc_id                              = ibm_is_vpc.vpc.id
+  vpc_subnets                         = local.cluster_1_vpc_subnets
+  disable_outbound_traffic_protection = true
+  worker_pools                        = local.worker_pools
+  operating_system                    = local.pool_1_os
+  worker_pools_taints                 = local.worker_pool_taints
+  ocp_version                         = var.ocp_version
+  tags                                = var.resource_tags
+  ocp_entitlement                     = var.ocp_entitlement
 }
 
 module "ocp_base_cluster_2" {
-  source               = "../.."
-  cluster_name         = "${var.prefix}-cluster-2"
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_2_vpc_subnets
-  worker_pools         = local.worker_pools
-  operating_system     = local.pool_2_os
-  worker_pools_taints  = local.worker_pool_taints
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  ocp_entitlement      = var.ocp_entitlement
+  source                              = "../.."
+  cluster_name                        = "${var.prefix}-cluster-2"
+  resource_group_id                   = module.resource_group.resource_group_id
+  region                              = var.region
+  force_delete_storage                = true
+  vpc_id                              = ibm_is_vpc.vpc.id
+  disable_outbound_traffic_protection = true
+  vpc_subnets                         = local.cluster_2_vpc_subnets
+  worker_pools                        = local.worker_pools
+  operating_system                    = local.pool_2_os
+  worker_pools_taints                 = local.worker_pool_taints
+  ocp_version                         = var.ocp_version
+  tags                                = var.resource_tags
+  ocp_entitlement                     = var.ocp_entitlement
 }
 
 ########################################################################################################################
