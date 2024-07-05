@@ -15,7 +15,7 @@ locals {
 
 
   # tflint-ignore: terraform_unused_declarations
-  validate_ocp_version_for_rhcos = var.operating_system == "RHCOS" && length(regexall("^4\\.(1[5-9]|[2-9][0-9]|[0-9]{3,})$|^[5-9]\\d*\\.\\d+$", var.ocp_version)) > 0 ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS.")
+  validate_ocp_version_for_rhcos = (var.ocp_version == null || var.operating_system == "REDHAT_8_64" || (var.operating_system == "RHCOS" && length(regexall("^4\\.(1[5-9]|[2-9][0-9]|[0-9]{3,})$|^[5-9]\\d*\\.\\d+$", var.ocp_version)))) > 0 ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS.")
 
   cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
