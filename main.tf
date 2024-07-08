@@ -15,7 +15,7 @@ locals {
 
 
   # To verify rhcos operating system only for OCP versions >=4.15
-  rhcos_validation = var.ocp_version == null || var.operating_system == "REDHAT_8_64" || (var.operating_system == "RHCOS" && var.ocp_version >= "4.15")
+  rhcos_validation = var.operating_system == null || var.operating_system == "REDHAT_8_64" || (var.operating_system == "RHCOS" && var.ocp_version >= "4.15")
   # tflint-ignore: terraform_unused_declarations
   validate_ocp_version_for_rhcos = local.rhcos_validation ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS.")
 
