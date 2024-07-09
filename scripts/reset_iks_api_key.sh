@@ -51,8 +51,12 @@ fetch_data
 
 if [ "${reset}" == true ]; then
     if [ "$PRIVATE_ENV" = true ]; then
-        RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
-        curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+        if curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "https://private.$REGION.containers.cloud.ibm.com/v1/keys" --connect-timeout 30; then
+            echo "$APIKEY_KEY_NAME created." >&2
+        else
+            echo "Error using default private endpoint. Using virtual private endpoint." >&2
+            curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "https://api.$REGION.containers.cloud.ibm.com/v1/keys"
+        fi
     else
         RESET_URL="https://containers.cloud.ibm.com/global/v1/keys"
         curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d ''
