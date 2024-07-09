@@ -17,6 +17,11 @@ locals {
   # tflint-ignore: terraform_unused_declarations
   rhcos_validation = var.operating_system == null || var.operating_system == "REDHAT_8_64" || (var.operating_system == "RHCOS" && (var.ocp_version != null ? var.ocp_version >= "4.15" : false)) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
+  # To verify rhcos operating system within worker pool map for OCP versions >=4.15
+  worker_pool_rhcos_entry = [for worker_pool in var.worker_pools : (worker_pool.operating_system == null || worker_pool.operating_system == "REDHAT_8_64" || (worker_pool.operating_system == "RHCOS" && (var.ocp_version != null ? var.ocp_version >= "4.15" : false)) ? true : false)]
+  # tflint-ignore: terraform_unused_declarations
+  worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+
   cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
   cos_plan     = "standard"
