@@ -16,12 +16,12 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.5.3"
+  version                       = "8.6.2"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-  sysdig_crn                    = module.observability_instances.cloud_monitoring_crn
+  monitoring_crn                = module.observability_instances.cloud_monitoring_crn
   activity_tracker_crn          = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
@@ -32,7 +32,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.5.3"
+  version = "8.6.2"
 
   bucket_configs = [
     {
