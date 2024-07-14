@@ -13,15 +13,6 @@ locals {
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
 
-  # To verify rhcos operating system only for OCP versions >=4.15
-  # tflint-ignore: terraform_unused_declarations
-  rhcos_validation = var.operating_system == null || var.operating_system == "REDHAT_8_64" || (var.operating_system == "RHCOS" && (var.ocp_version != null ? var.ocp_version >= "4.15" : false)) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
-
-  # To verify rhcos operating system within worker pool map for OCP versions >=4.15
-  worker_pool_rhcos_entry = [for worker_pool in var.worker_pools : (worker_pool.operating_system == null || worker_pool.operating_system == "REDHAT_8_64" || (worker_pool.operating_system == "RHCOS" && (var.ocp_version != null ? var.ocp_version >= "4.15" : false)) ? true : false)]
-  # tflint-ignore: terraform_unused_declarations
-  worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
-
   cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
   cos_plan     = "standard"
@@ -60,6 +51,35 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+}
+
+# Separate local block to handle os validations
+locals {
+  os_rhel  = "REDHAT_8_64"
+  os_rhcos = "RHCOS"
+
+  # Strip OCP VERSION and use this ocp version in logic
+  ocp_version_num           = regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]
+  is_valid_version          = local.ocp_version_num != null ? tonumber(local.ocp_version_num) >= 4.15 : false
+  rhcos_allowed_ocp_version = var.operating_system == local.os_rhcos && local.is_valid_version
+  worker_pool_rhcos_entry   = [for worker_pool in var.worker_pools : (worker_pool.operating_system == null || worker_pool.operating_system == local.os_rhel || (worker_pool.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
+
+  # To verify rhcos operating system exists only for OCP versions >=4.15
+  # tflint-ignore: terraform_unused_declarations
+  default_rhcos_validation = var.operating_system == null || var.operating_system == local.os_rhel || local.rhcos_allowed_ocp_version ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+
+  # tflint-ignore: terraform_unused_declarations
+  worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+
+  # If the default os is RHEL, worker pools' os has to be RHEL
+  default_os_check_rhel = var.operating_system == local.os_rhel && (alltrue([for worker_pool in var.worker_pools : worker_pool.operating_system == local.os_rhel ? true : false])) ? true : false
+
+  # # If the default os is RHCOS, worker pools' os can be either RHEL or RHCOS
+  default_os_check_rhcos = var.operating_system == local.os_rhcos && (alltrue([for worker_pool in var.worker_pools : (worker_pool.operating_system == local.os_rhel || worker_pool.operating_system == local.os_rhcos) ? true : false])) ? true : false
+
+  # tflint-ignore: terraform_unused_declarations
+  completed_os_check = local.default_os_check_rhel || local.default_os_check_rhcos ? true : tobool("If the default operating system is RHEL, worker pools' os has to be RHEL")
+
 }
 
 # Lookup the current default kube version
@@ -307,12 +327,13 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
-  operating_system  = each.value.operating_system
-  worker_count      = each.value.workers_per_zone
-  labels            = each.value.labels
-  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
-  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
+  # operating_system  = each.value.operating_system
+  operating_system = coalesce(each.value.operating_system, var.operating_system)
+  worker_count     = each.value.workers_per_zone
+  labels           = each.value.labels
+  crk              = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id  = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = each.value.additional_security_group_ids
 
@@ -350,12 +371,13 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
-  operating_system  = each.value.operating_system
-  worker_count      = each.value.workers_per_zone
-  labels            = each.value.labels
-  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
-  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
+  # operating_system  = each.value.operating_system
+  operating_system = coalesce(each.value.operating_system, var.operating_system)
+  worker_count     = each.value.workers_per_zone
+  labels           = each.value.labels
+  crk              = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id  = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   lifecycle {
     ignore_changes = [worker_count]
