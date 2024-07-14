@@ -327,13 +327,12 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
-  # operating_system  = each.value.operating_system
-  operating_system = coalesce(each.value.operating_system, var.operating_system)
-  worker_count     = each.value.workers_per_zone
-  labels           = each.value.labels
-  crk              = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
-  kms_instance_id  = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
+  operating_system  = coalesce(each.value.operating_system, var.operating_system)
+  worker_count      = each.value.workers_per_zone
+  labels            = each.value.labels
+  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = each.value.additional_security_group_ids
 
@@ -371,13 +370,12 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
-  # operating_system  = each.value.operating_system
-  operating_system = coalesce(each.value.operating_system, var.operating_system)
-  worker_count     = each.value.workers_per_zone
-  labels           = each.value.labels
-  crk              = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
-  kms_instance_id  = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
+  operating_system  = coalesce(each.value.operating_system, var.operating_system)
+  worker_count      = each.value.workers_per_zone
+  labels            = each.value.labels
+  crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
+  kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
   lifecycle {
     ignore_changes = [worker_count]
