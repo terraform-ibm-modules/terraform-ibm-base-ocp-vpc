@@ -96,7 +96,7 @@ locals {
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
-      operating_system = local.os_rhel
+      operating_system = local.os_rhcos
     },
     {
       subnet_prefix    = "default"
@@ -104,7 +104,7 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
       labels           = { "dedicated" : "logging-worker-pool" }
-      operating_system = local.os_rhcos
+      operating_system = local.os_rhel
     }
   ]
 
