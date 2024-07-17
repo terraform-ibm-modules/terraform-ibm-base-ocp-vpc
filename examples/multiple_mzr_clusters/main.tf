@@ -62,6 +62,12 @@ resource "ibm_is_subnet" "subnet_cluster_2" {
 ########################################################################################################################
 
 locals {
+
+  # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
+  # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
+
+  os_rhcos = "RHCOS"
+  os_rhel  = "REDHAT_8_64"
   cluster_1_vpc_subnets = {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
@@ -90,6 +96,7 @@ locals {
       pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
+      operating_system = local.os_rhcos
     },
     {
       subnet_prefix    = "default"
@@ -97,6 +104,7 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
       labels           = { "dedicated" : "logging-worker-pool" }
+      operating_system = local.os_rhel
     }
   ]
 
@@ -112,33 +120,37 @@ locals {
 }
 
 module "ocp_base_cluster_1" {
-  source               = "../.."
-  cluster_name         = "${var.prefix}-cluster-1"
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_1_vpc_subnets
-  worker_pools         = local.worker_pools
-  worker_pools_taints  = local.worker_pool_taints
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  ocp_entitlement      = var.ocp_entitlement
+  source                              = "../.."
+  cluster_name                        = "${var.prefix}-cluster-1"
+  resource_group_id                   = module.resource_group.resource_group_id
+  region                              = var.region
+  force_delete_storage                = true
+  vpc_id                              = ibm_is_vpc.vpc.id
+  vpc_subnets                         = local.cluster_1_vpc_subnets
+  disable_outbound_traffic_protection = true
+  worker_pools                        = local.worker_pools
+  operating_system                    = local.os_rhcos
+  worker_pools_taints                 = local.worker_pool_taints
+  ocp_version                         = var.ocp_version
+  tags                                = var.resource_tags
+  ocp_entitlement                     = var.ocp_entitlement
 }
 
 module "ocp_base_cluster_2" {
-  source               = "../.."
-  cluster_name         = "${var.prefix}-cluster-2"
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_2_vpc_subnets
-  worker_pools         = local.worker_pools
-  worker_pools_taints  = local.worker_pool_taints
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  ocp_entitlement      = var.ocp_entitlement
+  source                              = "../.."
+  cluster_name                        = "${var.prefix}-cluster-2"
+  resource_group_id                   = module.resource_group.resource_group_id
+  region                              = var.region
+  force_delete_storage                = true
+  vpc_id                              = ibm_is_vpc.vpc.id
+  disable_outbound_traffic_protection = true
+  vpc_subnets                         = local.cluster_2_vpc_subnets
+  worker_pools                        = local.worker_pools
+  operating_system                    = local.os_rhcos
+  worker_pools_taints                 = local.worker_pool_taints
+  ocp_version                         = var.ocp_version
+  tags                                = var.resource_tags
+  ocp_entitlement                     = var.ocp_entitlement
 }
 
 ########################################################################################################################

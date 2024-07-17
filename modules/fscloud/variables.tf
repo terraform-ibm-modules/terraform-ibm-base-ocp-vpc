@@ -47,6 +47,7 @@ variable "worker_pools" {
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
+    operating_system  = optional(string)
     labels            = optional(map(string))
     boot_volume_encryption_kms_config = optional(object({
       crk             = string
@@ -203,6 +204,11 @@ variable "operating_system" {
   type        = string
   description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
   default     = null
+  validation {
+    error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+    condition     = var.operating_system == null || var.operating_system == "REDHAT_8_64" || var.operating_system == "RHCOS"
+  }
+
 }
 
 ##############################################################################

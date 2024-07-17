@@ -53,6 +53,36 @@ locals {
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
+# Separate local block to handle os validations
+locals {
+  os_rhel  = "REDHAT_8_64"
+  os_rhcos = "RHCOS"
+
+  # Strip OCP VERSION and use this ocp version in logic
+  ocp_version_num           = regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]
+  is_valid_version          = local.ocp_version_num != null ? tonumber(local.ocp_version_num) >= 4.15 : false
+  rhcos_allowed_ocp_version = var.operating_system == local.os_rhcos && local.is_valid_version
+  worker_pool_rhcos_entry   = [for worker in var.worker_pools : (worker.operating_system == null || worker.operating_system == local.os_rhel || (worker.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
+
+  # To verify rhcos operating system exists only for OCP versions >=4.15
+  # tflint-ignore: terraform_unused_declarations
+  cluster_rhcos_validation = var.operating_system == null || var.operating_system == local.os_rhel || local.rhcos_allowed_ocp_version ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+
+  # tflint-ignore: terraform_unused_declarations
+  worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+
+  # Validate if default worker pool's operating system is RHEL, all pools' operating system must be RHEL
+  check_other_os             = local.default_pool.operating_system == null || local.default_pool.operating_system == local.os_rhcos
+  rhel_check_for_other_pools = [for pool in var.worker_pools : pool.pool_name != "default" && pool.operating_system == local.os_rhel ? true : false]
+  # tflint-ignore: terraform_unused_declarations
+  valid_rhel_worker_pools = local.check_other_os || (local.default_pool.operating_system == local.os_rhel && alltrue(local.rhel_check_for_other_pools)) == true ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
+
+  # Validate if RHCOS is used as operating system for the cluster then the default worker pool must be created with RHCOS
+  rhcos_check = var.operating_system == null || var.operating_system == local.os_rhel || (var.operating_system == local.os_rhcos && local.default_pool.operating_system == local.os_rhcos)
+  # tflint-ignore: terraform_unused_declarations
+  default_wp_validation = local.rhcos_check == true ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
+}
+
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
@@ -298,6 +328,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
+  operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
@@ -340,6 +371,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   cluster           = local.cluster_id
   worker_pool_name  = each.value.pool_name
   flavor            = each.value.machine_type
+  operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
