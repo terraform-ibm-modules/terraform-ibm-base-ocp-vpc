@@ -52,6 +52,7 @@ variable "worker_pools" {
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
+    operating_system  = optional(string)
     labels            = optional(map(string))
     minSize           = optional(number)
     maxSize           = optional(number)
@@ -85,6 +86,17 @@ variable "worker_pools" {
   validation {
     condition     = length([for worker_pool in var.worker_pools : worker_pool if(worker_pool.subnet_prefix == null && worker_pool.vpc_subnets == null) || (worker_pool.subnet_prefix != null && worker_pool.vpc_subnets != null)]) == 0
     error_message = "Please provide exactly one of subnet_prefix or vpc_subnets. Passing neither or both is invalid."
+  }
+  validation {
+    condition = alltrue([
+      for worker_pool in var.worker_pools :
+      anytrue([
+        worker_pool.operating_system == null,
+        worker_pool.operating_system == "REDHAT_8_64",
+        worker_pool.operating_system == "RHCOS"
+      ])
+    ])
+    error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
   }
 }
 
@@ -253,6 +265,10 @@ variable "operating_system" {
   type        = string
   description = "The operating system of the workers in the default worker pool. If no value is specified, the current default version OS will be used. See https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_versions#openshift_versions_available ."
   default     = null
+  validation {
+    error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+    condition     = var.operating_system == null || var.operating_system == "REDHAT_8_64" || var.operating_system == "RHCOS"
+  }
 }
 
 # VPC Variables
