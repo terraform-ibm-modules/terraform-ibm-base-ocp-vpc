@@ -6,6 +6,7 @@ REGION="$1"
 RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
 PRIVATE_ENV="$3"
+CLUSTER_ENDPOINT="$4"
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -51,8 +52,13 @@ fetch_data
 
 if [ "${reset}" == true ]; then
     if [ "$PRIVATE_ENV" = true ]; then
-        RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
-        curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+        if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
+            RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
+            curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+        elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
+            RESET_URL="https://api.$REGION.containers.cloud.ibm.com/v1/keys"
+            curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+        fi
     else
         RESET_URL="https://containers.cloud.ibm.com/global/v1/keys"
         curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d ''
