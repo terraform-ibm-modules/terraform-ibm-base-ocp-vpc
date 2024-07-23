@@ -25,13 +25,6 @@ locals {
   # tflint-ignore: terraform_unused_declarations
   validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
 
-  csi_driver_version = [
-    for addon in data.ibm_container_addons.existing_addons.addons :
-    addon.version if addon.name == "vpc-block-csi-driver"
-  ]
-  addons_list = var.addons != null ? { for k, v in var.addons : k => v if v != null } : {}
-  addons      = lookup(local.addons_list, "vpc-block-csi-driver", null) == null ? merge(local.addons_list, { vpc-block-csi-driver = local.csi_driver_version[0] }) : local.addons_list
-
   delete_timeout = "2h"
   create_timeout = "3h"
   update_timeout = "3h"
@@ -297,7 +290,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.verify_worker_network_readiness || lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  count             = var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
@@ -443,18 +436,40 @@ resource "null_resource" "confirm_network_healthy" {
   }
 }
 
+##############################################################################
+# Addons
+##############################################################################
+
 # Lookup the current default csi-driver version
 data "ibm_container_addons" "existing_addons" {
   cluster = local.cluster_id
 }
+
+locals {
+  # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
+  csi_driver_version = one([
+    for addon in data.ibm_container_addons.existing_addons.addons :
+    addon.version if addon.name == "vpc-block-csi-driver"
+  ])
+
+  # for each cluster in the clusters_map, get the addons and their versions and create an addons map including the corosponding csi_driver_version
+  cluster_addons = {
+    id                = local.cluster_id
+    resource_group_id = var.resource_group_id
+    addons = merge(
+      { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
+      local.csi_driver_version != null ? { vpc-block-csi-driver = local.csi_driver_version } : {}
+    )
+  }
+}
+
 
 resource "ibm_container_addons" "addons" {
 
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
-
+  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
@@ -462,7 +477,7 @@ resource "ibm_container_addons" "addons" {
   manage_all_addons = var.manage_all_addons
 
   dynamic "addons" {
-    for_each = local.addons
+    for_each = local.cluster_addons.addons
     content {
       name    = addons.key
       version = addons.value
@@ -488,7 +503,7 @@ locals {
 }
 
 resource "null_resource" "config_map_status" {
-  count      = lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   depends_on = [ibm_container_addons.addons]
 
   provisioner "local-exec" {
@@ -501,7 +516,7 @@ resource "null_resource" "config_map_status" {
 }
 
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
-  count      = lookup(local.addons_list, "cluster-autoscaler", null) != null ? 1 : 0
+  count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   depends_on = [null_resource.config_map_status]
 
   metadata {
