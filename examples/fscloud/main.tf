@@ -21,7 +21,7 @@ module "cos_fscloud" {
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-  sysdig_crn                    = module.observability_instances.cloud_monitoring_crn
+  monitoring_crn                = module.observability_instances.cloud_monitoring_crn
   activity_tracker_crn          = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
