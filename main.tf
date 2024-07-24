@@ -447,20 +447,16 @@ data "ibm_container_addons" "existing_addons" {
 
 locals {
   # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
-  csi_driver_version = one([
+  csi_driver_version = [
     for addon in data.ibm_container_addons.existing_addons.addons :
     addon.version if addon.name == "vpc-block-csi-driver"
-  ])
+  ]
 
-  # for each cluster in the clusters_map, get the addons and their versions and create an addons map including the corosponding csi_driver_version
-  cluster_addons = {
-    id                = local.cluster_id
-    resource_group_id = var.resource_group_id
-    addons = merge(
-      { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
-      local.csi_driver_version != null ? { vpc-block-csi-driver = local.csi_driver_version } : {}
-    )
-  }
+  # get the addons and their versions and create an addons map including the corresponding csi_driver_version
+  addons = merge(
+    { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
+    local.csi_driver_version != null ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}
+  )
 }
 
 
@@ -477,7 +473,7 @@ resource "ibm_container_addons" "addons" {
   manage_all_addons = var.manage_all_addons
 
   dynamic "addons" {
-    for_each = local.cluster_addons.addons
+    for_each = local.addons
     content {
       name    = addons.key
       version = addons.value
