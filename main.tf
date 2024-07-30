@@ -582,14 +582,37 @@ module "attach_sg_to_lb" {
 # https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui#vpc-sg-vpe-alb
 ##############################################################################
 
-data "ibm_is_virtual_endpoint_gateways" "all_vpes" {
+locals {
+  vpes_to_attach_to_sg = {
+    "master" : "iks-${local.cluster_id}",
+    "api" : "iks-api-${var.vpc_id}",
+    "registry" : "iks-registry-${var.vpc_id}"
+  }
+}
+
+data "ibm_is_virtual_endpoint_gateway" "master_vpe" {
+  count      = length(var.additional_vpe_security_group_ids["master"])
   depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  name       = local.vpes_to_attach_to_sg["master"]
+}
+
+data "ibm_is_virtual_endpoint_gateway" "api_vpe" {
+  count      = length(var.additional_vpe_security_group_ids["api"])
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  name       = local.vpes_to_attach_to_sg["api"]
+}
+
+data "ibm_is_virtual_endpoint_gateway" "registry_vpe" {
+  count      = length(var.additional_vpe_security_group_ids["registry"])
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  name       = local.vpes_to_attach_to_sg["registry"]
 }
 
 locals {
-  master_vpe_id   = [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-${local.cluster_id}")][0]
-  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-api-${var.vpc_id}")][0] : null
-  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? [for vpe in data.ibm_is_virtual_endpoint_gateways.all_vpes.virtual_endpoint_gateways : vpe.id if strcontains(vpe.name, "iks-registry-${var.vpc_id}")][0] : null
+  # loading cluster master, cluster API and registry VPE IDs to attach related SGs
+  master_vpe_id   = length(var.additional_vpe_security_group_ids["master"]) > 0 ? data.ibm_is_virtual_endpoint_gateway.master_vpe[0].id : null
+  api_vpe_id      = length(var.additional_vpe_security_group_ids["api"]) > 0 ? data.ibm_is_virtual_endpoint_gateway.api_vpe[0].id : null
+  registry_vpe_id = length(var.additional_vpe_security_group_ids["registry"]) > 0 ? data.ibm_is_virtual_endpoint_gateway.registry_vpe[0].id : null
 }
 
 module "attach_sg_to_master_vpe" {
