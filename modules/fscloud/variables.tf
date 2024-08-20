@@ -55,6 +55,7 @@ variable "worker_pools" {
       kms_account_id  = optional(string)
     }))
     additional_security_group_ids = optional(list(string))
+    import_on_create              = optional(bool)
   }))
   description = "List of worker pools"
 }

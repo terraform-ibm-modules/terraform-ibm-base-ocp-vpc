@@ -120,7 +120,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
   cos_instance_crn                    = local.cos_instance_crn
-  worker_count                        = local.default_pool.workers_per_zone
+  worker_count                        = local.default_pool.workers_per_zone > 0 ? local.default_pool.workers_per_zone : 2
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
@@ -312,6 +312,51 @@ data "ibm_container_vpc_worker_pool" "all_pools" {
   for_each         = local.pool_names
   cluster          = local.cluster_id
   worker_pool_name = each.value
+}
+
+resource "ibm_container_vpc_worker_pool" "default_pool" {
+  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+
+  vpc_id            = var.vpc_id
+  resource_group_id = var.resource_group_id
+  cluster           = local.cluster_id
+  worker_pool_name  = local.default_pool.pool_name
+  flavor            = local.default_pool.machine_type
+  operating_system  = local.default_pool.operating_system
+  worker_count      = local.default_pool.workers_per_zone
+  labels            = local.default_pool.labels
+  crk               = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id   = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id    = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.default_pool.additional_security_group_ids
+
+  dynamic "zones" {
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
+    content {
+      subnet_id = zones.value.id
+      name      = zones.value.zone
+    }
+  }
+
+  # Apply taints to worker pools i.e. other_pools
+  dynamic "taints" {
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, local.default_pool["pool_name"], []))
+    content {
+      effect = taints.value.effect
+      key    = taints.value.key
+      value  = taints.value.value
+    }
+  }
+
+  timeouts {
+    # Extend create and delete timeout to 2h
+    delete = "2h"
+    create = "2h"
+  }
+
+  # The default workerpool has to be imported as it will already exist on cluster create
+  import_on_create = local.default_pool.import_on_create
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
