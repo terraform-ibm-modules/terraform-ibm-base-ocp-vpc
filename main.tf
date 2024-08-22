@@ -120,7 +120,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
   cos_instance_crn                    = local.cos_instance_crn
-  worker_count                        = local.default_pool.workers_per_zone > 0 ? local.default_pool.workers_per_zone : 2
+  worker_count                        = local.default_pool.workers_per_zone
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage

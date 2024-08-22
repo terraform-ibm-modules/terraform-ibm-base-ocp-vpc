@@ -115,7 +115,7 @@ locals {
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      operating_system                  = "RHCOS"
+      import_on_create                  = false
     },
     {
       subnet_prefix                     = "zone-2"
@@ -123,7 +123,6 @@ locals {
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      operating_system                  = "RHCOS"
     },
     {
       subnet_prefix                     = "zone-3"
