@@ -356,7 +356,7 @@ resource "ibm_container_vpc_worker_pool" "default_pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = local.default_pool.import_on_create
+  import_on_create = true
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
@@ -373,7 +373,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
-  security_groups = each.value.additional_security_group_ids
+  security_groups  = each.value.additional_security_group_ids
+  import_on_create = each.value.import_on_create
 
   dynamic "zones" {
     for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
@@ -415,6 +416,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
+  import_on_create  = each.value.import_on_create
 
   lifecycle {
     ignore_changes = [worker_count]

@@ -110,12 +110,11 @@ locals {
       subnet_prefix                     = "zone-1"
       pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type                      = "bx2.4x16"
-      workers_per_zone                  = 2
+      workers_per_zone                  = 1
       enableAutoscaling                 = true
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      import_on_create                  = false
     },
     {
       subnet_prefix                     = "zone-2"
