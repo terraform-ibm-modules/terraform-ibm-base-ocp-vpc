@@ -308,15 +308,13 @@ locals {
 }
 
 data "ibm_container_vpc_worker_pool" "all_pools" {
-  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool]
+  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.default_pool]
   for_each         = local.pool_names
   cluster          = local.cluster_id
   worker_pool_name = each.value
 }
 
 resource "ibm_container_vpc_worker_pool" "default_pool" {
-  depends_on = [ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
-
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
   cluster           = local.cluster_id
@@ -356,7 +354,7 @@ resource "ibm_container_vpc_worker_pool" "default_pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = true
+  import_on_create = local.default_pool.import_on_create
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
@@ -373,8 +371,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
-  security_groups  = each.value.additional_security_group_ids
-  import_on_create = each.value.import_on_create
+  security_groups = each.value.additional_security_group_ids
 
   dynamic "zones" {
     for_each = each.value.subnet_prefix != null ? var.vpc_subnets[each.value.subnet_prefix] : each.value.vpc_subnets
@@ -416,7 +413,6 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
-  import_on_create  = each.value.import_on_create
 
   lifecycle {
     ignore_changes = [worker_count]
@@ -472,7 +468,7 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
@@ -512,7 +508,7 @@ resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool, null_resource.confirm_network_healthy]
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
@@ -584,7 +580,7 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
 ##############################################################################
 
 data "ibm_is_lbs" "all_lbs" {
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool, null_resource.confirm_network_healthy]
   count      = length(var.additional_lb_security_group_ids) > 0 ? 1 : 0
 }
 
@@ -639,19 +635,19 @@ locals {
 
 data "ibm_is_virtual_endpoint_gateway" "master_vpe" {
   count      = length(var.additional_vpe_security_group_ids["master"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["master"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "api_vpe" {
   count      = length(var.additional_vpe_security_group_ids["api"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["api"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "registry_vpe" {
   count      = length(var.additional_vpe_security_group_ids["registry"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.default_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["registry"]
 }
 
