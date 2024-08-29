@@ -189,6 +189,7 @@ module "observability_instances" {
   enable_platform_metrics        = false
   log_analysis_instance_name     = "${var.prefix}-logdna"
   cloud_monitoring_instance_name = "${var.prefix}-sysdig"
+  cloud_logs_provision           = false
 }
 
 ########################################################################################################################
