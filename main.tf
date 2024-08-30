@@ -358,7 +358,6 @@ resource "ibm_container_vpc_worker_pool" "default_pool" {
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
-  depends_on        = [ibm_container_vpc_worker_pool.default_pool]
   for_each          = { for pool in local.other_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
@@ -402,7 +401,6 @@ resource "ibm_container_vpc_worker_pool" "pool" {
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
-  depends_on        = [ibm_container_vpc_worker_pool.default_pool]
   for_each          = { for pool in local.other_autoscaling_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
