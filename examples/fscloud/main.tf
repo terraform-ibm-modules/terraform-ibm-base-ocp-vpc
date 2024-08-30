@@ -128,6 +128,7 @@ module "observability_instances" {
   activity_tracker_instance_name = "${var.prefix}-at"
   activity_tracker_plan          = "7-day"
   activity_tracker_provision     = !local.existing_at
+  cloud_logs_provision           = false
 }
 
 ########################################################################################################################
