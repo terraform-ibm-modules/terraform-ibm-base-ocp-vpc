@@ -115,36 +115,12 @@ locals {
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-    },
-    {
-      subnet_prefix                     = "zone-2"
-      pool_name                         = "zone-2"
-      machine_type                      = "bx2.4x16"
-      workers_per_zone                  = 1
-      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-    },
-    {
-      subnet_prefix                     = "zone-3"
-      pool_name                         = "zone-3"
-      machine_type                      = "bx2.4x16"
-      workers_per_zone                  = 1
-      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
 
   worker_pools_taints = {
     all     = []
     default = []
-    zone-2 = [{
-      key    = "dedicated"
-      value  = "zone-2"
-      effect = "NoExecute"
-    }]
-    zone-3 = [{
-      key    = "dedicated"
-      value  = "zone-3"
-      effect = "NoExecute"
-    }]
   }
 }
 
