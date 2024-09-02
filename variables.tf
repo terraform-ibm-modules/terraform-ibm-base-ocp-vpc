@@ -63,7 +63,7 @@ variable "worker_pools" {
       kms_account_id  = optional(string)
     }))
     additional_security_group_ids = optional(list(string))
-    import_on_create              = optional(bool, true)
+    import_on_create              = optional(bool) # Import an existing WorkerPool from the cluster, instead of creating a new.
   }))
   description = "List of worker pools"
   validation {

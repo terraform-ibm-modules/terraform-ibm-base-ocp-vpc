@@ -115,12 +115,24 @@ locals {
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
+      import_on_create                  = true
     }
+
   ]
 
   worker_pools_taints = {
     all     = []
     default = []
+    # zone-2 = [{
+    #   key    = "dedicated"
+    #   value  = "zone-2"
+    #   effect = "NoExecute"
+    # }]
+    # zone-3 = [{
+    #   key    = "dedicated"
+    #   value  = "zone-3"
+    #   effect = "NoExecute"
+    # }]
   }
 }
 

@@ -105,6 +105,14 @@ module "ocp_base" {
         }
     ]
   }
+  worker_pools         = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+    }
+  ]
 }
 ```
 
@@ -117,6 +125,25 @@ The [custom_sg example](./examples/custom_sg/) demonstrates how to use these cap
 See the IBM Cloud documentation on this topic [here](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui)
 
 Tip: The [terraform-ibm-security-groups](https://github.com/terraform-ibm-modules/terraform-ibm-security-group) module can be used to create security groups and rules.
+
+#### Default Worker Pool
+
+- You can now manage the default worker pool using Terraform, and make changes to it. However, to enable Terraform to manage the default worker pool, you must set the `import_on_create` parameter to `true`.
+    ```hcl
+          worker_pools         = [
+            {
+            subnet_prefix    = "default"
+            pool_name        = "default"
+            machine_type     = "bx2.4x16"
+            workers_per_zone = 2
+            import_on_create = true
+            }
+          ]
+    ```
+- **Important**: When Terraform is managing the default worker pool, you must manually remove it from the Terraform state before running a `terraform destroy` command to avoid an error due to this [limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster).
+    ```hcl
+        terraform state rm module.ocp_base.ibm_container_vpc_worker_pool.default_pool
+    ```
 
 #### Worker nodes
 
@@ -272,7 +299,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_verify_worker_network_readiness"></a> [verify\_worker\_network\_readiness](#input\_verify\_worker\_network\_readiness) | By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false. | `bool` | `true` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Id of the VPC instance where this cluster will be provisioned | `string` | n/a | yes |
 | <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created | <pre>map(list(object({<br>    id         = string<br>    zone       = string<br>    cidr_block = string<br>  })))</pre> | n/a | yes |
-| <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools) | List of worker pools | <pre>list(object({<br>    subnet_prefix = optional(string)<br>    vpc_subnets = optional(list(object({<br>      id         = string<br>      zone       = string<br>      cidr_block = string<br>    })))<br>    pool_name         = string<br>    machine_type      = string<br>    workers_per_zone  = number<br>    resource_group_id = optional(string)<br>    operating_system  = optional(string)<br>    labels            = optional(map(string))<br>    minSize           = optional(number)<br>    maxSize           = optional(number)<br>    enableAutoscaling = optional(bool)<br>    boot_volume_encryption_kms_config = optional(object({<br>      crk             = string<br>      kms_instance_id = string<br>      kms_account_id  = optional(string)<br>    }))<br>    additional_security_group_ids = optional(list(string))<br>    import_on_create              = optional(bool, true)<br>  }))</pre> | n/a | yes |
+| <a name="input_worker_pools"></a> [worker\_pools](#input\_worker\_pools) | List of worker pools | <pre>list(object({<br>    subnet_prefix = optional(string)<br>    vpc_subnets = optional(list(object({<br>      id         = string<br>      zone       = string<br>      cidr_block = string<br>    })))<br>    pool_name         = string<br>    machine_type      = string<br>    workers_per_zone  = number<br>    resource_group_id = optional(string)<br>    operating_system  = optional(string)<br>    labels            = optional(map(string))<br>    minSize           = optional(number)<br>    maxSize           = optional(number)<br>    enableAutoscaling = optional(bool)<br>    boot_volume_encryption_kms_config = optional(object({<br>      crk             = string<br>      kms_instance_id = string<br>      kms_account_id  = optional(string)<br>    }))<br>    additional_security_group_ids = optional(list(string))<br>    import_on_create              = optional(bool) # Import an existing WorkerPool from the cluster, instead of creating a new.<br>  }))</pre> | n/a | yes |
 | <a name="input_worker_pools_taints"></a> [worker\_pools\_taints](#input\_worker\_pools\_taints) | Optional, Map of lists containing node taints by node-pool name | `map(list(object({ key = string, value = string, effect = string })))` | `null` | no |
 
 ### Outputs

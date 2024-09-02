@@ -315,6 +315,7 @@ data "ibm_container_vpc_worker_pool" "all_pools" {
 }
 
 resource "ibm_container_vpc_worker_pool" "default_pool" {
+  count             = local.default_pool.import_on_create ? 1 : 0
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
   cluster           = local.cluster_id
