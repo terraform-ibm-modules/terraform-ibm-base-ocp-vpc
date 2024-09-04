@@ -7,8 +7,8 @@
 locals {
   # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
   default_pool            = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
-  other_pools             = [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
-  other_autoscaling_pools = [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
+  other_pools             = local.default_pool.import_on_create != null && coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
+  other_autoscaling_pools = local.default_pool.import_on_create != null && coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
@@ -308,54 +308,10 @@ locals {
 }
 
 data "ibm_container_vpc_worker_pool" "all_pools" {
-  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.default_pool]
+  depends_on       = [ibm_container_vpc_worker_pool.autoscaling_pool, ibm_container_vpc_worker_pool.pool]
   for_each         = local.pool_names
   cluster          = local.cluster_id
   worker_pool_name = each.value
-}
-
-resource "ibm_container_vpc_worker_pool" "default_pool" {
-  count             = local.default_pool.import_on_create != null ? local.default_pool.import_on_create ? 1 : 0 : 0
-  vpc_id            = var.vpc_id
-  resource_group_id = var.resource_group_id
-  cluster           = local.cluster_id
-  worker_pool_name  = local.default_pool.pool_name
-  flavor            = local.default_pool.machine_type
-  operating_system  = local.default_pool.operating_system
-  worker_count      = local.default_pool.workers_per_zone
-  labels            = local.default_pool.labels
-  crk               = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
-  kms_instance_id   = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
-  kms_account_id    = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
-
-  security_groups = local.default_pool.additional_security_group_ids
-
-  dynamic "zones" {
-    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
-    content {
-      subnet_id = zones.value.id
-      name      = zones.value.zone
-    }
-  }
-
-  # Apply taints to worker pools i.e. other_pools
-  dynamic "taints" {
-    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, local.default_pool["pool_name"], []))
-    content {
-      effect = taints.value.effect
-      key    = taints.value.key
-      value  = taints.value.value
-    }
-  }
-
-  timeouts {
-    # Extend create and delete timeout to 2h
-    delete = "2h"
-    create = "2h"
-  }
-
-  # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = local.default_pool.import_on_create
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
@@ -398,6 +354,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
     create = "2h"
   }
 
+  # The default workerpool has to be imported as it will already exist on cluster create
+  import_on_create = each.value.pool_name == "default" ? each.value.import_on_create != null ? each.value.import_on_create ? true : null : null : null
 }
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
@@ -438,6 +396,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
     }
   }
 
+  # The default workerpool has to be imported as it will already exist on cluster create
+  import_on_create = each.value.pool_name == "default" ? each.value.import_on_create : null
 }
 
 ##############################################################################
