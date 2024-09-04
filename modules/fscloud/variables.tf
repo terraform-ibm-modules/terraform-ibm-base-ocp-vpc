@@ -40,6 +40,13 @@ variable "vpc_subnets" {
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
 }
 
+variable "import_default_worker_pool_on_create" {
+  type        = bool
+  description = "Whether to handle the default worker pool as a stand-alone ibm_container_vpc_worker_pool resource on cluster creation. Set to true to import the default worker pool as a separate resource. Set to false to manage the default worker pool as part of the cluster resource. Only set to false if you understand the implications of managing the default worker pool as part of the cluster resource."
+  default     = true
+  nullable    = false
+}
+
 variable "worker_pools" {
   type = list(object({
     subnet_prefix     = string

@@ -128,21 +128,15 @@ Tip: The [terraform-ibm-security-groups](https://github.com/terraform-ibm-module
 
 #### Default Worker Pool
 
-- You can now manage the default worker pool using Terraform, and make changes to it. However, to enable Terraform to manage the default worker pool, you must set the `import_on_create` parameter to `true`.
-    ```hcl
-          worker_pools         = [
-            {
-            subnet_prefix    = "default"
-            pool_name        = "default"
-            machine_type     = "bx2.4x16"
-            workers_per_zone = 2
-            import_on_create = true
-            }
-          ]
-    ```
+- You can now manage the default worker pool using Terraform, and make changes to it. However, to enable Terraform to manage the default worker pool, you must set the `import_default_worker_pool_on_create` parameter to `true`.
+
 - **Important**: When Terraform is managing the default worker pool, you must manually remove it from the Terraform state before running a `terraform destroy` command to avoid an error due to this [limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster).
-    ```hcl
-        terraform state rm module.ocp_base.ibm_container_vpc_worker_pool.default_pool
+    ```sh
+        $ terraform state list | grep default
+          > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
+          > module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool["default"]
+
+        $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]"
     ```
 
 #### Worker nodes
