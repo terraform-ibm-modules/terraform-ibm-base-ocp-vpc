@@ -6,9 +6,10 @@
 # Segregate pools, as we need default pool for cluster creation
 locals {
   # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-  default_pool            = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
-  other_pools             = coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
-  other_autoscaling_pools = coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
+  default_pool = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
+  # all_standalone_pools are the pools managed by a 'standalone' ibm_container_vpc_worker_pool resource
+  all_standalone_pools             = var.import_default_worker_pool_on_create == true ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
+  all_standalone_autoscaling_pools = var.import_default_worker_pool_on_create == true ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
@@ -65,10 +66,10 @@ locals {
   worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
   # Validate if default worker pool's operating system is RHEL, all pools' operating system must be RHEL
-  check_other_os             = local.default_pool.operating_system == null || local.default_pool.operating_system == local.os_rhcos
-  rhel_check_for_other_pools = [for pool in var.worker_pools : pool.pool_name != "default" && pool.operating_system == local.os_rhel ? true : false]
+  check_other_os                      = local.default_pool.operating_system == null || local.default_pool.operating_system == local.os_rhcos
+  rhel_check_for_all_standalone_pools = [for pool in var.worker_pools : pool.pool_name != "default" && pool.operating_system == local.os_rhel ? true : false]
   # tflint-ignore: terraform_unused_declarations
-  valid_rhel_worker_pools = local.check_other_os || (local.default_pool.operating_system == local.os_rhel && alltrue(local.rhel_check_for_other_pools)) == true ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
+  valid_rhel_worker_pools = local.check_other_os || (local.default_pool.operating_system == local.os_rhel && alltrue(local.rhel_check_for_all_standalone_pools)) == true ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
 
   # Validate if RHCOS is used as operating system for the cluster then the default worker pool must be created with RHCOS
   rhcos_check = var.operating_system == null || var.operating_system == local.os_rhel || (var.operating_system == local.os_rhcos && local.default_pool.operating_system == local.os_rhcos)
@@ -303,7 +304,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 ##############################################################################
 
 locals {
-  additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.other_autoscaling_pools : pool.pool_name] : [for pool in local.other_pools : pool.pool_name]
+  additional_pool_names = var.ignore_worker_pool_size_changes ? [for pool in local.all_standalone_autoscaling_pools : pool.pool_name] : [for pool in local.all_standalone_pools : pool.pool_name]
   pool_names            = toset(flatten([["default"], local.additional_pool_names]))
 }
 
@@ -315,7 +316,7 @@ data "ibm_container_vpc_worker_pool" "all_pools" {
 }
 
 resource "ibm_container_vpc_worker_pool" "pool" {
-  for_each          = { for pool in local.other_pools : pool.pool_name => pool }
+  for_each          = { for pool in local.all_standalone_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
   cluster           = local.cluster_id
@@ -338,7 +339,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
     }
   }
 
-  # Apply taints to worker pools i.e. other_pools
+  # Apply taints to worker pools i.e. all_standalone_pools
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
     content {
@@ -355,12 +356,12 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? each.value.import_on_create != null ? each.value.import_on_create ? true : null : null : null
+  import_on_create = each.value.pool_name == "default"
 }
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
-  for_each          = { for pool in local.other_autoscaling_pools : pool.pool_name => pool }
+  for_each          = { for pool in local.all_standalone_autoscaling_pools : pool.pool_name => pool }
   vpc_id            = var.vpc_id
   resource_group_id = var.resource_group_id
   cluster           = local.cluster_id
@@ -385,7 +386,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
     }
   }
 
-  # Apply taints to worker pools i.e. other_pools
+  # Apply taints to worker pools i.e. all_standalone_pools
 
   dynamic "taints" {
     for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], lookup(var.worker_pools_taints, each.value["pool_name"], []))
@@ -397,7 +398,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? each.value.import_on_create : null
+  import_on_create = each.value.pool_name == "default"
 }
 
 ##############################################################################
