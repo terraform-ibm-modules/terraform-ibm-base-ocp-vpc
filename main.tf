@@ -7,8 +7,8 @@
 locals {
   # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
   default_pool            = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
-  other_pools             = local.default_pool.import_on_create != null && coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
-  other_autoscaling_pools = local.default_pool.import_on_create != null && coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
+  other_pools             = coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
+  other_autoscaling_pools = coalesce(local.default_pool.import_on_create, false) ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
 
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
