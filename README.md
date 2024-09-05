@@ -108,6 +108,12 @@ module "ocp_base" {
 }
 ```
 
+### Secure by default cluster settings
+
+In OCP version 4.15, outbound traffic is disabled by default. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group-reference).
+
+There is a provision to toggle outbound traffic by using the modules' `disable_outbound_traffic_protection` input. Refer [Managing outbound traffic protection in VPC clusters](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound#sbd-example-oh).
+
 ### Advanced security group options
 
 The Terraform module provides options to attach additional security groups to the worker nodes, VPE, and load balancer associated with the cluster.
