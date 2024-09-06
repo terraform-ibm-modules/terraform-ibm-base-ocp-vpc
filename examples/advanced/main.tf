@@ -163,8 +163,7 @@ module "ocp_base" {
   worker_pools_taints  = local.worker_pools_taints
   ocp_entitlement      = var.ocp_entitlement
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
-  ignore_worker_pool_size_changes       = true
-  allow_default_worker_pool_replacement = true
+  ignore_worker_pool_size_changes = true
   addons = {
     "cluster-autoscaler" = "1.2.0"
   }
