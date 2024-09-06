@@ -251,21 +251,22 @@ module "custom_sg" {
 }
 
 module "ocp_fscloud" {
-  source                           = "../../modules/fscloud"
-  cluster_name                     = var.prefix
-  resource_group_id                = module.resource_group.resource_group_id
-  region                           = var.region
-  force_delete_storage             = true
-  vpc_id                           = module.vpc.vpc_id
-  vpc_subnets                      = local.cluster_vpc_subnets
-  existing_cos_id                  = module.cos_fscloud.cos_instance_id
-  worker_pools                     = local.worker_pools
-  tags                             = var.resource_tags
-  access_tags                      = var.access_tags
-  ocp_version                      = var.ocp_version
-  additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
-  use_private_endpoint             = true
-  ocp_entitlement                  = var.ocp_entitlement
+  source                               = "../../modules/fscloud"
+  cluster_name                         = var.prefix
+  resource_group_id                    = module.resource_group.resource_group_id
+  region                               = var.region
+  force_delete_storage                 = true
+  vpc_id                               = module.vpc.vpc_id
+  vpc_subnets                          = local.cluster_vpc_subnets
+  existing_cos_id                      = module.cos_fscloud.cos_instance_id
+  worker_pools                         = local.worker_pools
+  tags                                 = var.resource_tags
+  access_tags                          = var.access_tags
+  ocp_version                          = var.ocp_version
+  import_default_worker_pool_on_create = false
+  additional_lb_security_group_ids     = [module.custom_sg["custom-lb-sg"].security_group_id]
+  use_private_endpoint                 = true
+  ocp_entitlement                      = var.ocp_entitlement
   kms_config = {
     instance_id      = var.hpcs_instance_guid
     crk_id           = local.cluster_hpcs_cluster_key_id
