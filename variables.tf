@@ -47,6 +47,13 @@ variable "import_default_worker_pool_on_create" {
   nullable    = false
 }
 
+variable "allow_default_worker_pool_replacement" {
+  type        = bool
+  description = "Once the default worker pool is handled as a stand-alone ibm_container_vpc_worker_pool, if you wish to make any change to the default worker pool which requires the re-creation of the default pool set this variable to true."
+  default     = false
+  nullable    = false
+}
+
 variable "worker_pools" {
   type = list(object({
     subnet_prefix = optional(string)

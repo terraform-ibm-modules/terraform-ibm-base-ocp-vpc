@@ -109,13 +109,12 @@ locals {
     {
       subnet_prefix                     = "zone-1"
       pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type                      = "bx2.4x16"
+      machine_type                      = "mx2.4x32"
       workers_per_zone                  = 1
       enableAutoscaling                 = true
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      import_on_create                  = true
     },
     {
       subnet_prefix                     = "zone-2"
@@ -164,7 +163,8 @@ module "ocp_base" {
   worker_pools_taints  = local.worker_pools_taints
   ocp_entitlement      = var.ocp_entitlement
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
-  ignore_worker_pool_size_changes = true
+  ignore_worker_pool_size_changes       = true
+  allow_default_worker_pool_replacement = true
   addons = {
     "cluster-autoscaler" = "1.2.0"
   }

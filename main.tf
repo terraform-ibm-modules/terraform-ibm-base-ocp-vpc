@@ -356,7 +356,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? true : null
+  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? false : true : null
 }
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
@@ -398,7 +398,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? true : null
+  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? false : true : null
 }
 
 ##############################################################################
