@@ -116,30 +116,44 @@ module "ocp_base" {
 }
 ```
 
-### Default Worker Pool
+### Default Worker Pool management
 
 You can manage the default worker pool using Terraform, and make changes to it through this module. This option is enabled by default. Under the hood, the default worker pool is imported as a `ibm_container_vpc_worker_pool` resource. Advanced users may opt-out of this option by setting `import_default_worker_pool_on_create` parameter to `false`. For most use cases it is recommended to keep this variable to `true`.
 
-- **Important**: If the default worker pool is handled as a stand-alone ibm_container_vpc_worker_pool (which is the default behavior), you must manually remove all worker pools from the Terraform state prior to running a `terraform destroy` command on the module to avoid an error due to this [limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster).
-    - Terraform CLI. Example for a cluster with 2 worker pools: one named 'default' and the other named 'secondarypool'.
-    ```sh
-        $ terraform state list | grep ibm_container_vpc_worker_pool
-          > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
-          > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["secondarypool"]
-          > ...
+#### Important Considerations for Terraform and Default Worker Pool
 
-        $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
-        $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
-        $ ...
-    ```
-    - Schematics. Example for a cluster with 2 worker pools: one named 'default' and the other named 'secondarypool'.
-    ```sh
+**Terraform Destroy**
+
+When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove all worker pools from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
+
+Terraform CLI Example
+
+For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+
+```sh
+      $ terraform state list | grep ibm_container_vpc_worker_pool
+        > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
+        > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["secondarypool"]
+        > ...
+
+      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
+      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
+      $ ...
+```
+
+Schematics Example: For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+
+```sh
         $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
         $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
         $ ...
-    ```
+```
 
-- **Important**: If the default worker pool is handled as a stand-alone ibm_container_vpc_worker_pool (which is the default behavior), if you wish to make any change to the default worker pool which requires the re-creation of the default pool (for example a change to the worker node `operating_system`), then set the variable `allow_default_worker_pool_replacement` to true, perform the apply, and set it back for false. This is ONLY needed for changes that require the recreation of existing worker nodes in the default pool, and is NOT needed for scenario such as changing the number of workers in the default worker pool. This approach is due to a limitation in the terraform provider that may be lifted in the future.
+**Changes Requiring Re-creation of Default Worker Pool**
+
+If you need to make changes to the default worker pool that require its re-creation (e.g., changing the worker node `operating_system`), you must set the `allow_default_worker_pool_replacement` variable to true, perform the apply, and then set it back to false in the code before the subsequent apply. This is **only** necessary for changes that require the recreation the entire default pool and is **not needed for scenarios that does not require recreating the worker pool such as changing the number of workers in the default worker pool**.
+
+This approach is due to a limitation in the Terraform provider that may be lifted in the future.
 
 ### Advanced security group options
 
