@@ -68,17 +68,18 @@ locals {
 }
 
 module "ocp_base" {
-  source                              = "../.."
-  resource_group_id                   = module.resource_group.resource_group_id
-  region                              = var.region
-  tags                                = var.resource_tags
-  cluster_name                        = var.prefix
-  force_delete_storage                = true
-  vpc_id                              = ibm_is_vpc.vpc.id
-  vpc_subnets                         = local.cluster_vpc_subnets
-  ocp_version                         = var.ocp_version
-  worker_pools                        = local.worker_pools
-  access_tags                         = var.access_tags
-  ocp_entitlement                     = var.ocp_entitlement
-  disable_outbound_traffic_protection = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
+  source                               = "../.."
+  resource_group_id                    = module.resource_group.resource_group_id
+  region                               = var.region
+  tags                                 = var.resource_tags
+  cluster_name                         = var.prefix
+  force_delete_storage                 = true
+  vpc_id                               = ibm_is_vpc.vpc.id
+  vpc_subnets                          = local.cluster_vpc_subnets
+  ocp_version                          = var.ocp_version
+  worker_pools                         = local.worker_pools
+  access_tags                          = var.access_tags
+  ocp_entitlement                      = var.ocp_entitlement
+  disable_outbound_traffic_protection  = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
+  import_default_worker_pool_on_create = false
 }
