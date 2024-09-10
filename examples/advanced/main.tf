@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.15.9"
+  version                   = "4.15.10"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -109,7 +109,7 @@ locals {
     {
       subnet_prefix                     = "zone-1"
       pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type                      = "bx2.4x16"
+      machine_type                      = "mx2.4x32"
       workers_per_zone                  = 1
       enableAutoscaling                 = true
       minSize                           = 1
