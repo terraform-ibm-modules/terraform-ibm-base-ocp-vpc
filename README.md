@@ -30,7 +30,7 @@ Optionally, the module supports advanced security group management for the worke
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
     * [Attaching custom security groups](./examples/custom_sg)
-    * [Basic single zone example](./examples/basic)
+    * [Basic single zone cluster with allowed outbound traffic](./examples/basic)
     * [Cluster security group rules example](./examples/add_rules_to_sg)
     * [Cross account KMS encryption example](./examples/cross_kms_support)
     * [Financial Services compliant example](./examples/fscloud)
@@ -115,6 +115,12 @@ module "ocp_base" {
   ]
 }
 ```
+
+### Secure by default cluster settings
+
+In OCP version 4.15, outbound traffic is disabled by default. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group-reference).
+
+There is a provision to toggle outbound traffic by using the modules' `disable_outbound_traffic_protection` input. Refer [Managing outbound traffic protection in VPC clusters](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound#sbd-example-oh).
 
 ### Default Worker Pool management
 
