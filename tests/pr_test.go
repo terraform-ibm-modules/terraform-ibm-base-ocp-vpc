@@ -61,6 +61,9 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 			"access_tags":     permanentResources["accessTags"],
 			"ocp_entitlement": "cloud_pak",
 		},
+		ImplicitDestroy: []string{
+			"module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]",
+		},
 	})
 
 	return options
