@@ -56,7 +56,7 @@ locals {
   ocp_version_num           = regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]
   is_valid_version          = local.ocp_version_num != null ? tonumber(local.ocp_version_num) >= 4.15 : false
   rhcos_allowed_ocp_version = var.operating_system == local.os_rhcos && local.is_valid_version
-  worker_pool_rhcos_entry   = [for worker in var.worker_pools : (worker.operating_system == null || worker.operating_system == local.os_rhel || (worker.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
+  worker_pool_rhcos_entry   = [for worker in var.worker_pools : (worker.operating_system == local.os_rhel || (worker.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
 
   # To verify rhcos operating system exists only for OCP versions >=4.15
   # tflint-ignore: terraform_unused_declarations
