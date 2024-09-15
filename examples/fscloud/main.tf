@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.11.5"
+  version                       = "8.11.10"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -32,7 +32,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.11.5"
+  version = "8.11.10"
 
   bucket_configs = [
     {
@@ -113,7 +113,7 @@ locals {
 # Create Sysdig and Activity Tracker instance
 module "observability_instances" {
   source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.15.0"
+  version = "2.17.0"
   providers = {
     logdna.at = logdna.at
     logdna.ld = logdna.ld
@@ -145,7 +145,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.24.1"
+  version          = "1.27.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -157,7 +157,7 @@ module "cbr_zone" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.24.1"
+  version          = "1.27.0"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
