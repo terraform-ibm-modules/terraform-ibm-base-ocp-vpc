@@ -66,7 +66,7 @@ locals {
   worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
   # Validate if default worker pool's operating system is RHEL, all pools' operating system must be RHEL
-  check_other_os                      = local.default_pool.operating_system == null || local.default_pool.operating_system == local.os_rhcos
+  check_other_os                      = local.default_pool.operating_system == local.os_rhcos
   rhel_check_for_all_standalone_pools = [for pool in var.worker_pools : pool.pool_name != "default" && pool.operating_system == local.os_rhel ? true : false]
   # tflint-ignore: terraform_unused_declarations
   valid_rhel_worker_pools = local.check_other_os || (local.default_pool.operating_system == local.os_rhel && alltrue(local.rhel_check_for_all_standalone_pools)) == true ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
