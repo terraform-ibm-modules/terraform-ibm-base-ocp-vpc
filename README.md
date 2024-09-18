@@ -140,19 +140,17 @@ For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow t
       $ terraform state list | grep ibm_container_vpc_worker_pool
         > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
         > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["secondarypool"]
+        > module.ocp_base.ibm_container_vpc_worker_pool.pool["default"]
+        > module.ocp_base.ibm_container_vpc_worker_pool.pool["secondarypool"]
         > ...
 
-      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
-      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
-      $ ...
+      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
 ```
 
 Schematics Example: For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
 
 ```sh
-        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
-        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
-        $ ...
+        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
 ```
 
 **Changes Requiring Re-creation of Default Worker Pool**
