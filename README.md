@@ -130,7 +130,7 @@ You can manage the default worker pool using Terraform, and make changes to it t
 
 **Terraform Destroy**
 
-When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove all worker pools from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
+When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove the default worker pool from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
 
 Terraform CLI Example
 
