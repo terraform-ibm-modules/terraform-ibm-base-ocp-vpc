@@ -134,20 +134,17 @@ When using the default behavior of handling the default worker pool as a stand-a
 
 Terraform CLI Example
 
-For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+For a cluster with 1 or more worker pools, follow these steps:
 
 ```sh
-      $ terraform state list | grep ibm_container_vpc_worker_pool
+      $ terraform state list | grep ibm_container_vpc_worker_pool | grep default
         > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
-        > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["secondarypool"]
         > module.ocp_base.ibm_container_vpc_worker_pool.pool["default"]
-        > module.ocp_base.ibm_container_vpc_worker_pool.pool["secondarypool"]
-        > ...
 
       $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
 ```
 
-Schematics Example: For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+Schematics Example: For a cluster with 1 or more worker pools, follow these steps:
 
 ```sh
         $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
