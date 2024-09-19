@@ -130,29 +130,24 @@ You can manage the default worker pool using Terraform, and make changes to it t
 
 **Terraform Destroy**
 
-When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove all worker pools from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
+When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove the default worker pool from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
 
 Terraform CLI Example
 
-For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+For a cluster with 1 or more worker pools, follow these steps:
 
 ```sh
-      $ terraform state list | grep ibm_container_vpc_worker_pool
+      $ terraform state list | grep ibm_container_vpc_worker_pool | grep default
         > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
-        > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["secondarypool"]
-        > ...
+        > module.ocp_base.ibm_container_vpc_worker_pool.pool["default"]
 
-      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
-      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
-      $ ...
+      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
 ```
 
-Schematics Example: For a cluster with 2 worker pools, named 'default' and 'secondarypool', follow these steps:
+Schematics Example: For a cluster with 1 or more worker pools, follow these steps:
 
 ```sh
-        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"default\"]"
-        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.all_pools[\"secondarypool\"]"
-        $ ...
+        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
 ```
 
 **Changes Requiring Re-creation of Default Worker Pool**
