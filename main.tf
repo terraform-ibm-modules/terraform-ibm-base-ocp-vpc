@@ -459,8 +459,8 @@ locals {
 
   # get the addons and their versions and create an addons map including the corresponding csi_driver_version
   addons = merge(
-    { for addon_name, addon_version in (var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
-    var.manage_all_addons ? (length(local.csi_driver_version) > 0 ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}): {}
+    { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
+    var.manage_all_addons ? (length(local.csi_driver_version) > 0 ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}) : {}
   )
 }
 
