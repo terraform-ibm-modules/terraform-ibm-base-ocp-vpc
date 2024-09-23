@@ -19,6 +19,8 @@ module "fscloud" {
   ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
   verify_worker_network_readiness       = var.verify_worker_network_readiness
   worker_pools_taints                   = var.worker_pools_taints
+  pod_subnet                            = var.pod_subnet
+  service_subnet                        = var.service_subnet
   use_existing_cos                      = true
   existing_cos_id                       = var.existing_cos_id
   tags                                  = var.tags

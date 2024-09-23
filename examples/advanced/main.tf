@@ -114,6 +114,7 @@ locals {
       enableAutoscaling                 = true
       minSize                           = 1
       maxSize                           = 6
+      secondary_storage                 = "30gb.10iops-tier"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {

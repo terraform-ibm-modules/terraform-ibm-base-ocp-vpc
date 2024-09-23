@@ -69,6 +69,8 @@ variable "worker_pools" {
     operating_system  = optional(string)
     labels            = optional(map(string))
     minSize           = optional(number)
+    secondary_storage = optional(string)
+    entitlement       = optional(string)
     maxSize           = optional(number)
     enableAutoscaling = optional(bool)
     boot_volume_encryption_kms_config = optional(object({
@@ -283,6 +285,18 @@ variable "operating_system" {
     error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
     condition     = var.operating_system == null || var.operating_system == "REDHAT_8_64" || var.operating_system == "RHCOS"
   }
+}
+
+variable "pod_subnet" {
+  type        = string
+  default     = null
+  description = "Specify a custom subnet CIDR to provide private IP addresses for pods."
+}
+
+variable "service_subnet" {
+  type        = string
+  default     = null
+  description = "Specify a custom subnet CIDR to provide private IP addresses for services."
 }
 
 # VPC Variables
