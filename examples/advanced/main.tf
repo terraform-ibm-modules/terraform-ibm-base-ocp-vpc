@@ -148,6 +148,27 @@ locals {
   }
 }
 
+##############################################################################
+# Get Cloud Account ID
+##############################################################################
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
+##############################################################################
+# Create CBR Zone
+##############################################################################
+module "cbr_zone" {
+  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-zone-module?ref=v1.2.0"
+  name             = "${var.prefix}-VPC-network-zone"
+  zone_description = "CBR Network zone representing VPC"
+  account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+  addresses = [{
+    type  = "vpc", # to bind a specific vpc to the zone
+    value = ibm_is_vpc.vpc.crn,
+  }]
+}
+
 module "ocp_base" {
   source               = "../.."
   cluster_name         = var.prefix
@@ -171,6 +192,24 @@ module "ocp_base" {
     instance_id = module.kp_all_inclusive.kms_guid
     crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
   }
+  cbr_rules = [
+    {
+      description      = "${var.prefix}-OCP-base access only from vpc"
+      enforcement_mode = "enabled"
+      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+      rule_contexts = [{
+        attributes = [
+          {
+            "name" : "endpointType",
+            "value" : "private"
+          },
+          {
+            name  = "networkZoneId"
+            value = module.cbr_zone.zone_id
+        }]
+      }]
+    }
+  ]
 }
 
 data "ibm_container_cluster_config" "cluster_config" {

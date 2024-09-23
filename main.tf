@@ -646,3 +646,34 @@ module "attach_sg_to_registry_vpe" {
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]
 }
+
+##############################################################################
+# Context Based Restrictions
+##############################################################################
+module "cbr_rule" {
+  count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
+  version          = "1.24.0"
+  rule_description = var.cbr_rules[count.index].description
+  enforcement_mode = var.cbr_rules[count.index].enforcement_mode
+  rule_contexts    = var.cbr_rules[count.index].rule_contexts
+  resources = [{
+    attributes = [
+      {
+        name     = "accountId"
+        value    = var.cbr_rules[count.index].account_id
+        operator = "stringEquals"
+      },
+      {
+        name     = "serviceInstance"
+        value    = ibm_container_vpc_cluster.cluster[0].crn
+        operator = "stringEquals"
+      },
+      {
+        name     = "serviceName"
+        value    = "Red Hat OpenShift on IBM Cloud"
+        operator = "stringEquals"
+      }
+    ],
+  }]
+}
