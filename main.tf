@@ -444,12 +444,6 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 # Addons
 ##############################################################################
-
-# Lookup the current default csi-driver version
-data "ibm_container_addons" "existing_addons" {
-  cluster = local.cluster_id
-}
-
 resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
