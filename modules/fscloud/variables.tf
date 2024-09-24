@@ -83,16 +83,16 @@ variable "worker_pools" {
   description = "List of worker pools"
 }
 
-variable "pod_subnet" {
+variable "pod_subnet_cidr" {
   type        = string
   default     = null
-  description = "Specify a custom subnet CIDR to provide private IP addresses for pods."
+  description = "Specify a custom subnet CIDR to provide private IP addresses for pods. The subnet must have a CIDR of at least `/23` or larger. Default value is `172.30.0.0/16` when the variable is set to `null`."
 }
 
-variable "service_subnet" {
+variable "service_subnet_cidr" {
   type        = string
   default     = null
-  description = "Specify a custom subnet CIDR to provide private IP addresses for services."
+  description = "Specify a custom subnet CIDR to provide private IP addresses for services. The subnet must be at least `/24` or larger. Default value is `172.21.0.0/16` when the variable is set to `null`."
 }
 
 variable "worker_pools_taints" {
