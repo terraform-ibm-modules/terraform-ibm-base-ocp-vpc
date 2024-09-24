@@ -464,13 +464,6 @@ resource "ibm_container_addons" "addons" {
     }
   }
 
-  lifecycle {
-    ignore_changes = [
-      # Ignore changes to existing addons that are managed elsewhere (e.g., default CSI driver)
-      addons["vpc-block-csi-driver"],
-    ]
-  }
-
   timeouts {
     create = "1h"
   }
