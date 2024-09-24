@@ -88,7 +88,7 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 
 	// Get output of the last apply
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
-	if assert.Error(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
 		return nil
 	}
 
