@@ -666,12 +666,12 @@ module "cbr_rule" {
       },
       {
         name     = "serviceInstance"
-        value    = ibm_container_vpc_cluster.cluster[0].crn
+        value    = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
         operator = "stringEquals"
       },
       {
         name     = "serviceName"
-        value    = "Red Hat OpenShift on IBM Cloud"
+        value    = "containers-kubernetes"
         operator = "stringEquals"
       }
     ],
