@@ -445,26 +445,6 @@ resource "null_resource" "confirm_network_healthy" {
 # Addons
 ##############################################################################
 
-# Lookup the current default csi-driver version
-data "ibm_container_addons" "existing_addons" {
-  cluster = local.cluster_id
-}
-
-locals {
-  # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
-  csi_driver_version = [
-    for addon in data.ibm_container_addons.existing_addons.addons :
-    addon.version if addon.name == "vpc-block-csi-driver"
-  ]
-
-  # get the addons and their versions and create an addons map including the corresponding csi_driver_version
-  addons = merge(
-    { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
-    var.manage_all_addons ? (length(local.csi_driver_version) > 0 ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}) : {}
-  )
-}
-
-
 resource "ibm_container_addons" "addons" {
 
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
@@ -478,11 +458,18 @@ resource "ibm_container_addons" "addons" {
   manage_all_addons = var.manage_all_addons
 
   dynamic "addons" {
-    for_each = local.addons
+    for_each =  tomap(var.addons)
     content {
       name    = addons.key
       version = addons.value
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to existing addons that are managed elsewhere (e.g., default CSI driver)
+      addons["vpc-block-csi-driver"],
+    ]
   }
 
   timeouts {
