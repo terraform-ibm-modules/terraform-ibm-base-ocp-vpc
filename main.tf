@@ -331,7 +331,7 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   secondary_storage = each.value.secondary_storage
-  entitlement       = each.value.entitlement
+  entitlement       = var.ocp_entitlement
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
@@ -378,7 +378,7 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
   secondary_storage = each.value.secondary_storage
-  entitlement       = each.value.entitlement
+  entitlement       = var.ocp_entitlement
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
