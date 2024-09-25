@@ -457,7 +457,7 @@ resource "ibm_container_addons" "addons" {
   manage_all_addons = var.manage_all_addons
 
   dynamic "addons" {
-    for_each =  tomap(var.addons)
+    for_each =  var.addons
     content {
       name    = addons.key
       version = addons.value
