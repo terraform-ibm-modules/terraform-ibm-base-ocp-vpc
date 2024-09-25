@@ -70,7 +70,6 @@ variable "worker_pools" {
     labels            = optional(map(string))
     minSize           = optional(number)
     secondary_storage = optional(string)
-    entitlement       = optional(string)
     maxSize           = optional(number)
     enableAutoscaling = optional(bool)
     boot_volume_encryption_kms_config = optional(object({
