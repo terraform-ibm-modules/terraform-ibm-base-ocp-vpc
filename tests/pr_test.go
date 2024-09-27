@@ -26,10 +26,11 @@ const customsgExampleDir = "examples/custom_sg"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.15" // used by TestRunUpgradeAdvancedExample, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.14" // used by TestRunAdvancedExample and TestRunAddRulesToSGExample
-const ocpVersion3 = "4.13" // used by TestCrossKmsSupportExample
-const ocpVersion4 = "4.12" // used by TestRunBasicExample
+const ocpVersion1 = "4.16" // used by TestRunUpgradeAdvancedExample , TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.15" // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.14" // used by TestRunAdvancedExample and TestRunAddRulesToSGExample
+const ocpVersion4 = "4.13" // used by TestCrossKmsSupportExample
+const ocpVersion5 = "4.12" // used by TestRunBasicExample
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}
@@ -74,7 +75,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 func TestRunAdvancedExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion2)
+	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 
 	output, err := options.RunTestConsistency()
 
