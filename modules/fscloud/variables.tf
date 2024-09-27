@@ -56,22 +56,42 @@ variable "allow_default_worker_pool_replacement" {
 
 variable "worker_pools" {
   type = list(object({
-    subnet_prefix     = string
+    subnet_prefix = optional(string)
+    vpc_subnets = optional(list(object({
+      id         = string
+      zone       = string
+      cidr_block = string
+    })))
     pool_name         = string
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
     operating_system  = string
     labels            = optional(map(string))
+    minSize           = optional(number)
+    secondary_storage = optional(string)
+    maxSize           = optional(number)
+    enableAutoscaling = optional(bool)
     boot_volume_encryption_kms_config = optional(object({
       crk             = string
       kms_instance_id = string
       kms_account_id  = optional(string)
     }))
     additional_security_group_ids = optional(list(string))
-    import_on_create              = optional(bool)
   }))
   description = "List of worker pools"
+}
+
+variable "pod_subnet_cidr" {
+  type        = string
+  default     = null
+  description = "Specify a custom subnet CIDR to provide private IP addresses for pods. The subnet must have a CIDR of at least `/23` or larger. Default value is `172.30.0.0/16` when the variable is set to `null`."
+}
+
+variable "service_subnet_cidr" {
+  type        = string
+  default     = null
+  description = "Specify a custom subnet CIDR to provide private IP addresses for services. The subnet must be at least `/24` or larger. Default value is `172.21.0.0/16` when the variable is set to `null`."
 }
 
 variable "worker_pools_taints" {
