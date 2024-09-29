@@ -86,7 +86,7 @@ func TestRunAdvancedExample(t *testing.T) {
 func TestRunUpgradeAdvancedExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion1)
+	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion2)
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {
