@@ -86,7 +86,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.11.13"
+  version                = "8.11.14"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -125,6 +125,9 @@ resource "ibm_container_vpc_cluster" "cluster" {
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
+  secondary_storage                   = local.default_pool.secondary_storage
+  pod_subnet                          = var.pod_subnet_cidr
+  service_subnet                      = var.service_subnet_cidr
   operating_system                    = var.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
@@ -193,6 +196,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
   operating_system                    = var.operating_system
+  secondary_storage                   = local.default_pool.secondary_storage
+  pod_subnet                          = var.pod_subnet_cidr
+  service_subnet                      = var.service_subnet_cidr
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
   disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
@@ -324,6 +330,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   flavor            = each.value.machine_type
   operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
+  secondary_storage = each.value.secondary_storage
+  entitlement       = var.ocp_entitlement
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
@@ -369,6 +377,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   flavor            = each.value.machine_type
   operating_system  = each.value.operating_system
   worker_count      = each.value.workers_per_zone
+  secondary_storage = each.value.secondary_storage
+  entitlement       = var.ocp_entitlement
   labels            = each.value.labels
   crk               = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.crk
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
