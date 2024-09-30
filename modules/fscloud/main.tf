@@ -33,4 +33,5 @@ module "fscloud" {
   number_of_lbs                         = var.number_of_lbs
   additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
   operating_system                      = var.operating_system
+  cbr_rules                             = var.cbr_rules
 }

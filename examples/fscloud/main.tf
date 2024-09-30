@@ -272,4 +272,23 @@ module "ocp_fscloud" {
     crk_id           = local.cluster_hpcs_cluster_key_id
     private_endpoint = true
   }
+  cbr_rules = [
+    {
+      description      = "${var.prefix}-OCP-base access only from vpc"
+      enforcement_mode = "enabled"
+      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+      rule_contexts = [{
+        attributes = [
+          {
+            "name" : "endpointType",
+            "value" : "private"
+          },
+          {
+            name  = "networkZoneId"
+            value = module.cbr_zone.zone_id
+        }]
+      }]
+    }
+  ]
+
 }
