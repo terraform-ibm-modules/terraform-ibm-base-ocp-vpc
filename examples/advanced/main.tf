@@ -121,6 +121,7 @@ locals {
       pool_name                         = "zone-2"
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
+      secondary_storage                 = "300gb.5iops-tier"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {
