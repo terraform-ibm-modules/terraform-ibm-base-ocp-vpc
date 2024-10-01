@@ -11,7 +11,7 @@ import (
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion5)
 
 	output, err := options.RunTestConsistency()
 
@@ -22,7 +22,7 @@ func TestRunBasicExample(t *testing.T) {
 func TestRunCustomsgExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-customsg", customsgExampleDir, ocpVersion1)
+	options := setupOptions(t, "base-ocp-customsg", customsgExampleDir, ocpVersion2)
 
 	output, err := options.RunTestConsistency()
 
@@ -102,7 +102,7 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
+			"ocp_version": ocpVersion3,
 		},
 	})
 	output, err := options.RunTestConsistency()
@@ -128,7 +128,7 @@ func TestCustomSGExample(t *testing.T) {
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion1,
+			"ocp_version": ocpVersion2,
 		},
 	})
 	output, err := options.RunTestConsistency()
@@ -147,7 +147,7 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
 			"kms_key_id":           permanentResources["kp_us_south_root_key_id"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
-			"ocp_version":          ocpVersion3,
+			"ocp_version":          ocpVersion4,
 		},
 		ImplicitDestroy: []string{
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
