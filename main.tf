@@ -385,6 +385,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   kms_instance_id   = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id    = each.value.boot_volume_encryption_kms_config == null ? null : each.value.boot_volume_encryption_kms_config.kms_account_id
 
+  security_groups = each.value.additional_security_group_ids
+
   lifecycle {
     ignore_changes = [worker_count]
   }
