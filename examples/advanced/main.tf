@@ -159,14 +159,30 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 ##############################################################################
 # Create CBR Zone
 ##############################################################################
-module "cbr_zone" {
-  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-zone-module?ref=v1.2.0"
+module "cbr_vpc_zone" {
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
+  version          = "1.27.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
   addresses = [{
-    type  = "vpc", # to bind a specific vpc to the zone
-    value = ibm_is_vpc.vpc.crn,
+    type  = "vpc",
+    value = ibm_is_vpc.vpc.crn
+  }]
+}
+
+module "cbr_zone_schematics" {
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
+  version          = "1.27.0"
+  name             = "${var.prefix}-schematics-zone"
+  zone_description = "CBR Network zone containing Schematics"
+  account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+  addresses = [{
+    type = "serviceRef",
+    ref = {
+      account_id   = data.ibm_iam_account_settings.iam_account_settings.account_id
+      service_name = "schematics"
+    }
   }]
 }
 
@@ -195,18 +211,28 @@ module "ocp_base" {
   }
   cbr_rules = [
     {
-      description      = "${var.prefix}-OCP-base access only from vpc"
+      description      = "${var.prefix}-event notification access only from vpc"
       enforcement_mode = "enabled"
       account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
       rule_contexts = [{
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "private"
+            "value" : "public"
           },
           {
             name  = "networkZoneId"
-            value = module.cbr_zone.zone_id
+            value = module.cbr_vpc_zone.zone_id
+        }]
+        }, {
+        attributes = [
+          {
+            "name" : "endpointType",
+            "value" : "public"
+          },
+          {
+            name  = "networkZoneId"
+            value = module.cbr_zone_schematics.zone_id
         }]
       }]
     }

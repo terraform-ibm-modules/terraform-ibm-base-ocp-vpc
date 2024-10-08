@@ -3,6 +3,7 @@ package test
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"testing"
 
@@ -33,6 +34,14 @@ const ocpVersion4 = "4.12" // used by TestRunBasicExample
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}
+
+var validRegions = []string{
+	"us-south",
+	"eu-de",
+	"eu-gb",
+	"au-syd",
+	"eu-es",
+}
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
@@ -71,15 +80,30 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 	return options
 }
 
-func TestRunAdvancedExample(t *testing.T) {
+func TestAdvancedExampleInSchematics(t *testing.T) {
 	t.Parallel()
+	var region = validRegions[rand.Intn(len(validRegions))]
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "base-ocp-adv",
+		TarIncludePatterns: []string{
+			"*.tf",
+			advancedExampleDir + "/*.tf",
+		},
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         advancedExampleDir,
+		Tags:                   []string{"test-schematic"},
+		Region:                 region,
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+	})
 
-	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion2)
-
-	output, err := options.RunTestConsistency()
-
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+	}
+	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunUpgradeAdvancedExample(t *testing.T) {
