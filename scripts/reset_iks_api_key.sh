@@ -54,14 +54,25 @@ if [ "${reset}" == true ]; then
     if [ "$PRIVATE_ENV" = true ]; then
         if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
             RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
-            curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+            result=$(curl -i -H "accept: application/json" -H "Authorization: 5$IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+            status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
             RESET_URL="https://api.$REGION.containers.cloud.ibm.com/v1/keys"
-            curl -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL"
+            result=$(curl -i -H "accept: application/json" -H "Authorization: 5$IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+            status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         fi
     else
         RESET_URL="https://containers.cloud.ibm.com/global/v1/keys"
-        curl -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d ''
+        result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: 5$IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
+        status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
+    fi
+
+    if [ "${status_code}" == "204" ]; then
+        echo "The IAM API key is successfully reset."
+    else
+        echo "ERROR:: FAILED TO RESET THE IAM API KEY"
+        echo "$result"
+        exit 1
     fi
     # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
     sleep 10
