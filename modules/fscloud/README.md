@@ -7,6 +7,86 @@ This is a profile for IBM Cloud Red Hat OpenShift cluster on VPC Gen2 that meets
 It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals.
 
 
+### Usage
+
+```hcl
+module "ocp_base_fscloud" {
+  source               = "terraform-ibm-modules/terraform-ibm-base-ocp-vpc/ibm//modules/fscloud"
+  version              = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
+  cluster_name         = "example-fs-cluster-name"
+  resource_group_id    = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+  region               = "us-south"
+  force_delete_storage = true
+  vpc_id               = "79cxxxx-xxxx-xxxx-xxxx-xxxxxXX8667"
+  # obtain the below values from the targeted VPC and adjust to the number of zones, subnets, subnet name, cidr_block, id, zone
+  vpc_subnets          = {
+    zone-1    = [
+        {
+            cidr_block = "192.168.32.0/22"
+            id         = "0717-afc29fbb-0dbe-493a-a5b9-f3c5899cb8b9"
+            zone       = "us-south-1"
+        },
+        {
+            cidr_block = "192.168.36.0/22"
+            id         = "0727-d65c1eda-9e38-4200-8452-cb8ff5bb3140"
+            zone       = "us-south-2"
+        },
+        {
+            cidr_block = "192.168.40.0/22"
+            id         = "0737-9a823cd3-16bf-4ba4-a429-9e1fc7db74b8"
+            zone       = "us-south-3"
+        }
+    ]
+    zone-2 = [
+        {
+            cidr_block = "192.168.0.0/22"
+            id         = "0717-846b9490-34ae-4a6c-8288-28112dca1ba3"
+            zone       = "us-south-1"
+        },
+        {
+            cidr_block = "192.168.4.0/22"
+            id         = "0727-ef8db7f6-ffa5-4d8b-a317-4631741a45ee"
+            zone       = "us-south-2"
+        },
+        {
+            cidr_block = "192.168.8.0/22"
+            id         = "0737-c9a6d871-d95b-4914-abf5-82c22f4161d1"
+            zone       = "us-south-3"
+        }
+    ]
+    zone-3 = [
+        {
+            cidr_block = "192.168.16.0/22"
+            id         = "0717-d46e227c-89d4-4b02-9008-d03907a275b6"
+            zone       = "us-south-1"
+        },
+        {
+            cidr_block = "192.168.20.0/22"
+            id         = "0727-93b1edcb-966c-4517-a7af-6ac63cd93adf"
+            zone       = "us-south-2"
+        },
+        {
+            cidr_block = "192.168.24.0/22"
+            id         = "0737-807ec4f1-4d84-484e-b2f4-62dd5e431065"
+            zone       = "us-south-3"
+        }
+    ]
+  }
+  worker_pools         = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+      operating_system = "REDHAT_8_64"
+    }
+  ]
+  import_default_worker_pool_on_create = false
+  use_private_endpoint                 = true
+
+}
+```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
 
