@@ -56,7 +56,7 @@ locals {
   ocp_version_num           = regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]
   is_valid_version          = local.ocp_version_num != null ? tonumber(local.ocp_version_num) >= 4.15 : false
   rhcos_allowed_ocp_version = var.operating_system == local.os_rhcos && local.is_valid_version
-  worker_pool_rhcos_entry   = [for worker in var.worker_pools : (worker.operating_system == null || worker.operating_system == local.os_rhel || (worker.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
+  worker_pool_rhcos_entry   = [for worker in var.worker_pools : (worker.operating_system == local.os_rhel || (worker.operating_system == local.os_rhcos && local.is_valid_version) ? true : false)]
 
   # To verify rhcos operating system exists only for OCP versions >=4.15
   # tflint-ignore: terraform_unused_declarations
@@ -66,8 +66,9 @@ locals {
   worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
   # Validate if default worker pool's operating system is RHEL, all pools' operating system must be RHEL
-  check_other_os                      = local.default_pool.operating_system == null || local.default_pool.operating_system == local.os_rhcos
-  rhel_check_for_all_standalone_pools = [for pool in var.worker_pools : pool.pool_name != "default" && pool.operating_system == local.os_rhel ? true : false]
+  check_other_os                      = local.default_pool.operating_system == local.os_rhcos
+  rhel_check_for_all_standalone_pools = [for pool in var.worker_pools : pool.operating_system == local.os_rhel if pool.pool_name != "default"]
+
   # tflint-ignore: terraform_unused_declarations
   valid_rhel_worker_pools = local.check_other_os || (local.default_pool.operating_system == local.os_rhel && alltrue(local.rhel_check_for_all_standalone_pools)) == true ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
 
