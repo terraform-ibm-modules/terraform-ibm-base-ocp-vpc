@@ -66,7 +66,7 @@ variable "worker_pools" {
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
-    operating_system  = optional(string)
+    operating_system  = string
     labels            = optional(map(string))
     minSize           = optional(number)
     secondary_storage = optional(string)
@@ -106,7 +106,6 @@ variable "worker_pools" {
     condition = alltrue([
       for worker_pool in var.worker_pools :
       anytrue([
-        worker_pool.operating_system == null,
         worker_pool.operating_system == "REDHAT_8_64",
         worker_pool.operating_system == "RHCOS"
       ])
@@ -188,6 +187,7 @@ variable "ocp_version" {
       var.ocp_version == "4.13",
       var.ocp_version == "4.14",
       var.ocp_version == "4.15",
+      var.ocp_version == "4.16",
     ])
     error_message = "The specified ocp_version is not of the valid versions."
   }
