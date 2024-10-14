@@ -143,15 +143,30 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 # Create CBR Zone and Rules
 ########################################################################################################################
 
-module "cbr_zone" {
+module "cbr_vpc_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
   version          = "1.27.0"
   name             = "${var.prefix}-VPC-network-zone"
-  zone_description = "CBR Network zone containing VPC"
+  zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
   addresses = [{
     type  = "vpc", # to bind a specific vpc to the zone
     value = module.vpc.vpc_crn,
+  }]
+}
+
+module "cbr_zone_schematics" {
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
+  version          = "1.27.0"
+  name             = "${var.prefix}-schematics-zone"
+  zone_description = "CBR Network zone containing Schematics"
+  account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+  addresses = [{
+    type = "serviceRef",
+    ref = {
+      account_id   = data.ibm_iam_account_settings.iam_account_settings.account_id
+      service_name = "schematics"
+    }
   }]
 }
 
@@ -192,7 +207,7 @@ module "cbr_rules" {
       },
       {
         name  = "networkZoneId"
-        value = module.cbr_zone.zone_id
+        value = module.cbr_vpc_zone.zone_id
     }]
   }]
 }
@@ -282,14 +297,32 @@ module "ocp_fscloud" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "private"
+            "value" : "public"
           },
           {
             name  = "networkZoneId"
-            value = module.cbr_zone.zone_id
+            value = module.cbr_vpc_zone.zone_id
+        }]
+        }, {
+        attributes = [
+          {
+            "name" : "endpointType",
+            "value" : "public"
+          },
+          {
+            name  = "networkZoneId"
+            value = module.cbr_zone_schematics.zone_id
         }]
       }]
+      operations = [{
+        api_types = [
+          {
+            "api_type_id" : "crn:v1:bluemix:public:containers-kubernetes::::api-type:management"
+          }
+        ]
+      }]
     }
+
   ]
 
 }

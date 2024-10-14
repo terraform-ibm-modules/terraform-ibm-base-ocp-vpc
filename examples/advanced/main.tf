@@ -214,7 +214,7 @@ module "ocp_base" {
   }
   cbr_rules = [
     {
-      description      = "${var.prefix}-event notification access only from vpc"
+      description      = "${var.prefix}-OCP-base access only from vpc"
       enforcement_mode = "enabled"
       account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
       rule_contexts = [{
@@ -238,7 +238,15 @@ module "ocp_base" {
             value = module.cbr_zone_schematics.zone_id
         }]
       }]
+      operations = [{
+        api_types = [
+          {
+            "api_type_id" : "crn:v1:bluemix:public:containers-kubernetes::::api-type:management"
+          }
+        ]
+      }]
     }
+
   ]
 }
 
