@@ -21,7 +21,6 @@ module "cos_fscloud" {
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-  monitoring_crn                = module.observability_instances.cloud_monitoring_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
 
@@ -97,23 +96,6 @@ module "vpc" {
     zone-2 = false
     zone-3 = false
   }
-}
-
-########################################################################################################################
-# Observability Instances (Cloud Monitoring)
-########################################################################################################################
-
-
-# Create Cloud Monitoring instance
-module "observability_instances" {
-  source                         = "terraform-ibm-modules/observability-instances/ibm"
-  version                        = "3.0.0"
-  region                         = var.region
-  resource_group_id              = module.resource_group.resource_group_id
-  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
-  cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_metrics        = false
-  cloud_logs_provision           = false
 }
 
 ########################################################################################################################
