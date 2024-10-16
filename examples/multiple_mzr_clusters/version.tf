@@ -16,9 +16,5 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.8.0"
     }
-    logdna = {
-      source  = "logdna/logdna"
-      version = ">= 1.14.2"
-    }
   }
 }
