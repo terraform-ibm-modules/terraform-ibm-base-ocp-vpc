@@ -66,7 +66,7 @@ variable "worker_pools" {
     machine_type      = string
     workers_per_zone  = number
     resource_group_id = optional(string)
-    operating_system  = string
+    operating_system  = optional(string)
     labels            = optional(map(string))
     minSize           = optional(number)
     secondary_storage = optional(string)
@@ -108,7 +108,7 @@ variable "worker_pools" {
       anytrue([
         worker_pool.operating_system == "REDHAT_8_64",
         worker_pool.operating_system == "RHCOS"
-      ])
+      ]) if worker_pool.pool_name != "default"
     ])
     error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
   }
