@@ -222,6 +222,7 @@ locals {
       pool_name         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type      = "bx2.4x16"
       workers_per_zone  = 2
+      operating_system  = "RHCOS"
       labels            = {}
       resource_group_id = module.resource_group.resource_group_id
       boot_volume_encryption_kms_config = {
