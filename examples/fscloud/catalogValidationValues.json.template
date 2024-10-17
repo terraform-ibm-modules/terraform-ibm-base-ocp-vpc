@@ -5,6 +5,5 @@
   "prefix": $PREFIX,
   "hpcs_instance_guid": $HPCS_US_SOUTH_GUID,
   "hpcs_key_crn_cluster": $HPCS_US_SOUTH_ROOT_KEY_CRN,
-  "hpcs_key_crn_worker_pool": $HPCS_US_SOUTH_ROOT_KEY_CRN,
-  "existing_at_instance_crn": $AT_CRN
+  "hpcs_key_crn_worker_pool": $HPCS_US_SOUTH_ROOT_KEY_CRN
 }

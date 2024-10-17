@@ -21,8 +21,6 @@ module "cos_fscloud" {
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-  monitoring_crn                = module.observability_instances.cloud_monitoring_crn
-  activity_tracker_crn          = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
 
@@ -98,37 +96,6 @@ module "vpc" {
     zone-2 = false
     zone-3 = false
   }
-}
-
-########################################################################################################################
-# Observability Instances (Sysdig + AT)
-########################################################################################################################
-
-locals {
-  existing_at = var.existing_at_instance_crn != null ? true : false
-  at_crn      = var.existing_at_instance_crn == null ? module.observability_instances.activity_tracker_crn : var.existing_at_instance_crn
-}
-
-
-# Create Sysdig and Activity Tracker instance
-module "observability_instances" {
-  source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.18.1"
-  providers = {
-    logdna.at = logdna.at
-    logdna.ld = logdna.ld
-  }
-  region                         = var.region
-  resource_group_id              = module.resource_group.resource_group_id
-  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
-  cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_logs           = false
-  enable_platform_metrics        = false
-  log_analysis_provision         = false
-  activity_tracker_instance_name = "${var.prefix}-at"
-  activity_tracker_plan          = "7-day"
-  activity_tracker_provision     = !local.existing_at
-  cloud_logs_provision           = false
 }
 
 ########################################################################################################################
