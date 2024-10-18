@@ -129,7 +129,6 @@ module "ocp_base_cluster_1" {
   vpc_subnets                         = local.cluster_1_vpc_subnets
   disable_outbound_traffic_protection = true
   worker_pools                        = local.worker_pools
-  operating_system                    = local.os_rhcos
   worker_pools_taints                 = local.worker_pool_taints
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
@@ -146,7 +145,6 @@ module "ocp_base_cluster_2" {
   disable_outbound_traffic_protection = true
   vpc_subnets                         = local.cluster_2_vpc_subnets
   worker_pools                        = local.worker_pools
-  operating_system                    = local.os_rhcos
   worker_pools_taints                 = local.worker_pool_taints
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
