@@ -10,3 +10,6 @@ The following resources are provisioned by this example:
 - A multi-zone (3 zone) KMS encrypted OCP VPC cluster, with worker pools in each zone.
 - Auto scaling enabled for the default worker pool.
 - Taints against the workers in zone-2 and zone-3.
+- A Context-based restriction (CBR) network zone containing the VPC.
+- A Context-based restriction network zone containing the schematics service.
+- CBR rules that allow only the VPC and schematics to access the OCP cluster over the private endpoint.

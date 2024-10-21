@@ -221,7 +221,7 @@ module "ocp_base" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "public"
+            "value" : "private"
           },
           {
             name  = "networkZoneId"
@@ -231,7 +231,7 @@ module "ocp_base" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "public"
+            "value" : "private"
           },
           {
             name  = "networkZoneId"

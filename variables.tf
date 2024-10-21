@@ -357,5 +357,4 @@ variable "cbr_rules" {
   }))
   description = "The list of context-based restriction rules to create."
   default     = []
-  # Validation happens in the rule module
 }

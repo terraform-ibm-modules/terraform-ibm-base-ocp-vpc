@@ -264,7 +264,7 @@ module "ocp_fscloud" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "public"
+            "value" : "private"
           },
           {
             name  = "networkZoneId"
@@ -274,7 +274,7 @@ module "ocp_fscloud" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "public"
+            "value" : "private"
           },
           {
             name  = "networkZoneId"

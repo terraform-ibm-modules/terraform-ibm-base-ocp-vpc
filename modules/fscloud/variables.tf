@@ -246,6 +246,10 @@ variable "cbr_rules" {
   type = list(object({
     description = string
     account_id  = string
+    tags = optional(list(object({
+      name  = string
+      value = string
+    })), [])
     rule_contexts = list(object({
       attributes = optional(list(object({
         name  = string
