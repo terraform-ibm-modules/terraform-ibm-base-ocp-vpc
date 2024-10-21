@@ -335,3 +335,26 @@ variable "cluster_config_endpoint_type" {
 }
 
 ##############################################################################
+
+##############################################################
+# Context-based restriction (CBR)
+##############################################################
+
+variable "cbr_rules" {
+  type = list(object({
+    description = string
+    account_id  = string
+    tags = optional(list(object({
+      name  = string
+      value = string
+    })), [])
+    rule_contexts = list(object({
+      attributes = optional(list(object({
+        name  = string
+        value = string
+    }))) }))
+    enforcement_mode = string
+  }))
+  description = "The list of context-based restriction rules to create."
+  default     = []
+}
