@@ -173,7 +173,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 
 module "observability_instances" {
   source                         = "terraform-ibm-modules/observability-instances/ibm"
-  version                        = "3.0.0"
+  version                        = "3.1.0"
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
   cloud_monitoring_plan          = "graduated-tier"
@@ -189,7 +189,7 @@ module "observability_instances" {
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.30.2"
+  version = "2.0.0"
   providers = {
     helm = helm.helm_cluster_1
   }
@@ -202,7 +202,7 @@ module "observability_agents_1" {
 
 module "observability_agents_2" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.30.2"
+  version = "2.0.0"
   providers = {
     helm = helm.helm_cluster_2
   }
