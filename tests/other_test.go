@@ -47,24 +47,16 @@ func TestRunMultiClusterExample(t *testing.T) {
 		},
 		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
 			List: []string{
-				"module.observability_agents_1.helm_release.logdna_agent",
 				"module.observability_agents_1.helm_release.sysdig_agent",
-				"module.observability_agents_2.helm_release.logdna_agent",
 				"module.observability_agents_2.helm_release.sysdig_agent",
-				"module.observability_agents_1.helm_release.log_analysis_agent",
 				"module.observability_agents_1.helm_release.cloud_monitoring_agent",
-				"module.observability_agents_2.helm_release.log_analysis_agent",
 				"module.observability_agents_2.helm_release.cloud_monitoring_agent",
 			},
 		},
 		ImplicitDestroy: []string{ // Ignore full destroy to speed up tests
-			"module.observability_agents_1.helm_release.logdna_agent",
 			"module.observability_agents_1.helm_release.sysdig_agent",
-			"module.observability_agents_2.helm_release.logdna_agent",
 			"module.observability_agents_2.helm_release.sysdig_agent",
-			"module.observability_agents_1.helm_release.log_analysis_agent",
 			"module.observability_agents_1.helm_release.cloud_monitoring_agent",
-			"module.observability_agents_2.helm_release.log_analysis_agent",
 			"module.observability_agents_2.helm_release.cloud_monitoring_agent",
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
 			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed

@@ -50,12 +50,6 @@ variable "hpcs_key_crn_worker_pool" {
   type        = string
 }
 
-variable "existing_at_instance_crn" {
-  type        = string
-  description = "Optionally pass an existing activity tracker instance CRN to use in the example. If not passed, a new instance will be provisioned"
-  default     = null
-}
-
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module"
