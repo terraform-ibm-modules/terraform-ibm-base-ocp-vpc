@@ -10,6 +10,9 @@ The following resources are provisioned by this example:
 - An IBM Cloud Monitoring (Sysdig) instance.
 - An IBM Cloud Activity Tracker instance, if existing ones is not passed in.
 - A context-based restriction (CBR) rule to only allow COS Instance to be accessible from within the VPC.
+- A Context-based restriction (CBR) network zone containing the VPC.
+- A Context-based restriction network zone containing the schematics service.
+- CBR rules that allow only the VPC and schematics to access the OCP cluster over the private endpoint.
 - An OCP cluster in a VPC with the default worker pool deployed across 3 availability zones with cluster and boot volume encrypted with the given Hyper Protect Crypto Service root key.
 
 :exclamation: **Important:** OCP provisions a COS bucket, but you cannot use your own encryption keys. This will fail the requirement for Cloud Object Storage to be enabled with customer-managed encryption and Keep Your Own Key (KYOK). In OCP 4.14, COS will become optional to provision a cluster.
