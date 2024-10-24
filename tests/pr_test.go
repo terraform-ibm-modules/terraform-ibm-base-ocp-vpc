@@ -78,9 +78,8 @@ func TestAdvancedExampleInSchematics(t *testing.T) {
 		Prefix:  "base-ocp-adv",
 		TarIncludePatterns: []string{
 			"*.tf",
+			advancedExampleDir + "/*.tf",
 			"scripts/*.sh",
-			"examples/fscloud/*.tf",
-			"modules/*/*.tf",
 			"kubeconfig/README.md",
 		},
 		ResourceGroup:          resourceGroup,
