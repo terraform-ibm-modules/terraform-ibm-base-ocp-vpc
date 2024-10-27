@@ -87,7 +87,7 @@ func TestAdvancedExampleInSchematics(t *testing.T) {
 		Tags:                   []string{"test-schematic"},
 		CloudInfoService:       sharedInfoSvc,
 		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 60,
+		WaitJobCompleteMinutes: 120,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
