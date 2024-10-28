@@ -16,13 +16,11 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.11.14"
+  version                       = "8.13.2"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
   skip_iam_authorization_policy = true
-  monitoring_crn                = module.observability_instances.cloud_monitoring_crn
-  activity_tracker_crn          = local.at_crn
   # Don't set CBR rules here as we don't want to create a circular dependency with the VPC module
 }
 
@@ -32,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.11.14"
+  version = "8.13.2"
 
   bucket_configs = [
     {
@@ -101,37 +99,6 @@ module "vpc" {
 }
 
 ########################################################################################################################
-# Observability Instances (Sysdig + AT)
-########################################################################################################################
-
-locals {
-  existing_at = var.existing_at_instance_crn != null ? true : false
-  at_crn      = var.existing_at_instance_crn == null ? module.observability_instances.activity_tracker_crn : var.existing_at_instance_crn
-}
-
-
-# Create Sysdig and Activity Tracker instance
-module "observability_instances" {
-  source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.18.1"
-  providers = {
-    logdna.at = logdna.at
-    logdna.ld = logdna.ld
-  }
-  region                         = var.region
-  resource_group_id              = module.resource_group.resource_group_id
-  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
-  cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_logs           = false
-  enable_platform_metrics        = false
-  log_analysis_provision         = false
-  activity_tracker_instance_name = "${var.prefix}-at"
-  activity_tracker_plan          = "7-day"
-  activity_tracker_provision     = !local.existing_at
-  cloud_logs_provision           = false
-}
-
-########################################################################################################################
 # Get Cloud Account ID
 ########################################################################################################################
 
@@ -145,7 +112,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.27.0"
+  version          = "1.28.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone containing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -157,7 +124,7 @@ module "cbr_zone" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.27.0"
+  version          = "1.28.0"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{

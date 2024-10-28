@@ -8,9 +8,5 @@ terraform {
       source  = "ibm-cloud/ibm"
       version = ">= 1.68.0"
     }
-    logdna = {
-      source  = "logdna/logdna"
-      version = ">= 1.14.2"
-    }
   }
 }

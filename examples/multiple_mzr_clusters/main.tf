@@ -129,7 +129,6 @@ module "ocp_base_cluster_1" {
   vpc_subnets                         = local.cluster_1_vpc_subnets
   disable_outbound_traffic_protection = true
   worker_pools                        = local.worker_pools
-  operating_system                    = local.os_rhcos
   worker_pools_taints                 = local.worker_pool_taints
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
@@ -146,7 +145,6 @@ module "ocp_base_cluster_2" {
   disable_outbound_traffic_protection = true
   vpc_subnets                         = local.cluster_2_vpc_subnets
   worker_pools                        = local.worker_pools
-  operating_system                    = local.os_rhcos
   worker_pools_taints                 = local.worker_pool_taints
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
@@ -174,20 +172,13 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ########################################################################################################################
 
 module "observability_instances" {
-  source  = "terraform-ibm-modules/observability-instances/ibm"
-  version = "2.18.1"
-  providers = {
-    logdna.at = logdna.at
-    logdna.ld = logdna.ld
-  }
+  source                         = "terraform-ibm-modules/observability-instances/ibm"
+  version                        = "3.1.0"
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
-  log_analysis_plan              = "7-day"
   cloud_monitoring_plan          = "graduated-tier"
-  activity_tracker_provision     = false
   enable_platform_logs           = false
   enable_platform_metrics        = false
-  log_analysis_instance_name     = "${var.prefix}-logdna"
   cloud_monitoring_instance_name = "${var.prefix}-sysdig"
   cloud_logs_provision           = false
 }
@@ -198,28 +189,26 @@ module "observability_instances" {
 
 module "observability_agents_1" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.29.1"
+  version = "2.0.0"
   providers = {
     helm = helm.helm_cluster_1
   }
   cluster_id                       = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id        = module.resource_group.resource_group_id
-  log_analysis_ingestion_key       = module.observability_instances.log_analysis_ingestion_key
-  log_analysis_instance_region     = var.region
   cloud_monitoring_access_key      = module.observability_instances.cloud_monitoring_access_key
   cloud_monitoring_instance_region = var.region
+  logs_agent_enabled               = false
 }
 
 module "observability_agents_2" {
   source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "1.29.1"
+  version = "2.0.0"
   providers = {
     helm = helm.helm_cluster_2
   }
   cluster_id                       = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id        = module.ocp_base_cluster_2.resource_group_id
-  log_analysis_ingestion_key       = module.observability_instances.log_analysis_ingestion_key
-  log_analysis_instance_region     = var.region
   cloud_monitoring_access_key      = module.observability_instances.cloud_monitoring_access_key
   cloud_monitoring_instance_region = var.region
+  logs_agent_enabled               = false
 }
