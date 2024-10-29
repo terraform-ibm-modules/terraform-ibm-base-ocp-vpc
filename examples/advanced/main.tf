@@ -212,42 +212,6 @@ module "ocp_base" {
     instance_id = module.kp_all_inclusive.kms_guid
     crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
   }
-  cbr_rules = [
-    {
-      description      = "${var.prefix}-OCP-base access only from vpc"
-      enforcement_mode = "enabled"
-      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
-      rule_contexts = [{
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "public"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_vpc_zone.zone_id
-        }]
-        }, {
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "public"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_zone_schematics.zone_id
-        }]
-      }]
-      operations = [{
-        api_types = [
-          {
-            "api_type_id" : "crn:v1:bluemix:public:containers-kubernetes::::api-type:management"
-          }
-        ]
-      }]
-    }
-
-  ]
 }
 
 data "ibm_container_cluster_config" "cluster_config" {

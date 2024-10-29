@@ -71,35 +71,15 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 	return options
 }
 
-func TestAdvancedExampleInSchematics(t *testing.T) {
+func TestRunAdvancedExample(t *testing.T) {
 	t.Parallel()
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		Prefix:  "base-ocp-adv",
-		TarIncludePatterns: []string{
-			"*.tf",
-			advancedExampleDir + "/*.tf",
-			"scripts/*.sh",
-			"kubeconfig/README.md",
-		},
-		ResourceGroup:          resourceGroup,
-		TemplateFolder:         advancedExampleDir,
-		Tags:                   []string{"test-schematic"},
-		CloudInfoService:       sharedInfoSvc,
-		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 120,
-	})
 
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "region", Value: options.Region, DataType: "string"},
-		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
-		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-	}
-	err := options.RunSchematicTest()
+	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
+
+	output, err := options.RunTestConsistency()
+
 	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunUpgradeAdvancedExample(t *testing.T) {
