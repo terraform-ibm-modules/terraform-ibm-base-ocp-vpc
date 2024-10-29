@@ -473,13 +473,11 @@ locals {
   # get the addons and their versions and create an addons map including the corresponding csi_driver_version
   addons = merge(
     { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
-    local.csi_driver_version != null ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}
+    length(local.csi_driver_version) > 0 ? { vpc-block-csi-driver = local.csi_driver_version[0] } : {}
   )
 }
 
-
 resource "ibm_container_addons" "addons" {
-
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
