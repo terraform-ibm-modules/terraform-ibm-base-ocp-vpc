@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
@@ -74,12 +75,32 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 func TestRunAdvancedExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
+	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion2)
+	options.PostApplyHook = getClusterIngress
 
 	output, err := options.RunTestConsistency()
 
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func getClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name" key is present in the outputs
+	expectedOutputs := []string{"cluster_name"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name" is valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+	}
+	return nil
 }
 
 func TestRunUpgradeAdvancedExample(t *testing.T) {
