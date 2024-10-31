@@ -146,7 +146,6 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "region", Value: options.Region, DataType: "string"},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
-		{Name: "existing_at_instance_crn", Value: permanentResources["activityTrackerFrankfurtCrn"], DataType: "string"},
 		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
 		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
