@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.16.4"
+  version                   = "4.16.7"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -31,10 +31,12 @@ module "kp_all_inclusive" {
     key_ring_name = local.key_ring
     keys = [
       {
-        key_name = local.cluster_key
+        key_name     = local.cluster_key
+        force_delete = true
       },
       {
-        key_name = local.boot_volume_key
+        key_name     = local.boot_volume_key
+        force_delete = true
       }
     ]
   }]
