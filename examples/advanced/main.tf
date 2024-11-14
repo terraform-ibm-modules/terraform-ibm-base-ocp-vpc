@@ -31,10 +31,12 @@ module "kp_all_inclusive" {
     key_ring_name = local.key_ring
     keys = [
       {
-        key_name = local.cluster_key
+        key_name     = local.cluster_key
+        force_delete = true
       },
       {
-        key_name = local.boot_volume_key
+        key_name     = local.boot_volume_key
+        force_delete = true
       }
     ]
   }]
