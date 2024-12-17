@@ -170,6 +170,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
       instance_id      = var.kms_config.instance_id
       private_endpoint = var.kms_config.private_endpoint == null ? true : var.kms_config.private_endpoint
       account_id       = var.kms_config.account_id
+      wait_for_apply   = var.kms_config.wait_for_apply
     }
   }
 
@@ -240,6 +241,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
       instance_id      = var.kms_config.instance_id
       private_endpoint = var.kms_config.private_endpoint
       account_id       = var.kms_config.account_id
+      wait_for_apply   = var.kms_config.wait_for_apply
     }
   }
 
