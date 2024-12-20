@@ -66,6 +66,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
 			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
 			"'module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
+			"'module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]'",
 		},
 	})
 
