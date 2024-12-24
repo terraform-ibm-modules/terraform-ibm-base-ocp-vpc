@@ -30,7 +30,7 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cloud_endpoint = var.custom_cloud_endpoint != null || var.custom_cloud_endpoint != "" ? var.custom_cloud_endpoint : "cloud.ibm.com"
+  cloud_endpoint = var.custom_cloud_endpoint != null && var.custom_cloud_endpoint != "" ? var.custom_cloud_endpoint : "cloud.ibm.com"
   cluster_id     = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
 
   # security group attached to worker pool
