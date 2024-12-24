@@ -7,6 +7,7 @@ RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
 PRIVATE_ENV="$3"
 CLUSTER_ENDPOINT="$4"
+CLOUD_ENDPOINT="$5"
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -19,9 +20,9 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
 fi
 
 if [ "$PRIVATE_ENV" = true ]; then
-    IAM_URL="https://private.iam.cloud.ibm.com/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+    IAM_URL="https://private.iam.$CLOUD_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
 else
-    IAM_URL="https://iam.cloud.ibm.com/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+    IAM_URL="https://iam.$CLOUD_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
 fi
 
 reset=true
@@ -53,16 +54,16 @@ fetch_data
 if [ "${reset}" == true ]; then
     if [ "$PRIVATE_ENV" = true ]; then
         if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
-            RESET_URL="https://private.$REGION.containers.cloud.ibm.com/v1/keys"
+            RESET_URL="https://private.$REGION.containers.$CLOUD_ENDPOINT/v1/keys"
             result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
             status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
-            RESET_URL="https://api.$REGION.containers.cloud.ibm.com/v1/keys"
+            RESET_URL="https://api.$REGION.containers.$CLOUD_ENDPOINT/v1/keys"
             result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
             status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         fi
     else
-        RESET_URL="https://containers.cloud.ibm.com/global/v1/keys"
+        RESET_URL="https://containers.$CLOUD_ENDPOINT/global/v1/keys"
         result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
         status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
     fi

@@ -30,7 +30,8 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+  cloud_endpoint = var.custom_cloud_endpoint != null || var.custom_cloud_endpoint != "" ? var.custom_cloud_endpoint : "cloud.ibm.com"
+  cluster_id     = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
 
   # security group attached to worker pool
   # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
@@ -286,7 +287,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.ocp_version == "4.13" && var.disable_public_endpoint ? "vpe" : var.cluster_config_endpoint_type}" # private only cluster on 4.13 will use VPE endpoint.
+    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.ocp_version == "4.13" && var.disable_public_endpoint ? "vpe" : var.cluster_config_endpoint_type} ${local.cloud_endpoint}" # private only cluster on 4.13 will use VPE endpoint.
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
@@ -573,7 +574,7 @@ resource "null_resource" "confirm_lb_active" {
   depends_on = [data.ibm_iam_auth_token.tokendata]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
+    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint} ${local.cloud_endpoint}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token

@@ -5,6 +5,7 @@ set -euo pipefail
 REGION="$1"
 LB_ID="$2"
 PRIVATE_ENV="$3"
+CLOUD_ENDPOINT="$4"
 API_VERSION="2024-03-01"
 
 if [[ -z "${REGION}" ]]; then
@@ -14,9 +15,9 @@ fi
 
 lb_attempts=1
 if [ "$PRIVATE_ENV" = true ]; then
-    URL="https://$REGION.private.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+    URL="https://$REGION.private.iaas.$CLOUD_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
 else
-    URL="https://$REGION.iaas.cloud.ibm.com/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+    URL="https://$REGION.iaas.$CLOUD_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
 fi
 
 while true; do
