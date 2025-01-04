@@ -19,6 +19,12 @@ variable "use_private_endpoint" {
   default     = false
 }
 
+variable "custom_cloud_endpoint" {
+  type        = string
+  description = "Set this value to use a different cloud endpoint than the production cloud endpoint. For example, `test.cloud.ibm.com`."
+  default     = null
+}
+
 # Cluster Variables
 variable "tags" {
   type        = list(string)
