@@ -7,7 +7,7 @@ RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
 PRIVATE_ENV="$3"
 CLUSTER_ENDPOINT="$4"
-CLOUD_ENDPOINT="$5"
+CLOUD_ENDPOINT=""
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -18,6 +18,13 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
     echo "Resource_group_id must be passed as second input script argument" >&2
     exit 1
 fi
+
+get_cloud_endpoint() {
+    cloud_endpoint="${IBMCLOUD_API_ENDPOINT:-"https://cloud.ibm.com"}"
+    CLOUD_ENDPOINT=${cloud_endpoint#https://}
+}
+
+get_cloud_endpoint
 
 if [ "$PRIVATE_ENV" = true ]; then
     IAM_URL="https://private.iam.$CLOUD_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
