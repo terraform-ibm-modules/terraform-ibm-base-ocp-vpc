@@ -20,7 +20,7 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
 fi
 
 get_cloud_endpoint() {
-    cloud_endpoint="${IBMCLOUD_API_ENDPOINT:-"https://cloud.ibm.com"}"
+    cloud_endpoint="${IBMCLOUD_API_ENDPOINT:-"cloud.ibm.com"}"
     CLOUD_ENDPOINT=${cloud_endpoint#https://}
 }
 
