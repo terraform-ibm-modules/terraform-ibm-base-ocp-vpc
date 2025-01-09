@@ -117,6 +117,15 @@ module "ocp_base" {
 }
 ```
 
+### Customizing default cloud service endpoints.
+
+The user must export the endpoint as an environment variable in order to use custom cloud service endpoints with this module. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#1-define-service-endpoints-by-using-environment-variables).
+
+**Important** The only supported method for customizing cloud service endpoints is to export the endpoint; be sure to export the value for `IBMCLOUD_API_ENDPOINT`. For example,
+```
+export IBMCLOUD_API_ENDPOINT="<endpoint_url>"
+```
+
 ### Secure by default cluster settings
 
 In OCP version 4.15, outbound traffic is disabled by default. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group-reference).
