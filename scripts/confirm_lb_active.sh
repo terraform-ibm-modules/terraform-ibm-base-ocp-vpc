@@ -5,7 +5,6 @@ set -euo pipefail
 REGION="$1"
 LB_ID="$2"
 PRIVATE_ENV="$3"
-CLOUD_ENDPOINT=""
 API_VERSION="2024-03-01"
 
 if [[ -z "${REGION}" ]]; then
@@ -14,16 +13,21 @@ if [[ -z "${REGION}" ]]; then
 fi
 
 get_cloud_endpoint() {
-    cloud_endpoint="${IBMCLOUD_API_ENDPOINT:-"cloud.ibm.com"}"
-    CLOUD_ENDPOINT=${cloud_endpoint#https://}
+    cloud_endpoint="${IBMCLOUD_IS_NG_API_ENDPOINT:-"iaas.cloud.ibm.com"}"
+    IBMCLOUD_IS_NG_API_ENDPOINT=${cloud_endpoint#https://}
 }
 
 get_cloud_endpoint
+
 lb_attempts=1
-if [ "$PRIVATE_ENV" = true ]; then
-    URL="https://$REGION.private.iaas.$CLOUD_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+if [ "$IBMCLOUD_IS_NG_API_ENDPOINT" = "iaas.cloud.ibm.com" ]; then
+    if [ "$PRIVATE_ENV" = true ]; then
+        URL="https://$REGION.private.$IBMCLOUD_IS_NG_API_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+    else
+        URL="https://$REGION.$IBMCLOUD_IS_NG_API_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+    fi
 else
-    URL="https://$REGION.iaas.$CLOUD_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
+    URL="https://$IBMCLOUD_IS_NG_API_ENDPOINT/v1/load_balancers/$LB_ID?version=$API_VERSION&generation=2"
 fi
 
 while true; do
