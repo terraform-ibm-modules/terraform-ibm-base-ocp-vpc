@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.16.4"
+  version                       = "8.16.5"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -30,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.16.4"
+  version = "8.16.5"
 
   bucket_configs = [
     {
