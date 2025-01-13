@@ -20,7 +20,7 @@ fi
 
 get_cloud_endpoint() {
     iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
-    iam_cloud_endpoint=${iam_cloud_endpoint#https://}
+    IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
 
     cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
     cs_api_endpoint=${cs_api_endpoint#https://}
@@ -29,8 +29,12 @@ get_cloud_endpoint() {
 
 get_cloud_endpoint
 
-if [ "$PRIVATE_ENV" = true ]; then
-    IAM_URL="https://private.$IBMCLOUD_IAM_API_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+if [ "$IBMCLOUD_IAM_API_ENDPOINT" = "iam.cloud.ibm.com" ]; then
+    if [ "$PRIVATE_ENV" = true ]; then
+        IAM_URL="https://private.$IBMCLOUD_IAM_API_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+    else
+        IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
+    fi
 else
     IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/v1/apikeys?account_id=$ACCOUNT_ID&scope=account&pagesize=100&type=user&sort=name"
 fi
@@ -62,14 +66,20 @@ fetch_data() {
 fetch_data
 
 if [ "${reset}" == true ]; then
-    if [ "$PRIVATE_ENV" = true ]; then
-        if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
-            RESET_URL="https://private.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
-            result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
-            status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
-        elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
-            RESET_URL="https://api.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
-            result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+    if [ "$IBMCLOUD_CS_API_ENDPOINT" = "containers.cloud.ibm.com" ]; then
+        if [ "$PRIVATE_ENV" = true ]; then
+            if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
+                RESET_URL="https://private.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
+                result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+                status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
+            elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
+                RESET_URL="https://api.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
+                result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+                status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
+            fi
+        else
+            RESET_URL="https://$IBMCLOUD_CS_API_ENDPOINT/global/v1/keys"
+            result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
             status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         fi
     else
