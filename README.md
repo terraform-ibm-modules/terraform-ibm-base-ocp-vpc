@@ -119,11 +119,13 @@ module "ocp_base" {
 
 ### Customizing default cloud service endpoints.
 
-The user must export the endpoint as an environment variable in order to use custom cloud service endpoints with this module. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#1-define-service-endpoints-by-using-environment-variables).
+The user must export the endpoint as an environment variable in order to use custom cloud service endpoints with this module. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#getting-started-with-custom-service-endpoints).
 
-**Important** The only supported method for customizing cloud service endpoints is to export the endpoint; be sure to export the value for `IBMCLOUD_API_ENDPOINT`. For example,
+**Important** The only supported method for customizing cloud service endpoints is to export the enviroment variables endpoint; be sure to export the value for `IBMCLOUD_IAM_API_ENDPOINT`, `IBMCLOUD_CS_API_ENDPOINT` and `IBMCLOUD_IS_NG_API_ENDPOINT`. For example,
 ```
-export IBMCLOUD_API_ENDPOINT="<endpoint_url>"
+export IBMCLOUD_IAM_API_ENDPOINT="<endpoint_url>"
+export IBMCLOUD_CS_API_ENDPOINT="<endpoint_url>"
+export IBMCLOUD_IS_NG_API_ENDPOINT="<endpoint_url>"
 ```
 
 ### Secure by default cluster settings
