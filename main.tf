@@ -457,6 +457,29 @@ resource "null_resource" "confirm_network_healthy" {
 }
 
 ##############################################################################
+# OCP Console Patch enablement
+##############################################################################
+
+locals {
+  console_patch = jsonencode({
+    spec = {
+      managementState = var.enable_ocp_console ? "Managed" : "Removed"
+    }
+  })
+}
+resource "null_resource" "ocp_console_management" {
+
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
+
+  provisioner "local-exec" {
+    command = "oc patch consoles.operator.openshift.io cluster --patch '${local.console_patch}' --type=merge"
+  }
+}
+
+##############################################################################
 # Addons
 ##############################################################################
 
