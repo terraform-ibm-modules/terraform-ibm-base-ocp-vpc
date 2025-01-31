@@ -11,7 +11,7 @@ import (
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion6)
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
 
 	output, err := options.RunTestConsistency()
 
@@ -139,7 +139,7 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_instance_guid":    permanentResources["kp_us_south_guid"],
 			"kms_key_id":           permanentResources["kp_us_south_root_key_id"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
-			"ocp_version":          ocpVersion5,
+			"ocp_version":          ocpVersion3,
 		},
 		ImplicitDestroy: []string{
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
