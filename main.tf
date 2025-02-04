@@ -38,7 +38,7 @@ locals {
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
   # for versions older than 4.15, this value must be null, or provider gives error
-  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.12") || startswith(local.ocp_version, "4.13") || startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
 # Separate local block to handle os validations
@@ -280,7 +280,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 resource "null_resource" "reset_api_key" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.ocp_version == "4.13" && var.disable_public_endpoint ? "vpe" : var.cluster_config_endpoint_type}" # private only cluster on 4.13 will use VPE endpoint.
+    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
