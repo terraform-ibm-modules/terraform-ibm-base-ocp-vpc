@@ -183,8 +183,6 @@ variable "ocp_version" {
     condition = anytrue([
       var.ocp_version == null,
       var.ocp_version == "default",
-      var.ocp_version == "4.12",
-      var.ocp_version == "4.13",
       var.ocp_version == "4.14",
       var.ocp_version == "4.15",
       var.ocp_version == "4.16",
