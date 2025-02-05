@@ -83,5 +83,4 @@ module "ocp_base" {
   ocp_entitlement                      = var.ocp_entitlement
   disable_outbound_traffic_protection  = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
   import_default_worker_pool_on_create = false
-  enable_ocp_console                   = false
 }
