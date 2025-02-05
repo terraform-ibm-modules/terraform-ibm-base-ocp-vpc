@@ -336,7 +336,7 @@ variable "cluster_config_endpoint_type" {
 }
 
 variable "enable_ocp_console" {
-  description = "Flag to specify whether to enable or disable the OpenShift console patch."
+  description = "Flag to specify whether to enable or disable the OpenShift console."
   type        = bool
   default     = true
 }
