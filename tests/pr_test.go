@@ -29,10 +29,8 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 // Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.17" // used by TestRunUpgradeAdvancedExample , TestFSCloudInSchematic and TestRunMultiClusterExample
 const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.15" // used by TestRunAdvancedExample
-const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample
-const ocpVersion5 = "4.13" // used by TestCrossKmsSupportExample
-const ocpVersion6 = "4.12" // used by TestRunBasicExample
+const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var permanentResources map[string]interface{}

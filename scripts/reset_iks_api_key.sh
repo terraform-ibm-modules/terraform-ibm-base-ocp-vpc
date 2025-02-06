@@ -88,7 +88,7 @@ if [ "${reset}" == true ]; then
         status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
     fi
 
-    if [ "${status_code}" == "204" ]; then
+    if [ "${status_code}" == "204" ] || [ "${status_code}" == "200" ]; then
         echo "The IAM API key is successfully reset."
     else
         echo "ERROR:: FAILED TO RESET THE IAM API KEY"
