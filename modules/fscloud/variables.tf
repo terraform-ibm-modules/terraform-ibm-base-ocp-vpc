@@ -236,6 +236,12 @@ variable "additional_vpe_security_group_ids" {
   default = {}
 }
 
+variable "enable_ocp_console" {
+  description = "Flag to specify whether to enable or disable the OpenShift console."
+  type        = bool
+  default     = true
+}
+
 ##############################################################################
 
 ##############################################################

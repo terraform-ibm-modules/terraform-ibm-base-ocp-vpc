@@ -34,5 +34,6 @@ module "fscloud" {
   additional_lb_security_group_ids      = var.additional_lb_security_group_ids
   number_of_lbs                         = var.number_of_lbs
   additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
+  enable_ocp_console                    = var.enable_ocp_console
   cbr_rules                             = var.cbr_rules
 }

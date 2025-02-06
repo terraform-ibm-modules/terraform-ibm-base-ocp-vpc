@@ -51,3 +51,9 @@ variable "ocp_entitlement" {
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
   default     = null
 }
+
+variable "enable_ocp_console" {
+  description = "Flag to specify whether to enable or disable the OpenShift console."
+  type        = bool
+  default     = false
+}

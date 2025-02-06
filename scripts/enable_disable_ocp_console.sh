@@ -59,14 +59,14 @@ function remove_oc_patch() {
 
 echo "========================================="
 
-echo "Starting OpenShift Console patch..."
 check_oc_cli
 
 if [ "${ENABLE_OCP_CONSOLE}" == "true" ]; then
+  echo "Enabling the OpenShift Console"
   apply_oc_patch
 else
+  echo "Disabling the OpenShift Console"
   remove_oc_patch
 fi
 
-echo "Operation completed successfully!"
 echo "========================================="
