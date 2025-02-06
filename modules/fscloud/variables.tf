@@ -265,3 +265,9 @@ variable "cbr_rules" {
   description = "The list of context-based restriction rules to create."
   default     = []
 }
+
+variable "enable_ocp_console" {
+  description = "Flag to specify whether to enable or disable the OpenShift console."
+  type        = bool
+  default     = true
+}
