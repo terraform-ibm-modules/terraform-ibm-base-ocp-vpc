@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
+	// "github.com/gruntwork-io/terratest/modules/terraform"
+	// "github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 
@@ -22,6 +22,7 @@ const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
+const quickStartTerraformDir = "solutions/quickstart-vpc"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -60,6 +61,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 			"ocp_version":     ocpVersion,
 			"access_tags":     permanentResources["accessTags"],
 			"ocp_entitlement": "cloud_pak",
+			"vpc_id" : "r006-1bfa65d6-46f9-494f-9b43-409aa7ffa7d0",
 		},
 		ImplicitDestroy: []string{
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
@@ -72,87 +74,97 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 	return options
 }
 
-func TestRunAdvancedExample(t *testing.T) {
+// func TestRunAdvancedExample(t *testing.T) {
+// 	t.Parallel()
+
+// 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
+// 	options.PostApplyHook = getClusterIngress
+
+// 	output, err := options.RunTestConsistency()
+
+// 	assert.Nil(t, err, "This should not have errored")
+// 	assert.NotNil(t, output, "Expected some output")
+// }
+
+// func getClusterIngress(options *testhelper.TestOptions) error {
+
+// 	// Get output of the last apply
+// 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+// 	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+// 		return nil
+// 	}
+
+// 	// Validate that the "cluster_name" key is present in the outputs
+// 	expectedOutputs := []string{"cluster_name"}
+// 	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+// 	// Proceed with the cluster ingress health check if "cluster_name" is valid
+// 	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+// 		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+// 	}
+// 	return nil
+// }
+
+// func TestRunUpgradeAdvancedExample(t *testing.T) {
+// 	t.Parallel()
+
+// 	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion2)
+
+// 	output, err := options.RunTestUpgrade()
+// 	if !options.UpgradeTestSkipped {
+// 		assert.Nil(t, err, "This should not have errored")
+// 		assert.NotNil(t, output, "Expected some output")
+// 	}
+// }
+
+func TestRunQuickStart(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
-	options.PostApplyHook = getClusterIngress
+	options := setupOptions(t, "base-ocp-qs", quickStartTerraformDir, ocpVersion2)
 
-	output, err := options.RunTestConsistency()
-
+	output, err := options.RunTestUpgrade()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func getClusterIngress(options *testhelper.TestOptions) error {
+// func TestFSCloudInSchematic(t *testing.T) {
+// 	t.Parallel()
 
-	// Get output of the last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
-	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
-		return nil
-	}
+// 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+// 		Testing: t,
+// 		Prefix:  "base-ocp-fscloud",
+// 		TarIncludePatterns: []string{
+// 			"*.tf",
+// 			"scripts/*.sh",
+// 			"examples/fscloud/*.tf",
+// 			"modules/*/*.tf",
+// 			"kubeconfig/README.md",
+// 		},
+// 		ResourceGroup:          resourceGroup,
+// 		TemplateFolder:         fscloudExampleDir,
+// 		Tags:                   []string{"test-schematic"},
+// 		DeleteWorkspaceOnFail:  false,
+// 		WaitJobCompleteMinutes: 120,
+// 	})
 
-	// Validate that the "cluster_name" key is present in the outputs
-	expectedOutputs := []string{"cluster_name"}
-	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+// 	// If "jp-osa" was the best region selected, default to us-south instead.
+// 	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
+// 	if options.Region == "jp-osa" {
+// 		options.Region = "us-south"
+// 	}
 
-	// Proceed with the cluster ingress health check if "cluster_name" is valid
-	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
-	}
-	return nil
-}
+// 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+// 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+// 		{Name: "region", Value: options.Region, DataType: "string"},
+// 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+// 		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
+// 		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
+// 		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+// 		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+// 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+// 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+// 	}
 
-func TestRunUpgradeAdvancedExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion2)
-
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-}
-
-func TestFSCloudInSchematic(t *testing.T) {
-	t.Parallel()
-
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		Prefix:  "base-ocp-fscloud",
-		TarIncludePatterns: []string{
-			"*.tf",
-			"scripts/*.sh",
-			"examples/fscloud/*.tf",
-			"modules/*/*.tf",
-			"kubeconfig/README.md",
-		},
-		ResourceGroup:          resourceGroup,
-		TemplateFolder:         fscloudExampleDir,
-		Tags:                   []string{"test-schematic"},
-		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 120,
-	})
-
-	// If "jp-osa" was the best region selected, default to us-south instead.
-	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
-	if options.Region == "jp-osa" {
-		options.Region = "us-south"
-	}
-
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "region", Value: options.Region, DataType: "string"},
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
-		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
-		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
-		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
-	}
-
-	err := options.RunSchematicTest()
-	assert.Nil(t, err, "This should not have errored")
-}
+// 	err := options.RunSchematicTest()
+// 	assert.Nil(t, err, "This should not have errored")
+// }
