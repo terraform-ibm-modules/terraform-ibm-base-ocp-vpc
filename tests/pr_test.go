@@ -17,9 +17,11 @@ import (
 )
 
 const resourceGroup = "geretain-test-base-ocp-vpc"
-const advancedExampleDir = "examples/advanced"
+
+// const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
-const fscloudExampleDir = "examples/fscloud"
+
+// const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
 const quickStartTerraformDir = "solutions/quickstart-vpc"
@@ -61,7 +63,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 			"ocp_version":     ocpVersion,
 			"access_tags":     permanentResources["accessTags"],
 			"ocp_entitlement": "cloud_pak",
-			"vpc_id" : "r006-1bfa65d6-46f9-494f-9b43-409aa7ffa7d0",
+			"vpc_id":          "r006-1bfa65d6-46f9-494f-9b43-409aa7ffa7d0",
 		},
 		ImplicitDestroy: []string{
 			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743

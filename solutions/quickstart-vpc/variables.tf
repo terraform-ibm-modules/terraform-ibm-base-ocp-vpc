@@ -57,13 +57,13 @@ variable "ocp_entitlement" {
   default     = null
 }
 
-variable "number-worker-nodes" {
+variable "number_worker_nodes" {
   type        = number
   description = "The number of workers to create in the cluster"
   default     = 2
 }
 
-variable "machine-type" {
+variable "machine_type" {
   type        = string
   description = "Worker node machine type. Use 'ibmcloud ks flavors --zone <zone>' to retrieve the list."
   default     = "bx2.4x16"

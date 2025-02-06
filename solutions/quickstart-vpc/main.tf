@@ -17,8 +17,8 @@ data "ibm_is_subnets" "vpc_subnets" {
 }
 
 locals {
-   cluster_vpc_subnets = {
-    for subnet in data.ibm_is_subnets.vpc_subnets.subnets : 
+  cluster_vpc_subnets = {
+    for subnet in data.ibm_is_subnets.vpc_subnets.subnets :
     "default" => [{
       id         = subnet.id
       zone       = subnet.zone
@@ -29,9 +29,9 @@ locals {
   worker_pools = [
     {
       subnet_prefix    = "default"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = var.machine-type
-      workers_per_zone = var.number-worker-nodes
+      pool_name        = "default"
+      machine_type     = var.machine_type
+      workers_per_zone = var.number_worker_nodes
       operating_system = var.operating_system
     }
   ]
