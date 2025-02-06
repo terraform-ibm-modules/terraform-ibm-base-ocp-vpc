@@ -6,4 +6,4 @@ The following resources are provisioned by this example:
 
 - A new resource group, if an existing one is not passed in.
 - A basic VPC and subnet with public gateway enabled.
-- A single zone OCP VPC cluster where OCP Console is disabled.
+- A single zone OCP VPC cluster.

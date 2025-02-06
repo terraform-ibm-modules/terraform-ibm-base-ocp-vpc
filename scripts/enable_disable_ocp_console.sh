@@ -59,14 +59,19 @@ function remove_oc_patch() {
 
 echo "========================================="
 
+if [[ -z "${ENABLE_OCP_CONSOLE}" ]]; then
+    echo "ENABLE_OCP_CONSOLE must be set" >&2
+    exit 1
+fi
+
 check_oc_cli
 
 if [ "${ENABLE_OCP_CONSOLE}" == "true" ]; then
-  echo "Enabling the OpenShift Console"
-  apply_oc_patch
+    echo "Enabling the OpenShift Console"
+    apply_oc_patch
 else
-  echo "Disabling the OpenShift Console"
-  remove_oc_patch
+    echo "Disabling the OpenShift Console"
+    remove_oc_patch
 fi
 
 echo "========================================="
