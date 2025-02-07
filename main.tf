@@ -64,17 +64,17 @@ locals {
 
   # To verify rhcos operating system exists only for OCP versions >=4.15
   # tflint-ignore: terraform_unused_declarations
-  cluster_rhcos_validation = contains([local.os_rhel9, local.os_rhel, local.rhcos_allowed_ocp_version], local.default_pool.operating_system) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
+  cluster_rhcos_validation = contains([local.os_rhel9, local.os_rhel], local.default_pool.operating_system) || local.rhcos_allowed_ocp_version ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
   # tflint-ignore: terraform_unused_declarations
   worker_pool_rhcos_validation = alltrue(local.worker_pool_rhcos_entry) ? true : tobool("RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS")
 
   # Validate if default worker pool's operating system is RHEL, all pools' operating system must be RHEL
-  check_other_os                      = local.default_pool.operating_system == local.os_rhcos
+
   rhel_check_for_all_standalone_pools = [for pool in var.worker_pools : contains([local.os_rhel, local.os_rhel9], pool.operating_system) if pool.pool_name != "default"]
 
   # tflint-ignore: terraform_unused_declarations
-  valid_rhel_worker_pools = local.check_other_os || contains([local.os_rhel, local.os_rhel9], local.default_pool.operating_system) && alltrue(local.rhel_check_for_all_standalone_pools) ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
+  valid_rhel_worker_pools = local.default_pool.operating_system == local.os_rhcos || (contains([local.os_rhel, local.os_rhel9], local.default_pool.operating_system) && alltrue(local.rhel_check_for_all_standalone_pools)) ? true : tobool("Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.")
 
   # Validate if RHCOS is used as operating system for the cluster then the default worker pool must be created with RHCOS
   rhcos_check = contains([local.os_rhel, local.os_rhel9], local.default_pool.operating_system) || (local.default_pool.operating_system == local.os_rhcos && local.default_pool.operating_system == local.os_rhcos)
