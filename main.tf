@@ -462,6 +462,25 @@ resource "null_resource" "confirm_network_healthy" {
 }
 
 ##############################################################################
+# OCP Console Patch enablement
+##############################################################################
+resource "null_resource" "ocp_console_management" {
+
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+      ENABLE_OCP_CONSOLE = var.enable_ocp_console
+    }
+  }
+}
+
+##############################################################################
 # Addons
 ##############################################################################
 
