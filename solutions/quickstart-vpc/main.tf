@@ -44,6 +44,8 @@ module "ocp_base" {
   tags                                 = var.resource_tags
   cluster_name                         = var.prefix
   force_delete_storage                 = true
+  use_existing_cos                     = true
+  existing_cos_id                      = var.existing_cos_id
   vpc_id                               = var.vpc_id
   vpc_subnets                          = local.cluster_vpc_subnets
   ocp_version                          = var.ocp_version

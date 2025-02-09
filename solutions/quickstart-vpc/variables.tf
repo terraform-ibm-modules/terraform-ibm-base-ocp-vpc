@@ -60,7 +60,7 @@ variable "ocp_entitlement" {
 variable "number_worker_nodes" {
   type        = number
   description = "The number of workers to create in the cluster"
-  default     = 2
+  default     = 1
 }
 
 variable "machine_type" {
@@ -78,4 +78,10 @@ variable "operating_system" {
 variable "vpc_id" {
   type        = string
   description = "Id of the VPC instance where this cluster will be provisioned"
+}
+
+variable "existing_cos_id" {
+  type        = string
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage."
+  default     = null
 }
