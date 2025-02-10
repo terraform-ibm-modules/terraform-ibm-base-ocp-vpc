@@ -48,6 +48,9 @@
                       "key": "resource_group_name"
                     },
                     {
+                      "key": "cluster_name"
+                    },
+                    {
                       "key": "ocp_version"
                     },
                     {

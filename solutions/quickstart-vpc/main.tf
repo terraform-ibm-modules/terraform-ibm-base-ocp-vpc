@@ -12,6 +12,10 @@ module "resource_group" {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 
+locals {
+  prefix = var.prefix != null ? (var.prefix != "" ? var.prefix : null) : null
+}
+
 data "ibm_is_subnets" "vpc_subnets" {
   vpc = var.vpc_id
 }
@@ -42,7 +46,7 @@ module "ocp_base" {
   resource_group_id                    = module.resource_group.resource_group_id
   region                               = var.region
   tags                                 = var.resource_tags
-  cluster_name                         = var.prefix
+  cluster_name                         = try("${local.prefix}-${var.cluster_name}", var.cluster_name)
   force_delete_storage                 = true
   use_existing_cos                     = true
   existing_cos_id                      = var.existing_cos_id

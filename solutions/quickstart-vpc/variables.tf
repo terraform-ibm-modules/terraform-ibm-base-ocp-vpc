@@ -15,6 +15,7 @@ variable "prefix" {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
   }
+  default = "dev"
 }
 
 variable "region" {
@@ -60,7 +61,7 @@ variable "ocp_entitlement" {
 variable "number_worker_nodes" {
   type        = number
   description = "The number of workers to create in the cluster"
-  default     = 1
+  default     = 2
 }
 
 variable "machine_type" {
@@ -84,4 +85,10 @@ variable "existing_cos_id" {
   type        = string
   description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage."
   default     = null
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
+  default     = "base-ocp"
 }
