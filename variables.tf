@@ -245,8 +245,13 @@ variable "use_existing_cos" {
 
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' and 'use_existing_cos' are true"
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' and 'use_existing_cos' are true."
   default     = null
+
+  validation {
+    condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+    error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+  }
 }
 
 variable "enable_registry_storage" {

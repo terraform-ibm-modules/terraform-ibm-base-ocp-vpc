@@ -137,7 +137,8 @@ func TestFSCloudInSchematic(t *testing.T) {
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
 	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
-	if options.Region == "jp-osa" {
+	// skipping the us-east due to provider issue : https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4843
+	if options.Region == "jp-osa" || options.Region == "us-east" {
 		options.Region = "us-south"
 	}
 
