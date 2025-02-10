@@ -170,7 +170,7 @@ func TestRunQuickStart(t *testing.T) {
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
 
-	prefix := fmt.Sprintf("en-existing-%s", strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("ocp-existing-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := "./existing-resources"
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
 
