@@ -66,8 +66,8 @@ locals {
   # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
   # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
 
-  os_rhcos = "RHCOS"
-  os_rhel  = "REDHAT_8_64"
+  os_rhcos  = "RHCOS"
+  os_rhel_9 = "RHEL_9_64"
   cluster_1_vpc_subnets = {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
@@ -104,7 +104,7 @@ locals {
       machine_type     = "bx2.4x16"
       workers_per_zone = 2
       labels           = { "dedicated" : "logging-worker-pool" }
-      operating_system = local.os_rhel
+      operating_system = local.os_rhel_9
     }
   ]
 

@@ -106,11 +106,22 @@ variable "worker_pools" {
     condition = alltrue([
       for worker_pool in var.worker_pools :
       anytrue([
-        worker_pool.operating_system == "REDHAT_8_64",
-        worker_pool.operating_system == "RHCOS"
+        worker_pool.operating_system == local.os_rhel9,
+        worker_pool.operating_system == local.os_rhel,
+        worker_pool.operating_system == local.os_rhcos
       ])
     ])
-    error_message = "RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+    error_message = "RHEL 9 (RHEL_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values. RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+  }
+
+  validation {
+    condition = alltrue([
+      for wp in var.worker_pools :
+      (local.ocp_version_num == "4.14" && wp.operating_system == local.os_rhel) ||
+      (local.ocp_version_num == "4.15" && contains([local.os_rhel, local.os_rhcos], wp.operating_system)) ||
+      (contains(["4.16", "4.17"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhel, local.os_rhcos], wp.operating_system))
+    ])
+    error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64)"
   }
 }
 
@@ -234,8 +245,13 @@ variable "use_existing_cos" {
 
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' and 'use_existing_cos' are true"
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' and 'use_existing_cos' are true."
   default     = null
+
+  validation {
+    condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+    error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+  }
 }
 
 variable "enable_registry_storage" {
