@@ -20,12 +20,6 @@ locals {
   # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
   cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
-  # Validation approach based on https://stackoverflow.com/a/66682419
-  validate_condition = var.enable_registry_storage == true && var.use_existing_cos == true && var.existing_cos_id == null
-  validate_msg       = "A value for 'existing_cos_id' variable must be passed when 'use_existing_cos = true'"
-  # tflint-ignore: terraform_unused_declarations
-  validate_check = regex("^${local.validate_msg}$", (!local.validate_condition ? local.validate_msg : ""))
-
   delete_timeout = "2h"
   create_timeout = "3h"
   update_timeout = "3h"
