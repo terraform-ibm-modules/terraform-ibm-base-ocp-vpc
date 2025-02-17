@@ -1,20 +1,23 @@
 {
     "products": [
         {
-            "name": "terraform-ibm-base-ocp-vpc",
-            "label": "Red Hat OpenShift VPC cluster on IBM Cloud module",
-            "product_kind": "module",
+            "name": "deploy-arch-ibm-base-ocp-vpc",
+            "label": "Cloud automation for Red Hat OpenShift VPC cluster on IBM Cloud",
+            "product_kind": "solution",
             "tags": [
                 "dev_ops",
                 "target_terraform",
                 "terraform",
-                "module",
+                "solution",
+                "support_ibm",
                 "ibm_created"
             ],
             "keywords": [
                 "terraform",
                 "ocp",
-                "cluster"
+                "cluster",
+                "roks",
+                "red hat openshit"
             ],
             "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
             "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
@@ -29,8 +32,8 @@
             ],
             "flavors": [
                 {
-                  "label": "quickstart",
-                  "name": "quickstart",
+                  "label": "quickstart-vpc",
+                  "name": "quickstart-vpc",
                   "install_type": "fullstack",
                   "working_directory": "solutions/quickstart-vpc",
                   "configuration": [
@@ -42,16 +45,44 @@
                       "required": true
                     },
                     {
-                      "key": "use_existing_resource_group"
+                      "key": "use_existing_resource_group",
+                      "required": true
                     },
                     {
                       "key": "resource_group_name"
                     },
                     {
-                      "key": "cluster_name"
+                      "key": "cluster_name",
+                      "required": true
                     },
                     {
-                      "key": "ocp_version"
+                      "key": "ocp_version",
+                      "options": [
+                        {
+                          "displayname": "preferred",
+                          "value": "__NULL__"
+                        },
+                        {
+                          "displayname": "default",
+                          "value": "default"
+                        },
+                        {
+                          "displayname": "4.14",
+                          "value": "4.14"
+                        },
+                        {
+                          "displayname": "4.15",
+                          "value": "4.15"
+                        },
+                        {
+                          "displayname": "4.16",
+                          "value": "4.16"
+                        },
+                        {
+                          "displayname": "4.17",
+                          "value": "4.17"
+                        }
+                      ]
                     },
                     {
                       "key": "number_worker_nodes"
@@ -63,57 +94,12 @@
                       "key": "vpc_id"
                     },
                     {
-                      "key": "existing_cos_id"
+                      "key": "existing_cos_id",
+                      "required": true
                     },
                     {
                       "key": "region",
-                      "required": true,
-                      "options": [
-                        {
-                          "displayname": "Dallas (us-south)",
-                          "value": "us-south"
-                        },
-                        {
-                          "displayname": "Frankfurt (eu-de)",
-                          "value": "eu-de"
-                        },
-                        {
-                          "displayname": "London (eu-gb)",
-                          "value": "eu-gb"
-                        },
-                        {
-                          "displayname": "Madrid (eu-es)",
-                          "value": "eu-es"
-                        },
-                        {
-                          "displayname": "Osaka (jp-osa)",
-                          "value": "jp-osa"
-                        },
-                        {
-                          "displayname": "Sydney (au-syd)",
-                          "value": "au-syd"
-                        },
-                        {
-                          "displayname": "Tokyo (jp-tok)",
-                          "value": "jp-tok"
-                        },
-                        {
-                          "displayname": "Osaka (jp-osa)",
-                          "value": "jp-osa"
-                        },
-                        {
-                          "displayname": "Sao Paulo (br-sao)",
-                          "value": "br-sao"
-                        },
-                        {
-                          "displayname": "Toronto (ca-tor)",
-                          "value": "ca-tor"
-                        },
-                        {
-                          "displayname": "Washington (us-east)",
-                          "value": "us-east"
-                        }
-                      ]
+                      "required": true
                     }
                   ],
                   "architecture": {

@@ -72,8 +72,8 @@ variable "machine_type" {
 
 variable "operating_system" {
   type        = string
-  description = "Allowed OS values are RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
-  default     = "REDHAT_8_64"
+  description = "Allowed OS values are RHEL_9 (REDHAT_8_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+  default     = "REDHAT_9_64"
 }
 
 variable "vpc_id" {
@@ -84,11 +84,20 @@ variable "vpc_id" {
 variable "existing_cos_id" {
   type        = string
   description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage."
-  default     = null
 }
 
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "base-ocp"
+}
+
+variable "provider_visibility" {
+  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  type        = string
+  default     = "private"
+
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
+    error_message = "Invalid visibility option. Allowed values are 'public', 'private', or 'public-and-private'."
+  }
 }
