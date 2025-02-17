@@ -41,8 +41,26 @@
                       "key": "ibmcloud_api_key"
                     },
                     {
+                      "key": "provider_visibility",
+                      "options": [
+                        {
+                          "displayname": "private",
+                          "value": "private"
+                        },
+                        {
+                          "displayname": "public",
+                          "value": "public"
+                        },
+                        {
+                          "displayname": "public-and-private",
+                          "value": "public-and-private"
+                        }
+                      ]
+                    },
+                    {
                       "key": "prefix",
-                      "required": true
+                      "required": true,
+                      "description": "The prefix to add to all resources that this solution creates. To not use any prefix value, you can enter the string `__NULL__`."
                     },
                     {
                       "key": "use_existing_resource_group",
@@ -53,6 +71,10 @@
                     },
                     {
                       "key": "cluster_name",
+                      "required": true
+                    },
+                    {
+                      "key": "region",
                       "required": true
                     },
                     {
@@ -85,6 +107,27 @@
                       ]
                     },
                     {
+                      "key": "operating_system",
+                      "options": [
+                        {
+                          "displayname": "RHEL_9_64",
+                          "value": "RHEL_9_64"
+                        },
+                        {
+                          "displayname": "REDHAT_8_64",
+                          "value": "REDHAT_8_64"
+                        },
+                        {
+                          "displayname": "RHCOS",
+                          "value": "RHCOS"
+                        }
+                      ]
+                    },
+
+                    {
+                      "key": "ocp_entitlement"
+                    },
+                    {
                       "key": "number_worker_nodes"
                     },
                     {
@@ -98,8 +141,10 @@
                       "required": true
                     },
                     {
-                      "key": "region",
-                      "required": true
+                      "key": "resource_tags"
+                    },
+                    {
+                      "key": "access_tags"
                     }
                   ],
                   "architecture": {
