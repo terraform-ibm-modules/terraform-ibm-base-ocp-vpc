@@ -40,16 +40,9 @@ variable "vpc_subnets" {
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
 }
 
-variable "import_default_worker_pool_on_create" {
-  type        = bool
-  description = "(Advanced users) Whether to handle the default worker pool as a stand-alone ibm_container_vpc_worker_pool resource on cluster creation. Only set to false if you understand the implications of managing the default worker pool as part of the cluster resource. Set to true to import the default worker pool as a separate resource. Set to false to manage the default worker pool as part of the cluster resource."
-  default     = true
-  nullable    = false
-}
-
 variable "allow_default_worker_pool_replacement" {
   type        = bool
-  description = "(Advanced users) Set to true to allow the module to recreate a default worker pool. Only use in the case where you are getting an error indicating that the default worker pool cannot be replaced on apply. Once the default worker pool is handled as a stand-alone ibm_container_vpc_worker_pool, if you wish to make any change to the default worker pool which requires the re-creation of the default pool set this variable to true."
+  description = "(Advanced users) Set to true to allow the module to recreate a default worker pool. If you wish to make any change to the default worker pool which requires the re-creation of the default pool follow these [steps](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#important-considerations-for-terraform-and-default-worker-pool)."
   default     = false
   nullable    = false
 }
