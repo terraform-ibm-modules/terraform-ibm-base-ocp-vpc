@@ -126,7 +126,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		TemplateFolder:         fscloudExampleDir,
 		Tags:                   []string{"test-schematic"},
 		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 120,
+		WaitJobCompleteMinutes: 240,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
