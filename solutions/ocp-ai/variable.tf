@@ -8,9 +8,7 @@ variable "region" {
   description = "Region where resources are created"
   default     = "us-south"
 }
-
-variable "cluster_id" {
-  description = "ID of cluster created"
+variable "cluster_name" {
   type        = string
-  default     = null
+  description = "The name that will be assigned to the provisioned cluster"
 }
