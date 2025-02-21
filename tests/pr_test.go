@@ -27,7 +27,7 @@ const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
-const quickStartTerraformDir = "solutions/quickstart-vpc"
+const quickStartTerraformDir = "solutions/baseline"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
