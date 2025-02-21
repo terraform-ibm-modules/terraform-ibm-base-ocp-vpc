@@ -42,20 +42,53 @@ locals {
 }
 
 module "ocp_base" {
-  source                               = "../.."
-  resource_group_id                    = module.resource_group.resource_group_id
-  region                               = var.region
-  tags                                 = var.resource_tags
-  cluster_name                         = try("${local.prefix}-${var.cluster_name}", var.cluster_name)
-  force_delete_storage                 = true
-  use_existing_cos                     = true
-  existing_cos_id                      = var.existing_cos_id
-  vpc_id                               = var.vpc_id
-  vpc_subnets                          = local.cluster_vpc_subnets
-  ocp_version                          = var.ocp_version
-  worker_pools                         = local.worker_pools
-  access_tags                          = var.access_tags
-  ocp_entitlement                      = var.ocp_entitlement
-  disable_outbound_traffic_protection  = true
-  import_default_worker_pool_on_create = false
+  source                                = "../.."
+  resource_group_id                     = module.resource_group.resource_group_id
+  region                                = var.region
+  tags                                  = var.resource_tags
+  cluster_name                          = try("${local.prefix}-${var.cluster_name}", var.cluster_name)
+  force_delete_storage                  = var.force_delete_storage
+  use_existing_cos                      = true
+  existing_cos_id                       = var.existing_cos_id
+  vpc_id                                = var.vpc_id
+  vpc_subnets                           = local.cluster_vpc_subnets
+  ocp_version                           = var.ocp_version
+  worker_pools                          = local.worker_pools
+  access_tags                           = var.access_tags
+  ocp_entitlement                       = var.ocp_entitlement
+  additional_lb_security_group_ids      = var.additional_lb_security_group_ids
+  additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
+  addons                                = var.addons
+  allow_default_worker_pool_replacement = var.allow_default_worker_pool_replacement
+  attach_ibm_managed_security_group     = var.attach_ibm_managed_security_group
+  cluster_config_endpoint_type          = var.cluster_config_endpoint_type
+  cbr_rules                             = var.cbr_rules
+  cluster_ready_when                    = var.cluster_ready_when
+  custom_security_group_ids             = var.custom_security_group_ids
+  disable_outbound_traffic_protection   = var.disable_outbound_traffic_protection
+  disable_public_endpoint               = var.disable_public_endpoint
+  enable_ocp_console                    = var.enable_ocp_console
+  ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
+  import_default_worker_pool_on_create  = var.import_default_worker_pool_on_create
+  kms_config                            = var.kms_config
+  manage_all_addons                     = var.manage_all_addons
+  number_of_lbs                         = var.number_of_lbs
+  pod_subnet_cidr                       = var.pod_subnet_cidr
+  service_subnet_cidr                   = var.service_subnet_cidr
+  use_private_endpoint                  = var.use_private_endpoint
+  verify_worker_network_readiness       = var.verify_worker_network_readiness
+  worker_pools_taints                   = var.worker_pools_taints
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

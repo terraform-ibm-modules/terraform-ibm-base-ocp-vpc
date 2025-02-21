@@ -9,7 +9,7 @@ module "resource_group" {
 # Provision VPC
 #############################################################################
 
-module "slz_vpc" {
+module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
   version           = "7.19.1"
   resource_group_id = module.resource_group.resource_group_id

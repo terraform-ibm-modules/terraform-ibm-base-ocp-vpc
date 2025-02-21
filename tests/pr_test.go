@@ -108,19 +108,6 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 	}
 	return nil
 }
-
-func TestRunUpgradeAdvancedExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp-upg", advancedExampleDir, ocpVersion2)
-
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-}
-
 func TestFSCloudInSchematic(t *testing.T) {
 	t.Parallel()
 
@@ -163,7 +150,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func TestRunQuickStart(t *testing.T) {
+func TestRunUpgradeQuickStart(t *testing.T) {
 	t.Parallel()
 
 	// ------------------------------------------------------------------------------------
@@ -204,6 +191,7 @@ func TestRunQuickStart(t *testing.T) {
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
 				"ocp_version":         ocpVersion1,
+				"cluster_name":        prefix,
 				"access_tags":         permanentResources["accessTags"],
 				"ocp_entitlement":     "cloud_pak",
 				"resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
