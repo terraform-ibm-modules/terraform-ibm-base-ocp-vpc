@@ -27,13 +27,13 @@ const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
-const quickStartTerraformDir = "solutions/baseline"
+const baselineTerraformDir = "solutions/baseline"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.17" // used by TestRunUpgradeAdvancedExample , TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion1 = "4.17" // used by TestRunUpgradeBaseline, TestFSCloudInSchematic and TestRunMultiClusterExample
 const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
 const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
 const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
@@ -150,7 +150,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func TestRunUpgradeQuickStart(t *testing.T) {
+func TestRunUpgradeBaseline(t *testing.T) {
 	t.Parallel()
 
 	// ------------------------------------------------------------------------------------
@@ -186,25 +186,22 @@ func TestRunUpgradeQuickStart(t *testing.T) {
 
 		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 			Testing:          t,
-			TerraformDir:     quickStartTerraformDir,
-			Prefix:           "base-ocp-qs",
+			TerraformDir:     baselineTerraformDir,
+			Prefix:           "base",
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
-				"ocp_version":         ocpVersion1,
-				"cluster_name":        prefix,
-				"access_tags":         permanentResources["accessTags"],
-				"ocp_entitlement":     "cloud_pak",
-				"resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-				"vpc_id":              terraform.Output(t, existingTerraformOptions, "vpc_id"),
-				"existing_cos_id":     terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
-			},
-			ImplicitDestroy: []string{
-				// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
-				// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
-				"'module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-				"'module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]'",
+				"ocp_version":                 ocpVersion1,
+				"cluster_name":                prefix,
+				"access_tags":                 permanentResources["accessTags"],
+				"ocp_entitlement":             "cloud_pak",
+				"use_existing_resource_group": true,
+				"resource_group_name":         terraform.Output(t, existingTerraformOptions, "resource_group_name"),
+				"vpc_id":                      terraform.Output(t, existingTerraformOptions, "vpc_id"),
+				"existing_cos_id":             terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
 			},
 		})
+
+		// For testing, runnning consistency instead of upgrade  // TODO: update below to run upgrade test
 
 		output, err := options.RunTestConsistency()
 		assert.Nil(t, err, "This should not have errored")

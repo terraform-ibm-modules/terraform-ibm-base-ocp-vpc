@@ -78,17 +78,4 @@ module "ocp_base" {
   use_private_endpoint                  = var.use_private_endpoint
   verify_worker_network_readiness       = var.verify_worker_network_readiness
   worker_pools_taints                   = var.worker_pools_taints
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

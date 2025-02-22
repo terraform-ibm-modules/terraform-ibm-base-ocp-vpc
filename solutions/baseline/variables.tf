@@ -156,10 +156,11 @@ variable "machine_type" {
   default     = "bx2.4x16"
 }
 
+# TODO: Need to add RHEL_9 (REDHAT_9_64) in root so that validation passes for "REDHAT_9_64"
 variable "operating_system" {
   type        = string
-  description = "Allowed OS values are RHEL_9 (REDHAT_8_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
-  default     = "REDHAT_9_64"
+  description = "Allowed OS values are RHEL_9 (REDHAT_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+  default     = "REDHAT_8_64"
 }
 
 variable "disable_outbound_traffic_protection" {
@@ -253,7 +254,7 @@ variable "existing_cos_id" {
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
-  default     = "private"
+  default     = "public"
 
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
