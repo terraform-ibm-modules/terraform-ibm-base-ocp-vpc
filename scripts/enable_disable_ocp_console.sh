@@ -17,7 +17,7 @@ function check_oc_cli() {
 function apply_oc_patch() {
 
   local attempt=0
-  local retry_wait_time=60
+  local retry_wait_time=5
 
   while [ $attempt -lt $MAX_ATTEMPTS ]; do
     echo "Attempt $((attempt+1)) of $MAX_ATTEMPTS: Applying OpenShift Console patch..."
@@ -60,8 +60,8 @@ function remove_oc_patch() {
 
 echo "========================================="
 
-if [[ -z "${ENABLE_OCP_CONSOLE}" ]]; then
-    echo "ENABLE_OCP_CONSOLE must be set" >&2
+if [[ -z "${ENABLE_OCP_CONSOLE:-}" ]]; then
+    echo "ENABLE_OCP_CONSOLE must be set ... exiting." >&2
     exit 1
 fi
 
