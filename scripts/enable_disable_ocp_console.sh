@@ -6,7 +6,6 @@ set -euo pipefail
 PATCH_APPLY="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Managed\"}}' --type=merge"
 PATCH_REMOVE="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Removed\"}}' --type=merge"
 MAX_ATTEMPTS=10
-RETRY_WAIT=5
 
 function check_oc_cli() {
   if ! command -v oc &> /dev/null; then
@@ -18,6 +17,8 @@ function check_oc_cli() {
 function apply_oc_patch() {
 
   local attempt=0
+  local retry_wait_time=60
+
   while [ $attempt -lt $MAX_ATTEMPTS ]; do
     echo "Attempt $((attempt+1)) of $MAX_ATTEMPTS: Applying OpenShift Console patch..."
 
@@ -25,10 +26,9 @@ function apply_oc_patch() {
       echo "Patch applied successfully."
       return 0
     else
-      echo "Failed to apply patch. Retrying in ${RETRY_WAIT}s..."
-      sleep $RETRY_WAIT
+      echo "Failed to apply patch. Retrying in ${retry_wait_time}s..."
+      sleep $retry_wait_time
       ((attempt++))
-      RETRY_WAIT=$((RETRY_WAIT * 2))
     fi
   done
 
@@ -39,6 +39,8 @@ function apply_oc_patch() {
 function remove_oc_patch() {
 
   local attempt=0
+  local retry_wait_time=5
+
   while [ $attempt -lt $MAX_ATTEMPTS ]; do
     echo "Attempt $((attempt+1)) of $MAX_ATTEMPTS: Removing OpenShift Console patch..."
 
@@ -46,10 +48,9 @@ function remove_oc_patch() {
       echo "Patch removed successfully."
       return 0
     else
-      echo "Failed to remove patch. Retrying in ${RETRY_WAIT}s..."
-      sleep $RETRY_WAIT
+      echo "Failed to remove patch. Retrying in ${retry_wait_time}s..."
+      sleep $retry_wait_time
       ((attempt++))
-      RETRY_WAIT=$((RETRY_WAIT * 2))
     fi
   done
 
