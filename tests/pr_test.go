@@ -156,7 +156,6 @@ func TestRunUpgradeBaseline(t *testing.T) {
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
-
 	prefix := fmt.Sprintf("ocp-existing-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := "./existing-resources"
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
@@ -166,12 +165,14 @@ func TestRunUpgradeBaseline(t *testing.T) {
 	val, present := os.LookupEnv(checkVariable)
 	require.True(t, present, checkVariable+" environment variable not set")
 	require.NotEqual(t, "", val, checkVariable+" environment variable is empty")
+	region, _ := testhelper.GetBestVpcRegion(val, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
 
 	logger.Log(t, "Tempdir: ", tempTerraformDir)
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir,
 		Vars: map[string]interface{}{
 			"prefix": prefix,
+			"region": region,
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
@@ -190,10 +191,9 @@ func TestRunUpgradeBaseline(t *testing.T) {
 			Prefix:           "base",
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
+				"region":                      region,
 				"ocp_version":                 ocpVersion1,
 				"cluster_name":                prefix,
-				"access_tags":                 permanentResources["accessTags"],
-				"ocp_entitlement":             "cloud_pak",
 				"use_existing_resource_group": true,
 				"resource_group_name":         terraform.Output(t, existingTerraformOptions, "resource_group_name"),
 				"vpc_id":                      terraform.Output(t, existingTerraformOptions, "vpc_id"),
@@ -201,9 +201,7 @@ func TestRunUpgradeBaseline(t *testing.T) {
 			},
 		})
 
-		// For testing, runnning consistency instead of upgrade  // TODO: update below to run upgrade test
-
-		output, err := options.RunTestConsistency()
+		output, err := options.RunTestUpgrade()
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}

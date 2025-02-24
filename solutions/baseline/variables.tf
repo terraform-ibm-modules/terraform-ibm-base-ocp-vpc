@@ -4,7 +4,7 @@
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api token"
+  description = "The IBM Cloud api key"
   sensitive   = true
 }
 
@@ -156,11 +156,10 @@ variable "machine_type" {
   default     = "bx2.4x16"
 }
 
-# TODO: Need to add RHEL_9 (REDHAT_9_64) in root so that validation passes for "REDHAT_9_64"
 variable "operating_system" {
   type        = string
   description = "Allowed OS values are RHEL_9 (REDHAT_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
-  default     = "REDHAT_8_64"
+  default     = "REDHAT_9_64"
 }
 
 variable "disable_outbound_traffic_protection" {
