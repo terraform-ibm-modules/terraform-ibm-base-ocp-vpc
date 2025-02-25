@@ -55,7 +55,7 @@ variable "cluster_name" {
 variable "import_default_worker_pool_on_create" {
   type        = bool
   description = "(Advanced users) Whether to handle the default worker pool as a stand-alone ibm_container_vpc_worker_pool resource on cluster creation. Only set to false if you understand the implications of managing the default worker pool as part of the cluster resource. Set to true to import the default worker pool as a separate resource. Set to false to manage the default worker pool as part of the cluster resource."
-  default     = true
+  default     = false
   nullable    = false
 }
 
@@ -158,8 +158,8 @@ variable "machine_type" {
 
 variable "operating_system" {
   type        = string
-  description = "Allowed OS values are RHEL_9 (REDHAT_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
-  default     = "REDHAT_9_64"
+  description = "Allowed OS values are RHEL_9 (RHEL_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
+  default     = "RHEL_9_64"
 }
 
 variable "disable_outbound_traffic_protection" {
