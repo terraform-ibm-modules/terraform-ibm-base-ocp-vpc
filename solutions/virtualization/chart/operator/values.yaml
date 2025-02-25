@@ -1,0 +1,4 @@
+# NOTE: Mock values added here for helm linter to pass. Actual values are set in main.tf
+operator:
+  # renovate: datasource=docker depName=icr.io/ext/logdna-agent versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-(?<build>\d{8}).\w+?$
+  version: "v4.17.4"
