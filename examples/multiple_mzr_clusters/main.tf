@@ -168,7 +168,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 }
 
 ########################################################################################################################
-# Observability instances : Create logdna and sysdig instances.
+# Observability instances : Create Cloud Logs and Cloud monitoring instances.
 ########################################################################################################################
 
 module "observability_instances" {

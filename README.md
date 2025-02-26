@@ -134,37 +134,16 @@ In OCP version 4.15, outbound traffic is disabled by default. [Learn more](https
 
 There is a provision to toggle outbound traffic by using the modules' `disable_outbound_traffic_protection` input. Refer [Managing outbound traffic protection in VPC clusters](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound#sbd-example-oh).
 
-### Default Worker Pool management
-
-You can manage the default worker pool using Terraform, and make changes to it through this module. This option is enabled by default. Under the hood, the default worker pool is imported as a `ibm_container_vpc_worker_pool` resource. Advanced users may opt-out of this option by setting `import_default_worker_pool_on_create` parameter to `false`. For most use cases it is recommended to keep this variable to `true`.
-
-#### Important Considerations for Terraform and Default Worker Pool
-
-**Terraform Destroy**
-
-When using the default behavior of handling the default worker pool as a stand-alone `ibm_container_vpc_worker_pool`, you must manually remove the default worker pool from the Terraform state before running a terraform destroy command on the module. This is due to a [known limitation](https://cloud.ibm.com/docs/containers?topic=containers-faqs#smallest_cluster) in IBM Cloud.
-
-Terraform CLI Example
-
-For a cluster with 1 or more worker pools, follow these steps:
-
-```sh
-      $ terraform state list | grep ibm_container_vpc_worker_pool | grep default
-        > module.ocp_base.data.ibm_container_vpc_worker_pool.all_pools["default"]
-        > module.ocp_base.ibm_container_vpc_worker_pool.pool["default"]
-
-      $ terraform state rm "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
-```
-
-Schematics Example: For a cluster with 1 or more worker pools, follow these steps:
-
-```sh
-        $ ibmcloud schematics workspace state rm --id <workspace_id> --address "module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]"
-```
+### Important Considerations for Terraform and Default Worker Pool
 
 **Changes Requiring Re-creation of Default Worker Pool**
 
-If you need to make changes to the default worker pool that require its re-creation (e.g., changing the worker node `operating_system`), you must set the `allow_default_worker_pool_replacement` variable to true, perform the apply, and then set it back to false in the code before the subsequent apply. This is **only** necessary for changes that require the recreation the entire default pool and is **not needed for scenarios that does not require recreating the worker pool such as changing the number of workers in the default worker pool**.
+If you need to make changes to the default worker pool that require its re-creation (e.g., changing the worker node `operating_system`), you need to follow 3 steps:
+1. you must set the `allow_default_worker_pool_replacement` variable to `true`, perform the apply.
+2. Once the first apply is successful, then make the required change to the default worker pool object, perform the apply.
+3. After successful apply of the default worker pool change set `allow_default_worker_pool_replacement` back to `false` in the code before the subsequent apply.
+
+This is **only** necessary for changes that require the recreation the entire default pool and is **not needed for scenarios that does not require recreating the worker pool such as changing the number of workers in the default worker pool**.
 
 This approach is due to a limitation in the Terraform provider that may be lifted in the future.
 
@@ -255,7 +234,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.70.0, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.71.0, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1, < 3.0.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
 
