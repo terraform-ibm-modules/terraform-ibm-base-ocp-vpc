@@ -7,8 +7,6 @@ The following resources are provisioned by this example:
 - A Cloud Object Storage instance.
 - An Object Storage bucket (for VPC Flow logs).
 - A secure Virtual Private Cloud (VPC).
-- An IBM Cloud Monitoring (Sysdig) instance.
-- An IBM Cloud Activity Tracker instance, if existing ones is not passed in.
 - A context-based restriction (CBR) rule to only allow COS Instance to be accessible from within the VPC.
 - A Context-based restriction (CBR) network zone containing the VPC.
 - A Context-based restriction network zone containing the schematics service.
