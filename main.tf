@@ -462,7 +462,7 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
 
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [null_resource.confirm_network_healthy]
   triggers = {
     enable_ocp_console = var.enable_ocp_console
   }
