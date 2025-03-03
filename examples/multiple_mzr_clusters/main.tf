@@ -177,7 +177,6 @@ module "observability_instances" {
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
   cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_logs           = false
   enable_platform_metrics        = false
   cloud_monitoring_instance_name = "${var.prefix}-sysdig"
   cloud_logs_provision           = false
