@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "dev-deploy-arch-ibm-base-ocp-vpc",
-      "label": "Cloud automation for Red Hat OpenShift VPC cluster on IBM Cloud",
+      "label": "[Dev] Cloud automation for Red Hat OpenShift Container Platform on VPC",
       "product_kind": "solution",
       "tags": [
         "dev_ops",
