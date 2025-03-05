@@ -58,12 +58,6 @@ func TestRunMultiClusterExample(t *testing.T) {
 			"module.observability_agents_2.helm_release.sysdig_agent",
 			"module.observability_agents_1.helm_release.cloud_monitoring_agent",
 			"module.observability_agents_2.helm_release.cloud_monitoring_agent",
-			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
-			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
-			"'module.ocp_base_cluster_1.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-			"'module.ocp_base_cluster_1.ibm_container_vpc_worker_pool.pool[\"default\"]'",
-			"'module.ocp_base_cluster_2.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-			"'module.ocp_base_cluster_2.ibm_container_vpc_worker_pool.pool[\"default\"]'",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
@@ -86,10 +80,6 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
 			"module.ocp_base.null_resource.reset_api_key",
-			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
-			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
-			"'module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-			"'module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]'",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
@@ -112,10 +102,6 @@ func TestCustomSGExample(t *testing.T) {
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
 			"module.ocp_base.null_resource.reset_api_key",
-			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
-			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
-			"'module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-			"'module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]'",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
@@ -140,12 +126,6 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_key_id":           permanentResources["kp_us_south_root_key_id"],
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
 			"ocp_version":          ocpVersion3,
-		},
-		ImplicitDestroy: []string{
-			// workaround for the issue https://github.ibm.com/GoldenEye/issues/issues/10743
-			// when the issue is fixed on IKS, so the destruction of default workers pool is correctly managed on provider/clusters service the next two entries should be removed
-			"'module.ocp_base.ibm_container_vpc_worker_pool.autoscaling_pool[\"default\"]'",
-			"'module.ocp_base.ibm_container_vpc_worker_pool.pool[\"default\"]'",
 		},
 	})
 

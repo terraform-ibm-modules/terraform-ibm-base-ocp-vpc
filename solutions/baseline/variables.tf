@@ -164,7 +164,7 @@ variable "operating_system" {
 
 variable "disable_outbound_traffic_protection" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for `ocp_version` 4.15"
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
   default     = true
 }
 
