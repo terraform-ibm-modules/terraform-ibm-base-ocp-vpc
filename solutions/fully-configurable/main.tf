@@ -17,7 +17,7 @@ locals {
 }
 
 data "ibm_is_subnets" "vpc_subnets" {
-  vpc = var.vpc_id
+  vpc = var.existing_vpc_id
 }
 
 locals {
@@ -39,6 +39,14 @@ locals {
       operating_system = var.operating_system
     }
   ]
+  
+  kms_config = {
+    instance_id      = var.instance_id
+    crk_id           = var.crk_id
+    private_endpoint = var.private_endpoint
+    account_id=var.account_id
+    wait_for_apply=var.wait_for_apply
+  }
 }
 
 module "ocp_base" {
@@ -49,8 +57,8 @@ module "ocp_base" {
   cluster_name                          = try("${local.prefix}-${var.cluster_name}", var.cluster_name)
   force_delete_storage                  = var.force_delete_storage
   use_existing_cos                      = true
-  existing_cos_id                       = var.existing_cos_id
-  vpc_id                                = var.vpc_id
+  existing_cos_id                       = var.existing_cos_instance_crn
+  vpc_id                                = var.existing_vpc_id
   vpc_subnets                           = local.cluster_vpc_subnets
   ocp_version                           = var.ocp_version
   worker_pools                          = local.worker_pools
@@ -69,8 +77,7 @@ module "ocp_base" {
   disable_public_endpoint               = var.disable_public_endpoint
   enable_ocp_console                    = var.enable_ocp_console
   ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
-  import_default_worker_pool_on_create  = var.import_default_worker_pool_on_create
-  kms_config                            = var.kms_config
+  kms_config                            = local.kms_config
   manage_all_addons                     = var.manage_all_addons
   number_of_lbs                         = var.number_of_lbs
   pod_subnet_cidr                       = var.pod_subnet_cidr

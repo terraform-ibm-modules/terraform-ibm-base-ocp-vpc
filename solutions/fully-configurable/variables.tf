@@ -52,16 +52,9 @@ variable "cluster_name" {
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
 }
 
-variable "import_default_worker_pool_on_create" {
-  type        = bool
-  description = "(Advanced users) Whether to handle the default worker pool as a stand-alone ibm_container_vpc_worker_pool resource on cluster creation. Only set to false if you understand the implications of managing the default worker pool as part of the cluster resource. Set to true to import the default worker pool as a separate resource. Set to false to manage the default worker pool as part of the cluster resource."
-  default     = false
-  nullable    = false
-}
-
 variable "allow_default_worker_pool_replacement" {
   type        = bool
-  description = "(Advanced users) Set to true to allow the module to recreate a default worker pool. Only use in the case where you are getting an error indicating that the default worker pool cannot be replaced on apply. Once the default worker pool is handled as a stand-alone ibm_container_vpc_worker_pool, if you wish to make any change to the default worker pool which requires the re-creation of the default pool set this variable to true."
+  description = "Set to true to allow the module to recreate a default worker pool. Only use in the case where you are getting an error indicating that the default worker pool cannot be replaced on apply. Once the default worker pool is handled separately, if you wish to make any change to the default worker pool which requires the re-creation of the default pool set this variable to true."
   default     = false
   nullable    = false
 }
@@ -73,26 +66,26 @@ variable "worker_pools_taints" {
 }
 
 variable "attach_ibm_managed_security_group" {
-  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if custom_security_group_ids is set."
+  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if `custom_security_group_ids` is set."
   type        = bool
   default     = true
 }
 
 variable "custom_security_group_ids" {
-  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if attach_ibm_managed_security_group is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
+  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if `attach_ibm_managed_security_group` is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
   type        = list(string)
   default     = null
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the number_of_lbs is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the additional_lb_security_group_names security group with."
+  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
   type        = number
   default     = 1
   nullable    = false
@@ -117,7 +110,6 @@ variable "ignore_worker_pool_size_changes" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
-  default     = null
 }
 
 variable "cluster_ready_when" {
@@ -222,17 +214,51 @@ variable "enable_ocp_console" {
   default     = true
 }
 
-variable "kms_config" {
-  type = object({
-    crk_id           = string
-    instance_id      = string
-    private_endpoint = optional(bool, true) # defaults to true
-    account_id       = optional(string)     # To attach KMS instance from another account
-    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed
-  })
-  description = "Use to attach a KMS instance to the cluster. If account_id is not provided, defaults to the account in use."
+
+##############################################################
+# KMS Config
+##############################################################
+
+variable "crk_id" {
+  description = "The ID of the cluster root key to use for cluster encryption."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.crk_id != null ? var.instance_id != null : true
+    error_message = "When providing a `crk_id`, you must also provide an `instance_id`."
+  }
+}
+
+variable "instance_id" {
+  type        = string
+  description = "The ID of the KMS instance to use for cluster encryption."
+  default     = null
+
+  validation {
+    condition     = var.instance_id != null ? var.crk_id != null : true
+    error_message = "When providing an `instance_id`, you must also provide a `crk_id`."
+  }
+}
+
+variable "private_endpoint" {
+  type        = bool
+  description = "Whether to use a private endpoint for KMS communication. Defaults to true."
+  default     = false
+}
+
+variable "account_id" {
+  type        = string
+  description = "The account ID to attach KMS instance from. If not provided, defaults to the account in use."
   default     = null
 }
+
+variable "wait_for_apply" {
+  type        = bool
+  description = "Whether Terraform should wait until the KMS is applied to the master, ready and deployed. Defaults to true."
+  default     = true
+}
+
 
 variable "access_tags" {
   type        = list(string)
@@ -240,12 +266,12 @@ variable "access_tags" {
   default     = []
 }
 
-variable "vpc_id" {
+variable "existing_vpc_id" {
   type        = string
   description = "Id of the VPC instance where this cluster will be provisioned"
 }
 
-variable "existing_cos_id" {
+variable "existing_cos_instance_crn" {
   type        = string
   description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage."
 }

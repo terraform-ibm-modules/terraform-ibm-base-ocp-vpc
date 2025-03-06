@@ -27,13 +27,13 @@ const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
-const baselineTerraformDir = "solutions/baseline"
+const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.17" // used by TestRunUpgradeBaseline, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion1 = "4.17" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
 const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
 const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
 const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
@@ -80,6 +80,16 @@ func TestRunAdvancedExample(t *testing.T) {
 
 	output, err := options.RunTestConsistency()
 
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunFullyConfigurable(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "fc-ocp", fullyConfigurableTerraformDir, ocpVersion1)
+
+	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
@@ -144,7 +154,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func TestRunUpgradeBaseline(t *testing.T) {
+func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
 	// ------------------------------------------------------------------------------------
@@ -181,8 +191,8 @@ func TestRunUpgradeBaseline(t *testing.T) {
 
 		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 			Testing:          t,
-			TerraformDir:     baselineTerraformDir,
-			Prefix:           "base",
+			TerraformDir:     fullyConfigurableTerraformDir,
+			Prefix:           "fc-ocp",
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
 				"region":                      region,
@@ -190,8 +200,8 @@ func TestRunUpgradeBaseline(t *testing.T) {
 				"cluster_name":                prefix,
 				"use_existing_resource_group": true,
 				"resource_group_name":         terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-				"vpc_id":                      terraform.Output(t, existingTerraformOptions, "vpc_id"),
-				"existing_cos_id":             terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
+				"existing_vpc_id":             terraform.Output(t, existingTerraformOptions, "vpc_id"),
+				"existing_cos_instance_crn":   terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
 			},
 		})
 

@@ -1,11 +1,11 @@
 {
   "products": [
     {
-      "name": "dev-deploy-arch-ibm-base-ocp-vpc",
-      "label": "[Dev] Cloud automation for Red Hat OpenShift Container Platform on VPC",
+      "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc",
+      "label": "[Add-ons Beta] Cloud automation for Red Hat OpenShift Container Platform on VPC",
       "product_kind": "solution",
       "tags": [
-        "dev_ops",
+        "containers",
         "target_terraform",
         "terraform",
         "solution",
@@ -17,7 +17,7 @@
         "ocp",
         "cluster",
         "roks",
-        "red hat openshit"
+        "red hat openshift"
       ],
       "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
       "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
@@ -32,12 +32,12 @@
       ],
       "flavors": [
         {
-          "label": "baseline",
-          "name": "baseline",
+          "label": "fully-configurable",
+          "name": "fully-configurable",
           "install_type": "fullstack",
-          "working_directory": "solutions/baseline",
+          "working_directory": "solutions/fully-configurable",
           "architecture": {
-            "descriptions": "This architecture creates a basic single zone OCP VPC cluster.",
+            "descriptions": "This architecture creates a fully-configurable single zone OCP VPC cluster.",
             "features": [
               {
                 "title": "Creates an OCP VPC cluster",
@@ -51,7 +51,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture creates a basic single zone OCP VPC cluster."
+                "description": "This architecture creates a fully-configurable single zone OCP VPC cluster."
               }
             ]
           },
@@ -98,15 +98,8 @@
             },
             {
               "key": "ocp_version",
+              "required": true,
               "options": [
-                {
-                  "displayname": "preferred",
-                  "value": "__NULL__"
-                },
-                {
-                  "displayname": "default",
-                  "value": "default"
-                },
                 {
                   "displayname": "4.14",
                   "value": "4.14"
@@ -152,10 +145,11 @@
               "key": "machine_type"
             },
             {
-              "key": "vpc_id"
+              "key": "existing_vpc_id",
+              "required": true
             },
             {
-              "key": "existing_cos_id",
+              "key": "existing_cos_instance_crn",
               "required": true
             },
             {
@@ -177,7 +171,25 @@
               "key": "cbr_rules"
             },
             {
-              "key": "cluster_config_endpoint_type"
+              "key": "cluster_config_endpoint_type",
+              "options": [
+                {
+                  "displayname": "default",
+                  "value": "default"
+                },
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "vpe",
+                  "value": "vpe"
+                },
+                {
+                  "displayname": "link",
+                  "value": "link"
+                }
+              ]
             },
             {
               "key": "cluster_ready_when"
@@ -199,12 +211,6 @@
             },
             {
               "key": "ignore_worker_pool_size_changes"
-            },
-            {
-              "key": "import_default_worker_pool_on_create"
-            },
-            {
-              "key": "kms_config"
             },
             {
               "key": "manage_all_addons"
@@ -320,7 +326,7 @@
               "input_mapping": [
                 {
                   "dependency_output": "cos_instance_id",
-                  "version_input": "existing_cos_id"
+                  "version_input": "existing_cos_instance_crn"
                 },
                 {
                   "dependency_input": "prefix",
