@@ -16,8 +16,8 @@
         "terraform",
         "ocp",
         "cluster",
-        "roks",
-        "red hat openshift"
+        "ocp",
+        "red_hat_openshift"
       ],
       "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
       "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
@@ -60,40 +60,28 @@
               "key": "ibmcloud_api_key"
             },
             {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
-                }
-              ]
-            },
-            {
               "key": "prefix",
               "required": true,
               "description": "The prefix to add to all resources that this solution creates. To not use any prefix value, you can enter the string `__NULL__`."
             },
             {
-              "key": "use_existing_resource_group",
+              "key": "existing_resource_group_name",
               "required": true
             },
             {
-              "key": "resource_group_name"
+              "key": "existing_vpc_id",
+              "required": true
             },
             {
-              "key": "cluster_name",
+              "key": "existing_cos_instance_crn",
               "required": true
             },
             {
               "key": "region",
+              "required": true
+            },
+            {
+              "key": "cluster_name",
               "required": true
             },
             {
@@ -119,6 +107,59 @@
               ]
             },
             {
+              "key": "ocp_entitlement"
+            },
+
+            {
+              "key": "cluster_ready_when",
+              "options": [
+                {
+                  "displayname": "Normal",
+                  "value": "Normal"
+                },
+                {
+                  "displayname": "IngressReady",
+                  "value": "IngressReady"
+                },
+                {
+                  "displayname": "OneWorkerNodeReady",
+                  "value": "OneWorkerNodeReady"
+                },
+                {
+                  "displayname": "MasterNodeReady",
+                  "value": "MasterNodeReady"
+                }
+              ]
+            },
+            {
+              "key": "enable_ocp_console"
+            },
+            {
+              "key": "force_delete_storage",
+              "options": [
+                {
+                  "displayname": "True",
+                  "value": "true"
+                },
+                {
+                  "displayname": "False",
+                  "value": "false"
+                }
+              ]
+            },
+            {
+              "key": "addons"
+            },
+            {
+              "key": "manage_all_addons"
+            },
+            {
+              "key": "number_worker_nodes"
+            },
+            {
+              "key": "machine_type"
+            },
+            {
               "key": "operating_system",
               "options": [
                 {
@@ -136,39 +177,19 @@
               ]
             },
             {
-              "key": "ocp_entitlement"
+              "key": "worker_pools_taints"
             },
             {
-              "key": "number_worker_nodes"
-            },
-            {
-              "key": "machine_type"
-            },
-            {
-              "key": "existing_vpc_id",
-              "required": true
-            },
-            {
-              "key": "existing_cos_instance_crn",
-              "required": true
-            },
-            {
-              "key": "additional_lb_security_group_ids"
-            },
-            {
-              "key": "additional_vpe_security_group_ids"
-            },
-            {
-              "key": "addons"
+              "key": "ignore_worker_pool_size_changes"
             },
             {
               "key": "allow_default_worker_pool_replacement"
             },
             {
-              "key": "attach_ibm_managed_security_group"
+              "key": "use_private_endpoint"
             },
             {
-              "key": "cbr_rules"
+              "key": "disable_public_endpoint"
             },
             {
               "key": "cluster_config_endpoint_type",
@@ -192,52 +213,86 @@
               ]
             },
             {
-              "key": "cluster_ready_when"
-            },
-            {
-              "key": "custom_security_group_ids"
-            },
-            {
               "key": "disable_outbound_traffic_protection"
-            },
-            {
-              "key": "disable_public_endpoint"
-            },
-            {
-              "key": "enable_ocp_console"
-            },
-            {
-              "key": "force_delete_storage"
-            },
-            {
-              "key": "ignore_worker_pool_size_changes"
-            },
-            {
-              "key": "manage_all_addons"
-            },
-            {
-              "key": "number_of_lbs"
-            },
-            {
-              "key": "pod_subnet_cidr"
-            },
-            {
-              "key": "use_private_endpoint"
-            },
-            {
-              "key": "service_subnet_cidr"
             },
             {
               "key": "verify_worker_network_readiness"
             },
             {
-              "key": "worker_pools_taints"
+              "key": "pod_subnet_cidr"
             },
             {
-              "key": "resource_tags"
+              "key": "service_subnet_cidr"
             },
             {
-              "key": "access_tags"
+              "key": "custom_security_group_ids"
+            },
+            {
+              "key": "attach_ibm_managed_security_group"
+            },
+            {
+              "key": "additional_lb_security_group_ids"
+            },
+            {
+              "key": "number_of_lbs"
+            },
+            {
+              "key": "additional_vpe_security_group_ids"
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
+            },
+            {
+              "key": "crk_id"
+            },
+            {
+              "key": "instance_id"
+            },
+            {
+              "key": "private_endpoint"
+            },
+            {
+              "key": "account_id"
+            },
+            {
+              "key": "wait_for_apply"
+            },
+            {
+              "key": "resource_tags",
+              "custom_config": {
+                  "grouping": "deployment",
+                  "original_grouping": "deployment",
+                  "config_constraints": {
+                      "type": "string"
+                  }
+              }
+            },
+            {
+              "key": "access_tags",
+              "custom_config": {
+                  "grouping": "deployment",
+                  "original_grouping": "deployment",
+                  "config_constraints": {
+                      "type": "string"
+                  }
+              }
+            },
+            {
+              "key": "cbr_rules"
             }
           ],
           "dependencies": [

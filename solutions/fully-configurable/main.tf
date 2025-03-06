@@ -1,21 +1,24 @@
 #######################################################################################################################
-# Resource Group
+# Local block
 #######################################################################################################################
-module "resource_group" {
-  source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.1.6"
-  resource_group_name          = var.use_existing_resource_group == false ? ((var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.resource_group_name}" : var.resource_group_name) : null
-  existing_resource_group_name = var.use_existing_resource_group == true ? var.resource_group_name : null
-}
-
-########################################################################################################################
-# OCP VPC cluster (single zone)
-########################################################################################################################
 
 locals {
   prefix = var.prefix != null ? (var.prefix != "" ? var.prefix : null) : null
 }
 
+
+#######################################################################################################################
+# Resource Group
+#######################################################################################################################
+module "resource_group" {
+  source                       = "terraform-ibm-modules/resource-group/ibm"
+  version                      = "1.1.6"
+  existing_resource_group_name = var.existing_resource_group_name
+}
+
+########################################################################################################################
+# OCP VPC cluster (single zone)
+########################################################################################################################
 data "ibm_is_subnets" "vpc_subnets" {
   vpc = var.existing_vpc_id
 }
@@ -39,13 +42,13 @@ locals {
       operating_system = var.operating_system
     }
   ]
-  
+
   kms_config = {
     instance_id      = var.instance_id
     crk_id           = var.crk_id
     private_endpoint = var.private_endpoint
-    account_id=var.account_id
-    wait_for_apply=var.wait_for_apply
+    account_id       = var.account_id
+    wait_for_apply   = var.wait_for_apply
   }
 }
 

@@ -195,13 +195,12 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 			Prefix:           "fc-ocp",
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
-				"region":                      region,
-				"ocp_version":                 ocpVersion1,
-				"cluster_name":                prefix,
-				"use_existing_resource_group": true,
-				"resource_group_name":         terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-				"existing_vpc_id":             terraform.Output(t, existingTerraformOptions, "vpc_id"),
-				"existing_cos_instance_crn":   terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
+				"region":                       region,
+				"ocp_version":                  ocpVersion1,
+				"cluster_name":                 prefix,
+				"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
+				"existing_vpc_id":              terraform.Output(t, existingTerraformOptions, "vpc_id"),
+				"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
 			},
 		})
 
