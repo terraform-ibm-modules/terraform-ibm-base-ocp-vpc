@@ -14,8 +14,8 @@ data "ibm_container_vpc_cluster" "cluster" {
 # Validation 5: Check if already ocp-ai addon is installed in the cluster.
 # Validation 6: Check the outbound traffic protection should be disabled, if any of the OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators are used with OCP AI addon.
 # Validation 7: GPU Worker node validation. If adding a GPU worker node, validation should be added for minimal configuration as validation3 and machine type for GPU Nodes.
+
 resource "ibm_container_addons" "addons" {
-  depends_on        = [data.ibm_container_vpc_cluster.cluster]
   cluster           = data.ibm_container_vpc_cluster.cluster.name
   manage_all_addons = false
   addons {
