@@ -299,7 +299,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
+  count             = var.enable_ocp_console || var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
