@@ -12,3 +12,7 @@ variable "cluster_name" {
   type        = string
   description = "The name that will be assigned to the provisioned cluster"
 }
+variable "pool_name" {
+  type        = string
+  description = "The name that will be assigned to the worker pool"
+}
