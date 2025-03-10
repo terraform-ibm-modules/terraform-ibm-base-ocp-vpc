@@ -16,7 +16,6 @@
         "terraform",
         "ocp",
         "cluster",
-        "ocp",
         "red_hat_openshift"
       ],
       "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
@@ -70,7 +69,15 @@
             },
             {
               "key": "existing_vpc_id",
-              "required": true
+              "required": true,
+              "custom_config": {
+                "type": "vpc",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "existing_vpc_id"
+                }
+              }
             },
             {
               "key": "existing_cos_instance_crn",
@@ -109,7 +116,6 @@
             {
               "key": "ocp_entitlement"
             },
-
             {
               "key": "cluster_ready_when",
               "options": [
@@ -274,21 +280,21 @@
             {
               "key": "resource_tags",
               "custom_config": {
-                  "grouping": "deployment",
-                  "original_grouping": "deployment",
-                  "config_constraints": {
-                      "type": "string"
-                  }
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
               }
             },
             {
               "key": "access_tags",
               "custom_config": {
-                  "grouping": "deployment",
-                  "original_grouping": "deployment",
-                  "config_constraints": {
-                      "type": "string"
-                  }
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
               }
             },
             {
@@ -309,7 +315,7 @@
               "input_mapping": [
                 {
                   "dependency_output": "workload_resource_group_name",
-                  "version_input": "resource_group_name"
+                  "version_input": "existing_resource_group_name"
                 },
                 {
                   "dependency_input": "prefix",
@@ -340,12 +346,8 @@
               ],
               "input_mapping": [
                 {
-                  "dependency_output": "kms_instance_crn",
-                  "version_input": "existing_kms_instance_crn"
-                },
-                {
                   "dependency_input": "resource_group_name",
-                  "version_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -390,7 +392,7 @@
                 },
                 {
                   "dependency_input": "resource_group_name",
-                  "version_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -446,12 +448,12 @@
                 },
                 {
                   "dependency_input": "resource_group_name",
-                  "version_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
                   "dependency_input": "use_existing_resource_group",
-                  "version_input": "prefix",
+                  "value": true,
                   "reference_version": true
                 }
               ]
@@ -468,7 +470,23 @@
               "ignore_auto_referencing": [
                 "*"
               ],
-              "input_mapping": []
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "cloud_monitoring_instance_region",
+                  "version_input": "region",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "cluster_resource_group_id",
+                  "version_input": "resource_group_name",
+                  "reference_version": true
+                }
+              ]
             }
           ],
           "dependency_version_2": true
