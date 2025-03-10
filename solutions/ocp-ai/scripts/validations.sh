@@ -66,21 +66,21 @@ validate_flavour "$3"
 # ############################################################
 
 # Validation 4: Cluster must have access to the public internet.
-# Validate_internet_access() {
+Validate_internet_access() {
 
-#     RESPONSE=$(curl -I https://www.google.com 2>/dev/null)
+    RESPONSE=$(curl -I https://www.google.com 2>/dev/null)
 
-#     # Check if the response contains "200 OK"
-#     if echo "$RESPONSE" | grep -q "200 OK"; then
-#         echo "Internet access is available."
-#     else
-#         echo "No internet access or unable to reach the server."
-#         exit 1
-#     fi
-# }
+    # Check if the response contains "200 OK"
+    if echo "$RESPONSE" | grep -q "200 OK"; then
+        echo "Internet access is available."
+    else
+        echo "No internet access or unable to reach the server."
+        exit 1
+    fi
+}
 
-# #Call the function
-# Validate_internet_access
+#Call the function
+Validate_internet_access
 
 # ################################################################
 # Validation 5: Check if already ocp-ai addon is installed in the cluster.
