@@ -263,19 +263,19 @@
               ]
             },
             {
-              "key": "crk_id"
+              "key": "existing_kms_instance_crn"
             },
             {
-              "key": "instance_id"
+              "key": "existing_kms_cluster_key_crn"
             },
             {
-              "key": "private_endpoint"
+              "key": "ocp_cluster_key_ring_name"
             },
             {
-              "key": "account_id"
+              "key": "ocp_cluster_key_name"
             },
             {
-              "key": "wait_for_apply"
+              "key": "kms_endpoint_type"
             },
             {
               "key": "resource_tags",
