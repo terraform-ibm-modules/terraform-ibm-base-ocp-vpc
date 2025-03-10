@@ -85,7 +85,17 @@
             },
             {
               "key": "region",
-              "required": true
+              "required": true,
+              "custom_config": {
+                "type": "region",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "showKinds": [
+                    "region"
+                  ]
+                }
+              }
             },
             {
               "key": "cluster_name",
@@ -448,6 +458,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "resource_group_name",
                   "version_input": "existing_resource_group_name",
                   "reference_version": true
@@ -472,6 +487,11 @@
                 "*"
               ],
               "input_mapping": [
+                {
+                  "dependency_input": "cluster_id",
+                  "version_input": "cluster_id",
+                  "reference_version": true
+                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
