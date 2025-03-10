@@ -164,33 +164,16 @@
               ]
             },
             {
+              "key": "worker_pools"
+            },
+            {
+              "key": "vpc_subnets"
+            },
+            {
               "key": "addons"
             },
             {
               "key": "manage_all_addons"
-            },
-            {
-              "key": "number_worker_nodes"
-            },
-            {
-              "key": "machine_type"
-            },
-            {
-              "key": "operating_system",
-              "options": [
-                {
-                  "displayname": "RHEL_9_64",
-                  "value": "RHEL_9_64"
-                },
-                {
-                  "displayname": "REDHAT_8_64",
-                  "value": "REDHAT_8_64"
-                },
-                {
-                  "displayname": "RHCOS",
-                  "value": "RHCOS"
-                }
-              ]
             },
             {
               "key": "worker_pools_taints"
@@ -271,6 +254,9 @@
                   "value": "public-and-private"
                 }
               ]
+            },
+            {
+              "key": "enable_kms_encryption"
             },
             {
               "key": "existing_kms_instance_crn"

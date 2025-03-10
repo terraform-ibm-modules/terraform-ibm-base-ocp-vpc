@@ -40,11 +40,13 @@ locals {
   ocp_cluster_key_ring_name = try("${local.prefix}-${var.ocp_cluster_key_ring_name}", var.ocp_cluster_key_ring_name)
   ocp_cluster_key_name      = try("${local.prefix}-${var.ocp_cluster_key_name}", var.ocp_cluster_key_name)
 
-  create_new_kms_key = var.existing_kms_cluster_key_crn == null ? 1 : 0
-  kms_region         = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].region : module.kms_instance_crn_parser[0].region
+  create_new_kms_key = var.enable_kms_encryption && var.existing_kms_instance_crn != null ? 1 : 0
+  kms_region         = var.existing_kms_cluster_key_crn != null && var.existing_kms_instance_crn != null ? module.kms_instance_crn_parser[0].region : null
 
-  kms_instance_guid = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance
-  crk_id            = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.ocp_cluster_key_ring_name, local.ocp_cluster_key_name)].key_id
+  kms_instance_guid = var.enable_kms_encryption == false ? null : (var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance)
+
+  crk_id = var.enable_kms_encryption == false ? null : (var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.ocp_cluster_key_ring_name, local.ocp_cluster_key_name)].key_id
+  )
 }
 
 module "kms" {
@@ -77,12 +79,21 @@ module "kms" {
 # OCP VPC cluster
 ########################################################################################################################
 data "ibm_is_subnets" "vpc_subnets" {
-  vpc = var.existing_vpc_id
+  count = length(var.vpc_subnets) > 0 ? 0 : 1
+  vpc   = var.existing_vpc_id
 }
 
 locals {
-  cluster_vpc_subnets = {
-    for subnet in data.ibm_is_subnets.vpc_subnets.subnets :
+  cluster_vpc_subnets = length(var.vpc_subnets) > 0 ? {
+    for subnet_type, subnet_list in var.vpc_subnets : subnet_type => [
+      for subnet in subnet_list : {
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.cidr_block
+      }
+    ]
+    } : {
+    for subnet in data.ibm_is_subnets.vpc_subnets[0].subnets :
     "default" => [{
       id         = subnet.id
       zone       = subnet.zone
@@ -90,18 +101,7 @@ locals {
     }]
   }
 
-
-  worker_pools = [
-    {
-      subnet_prefix    = "default"
-      pool_name        = "default"
-      machine_type     = var.machine_type
-      workers_per_zone = var.number_worker_nodes
-      operating_system = var.operating_system
-    }
-  ]
-
-  kms_config = {
+  kms_config = local.kms_instance_guid == null && local.crk_id == null ? null : {
     instance_id = local.kms_instance_guid
     crk_id      = local.crk_id
   }
@@ -119,7 +119,7 @@ module "ocp_base" {
   vpc_id                                = var.existing_vpc_id
   vpc_subnets                           = local.cluster_vpc_subnets
   ocp_version                           = var.ocp_version
-  worker_pools                          = local.worker_pools
+  worker_pools                          = var.worker_pools
   access_tags                           = var.access_tags
   ocp_entitlement                       = var.ocp_entitlement
   additional_lb_security_group_ids      = var.additional_lb_security_group_ids

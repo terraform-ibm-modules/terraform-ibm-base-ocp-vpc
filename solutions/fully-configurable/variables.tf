@@ -103,24 +103,6 @@ variable "manage_all_addons" {
   description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources."
 }
 
-variable "number_worker_nodes" {
-  type        = number
-  description = "The number of workers to create in the cluster."
-  default     = 2
-}
-
-variable "machine_type" {
-  type        = string
-  description = "Worker node machine type. Use 'ibmcloud ks flavors --zone <zone>' to retrieve the list."
-  default     = "bx2.4x16"
-}
-
-variable "operating_system" {
-  type        = string
-  description = "Allowed OS values are RHEL_9 (RHEL_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS). RHCOS requires VPC clusters created from 4.15 onwards. Upgraded clusters from 4.14 cannot use RHCOS."
-  default     = "RHEL_9_64"
-}
-
 variable "worker_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
   description = "Optional, Map of lists containing node taints by node-pool name."
@@ -140,43 +122,42 @@ variable "allow_default_worker_pool_replacement" {
   nullable    = false
 }
 
-# variable "worker_pools" {
-#   type = list(object({
-#     subnet_prefix = optional(string)
-#     vpc_subnets = optional(list(object({
-#       id         = string
-#       zone       = string
-#       cidr_block = string
-#     })))
-#     pool_name         = string
-#     machine_type      = string
-#     workers_per_zone  = number
-#     resource_group_id = optional(string)
-#     operating_system  = string
-#     labels            = optional(map(string))
-#     minSize           = optional(number)
-#     secondary_storage = optional(string)
-#     maxSize           = optional(number)
-#     enableAutoscaling = optional(bool)
-#     boot_volume_encryption_kms_config = optional(object({
-#       crk             = string
-#       kms_instance_id = string
-#       kms_account_id  = optional(string)
-#     }))
-#     additional_security_group_ids = optional(list(string))
-#   }))
-#   description = "List of worker pools"
-#   default = [
-#     {
-#       subnet_prefix    = "default"
-#       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-#       machine_type     = "bx2.4x16"
-#       workers_per_zone = 2 # minimum of 2 is allowed when using single zone
-#       operating_system = "REDHAT_8_64"
-#     }
-#   ]
-
-# }
+variable "worker_pools" {
+  type = list(object({
+    subnet_prefix = optional(string)
+    vpc_subnets = optional(list(object({
+      id         = string
+      zone       = string
+      cidr_block = string
+    })))
+    pool_name         = string
+    machine_type      = string
+    workers_per_zone  = number
+    resource_group_id = optional(string)
+    operating_system  = string
+    labels            = optional(map(string))
+    minSize           = optional(number)
+    secondary_storage = optional(string)
+    maxSize           = optional(number)
+    enableAutoscaling = optional(bool)
+    boot_volume_encryption_kms_config = optional(object({
+      crk             = string
+      kms_instance_id = string
+      kms_account_id  = optional(string)
+    }))
+    additional_security_group_ids = optional(list(string))
+  }))
+  description = "List of worker pools"
+  default = [
+    {
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = "bx2.4x16"
+      workers_per_zone = 2
+      operating_system = "REDHAT_8_64"
+    }
+  ]
+}
 
 ##############################################################
 # COS Related
@@ -274,21 +255,20 @@ variable "additional_vpe_security_group_ids" {
   default = {}
 }
 
-# variable "vpc_subnets" {
-#   type = map(list(object({
-#     id         = string
-#     zone       = string
-#     cidr_block = string
-#   })))
-#   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
-#   default     = {}
-# }
+variable "vpc_subnets" {
+  type = map(list(object({
+    id         = string
+    zone       = string
+    cidr_block = string
+  })))
+  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+  default     = {}
+}
 
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
-  default     = "public"
-
+  default     = "private"
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
     error_message = "Invalid visibility option. Allowed values are `public`, `private`, or `public-and-private`."
@@ -298,6 +278,21 @@ variable "provider_visibility" {
 ##############################################################
 # KMS Related
 ##############################################################
+
+variable "enable_kms_encryption" {
+  description = "Flag to enable KMS encryption. If set to true, a value must be passed for either `existing_kms_instance_crn` or `existing_kms_cluster_key_crn`. This is applicable only for Enterprise plan."
+  type        = bool
+  default     = false
+
+  validation {
+    condition = !var.enable_kms_encryption || (
+      var.enable_kms_encryption && (
+        (var.existing_kms_instance_crn != null && var.existing_kms_cluster_key_crn == null) ||
+        (var.existing_kms_instance_crn == null && var.existing_kms_cluster_key_crn != null)
+    ))
+    error_message = "If enable_kms_encryption is set to true, you must provide a value for either existing_kms_instance_crn OR existing_kms_cluster_key_crn, but not both."
+  }
+}
 variable "existing_kms_instance_crn" {
   type        = string
   description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required only when creating a new encryption key and key ring which will be used to encrypt OCP cluster data. To use an existing key, pass values for `existing_kms_cluster_key_crn`."
