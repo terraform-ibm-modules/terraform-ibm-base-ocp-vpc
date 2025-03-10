@@ -300,23 +300,13 @@ variable "provider_visibility" {
 ##############################################################
 variable "existing_kms_instance_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required only when creating a new encryption key and key ring which will be used to encrypt OCP cluster data. To use an existing key, pass values for `existing_kms_cluster_key_crn` and `existing_kms_boot_volume_key_crn`."
+  description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required only when creating a new encryption key and key ring which will be used to encrypt OCP cluster data. To use an existing key, pass values for `existing_kms_cluster_key_crn`."
   default     = null
 }
 
 variable "existing_kms_cluster_key_crn" {
   type        = string
   description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input variable."
-  # validation {
-  #   condition     = var.existing_kms_cluster_key_crn == null ? var.existing_kms_instance_crn != null ? true : false : true
-  #   error_message = "sdasd"
-  # }
-  default = null
-}
-
-variable "existing_kms_boot_volume_key_crn" {
-  type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services boot volume encryption key to encrypt your data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input variable."
   default     = null
 }
 
@@ -330,11 +320,6 @@ variable "ocp_cluster_key_name" {
   type        = string
   default     = "ocp-cluster-key"
   description = "The name for the key created for the OCP cluster key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-variable "ocp_cluster_boot_volume_key_name" {
-  type        = string
-  default     = "ocp-cluster-boot-volume-key"
-  description = "The name for the key created for the OCP cluster boot volume key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "kms_endpoint_type" {

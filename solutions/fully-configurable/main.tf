@@ -33,30 +33,18 @@ module "kms_cluster_key_crn_parser" {
   crn     = var.existing_kms_cluster_key_crn
 }
 
-module "kms_boot_volume_key_crn_parser" {
-  count   = local.boot_volume_key_crn != null ? 1 : 0
-  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.1.0"
-  crn     = local.boot_volume_key_crn
-}
-
 #######################################################################################################################
 # KMS encryption key
 #######################################################################################################################
 locals {
-  ocp_cluster_key_ring_name        = try("${local.prefix}-${var.ocp_cluster_key_ring_name}", var.ocp_cluster_key_ring_name)
-  ocp_cluster_key_name             = try("${local.prefix}-${var.ocp_cluster_key_name}", var.ocp_cluster_key_name)
-  ocp_cluster_boot_volume_key_name = try("${local.prefix}-${var.ocp_cluster_boot_volume_key_name}", var.ocp_cluster_boot_volume_key_name)
+  ocp_cluster_key_ring_name = try("${local.prefix}-${var.ocp_cluster_key_ring_name}", var.ocp_cluster_key_ring_name)
+  ocp_cluster_key_name      = try("${local.prefix}-${var.ocp_cluster_key_name}", var.ocp_cluster_key_name)
 
-  boot_volume_key_crn = var.existing_kms_boot_volume_key_crn == null ? var.existing_kms_cluster_key_crn : var.existing_kms_boot_volume_key_crn
-  create_new_kms_key  = var.existing_kms_cluster_key_crn == null && local.boot_volume_key_crn == null ? 1 : 0
-  kms_region          = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].region : module.kms_instance_crn_parser[0].region
+  create_new_kms_key = var.existing_kms_cluster_key_crn == null ? 1 : 0
+  kms_region         = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].region : module.kms_instance_crn_parser[0].region
 
   kms_instance_guid = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance
   crk_id            = var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.ocp_cluster_key_ring_name, local.ocp_cluster_key_name)].key_id
-
-  kms_instance_boot_volume_guid = local.boot_volume_key_crn != null ? module.kms_boot_volume_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance
-  boot_volume_crk_id            = local.boot_volume_key_crn != null ? module.kms_boot_volume_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.ocp_cluster_key_ring_name, local.ocp_cluster_boot_volume_key_name)].key_id
 }
 
 module "kms" {
@@ -75,13 +63,6 @@ module "kms" {
       keys = [
         {
           key_name                 = local.ocp_cluster_key_name
-          standard_key             = false
-          rotation_interval_month  = 3
-          dual_auth_delete_enabled = false
-          force_delete             = true
-        },
-        {
-          key_name                 = local.ocp_cluster_boot_volume_key_name
           standard_key             = false
           rotation_interval_month  = 3
           dual_auth_delete_enabled = false
@@ -109,19 +90,14 @@ locals {
     }]
   }
 
-  boot_volume_encryption_kms_config = {
-    kms_instance_id = local.kms_instance_boot_volume_guid
-    crk             = local.boot_volume_crk_id
-  }
 
   worker_pools = [
     {
-      subnet_prefix                     = "default"
-      pool_name                         = "default"
-      machine_type                      = var.machine_type
-      workers_per_zone                  = var.number_worker_nodes
-      operating_system                  = var.operating_system
-      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
+      subnet_prefix    = "default"
+      pool_name        = "default"
+      machine_type     = var.machine_type
+      workers_per_zone = var.number_worker_nodes
+      operating_system = var.operating_system
     }
   ]
 

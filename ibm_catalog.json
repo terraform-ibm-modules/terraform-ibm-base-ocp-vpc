@@ -263,16 +263,10 @@
               "key": "existing_kms_cluster_key_crn"
             },
             {
-              "key": "existing_kms_boot_volume_key_crn"
-            },
-            {
               "key": "ocp_cluster_key_ring_name"
             },
             {
               "key": "ocp_cluster_key_name"
-            },
-            {
-              "key": "ocp_cluster_boot_volume_key_name"
             },
             {
               "key": "kms_endpoint_type"
