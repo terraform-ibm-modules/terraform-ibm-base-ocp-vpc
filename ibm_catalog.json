@@ -257,19 +257,25 @@
               ]
             },
             {
-              "key": "crk_id"
+              "key": "existing_kms_instance_crn"
             },
             {
-              "key": "instance_id"
+              "key": "existing_kms_cluster_key_crn"
             },
             {
-              "key": "private_endpoint"
+              "key": "existing_kms_boot_volume_key_crn"
             },
             {
-              "key": "account_id"
+              "key": "ocp_cluster_key_ring_name"
             },
             {
-              "key": "wait_for_apply"
+              "key": "ocp_cluster_key_name"
+            },
+            {
+              "key": "ocp_cluster_boot_volume_key_name"
+            },
+            {
+              "key": "kms_endpoint_type"
             },
             {
               "key": "resource_tags",

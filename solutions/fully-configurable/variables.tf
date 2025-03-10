@@ -140,6 +140,44 @@ variable "allow_default_worker_pool_replacement" {
   nullable    = false
 }
 
+# variable "worker_pools" {
+#   type = list(object({
+#     subnet_prefix = optional(string)
+#     vpc_subnets = optional(list(object({
+#       id         = string
+#       zone       = string
+#       cidr_block = string
+#     })))
+#     pool_name         = string
+#     machine_type      = string
+#     workers_per_zone  = number
+#     resource_group_id = optional(string)
+#     operating_system  = string
+#     labels            = optional(map(string))
+#     minSize           = optional(number)
+#     secondary_storage = optional(string)
+#     maxSize           = optional(number)
+#     enableAutoscaling = optional(bool)
+#     boot_volume_encryption_kms_config = optional(object({
+#       crk             = string
+#       kms_instance_id = string
+#       kms_account_id  = optional(string)
+#     }))
+#     additional_security_group_ids = optional(list(string))
+#   }))
+#   description = "List of worker pools"
+#   default = [
+#     {
+#       subnet_prefix    = "default"
+#       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+#       machine_type     = "bx2.4x16"
+#       workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+#       operating_system = "REDHAT_8_64"
+#     }
+#   ]
+
+# }
+
 ##############################################################
 # COS Related
 ##############################################################
@@ -236,10 +274,20 @@ variable "additional_vpe_security_group_ids" {
   default = {}
 }
 
+# variable "vpc_subnets" {
+#   type = map(list(object({
+#     id         = string
+#     zone       = string
+#     cidr_block = string
+#   })))
+#   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+#   default     = {}
+# }
+
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
-  default     = "private"
+  default     = "public"
 
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
@@ -250,38 +298,53 @@ variable "provider_visibility" {
 ##############################################################
 # KMS Related
 ##############################################################
-variable "crk_id" {
-  description = "The ID of the cluster root key to use for cluster encryption."
+variable "existing_kms_instance_crn" {
   type        = string
+  description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required only when creating a new encryption key and key ring which will be used to encrypt OCP cluster data. To use an existing key, pass values for `existing_kms_cluster_key_crn` and `existing_kms_boot_volume_key_crn`."
   default     = null
 }
 
-variable "instance_id" {
+variable "existing_kms_cluster_key_crn" {
   type        = string
-  description = "The ID of the KMS instance to use for cluster encryption."
+  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input variable."
+  # validation {
+  #   condition     = var.existing_kms_cluster_key_crn == null ? var.existing_kms_instance_crn != null ? true : false : true
+  #   error_message = "sdasd"
+  # }
+  default = null
+}
+
+variable "existing_kms_boot_volume_key_crn" {
+  type        = string
+  description = "The CRN of a Key Protect or Hyper Protect Crypto Services boot volume encryption key to encrypt your data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input variable."
   default     = null
+}
+
+variable "ocp_cluster_key_ring_name" {
+  type        = string
+  default     = "ocp-cluster-key-ring"
+  description = "The name for the key ring created for the OCP cluster. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "ocp_cluster_key_name" {
+  type        = string
+  default     = "ocp-cluster-key"
+  description = "The name for the key created for the OCP cluster key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+variable "ocp_cluster_boot_volume_key_name" {
+  type        = string
+  default     = "ocp-cluster-boot-volume-key"
+  description = "The name for the key created for the OCP cluster boot volume key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "kms_endpoint_type" {
+  type        = string
+  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
+  default     = "private"
   validation {
-    condition     = (var.instance_id == null && var.crk_id == null) || (var.instance_id != null && var.crk_id != null)
-    error_message = "Both instance_id and crk_id should be provided together, or both should be null."
+    condition     = can(regex("public|private", var.kms_endpoint_type))
+    error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
-}
-
-variable "private_endpoint" {
-  type        = bool
-  description = "Whether to use a private endpoint for KMS communication. Defaults to true."
-  default     = false
-}
-
-variable "account_id" {
-  type        = string
-  description = "The account ID to attach KMS instance from. If not provided, defaults to the account in use."
-  default     = null
-}
-
-variable "wait_for_apply" {
-  type        = bool
-  description = "Whether Terraform should wait until the KMS is applied to the master, ready and deployed. Defaults to true."
-  default     = true
 }
 
 ##############################################################
