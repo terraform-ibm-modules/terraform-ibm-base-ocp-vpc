@@ -276,6 +276,7 @@
             {
               "key": "resource_tags",
               "custom_config": {
+                "type": "array",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
@@ -286,6 +287,7 @@
             {
               "key": "access_tags",
               "custom_config": {
+                "type": "array",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
@@ -329,18 +331,22 @@
             },
             {
               "name": "testing-deploy-arch-ibm-kms",
-              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9",
-              "version": "^1.0.6",
+              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
+              "version": "^v1.2.1",
               "flavors": [
                 "standard"
               ],
-              "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
               "ignore_auto_referencing": [
                 "*"
               ],
               "input_mapping": [
+                {
+                  "dependency_output": "kms_instance_crn",
+                  "version_input": "existing_kms_instance_crn"
+                },
                 {
                   "dependency_input": "resource_group_name",
                   "version_input": "existing_resource_group_name",
