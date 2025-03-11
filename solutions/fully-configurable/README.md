@@ -4,8 +4,8 @@ This architecture creates a fully-configurable OCP VPC cluster. Also the outboun
 
 The following resources are provisioned by this example:
 
-- A new resource group, if an existing one is not passed in.
 - OCP VPC cluster.
+- Cluster keys if an existing KMS instance is passed.
 
 
-![single-zone-ocp-cluster](../../reference-architecture/deployable-architecture-ocp-cluster-qs.svg)
+![ocp-cluster](../../reference-architecture/deployable-architecture-ocp-cluster-qs.svg)
