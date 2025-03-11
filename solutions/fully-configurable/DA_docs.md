@@ -93,7 +93,7 @@ worker_pools_taints = {
 }
 ```
 
-## Options with additional_vpe_security_group_ids <a name="#options-with-additional-vpe-security-group-ids"></a>
+## Options with additional_vpe_security_group_ids <a name="options-with-additional-vpe-security-group-ids"></a>
 
 This variable allows you to add extra security groups to the Virtual Private Endpoints (VPEs) that are created with your OCP cluster.
 
@@ -107,7 +107,7 @@ additional_vpe_security_group_ids = {
 }
 ```
 
-## Options with vpc_subnets <a name="#options-with-vpc-subnets"></a>
+## Options with vpc_subnets <a name="options-with-vpc-subnets"></a>
 
 This variable defines the Virtual Private Cloud (VPC) subnets where your OCP cluster will be deployed.
 
@@ -117,17 +117,17 @@ This variable defines the Virtual Private Cloud (VPC) subnets where your OCP clu
 vpc_subnets = {
   "default" = [
     {
-      id = "0717-a4b3c2d1-e5f6-g7h8-i9j0-k1l2m3n4o5p6"
+      id = "0717-a4b3c2d1-e5f6-g7h8-i9j0-k1l2m3n4o5p6" # pragma: allowlist secret
       zone = "us-south-1"
       cidr_block = " "10.10.10.0/24"
     },
     {
-      id = "0717-b4c3d2e1-f5g6-h7i8-j9k0-l1m2n3o4p5q6"
+      id = "0717-b4c3d2e1-f5g6-h7i8-j9k0-l1m2n3o4p5q6" # pragma: allowlist secret
       zone = "us-south-2"
       cidr_block = "10.20.10.0/24"
     },
     {
-      id = "0717-c4d3e2f1-g5h6-i7j8-k9l0-m1n2o3p4q5r6"
+      id = "0717-c4d3e2f1-g5h6-i7j8-k9l0-m1n2o3p4q5r6" # pragma: allowlist secret
       zone = "us-south-3"
       cidr_block = "10.30.10.0/24"
     }
@@ -168,8 +168,8 @@ cbr_rules = [
   rule_contexts= [{
       attributes = [
                 {
-                              "name" : "endpointType",
-                              "value" : "private"
+                  name : "endpointType",
+                  value : "private"
                 },
                 {
                   name  = "networkZoneId"
