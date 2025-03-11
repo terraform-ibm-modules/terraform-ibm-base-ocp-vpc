@@ -319,10 +319,6 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
-                },
-                {
-                  "version_input": "use_existing_resource_group",
-                  "value": true
                 }
               ],
               "optional": true,
