@@ -5,7 +5,7 @@ Several optional input variables in the OCP cluster [deployable architecture](ht
 - [Worker Pools](#options-with-worker-pools) (`worker_pools`)
 - [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
 - [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
-- [VPC subnets](#options-with-vpc-subnets) (`vpc_subnets`)
+- [VPC Subnets](#options-with-vpc-subnets) (`vpc_subnets`)
 - [Context Based Restrictions](#options-with-cbr) (`cbr_rules`)
 
 ## Options with addons <a name="options-with-addons"></a>
