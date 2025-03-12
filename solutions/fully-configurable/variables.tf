@@ -280,7 +280,7 @@ variable "provider_visibility" {
 ##############################################################
 
 variable "enable_kms_encryption" {
-  description = "Flag to enable KMS encryption. If set to true, a value must be passed for either `existing_kms_instance_crn` or `existing_kms_cluster_key_crn`. This is applicable only for Enterprise plan."
+  description = "Set to `true` to enable KMS encryption. If set to `true`, a value must be passed for either `existing_kms_instance_crn` or `existing_kms_cluster_key_crn`."
   type        = bool
   default     = false
 
@@ -290,7 +290,7 @@ variable "enable_kms_encryption" {
         (var.existing_kms_instance_crn != null && var.existing_kms_cluster_key_crn == null) ||
         (var.existing_kms_instance_crn == null && var.existing_kms_cluster_key_crn != null)
     ))
-    error_message = "If enable_kms_encryption is set to true, you must provide a value for either existing_kms_instance_crn OR existing_kms_cluster_key_crn, but not both."
+    error_message = "If enable_kms_encryption is set to true, you must provide a value for either existing_kms_instance_crn or existing_kms_cluster_key_crn, but not both."
   }
 }
 variable "existing_kms_instance_crn" {

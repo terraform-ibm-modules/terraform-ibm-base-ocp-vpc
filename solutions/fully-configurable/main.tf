@@ -39,12 +39,9 @@ module "kms_cluster_key_crn_parser" {
 locals {
   ocp_cluster_key_ring_name = try("${local.prefix}-${var.ocp_cluster_key_ring_name}", var.ocp_cluster_key_ring_name)
   ocp_cluster_key_name      = try("${local.prefix}-${var.ocp_cluster_key_name}", var.ocp_cluster_key_name)
-
-  create_new_kms_key = var.enable_kms_encryption && var.existing_kms_instance_crn != null ? 1 : 0
-  kms_region         = var.existing_kms_cluster_key_crn != null && var.existing_kms_instance_crn != null ? module.kms_instance_crn_parser[0].region : null
-
-  kms_instance_guid = var.enable_kms_encryption == false ? null : (var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance)
-
+  create_new_kms_key        = var.enable_kms_encryption && var.existing_kms_instance_crn != null ? 1 : 0
+  kms_region                = var.existing_kms_cluster_key_crn != null && var.existing_kms_instance_crn != null ? module.kms_instance_crn_parser[0].region : null
+  kms_instance_guid         = var.enable_kms_encryption == false ? null : (var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance)
   crk_id = var.enable_kms_encryption == false ? null : (var.existing_kms_cluster_key_crn != null ? module.kms_cluster_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.ocp_cluster_key_ring_name, local.ocp_cluster_key_name)].key_id
   )
 }
