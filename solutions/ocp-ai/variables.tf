@@ -33,6 +33,13 @@ variable "vpc_subnets" {
     cidr_block = string
   })))
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+  default = {
+    "default" =[{
+    "id" = "ary-subnet-1"
+    "zone" = "us-south-1"
+    "cidr_block" = "10.240.0.0/24"
+  }]
+  }
 }
 
 variable "worker_pools" {
@@ -61,6 +68,34 @@ variable "worker_pools" {
     additional_security_group_ids = optional(list(string))
   }))
   description = "List of worker pools"
+  default = [
+  {
+    "machine_type" = "bx2.8x32"
+    "operating_system" = "REDHAT_8_64"
+    "pool_name" = "default"
+    "subnet_prefix" = "default"
+    "workers_per_zone" = 2
+  },
+]
+  validation {
+    condition     = var.worker_pools[0].workers_per_zone >= 2 ? true : false 
+    error_message = "The Cluster must have at least two worker nodes."
+  }
+
+  validation {
+    condition     = contains(local.flavor_list,var.worker_pools[0].machine_type) ? true : false
+    error_message = "All Worker nodes in the cluster must have minimum configuration as 8-core, 32GB memory."
+  }
+  validation {
+    condition     = contains(local.os_version, var.worker_pools[0].operating_system) ? true : false
+    error_message = "RHEL 9 (RHEL_9_64), RHEL 8 (REDHAT_8_64) or Red Hat Enterprise Linux CoreOS (RHCOS) are the allowed OS values."
+  }
+
+  validation {
+    condition = var.worker_pools[0].pool_name == "gpu" ? contains(local.flavor_list,var.worker_pools[0].machine_type) ? true : false : true
+    error_message = "All Worker nodes in the cluster must have minimum configuration as 8-core, 32GB memory."
+  }
+
 }
 
 variable "ocp_entitlement" {
@@ -92,5 +127,18 @@ variable "access_tags" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
-  default     = null
+  validation {
+    condition     = contains(local.allowed_ocp_version, var.ocp_version) ? true : false
+    error_message = "OCPAI Addon Supports OpenShift cluster versions: >=4.16 <4.18 ."
+  }
+}
+variable "disable_outbound_traffic_protection" {
+  type    = bool 
+  description = "outbound traffic protection"
+  default = true
+  validation {
+    condition     = var.disable_outbound_traffic_protection == true ? true : false
+    error_message = "outbound traffic protection should be disabled, if any of the OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators are used with OCP AI addon."
+  }
+
 }
