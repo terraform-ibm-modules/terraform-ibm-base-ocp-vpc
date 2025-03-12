@@ -47,7 +47,7 @@
               {
                 "diagram": {
                   "caption": "Red Hat OpenShift VPC cluster for IBM Cloud.",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/qs/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture creates a fully-configurable single zone OCP VPC cluster."
@@ -368,7 +368,7 @@
             {
               "name": "deploy-arch-ibm-cos",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "^v8.19.2",
+              "version": "^v8.20.1",
               "flavors": [
                 "instance"
               ],
@@ -390,7 +390,7 @@
                 },
                 {
                   "dependency_input": "resource_group_name",
-                  "version_input": "existing_resource_group_name",
+                  "version_input": "resource_group_name",
                   "reference_version": true
                 },
                 {
