@@ -91,7 +91,7 @@ variable "addons" {
     vpc-block-csi-driver      = optional(string)
     ibm-storage-operator      = optional(string)
   })
-  description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions."
+  description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-addons)"
   nullable    = false
   default     = {}
 }
@@ -105,7 +105,7 @@ variable "manage_all_addons" {
 
 variable "worker_pools_taints" {
   type        = map(list(object({ key = string, value = string, effect = string })))
-  description = "Optional, Map of lists containing node taints by node-pool name."
+  description = "Optional, Map of lists containing node taints by node-pool name. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools-taints)"
   default     = null
 }
 
@@ -147,7 +147,7 @@ variable "worker_pools" {
     }))
     additional_security_group_ids = optional(list(string))
   }))
-  description = "List of worker pools"
+  description = "List of worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
   default = [
     {
       subnet_prefix    = "default"
@@ -246,7 +246,7 @@ variable "number_of_lbs" {
 }
 
 variable "additional_vpe_security_group_ids" {
-  description = "Additional security groups to add to all existing load balancers. This comes in addition to the IBM maintained security group."
+  description = "Additional security groups to add to all existing load balancers. This comes in addition to the IBM maintained security group. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-additional-vpe-security-group-ids)"
   type = object({
     master   = optional(list(string), [])
     registry = optional(list(string), [])
@@ -261,7 +261,7 @@ variable "vpc_subnets" {
     zone       = string
     cidr_block = string
   })))
-  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-vpc-subnets)"
   default     = {}
 }
 
@@ -351,6 +351,6 @@ variable "cbr_rules" {
       }))
     })))
   }))
-  description = "The list of context-based restriction rules to create."
+  description = "The list of context-based restriction rules to create. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-cbr)"
   default     = []
 }
