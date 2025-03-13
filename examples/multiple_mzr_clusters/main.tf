@@ -168,16 +168,15 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 }
 
 ########################################################################################################################
-# Observability instances : Create logdna and sysdig instances.
+# Observability instances : Create Cloud Logs and Cloud monitoring instances.
 ########################################################################################################################
 
 module "observability_instances" {
   source                         = "terraform-ibm-modules/observability-instances/ibm"
-  version                        = "3.4.2"
+  version                        = "3.4.3"
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
   cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_logs           = false
   enable_platform_metrics        = false
   cloud_monitoring_instance_name = "${var.prefix}-sysdig"
   cloud_logs_provision           = false

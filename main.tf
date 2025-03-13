@@ -8,8 +8,8 @@ locals {
   # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
   default_pool = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
   # all_standalone_pools are the pools managed by a 'standalone' ibm_container_vpc_worker_pool resource
-  all_standalone_pools             = var.import_default_worker_pool_on_create == true ? [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && !var.ignore_worker_pool_size_changes]
-  all_standalone_autoscaling_pools = var.import_default_worker_pool_on_create == true ? [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes] : [for pool in var.worker_pools : pool if pool.pool_name != "default" && var.ignore_worker_pool_size_changes]
+  all_standalone_pools             = [for pool in var.worker_pools : pool if !var.ignore_worker_pool_size_changes]
+  all_standalone_autoscaling_pools = [for pool in var.worker_pools : pool if var.ignore_worker_pool_size_changes]
 
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
@@ -86,7 +86,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.19.3"
+  version                = "8.19.5"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -299,7 +299,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
+  count             = var.enable_ocp_console || var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
@@ -366,7 +366,8 @@ resource "ibm_container_vpc_worker_pool" "pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? false : true : null
+  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? null : true : null
+  orphan_on_delete = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? null : true : null
 }
 
 # copy of the pool resource above which ignores changes to the worker pool for use in autoscaling scenarios
@@ -412,7 +413,8 @@ resource "ibm_container_vpc_worker_pool" "autoscaling_pool" {
   }
 
   # The default workerpool has to be imported as it will already exist on cluster create
-  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? false : true : null
+  import_on_create = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? null : true : null
+  orphan_on_delete = each.value.pool_name == "default" ? var.allow_default_worker_pool_replacement ? null : true : null
 }
 
 ##############################################################################
@@ -460,7 +462,7 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
 
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [null_resource.confirm_network_healthy]
   triggers = {
     enable_ocp_console = var.enable_ocp_console
   }

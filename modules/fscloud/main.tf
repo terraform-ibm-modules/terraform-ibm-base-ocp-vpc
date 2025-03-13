@@ -27,7 +27,6 @@ module "fscloud" {
   kms_config                            = var.kms_config
   addons                                = var.addons
   access_tags                           = var.access_tags
-  import_default_worker_pool_on_create  = var.import_default_worker_pool_on_create
   allow_default_worker_pool_replacement = var.allow_default_worker_pool_replacement
   attach_ibm_managed_security_group     = var.attach_ibm_managed_security_group
   custom_security_group_ids             = var.custom_security_group_ids
