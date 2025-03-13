@@ -87,14 +87,12 @@
               "key": "region",
               "required": true,
               "custom_config": {
-                "type": "region",
+                "config_constraints": {
+                  "generationType": "2"
+                },
                 "grouping": "deployment",
                 "original_grouping": "deployment",
-                "config_constraints": {
-                  "showKinds": [
-                    "region"
-                  ]
-                }
+                "type": "vpc_region"
               }
             },
             {
