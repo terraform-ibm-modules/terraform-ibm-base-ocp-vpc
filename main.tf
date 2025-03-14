@@ -463,9 +463,7 @@ resource "null_resource" "confirm_network_healthy" {
 resource "null_resource" "ocp_console_management" {
 
   depends_on = [null_resource.confirm_network_healthy]
-  triggers = {
-    enable_ocp_console = var.enable_ocp_console
-  }
+  count      = var.enable_ocp_console ? 1 : 0
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]
