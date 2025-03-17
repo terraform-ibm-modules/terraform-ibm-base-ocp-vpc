@@ -87,7 +87,27 @@ func TestRunAdvancedExample(t *testing.T) {
 func TestRunFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "fc-ocp", fullyConfigurableTerraformDir, ocpVersion1)
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:          t,
+		TerraformDir:     fullyConfigurableTerraformDir,
+		Prefix:           "fc-ocp",
+		ResourceGroup:    resourceGroup,
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	options.TerraformVars = map[string]interface{}{
+		"region":                       "au-syd",
+		"prefix":                       options.Prefix,
+		"cluster_name":                 options.Prefix,
+		"ocp_version":                  ocpVersion1,
+		"existing_resource_group_name": options.ResourceGroup,
+		"access_tags":                  permanentResources["accessTags"],
+		"existing_cos_instance_crn":    permanentResources["general_test_storage_cos_instance_crn"],
+		"existing_vpc_id":              "r026-66e8adec-ce89-4a66-b22f-d09639889143", // need to fill this
+		"ocp_entitlement":              "cloud_pak",
+		"kms_endpoint_type":            "public",
+		"provider_visibility":          "public",
+	}
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -205,8 +225,10 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		})
 
 		output, err := options.RunTestUpgrade()
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
+		if !options.UpgradeTestSkipped {
+			assert.Nil(t, err, "This should not have errored")
+			assert.NotNil(t, output, "Expected some output")
+		}
 	}
 
 	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
