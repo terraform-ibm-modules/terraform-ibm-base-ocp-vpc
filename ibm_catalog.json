@@ -69,7 +69,7 @@
                 ],
                 "optional": false,
                 "on_by_default": true,
-                "version": "^v1.18.0"
+                "version": "^v1.0.0"
               }
             ],
             "dependency_version_2": true
