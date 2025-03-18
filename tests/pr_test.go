@@ -87,31 +87,64 @@ func TestRunAdvancedExample(t *testing.T) {
 func TestRunFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     fullyConfigurableTerraformDir,
-		Prefix:           "fc-ocp",
-		ResourceGroup:    resourceGroup,
-		CloudInfoService: sharedInfoSvc,
+	// ------------------------------------------------------------------------------------
+	// Provision resources first
+	// ------------------------------------------------------------------------------------
+	prefix := fmt.Sprintf("ocp-fc-%s", strings.ToLower(random.UniqueId()))
+	realTerraformDir := "./existing-resources"
+	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, prefix)
+
+	// Verify ibmcloud_api_key variable is set
+	checkVariable := "TF_VAR_ibmcloud_api_key"
+	val, present := os.LookupEnv(checkVariable)
+	require.True(t, present, checkVariable+" environment variable not set")
+	require.NotEqual(t, "", val, checkVariable+" environment variable is empty")
+	region, _ := testhelper.GetBestVpcRegion(val, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
+
+	logger.Log(t, "Tempdir: ", tempTerraformDir)
+	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+		TerraformDir: tempTerraformDir,
+		Vars: map[string]interface{}{
+			"prefix": prefix,
+			"region": region,
+		},
+		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
+		// This is the same as setting the -upgrade=true flag with terraform.
+		Upgrade: true,
 	})
 
-	options.TerraformVars = map[string]interface{}{
-		"region":                       "au-syd",
-		"prefix":                       options.Prefix,
-		"cluster_name":                 options.Prefix,
-		"ocp_version":                  ocpVersion1,
-		"existing_resource_group_name": options.ResourceGroup,
-		"access_tags":                  permanentResources["accessTags"],
-		"existing_cos_instance_crn":    permanentResources["general_test_storage_cos_instance_crn"],
-		"existing_vpc_id":              "r026-66e8adec-ce89-4a66-b22f-d09639889143", // need to fill this
-		"ocp_entitlement":              "cloud_pak",
-		"kms_endpoint_type":            "public",
-		"provider_visibility":          "public",
-	}
+	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
+	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
+	} else {
 
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+			Testing:          t,
+			TerraformDir:     fullyConfigurableTerraformDir,
+			Prefix:           prefix,
+			ResourceGroup:    resourceGroup,
+			CloudInfoService: sharedInfoSvc,
+		})
+
+		options.TerraformVars = map[string]interface{}{
+			"region":                       region,
+			"prefix":                       options.Prefix,
+			"cluster_name":                 "cluster",
+			"ocp_version":                  ocpVersion1,
+			"access_tags":                  permanentResources["accessTags"],
+			"ocp_entitlement":              "cloud_pak",
+			"kms_endpoint_type":            "public",
+			"provider_visibility":          "public",
+			"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
+			"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
+			"existing_vpc_id":              terraform.Output(t, existingTerraformOptions, "vpc_id"),
+		}
+
+		output, err := options.RunTestConsistency()
+		assert.Nil(t, err, "This should not have errored")
+		assert.NotNil(t, output, "Expected some output")
+	}
 }
 
 func getClusterIngress(options *testhelper.TestOptions) error {
