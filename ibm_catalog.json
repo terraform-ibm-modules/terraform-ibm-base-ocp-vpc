@@ -62,6 +62,13 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "cloud-object-storage"
+            },
+            {
+              "service_name": "containers-kubernetes",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ]
             }
           ],
           "architecture": {
@@ -335,6 +342,8 @@
                 "fully-configurable"
               ],
               "catalog_id": "7b691e02-a073-4e06-b52e-390bb510cd9e",
+              "optional": true,
+              "on_by_default": true,
               "ignore_auto_referencing": [
                 "*"
               ],
@@ -394,6 +403,11 @@
                 "*"
               ],
               "input_mapping": [
+                {
+                  "dependency_input": "enable_kms_encryption",
+                  "value": true,
+                  "reference_version": true
+                },
                 {
                   "dependency_output": "kms_instance_crn",
                   "version_input": "existing_kms_instance_crn"
