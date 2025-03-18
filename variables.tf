@@ -323,6 +323,37 @@ variable "addons" {
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   nullable    = false
   default     = {}
+
+  validation {
+    condition = alltrue([
+      for addon_name in keys(var.addons) :
+      addon_name != "openshift-ai" || (tonumber(local.ocp_version_num) >= 4.16 && tonumber(local.ocp_version_num) < 4.18)
+    ])
+    error_message = "OCP AI add-on requires OCP version >= 4.16.0 and < 4.18.0"
+  }
+
+  validation {
+    condition = alltrue([
+      for addon_name in keys(var.addons) :
+      addon_name != "openshift-ai" || local.default_pool.workers_per_zone >= 2
+    ])
+    error_message = "OCP AI add-on requires at least 2 worker nodes."
+  }
+
+  # TODO: VERIFY THIS ONE (See if other operators will be part of addon list & if this comes into play after installing addon, then use precondition)
+  validation {
+    condition = alltrue([
+      for addon_name in keys(var.addons) :
+      addon_name != "openshift-ai" || alltrue([
+        for dependency in ["openshift-pipelines", "node-feature-discovery", "nvidia-gpu-operator"] :
+        !contains(keys(var.addons), dependency) || !var.disable_outbound_traffic_protection
+      ])
+    ])
+    error_message = "Outbound traffic protection must be disabled if OpenShift AI is used with OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators."
+  }
+
+
+
 }
 
 variable "manage_all_addons" {

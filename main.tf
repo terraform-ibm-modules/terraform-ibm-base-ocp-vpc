@@ -515,6 +515,13 @@ resource "ibm_container_addons" "addons" {
       version = addons.value
     }
   }
+  # OCP AI addon Validations
+  lifecycle {
+    precondition {
+      condition     = length([for addon in data.ibm_container_addons.existing_addons.addons : addon if addon.name == "openshift-ai"]) == 0
+      error_message = "OCP AI add-on is already installed."
+    }
+  }
 
   timeouts {
     create = "1h"
