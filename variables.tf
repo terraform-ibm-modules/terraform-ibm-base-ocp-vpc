@@ -352,7 +352,13 @@ variable "addons" {
     error_message = "Outbound traffic protection must be disabled if OpenShift AI is used with OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators."
   }
 
-
+  validation {
+    condition = alltrue([
+      for addon_name in keys(var.addons) :
+      addon_name != "openshift-ai" || (local.default_worker_cpu_count >= 8 && local.default_worker_ram_count >= 32)
+    ])
+    error_message = "To install OCP AI add-on all worker nodes in the cluster must have minimum configuration as 8-core, 32GB memory."
+  }
 
 }
 
