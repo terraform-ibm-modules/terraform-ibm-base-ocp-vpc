@@ -1,0 +1,7 @@
+# NOTE: Mock values added here for helm linter to pass. Actual values are set in main.tf
+metadata:
+  name: "ibmcloud-kube-audit"
+  namespace: "ibm-kube-audit"
+
+image: "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
+version: "latest"

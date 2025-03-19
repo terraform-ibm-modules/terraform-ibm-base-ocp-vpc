@@ -184,3 +184,11 @@ data "ibm_container_cluster_config" "cluster_config" {
   resource_group_id = module.ocp_base.resource_group_id
   config_dir        = "${path.module}/../../kubeconfig"
 }
+
+module "kube_audit" {
+  source                    = "../../modules/kube-audit"
+  cluster_id                = module.ocp_base.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  audit_log_policy          = "WriteRequestBodies"
+  region                    = var.region
+}
