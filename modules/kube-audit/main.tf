@@ -35,7 +35,7 @@ resource "null_resource" "set_audit_log_policy" {
 ########################################################################################################################
 
 locals {
-  kube_audit_chart_location = "${path.module}/chart/kube-audit"
+  kube_audit_chart_location = "${path.module}/helm-charts/kube-audit"
 }
 
 resource "helm_release" "kube_audit" {
