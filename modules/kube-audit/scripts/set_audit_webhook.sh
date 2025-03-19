@@ -29,7 +29,7 @@ get_ca_cert() {
         result=$(curl -s -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X GET "$WEBHOOK_URL")
     fi
 
-    CERTIFICATE_AUTHORITY=$(echo "$result" | jq -r .caCert | base64 -D)
+    CERTIFICATE_AUTHORITY=$(echo "$result" | jq -r .caCert | base64 -d)
 }
 
 curl_request() {
