@@ -31,10 +31,10 @@
         ],
         "flavors": [
           {
-            "label": "ocp-ai",
-            "name": "ocp-ai",
+            "label": "testing",
+            "name": "testing",
             "install_type": "fullstack",
-            "working_directory": "solutions/ocp-ai",
+            "working_directory": "solutions/testing",
             "architecture": {
               "descriptions": "This architecture creates a single zone OCP VPC cluster.",
               "features": [
@@ -58,18 +58,18 @@
             ],
             "dependencies": [
               {
-                "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc",
-                "catalog_id": "7b691e02-a073-4e06-b52e-390bb510cd9e",
+                "name": "deploy-arch-ibm-observability",
+                "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
                 "flavors": [
-                  "fully-configurable"
+                  "logs-routing"
                 ],
-                "id": "23436894-828d-4968-8dd6-d0778ecea94a",
+                "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
                 "ignore_auto_referencing": [
                   "*"
                 ],
                 "optional": false,
                 "on_by_default": true,
-                "version": "^v1.0.0"
+                "version": "^v2.9.1"
               }
             ],
             "dependency_version_2": true
