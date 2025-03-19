@@ -294,7 +294,11 @@ module "ocp_fscloud" {
 
 }
 
-
+data "ibm_container_cluster_config" "cluster_config" {
+  cluster_name_id   = module.ocp_fscloud.cluster_id
+  resource_group_id = module.resource_group.resource_group_id
+  config_dir        = "${path.module}/../../kubeconfig"
+}
 
 module "kube_audit" {
   source                    = "../../modules/kube-audit"
