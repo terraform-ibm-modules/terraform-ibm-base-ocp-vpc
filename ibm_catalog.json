@@ -34,7 +34,7 @@
             "label": "testing",
             "name": "testing",
             "install_type": "fullstack",
-            "working_directory": "solutions/testing",
+            "working_directory": "solutions/ocp-ai",
             "architecture": {
               "descriptions": "This architecture creates a single zone OCP VPC cluster.",
               "features": [
