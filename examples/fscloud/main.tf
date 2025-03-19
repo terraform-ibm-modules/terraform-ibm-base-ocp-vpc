@@ -255,41 +255,52 @@ module "ocp_fscloud" {
     crk_id           = local.cluster_hpcs_cluster_key_id
     private_endpoint = true
   }
-  cbr_rules = [
-    {
-      description      = "${var.prefix}-OCP-base access only from vpc"
-      enforcement_mode = "enabled"
-      account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
-      rule_contexts = [{
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "private"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_vpc_zone.zone_id
-        }]
-        }, {
-        attributes = [
-          {
-            "name" : "endpointType",
-            "value" : "private"
-          },
-          {
-            name  = "networkZoneId"
-            value = module.cbr_zone_schematics.zone_id
-        }]
-      }]
-      operations = [{
-        api_types = [
-          {
-            "api_type_id" : "crn:v1:bluemix:public:containers-kubernetes::::api-type:management"
-          }
-        ]
-      }]
-    }
+  # cbr_rules = [
+  #   {
+  #     description      = "${var.prefix}-OCP-base access only from vpc"
+  #     enforcement_mode = "enabled"
+  #     account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
+  #     rule_contexts = [{
+  #       attributes = [
+  #         {
+  #           "name" : "endpointType",
+  #           "value" : "private"
+  #         },
+  #         {
+  #           name  = "networkZoneId"
+  #           value = module.cbr_vpc_zone.zone_id
+  #       }]
+  #       }, {
+  #       attributes = [
+  #         {
+  #           "name" : "endpointType",
+  #           "value" : "private"
+  #         },
+  #         {
+  #           name  = "networkZoneId"
+  #           value = module.cbr_zone_schematics.zone_id
+  #       }]
+  #     }]
+  #     operations = [{
+  #       api_types = [
+  #         {
+  #           "api_type_id" : "crn:v1:bluemix:public:containers-kubernetes::::api-type:management"
+  #         }
+  #       ]
+  #     }]
+  #   }
 
-  ]
+  # ]
 
+}
+
+
+
+module "kube_audit" {
+  source                    = "../../modules/kube-audit"
+  cluster_id                = module.ocp_fscloud.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  audit_log_policy          = "WriteRequestBodies"
+  region                    = var.region
+  use_private_endpoint      = true
 }
