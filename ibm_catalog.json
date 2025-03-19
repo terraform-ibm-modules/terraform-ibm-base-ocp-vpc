@@ -69,6 +69,19 @@
                 ],
                 "optional": false,
                 "on_by_default": true,
+                "input_mapping": [
+                    {
+                        "dependency_input": "tenant_configuration",
+                        "value": [
+                            {
+                              "tenant_region" : "jp-tok",
+                              "tenant_name"   : "test-tenant-vipin-1",
+                              "target_name"   : "test-target-vipin-1",
+                              "log_sink_crn"  : "crn:v1:bluemix:public:logs:au-syd:a/abac0df06b644a9cabc6e44f55b3880e:a80fd541-63c3-45f9-8931-2ec2d314f0e2::"
+                            }
+                        ]
+                    }
+                ],
                 "version": "^v2.9.1"
               }
             ],
