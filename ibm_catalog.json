@@ -69,6 +69,14 @@
                 ],
                 "optional": false,
                 "on_by_default": true,
+                "input_mapping": [
+                  {
+                      "dependency_input": "addons",
+                      "value": {
+                        "openshift-ai" : "416"
+                      }
+                  }
+                ],
                 "version": "^v1.0.0"
               }
             ],
