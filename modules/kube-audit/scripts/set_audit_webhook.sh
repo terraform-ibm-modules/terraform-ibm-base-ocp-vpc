@@ -68,9 +68,6 @@ curl_request() {
 }
 
 get_cloud_endpoint() {
-    iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
-    IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
-
     cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
     cs_api_endpoint=${cs_api_endpoint#https://}
     IBMCLOUD_CS_API_ENDPOINT=${cs_api_endpoint%/global}
