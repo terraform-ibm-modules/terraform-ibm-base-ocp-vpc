@@ -4,12 +4,12 @@
 
 variable "cluster_id" {
   type        = string
-  description = "The ID of the cluster to deploy the agents in."
+  description = "The ID of the cluster to deploy the log collection service in."
 }
 
 variable "region" {
   type        = string
-  description = "The IBM Cloud region where the cluster will be provisioned."
+  description = "The IBM Cloud region where the cluster is provisioned."
 }
 
 variable "cluster_resource_group_id" {
@@ -56,10 +56,9 @@ variable "cluster_config_endpoint_type" {
   }
 }
 
-
 variable "audit_log_policy" {
   type        = string
-  description = "value"
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
   default     = "default"
 
   validation {
@@ -68,27 +67,26 @@ variable "audit_log_policy" {
   }
 }
 
-# var.logs_agent_namespace
 variable "audit_namespace" {
   type        = string
-  description = "value"
+  description = "The name of the namespace where log collection service and a deployment will be created."
   default     = "ibm-kube-audit"
 }
 
 variable "audit_deployment_name" {
   type        = string
-  description = "value"
+  description = "The name of log collection deployement and service."
   default     = "ibmcloud-kube-audit"
 }
 
 variable "audit_webhook_listener_image" {
   type        = string
-  description = "value"
+  description = "The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.The sub-module uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image."
   default     = "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
 }
 
 variable "audit_webhook_listener_image_version" {
   type        = string
-  description = "value"
+  description = "The audit webhook listener image version.  By default, latest image will be used."
   default     = "latest"
 }
