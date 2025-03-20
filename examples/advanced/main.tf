@@ -244,6 +244,7 @@ module "trusted_profile" {
 }
 
 module "observability_agents" {
+  depends_on                = [module.kube_audit]
   source                    = "terraform-ibm-modules/observability-agents/ibm"
   version                   = "2.6.0"
   cluster_id                = module.ocp_base.cluster_id
