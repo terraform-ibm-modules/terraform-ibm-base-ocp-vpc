@@ -4,4 +4,3 @@ metadata:
   namespace: "ibm-kube-audit"
 
 image: "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
-version: "latest"

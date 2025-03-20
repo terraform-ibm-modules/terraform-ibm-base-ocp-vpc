@@ -85,8 +85,12 @@ variable "audit_webhook_listener_image" {
   default     = "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
 }
 
-variable "audit_webhook_listener_image_version" {
+variable "audit_webhook_listener_image_digest" {
   type        = string
-  description = "The audit webhook listener image version.  By default, latest image will be used."
-  default     = "latest"
+  description = "An image digest in the format `sha256:xxxxx...` can also be specified. If no value is passed, latest image is used."
+  default     = null
+  validation {
+    condition     = var.audit_webhook_listener_image_digest == null || can(regex("^sha256:", var.audit_webhook_listener_image_digest))
+    error_message = "If provided, the value of audit_webhook_listener_image_digest must start with 'sha256:'."
+  }
 }

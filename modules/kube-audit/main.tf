@@ -35,7 +35,9 @@ resource "null_resource" "set_audit_log_policy" {
 ########################################################################################################################
 
 locals {
-  kube_audit_chart_location = "${path.module}/helm-charts/kube-audit"
+  kube_audit_chart_location      = "${path.module}/helm-charts/kube-audit"
+  audit_webhook_listener_version = "latest"
+  image_reference                = var.audit_webhook_listener_image_digest != null ? "${var.audit_webhook_listener_image}@${var.audit_webhook_listener_image_digest}" : "${var.audit_webhook_listener_image}:${local.audit_webhook_listener_version}"
 }
 
 resource "helm_release" "kube_audit" {
@@ -61,13 +63,7 @@ resource "helm_release" "kube_audit" {
   set {
     name  = "image"
     type  = "string"
-    value = var.audit_webhook_listener_image
-  }
-
-  set {
-    name  = "version"
-    type  = "string"
-    value = var.audit_webhook_listener_image_version
+    value = local.image_reference
   }
 
   provisioner "local-exec" {
