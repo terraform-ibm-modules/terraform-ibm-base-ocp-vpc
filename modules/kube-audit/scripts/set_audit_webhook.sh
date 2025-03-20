@@ -85,7 +85,7 @@ CLIENT_KEY=${CLIENT_KEY//$'\n'/\\n}
 JSON_BODY="{\"auditServer\": \"$AUDIT_SERVER\",\"caCertificate\": \"$CERTIFICATE_AUTHORITY\",\"clientCertificate\": \"$CLIENT_CERT\",\"clientKey\": \"$CLIENT_KEY\",\"policy\": \"$POLICY\"}"
 response=$(curl_request "v1/clusters/$CLUSTER_ID/apiserverconfigs/auditwebhook" "$JSON_BODY")
 echo "$response"
-sleep 30
+sleep 60
 
 response2=$(curl_request "v1/logging/$CLUSTER_ID/refresh" "")
 echo "$response2"
