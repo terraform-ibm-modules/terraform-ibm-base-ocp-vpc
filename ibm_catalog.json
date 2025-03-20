@@ -1,7 +1,7 @@
 {
   "products": [
     {
-      "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc",
+      "name": "deploy-arch-ibm-ocp-vpc",
       "label": "[Add-ons Beta] Cloud automation for Red Hat OpenShift Container Platform on VPC",
       "product_kind": "solution",
       "tags": [
@@ -31,7 +31,7 @@
       ],
       "flavors": [
         {
-          "label": "fully-configurable",
+          "label": "Fully configurable",
           "name": "fully-configurable",
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
@@ -72,7 +72,7 @@
             }
           ],
           "architecture": {
-            "descriptions": "This architecture creates a fully-configurable single zone OCP VPC cluster.",
+            "descriptions": "This architecture creates a fully-configurable OCP VPC cluster.",
             "features": [
               {
                 "title": "Creates an OCP VPC cluster",
@@ -86,7 +86,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/qs/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture creates a fully-configurable single zone OCP VPC cluster."
+                "description": "This architecture creates a fully-configurable OCP VPC cluster."
               }
             ]
           },
@@ -185,17 +185,7 @@
               "key": "enable_ocp_console"
             },
             {
-              "key": "force_delete_storage",
-              "options": [
-                {
-                  "displayname": "True",
-                  "value": "true"
-                },
-                {
-                  "displayname": "False",
-                  "value": "false"
-                }
-              ]
+              "key": "force_delete_storage"
             },
             {
               "key": "worker_pools"
@@ -336,12 +326,12 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
-              "id": "7618f9bb-8a53-4c50-8d07-8bcc05be89d8",
+              "id": "6c4e414c-cacc-4b52-83f0-43d7bb596e47",
               "version": "^v1.0.0",
               "flavors": [
                 "fully-configurable"
               ],
-              "catalog_id": "7b691e02-a073-4e06-b52e-390bb510cd9e",
+              "catalog_id": "9e5ca4a6-62ce-4d07-987e-f132f969d886",
               "optional": true,
               "on_by_default": true,
               "ignore_auto_referencing": [

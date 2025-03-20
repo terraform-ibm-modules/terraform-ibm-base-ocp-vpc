@@ -158,7 +158,7 @@ variable "number_of_lbs" {
   nullable    = false
   validation {
     condition     = var.number_of_lbs >= 1
-    error_message = "Please set the number_of_lbs to a minimum of."
+    error_message = "Please set the number_of_lbs to a minimum of 1."
   }
 }
 

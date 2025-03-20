@@ -100,7 +100,7 @@ variable "manage_all_addons" {
   type        = bool
   default     = false
   nullable    = false
-  description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources."
+  description = "Instructs deployable architecture to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this DA will destroy any addons that were installed by other sources."
 }
 
 variable "worker_pools_taints" {
@@ -179,13 +179,13 @@ variable "existing_vpc_id" {
 variable "use_private_endpoint" {
   type        = bool
   description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
-  default     = false
+  default     = true
 }
 
 variable "disable_public_endpoint" {
   type        = bool
   description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`."
-  default     = false
+  default     = true
 }
 
 variable "cluster_config_endpoint_type" {
@@ -198,7 +198,7 @@ variable "cluster_config_endpoint_type" {
 variable "disable_outbound_traffic_protection" {
   type        = bool
   description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
-  default     = true
+  default     = false
 }
 
 variable "verify_worker_network_readiness" {
