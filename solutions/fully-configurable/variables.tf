@@ -14,9 +14,15 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
+  nullable    = true
   validation {
-    error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
-    condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
+    condition = (var.prefix == null ? true :
+      alltrue([
+        can(regex("^[a-z]{0,1}[-a-z0-9]{0,14}[a-z0-9]{0,1}$", var.prefix)),
+        length(regexall("^.*--.*", var.prefix)) == 0
+      ])
+    )
+    error_message = "Prefix must begin with a lowercase letter, contain only lowercase letters, numbers, and - characters. Prefixes must end with a lowercase letter or number and be 16 or fewer characters."
   }
 }
 
@@ -30,7 +36,7 @@ variable "region" {
   description = "Region where resources are created."
 }
 
-variable "resource_tags" {
+variable "cluster_resource_tags" {
   type        = list(string)
   description = "Metadata labels describing this cluster deployment, i.e. test."
   default     = []
@@ -122,14 +128,64 @@ variable "allow_default_worker_pool_replacement" {
   nullable    = false
 }
 
+variable "machine_type" {
+  type        = string
+  description = ""
+}
+
+variable "workers_per_zone" {
+  type        = number
+  description = ""
+}
+
+variable "operating_system" {
+  type        = string
+  description = ""
+}
+
+variable "default_worker_pool_labels" {
+  type        = map(string)
+  description = ""
+  default     = {}
+}
+
+variable "default_worker_pool_secondary_storage" {
+  type        = string
+  description = ""
+  default     = null
+}
+
+variable "enable_autoscaling_for_default_pool" {
+  type        = bool
+  description = "value"
+  default     = false
+}
+
+variable "default_pool_minimum_number_of_nodes" {
+  type        = number
+  description = "value"
+  default     = 1
+}
+
+variable "default_pool_maximum_number_of_nodes" {
+  type        = number
+  description = "value"
+  default     = 3
+}
+
+variable "additional_security_group_ids" {
+  type        = list(string)
+  description = ""
+  default     = []
+}
+
 variable "worker_pools" {
   type = list(object({
-    subnet_prefix = optional(string)
-    vpc_subnets = optional(list(object({
+    vpc_subnets = list(object({
       id         = string
       zone       = string
       cidr_block = string
-    })))
+    }))
     pool_name         = string
     machine_type      = string
     workers_per_zone  = number
@@ -148,15 +204,12 @@ variable "worker_pools" {
     additional_security_group_ids = optional(list(string))
   }))
   description = "List of worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
-  default = [
-    {
-      subnet_prefix    = "default"
-      pool_name        = "default"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      operating_system = "RHEL_9_64"
-    }
-  ]
+  default     = []
+
+  # User cannot set default pool name
+  # validation {
+  #   condition = false
+  # }
 }
 
 ##############################################################
@@ -176,6 +229,12 @@ variable "existing_vpc_id" {
   type        = string
   description = "Id of the VPC instance where this cluster will be provisioned."
 }
+
+variable "existing_subnet_ids" {
+  type        = list(string)
+  description = "Id of the VPC instance where this cluster will be provisioned."
+}
+
 variable "use_private_endpoint" {
   type        = bool
   description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
@@ -255,16 +314,6 @@ variable "additional_vpe_security_group_ids" {
   default = {}
 }
 
-variable "vpc_subnets" {
-  type = map(list(object({
-    id         = string
-    zone       = string
-    cidr_block = string
-  })))
-  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-vpc-subnets)"
-  default     = {}
-}
-
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
@@ -278,53 +327,145 @@ variable "provider_visibility" {
 ##############################################################
 # KMS Related
 ##############################################################
-
-variable "enable_kms_encryption" {
-  description = "Set to `true` to enable KMS encryption. If set to `true`, a value must be passed for either `existing_kms_instance_crn` or `existing_kms_cluster_key_crn`."
+variable "kms_encryption_enabled_cluster" {
+  description = "Set to true to enable KMS encryption on the Object Storage bucket created for the Security and Compliance Center instance. When set to true, a value must be passed for either `existing_cluster_kms_key_crn` or `existing_kms_instance_crn` (to create a new key). Can not be set to true if passing a value for `existing_scc_instance_crn`."
   type        = bool
   default     = false
+  nullable    = false
 
   validation {
-    condition = !var.enable_kms_encryption || (
-      var.enable_kms_encryption && (
-        (var.existing_kms_instance_crn != null && var.existing_kms_cluster_key_crn == null) ||
-        (var.existing_kms_instance_crn == null && var.existing_kms_cluster_key_crn != null)
-    ))
-    error_message = "If enable_kms_encryption is set to true, you must provide a value for either existing_kms_instance_crn or existing_kms_cluster_key_crn, but not both."
+    condition     = var.existing_kms_instance_crn != null ? var.kms_encryption_enabled_cluster : true
+    error_message = "If passing a value for 'existing_kms_instance_crn', you should set 'kms_encryption_enabled_cluster' to true."
+  }
+
+  validation {
+    condition     = var.existing_cluster_kms_key_crn != null ? var.kms_encryption_enabled_cluster : true
+    error_message = "If passing a value for 'existing_cluster_kms_key_crn', you should set 'kms_encryption_enabled_cluster' to true."
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled_cluster ? ((var.existing_cluster_kms_key_crn != null || var.existing_kms_instance_crn != null) ? true : false) : true
+    error_message = "Either 'existing_cluster_kms_key_crn' or 'existing_kms_instance_crn' is required if 'kms_encryption_enabled_cluster' is set to true."
   }
 }
+
 variable "existing_kms_instance_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required only when creating a new encryption key and key ring which will be used to encrypt OCP cluster data. To use an existing key, pass values for `existing_kms_cluster_key_crn`."
   default     = null
+  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_scc_cos_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`. A value should not be passed passing existing SCC instance using the `existing_scc_instance_crn` input."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
+      var.existing_kms_instance_crn == null,
+    ])
+    error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' in not valid."
+  }
 }
 
-variable "existing_kms_cluster_key_crn" {
+variable "force_delete_kms_key" {
+  type        = bool
+  default     = false
+  nullable    = false
+  description = "If creating a new KMS key, toggle whether is should be force deleted or not on undeploy."
+}
+
+variable "existing_cluster_kms_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input variable."
   default     = null
-}
+  description = "The CRN of an existing KMS key to use to encrypt the Security and Compliance Center Object Storage bucket. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key, or for the `existing_scc_cos_bucket_name` variable to use an existing bucket."
 
-variable "ocp_cluster_key_ring_name" {
-  type        = string
-  default     = "ocp-cluster-key-ring"
-  description = "The name for the key ring created for the OCP cluster. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
+  validation {
+    condition = anytrue([
+      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_cluster_kms_key_crn)),
+      var.existing_cluster_kms_key_crn == null,
+    ])
+    error_message = "The provided KMS key CRN in the input 'existing_cluster_kms_key_crn' in not valid."
+  }
 
-variable "ocp_cluster_key_name" {
-  type        = string
-  default     = "ocp-cluster-key"
-  description = "The name for the key created for the OCP cluster key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  validation {
+    condition     = var.existing_cluster_kms_key_crn != null ? var.existing_kms_instance_crn == null : true
+    error_message = "A value should not be passed for 'existing_kms_instance_crn' when passing an existing key value using the 'existing_cluster_kms_key_crn' input."
+  }
+
 }
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
+  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_cluster` is true"
   default     = "private"
+  nullable    = false
   validation {
     condition     = can(regex("public|private", var.kms_endpoint_type))
     error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
+}
+
+variable "cluster_key_ring_name" {
+  type        = string
+  default     = "scc-cos-key-ring"
+  description = "The name for the key ring created for the Security and Compliance Center Object Storage bucket key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "cluster_key_name" {
+  type        = string
+  default     = "scc-cos-key"
+  description = "The name for the key created for the Security and Compliance Center Object Storage bucket. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "ibmcloud_kms_api_key" {
+  type        = string
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the Security and Compliance Centre instance. Leave this input empty if the same account owns both instances."
+  sensitive   = true
+  default     = null
+}
+
+variable "kms_encryption_enabled_boot_volume" {
+  type        = bool
+  description = "Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok"
+  default     = false
+  nullable    = false
+
+  validation {
+    condition     = var.existing_kms_instance_crn != null ? var.kms_encryption_enabled_boot_volume : true
+    error_message = "If passing a value for 'existing_kms_instance_crn', you should set 'kms_encryption_enabled_boot_volume' to true."
+  }
+
+  validation {
+    condition     = var.existing_boot_volume_kms_key_crn != null ? var.kms_encryption_enabled_boot_volume : true
+    error_message = "If passing a value for 'existing_boot_volume_kms_key_crn', you should set 'kms_encryption_enabled_boot_volume' to true."
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled_boot_volume ? ((var.existing_boot_volume_kms_key_crn != null || var.existing_kms_instance_crn != null) ? true : false) : true
+    error_message = "Either 'existing_boot_volume_kms_key_crn' or 'existing_kms_instance_crn' is required if 'kms_encryption_enabled_boot_volume' is set to true."
+  }
+}
+
+variable "existing_boot_volume_kms_key_crn" {
+  type        = string
+  default     = null
+  description = "The CRN of an existing KMS key to use to encrypt the the block storage volumes for VPC. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
+      var.existing_boot_volume_kms_key_crn == null,
+    ])
+    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' in not valid."
+  }
+}
+
+variable "boot_volume_key_ring_name" {
+  type        = string
+  default     = "boot-volume-key-ring"
+  description = "The name for the key ring created for the block storage volumes key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "boot_volume_key_name" {
+  type        = string
+  default     = "boot-volume-key"
+  description = "The name for the key created for the block storage volumes. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 ##############################################################

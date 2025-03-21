@@ -191,7 +191,7 @@
               "key": "worker_pools"
             },
             {
-              "key": "vpc_subnets"
+              "key": "additional_security_group_ids"
             },
             {
               "key": "addons"
@@ -280,25 +280,25 @@
               ]
             },
             {
-              "key": "enable_kms_encryption"
+              "key": "boot_volume_key_name"
             },
             {
               "key": "existing_kms_instance_crn"
             },
             {
-              "key": "existing_kms_cluster_key_crn"
+              "key": "boot_volume_key_ring_name"
             },
             {
-              "key": "ocp_cluster_key_ring_name"
+              "key": "cluster_key_name"
             },
             {
-              "key": "ocp_cluster_key_name"
+              "key": "cluster_key_ring_name"
             },
             {
               "key": "kms_endpoint_type"
             },
             {
-              "key": "resource_tags",
+              "key": "cluster_resource_tags",
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
@@ -318,6 +318,51 @@
                   "type": "string"
                 }
               }
+            },
+            {
+              "key": "default_pool_maximum_number_of_nodes"
+            },
+            {
+              "key": "default_pool_minimum_number_of_nodes"
+            },
+            {
+              "key": "default_worker_pool_labels"
+            },
+            {
+              "key": "default_worker_pool_secondary_storage"
+            },
+            {
+              "key": "enable_autoscaling_for_default_pool"
+            },
+            {
+              "key": "existing_boot_volume_kms_key_crn"
+            },
+            {
+              "key": "existing_cluster_kms_key_crn"
+            },
+            {
+              "key": "existing_subnet_ids"
+            },
+            {
+              "key": "force_delete_kms_key"
+            },
+            {
+              "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "kms_encryption_enabled_boot_volume"
+            },
+            {
+              "key": "kms_encryption_enabled_cluster"
+            },
+            {
+              "key": "machine_type"
+            },
+            {
+              "key": "operating_system"
+            },
+            {
+              "key": "workers_per_zone"
             },
             {
               "key": "cbr_rules"
