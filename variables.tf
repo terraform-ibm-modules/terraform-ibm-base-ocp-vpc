@@ -343,9 +343,10 @@ variable "cluster_config_endpoint_type" {
 }
 
 variable "enable_ocp_console" {
-  description = "Flag to specify whether to enable or disable the OpenShift console."
+  description = "Flag to specify whether to enable or disable the OpenShift console. If deploying a private cluster from a machine that does not have access to private endpoints, set this as `null` to avoid failures. Allowed values are `true` to enable the console, `false` to disable the console and `null` to retain the current setting unless explicitly set to `true` or `false`."
   type        = bool
-  default     = true
+  default     = null
+  nullable    = true
 }
 
 ##############################################################################

@@ -299,7 +299,6 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.enable_ocp_console || var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
@@ -452,24 +451,25 @@ resource "null_resource" "confirm_network_healthy" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
     }
   }
 }
 
 ##############################################################################
-# OCP Console Patch enablement
+# Enable or Disable OCP Console Patch
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
 
   depends_on = [null_resource.confirm_network_healthy]
-
-  count = var.enable_ocp_console ? 1 : 0
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+      KUBECONFIG         = data.ibm_container_cluster_config.cluster_config.config_file_path
       ENABLE_OCP_CONSOLE = var.enable_ocp_console
     }
   }
@@ -543,7 +543,7 @@ resource "null_resource" "config_map_status" {
     command     = "${path.module}/scripts/get_config_map_status.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
     }
   }
 }
