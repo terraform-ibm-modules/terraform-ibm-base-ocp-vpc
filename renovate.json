@@ -1,4 +1,42 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>terraform-ibm-modules/common-dev-assets:commonRenovateConfig"]
+  "extends": ["github>terraform-ibm-modules/common-dev-assets:commonRenovateConfig"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update docker image digest to latest in variables.tf",
+      "fileMatch": ["variables.tf$"],
+      "datasourceTemplate": "docker",
+      "matchStrings": [
+        "default\\s*=\\s*\"(?<currentValue>[a-f0-9]+)@(?<currentDigest>sha256:[a-f0-9]+)\"\\s*# datasource: (?<depName>[^\\s]+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "description": "Update helm chart version to latest in variables.tf",
+      "fileMatch": ["variables.tf$"],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*?default\\s*=\\s*\"(?<currentValue>.*)\"\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["regex"],
+      "matchUpdateTypes": ["patch"],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchUpdateTypes": ["minor"],
+      "semanticCommitType": "feat"
+    },
+    {
+      "description": "Do not allow major version updates - these should be done manually to ensure no breaking changes",
+      "matchManagers": ["regex"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ]
 }

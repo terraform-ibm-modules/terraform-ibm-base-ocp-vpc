@@ -15,7 +15,7 @@ data "ibm_container_vpc_cluster" "cluster" {
 
 locals {
   # tflint-ignore: terraform_unused_declarations
-  validate_existing_vpc_id = tonumber(regex("^([0-9]+\\.[0-9]+)", data.ibm_container_vpc_cluster.cluster.kube_version)[0]) > "4.15" ? true : tobool("Kubernetes API server audit logs forwarding is only supported in ocp versions 4.15 and later.")
+  validate_existing_vpc_id = tonumber(regex("^([0-9]+\\.[0-9]+)", data.ibm_container_vpc_cluster.cluster.kube_version)[0]) > "4.14" ? true : tobool("Kubernetes API server audit logs forwarding is only supported in ocp versions 4.15 and later.")
 }
 
 resource "null_resource" "set_audit_log_policy" {
@@ -35,9 +35,7 @@ resource "null_resource" "set_audit_log_policy" {
 ########################################################################################################################
 
 locals {
-  kube_audit_chart_location      = "${path.module}/helm-charts/kube-audit"
-  audit_webhook_listener_version = "latest"
-  image_reference                = var.audit_webhook_listener_image_digest != null ? "${var.audit_webhook_listener_image}@${var.audit_webhook_listener_image_digest}" : "${var.audit_webhook_listener_image}:${local.audit_webhook_listener_version}"
+  kube_audit_chart_location = "${path.module}/helm-charts/kube-audit"
 }
 
 resource "helm_release" "kube_audit" {
@@ -61,9 +59,15 @@ resource "helm_release" "kube_audit" {
     value = var.audit_namespace
   }
   set {
-    name  = "image"
+    name  = "image.name"
     type  = "string"
-    value = local.image_reference
+    value = var.audit_webhook_listener_image
+  }
+
+  set {
+    name  = "image.tag"
+    type  = "string"
+    value = var.audit_webhook_listener_image_version
   }
 
   provisioner "local-exec" {

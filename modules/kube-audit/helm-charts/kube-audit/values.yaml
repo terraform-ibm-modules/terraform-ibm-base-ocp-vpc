@@ -3,4 +3,6 @@ metadata:
   name: "ibmcloud-kube-audit"
   namespace: "ibm-kube-audit"
 
-image: "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
+image:
+  name: "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
+  tag: ""
