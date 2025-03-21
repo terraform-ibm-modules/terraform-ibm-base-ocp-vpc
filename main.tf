@@ -544,7 +544,7 @@ resource "null_resource" "config_map_status" {
     command     = "${path.module}/scripts/get_config_map_status.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
 }
