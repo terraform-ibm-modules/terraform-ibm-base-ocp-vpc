@@ -486,7 +486,7 @@ data "ibm_container_addons" "existing_addons" {
 
 locals {
   # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
-  csi_driver_version = [
+  csi_driver_version = anytrue([for key, value in var.addons : true if key == "vpc-block-csi-driver" && value != null]) ? [var.addons["vpc-block-csi-driver"]] : [
     for addon in data.ibm_container_addons.existing_addons.addons :
     addon.version if addon.name == "vpc-block-csi-driver"
   ]
