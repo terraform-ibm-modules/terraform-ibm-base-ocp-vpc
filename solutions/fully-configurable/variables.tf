@@ -403,13 +403,13 @@ variable "kms_endpoint_type" {
 
 variable "cluster_key_ring_name" {
   type        = string
-  default     = "scc-cos-key-ring"
+  default     = "cluster-key-ring"
   description = "The name for the key ring created for the Security and Compliance Center Object Storage bucket key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "cluster_key_name" {
   type        = string
-  default     = "scc-cos-key"
+  default     = "cluster-key"
   description = "The name for the key created for the Security and Compliance Center Object Storage bucket. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
@@ -427,7 +427,7 @@ variable "kms_encryption_enabled_boot_volume" {
   nullable    = false
 
   validation {
-    condition     = var.existing_kms_instance_crn != null ? var.kms_encryption_enabled_boot_volume : true
+    condition     = var.existing_kms_instance_crn != null ? var.kms_encryption_enabled_boot_volume || var.kms_encryption_enabled_cluster : true
     error_message = "If passing a value for 'existing_kms_instance_crn', you should set 'kms_encryption_enabled_boot_volume' to true."
   }
 

@@ -34,18 +34,19 @@ module "existing_boot_volume_kms_key_crn_parser" {
 
 locals {
   prefix                    = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
-  cluster_kms_region        = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].region : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].region : null
-  cluster_existing_kms_guid = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].service_instance : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].service_instance : null
-  cluster_kms_account_id    = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].account_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].account_id : null
-  cluster_kms_key_id        = var.existing_kms_instance_crn != null ? module.kms[0].keys[format("%s.%s", local.cluster_key_ring_name, local.cluster_key_name)].key_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].resource : null
+  cluster_name              = "${local.prefix}${var.cluster_name}"
+  cluster_kms_region        = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.existing_kms_crn_parser[0].region : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].region : null
+  cluster_existing_kms_guid = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.existing_kms_crn_parser[0].service_instance : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].service_instance : null
+  cluster_kms_account_id    = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.existing_kms_crn_parser[0].account_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].account_id : null
+  cluster_kms_key_id        = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.kms[0].keys[format("%s.%s", local.cluster_key_ring_name, local.cluster_key_name)].key_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].resource : null
   cluster_key_ring_name     = "${local.prefix}${var.cluster_key_ring_name}"
   cluster_key_name          = "${local.prefix}${var.cluster_key_name}"
 
   boot_volume_key_ring_name     = "${local.prefix}${var.boot_volume_key_ring_name}"
   boot_volume_key_name          = "${local.prefix}${var.boot_volume_key_name}"
-  boot_volume_existing_kms_guid = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].service_instance : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].service_instance : null
-  boot_volume_kms_account_id    = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].account_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].account_id : null
-  boot_volume_kms_key_id        = var.existing_kms_instance_crn != null ? module.kms[0].keys[format("%s.%s", local.boot_volume_key_ring_name, local.boot_volume_key_name)].key_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].resource : null
+  boot_volume_existing_kms_guid = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.existing_kms_crn_parser[0].service_instance : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].service_instance : null
+  boot_volume_kms_account_id    = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.existing_kms_crn_parser[0].account_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].account_id : null
+  boot_volume_kms_key_id        = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.kms[0].keys[format("%s.%s", local.boot_volume_key_ring_name, local.boot_volume_key_name)].key_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].resource : null
 
   kms_config = var.kms_encryption_enabled_cluster ? {
     crk_id           = local.cluster_kms_key_id
@@ -55,20 +56,7 @@ locals {
   } : null
 }
 
-
-# KMS root key for cluster or boot volume
-module "kms" {
-  providers = {
-    ibm = ibm.kms
-  }
-  count                       = (var.kms_encryption_enabled_boot_volume || var.kms_encryption_enabled_cluster) && var.existing_cluster_kms_key_crn == null ? 1 : 0
-  source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "4.21.2"
-  create_key_protect_instance = false
-  region                      = local.cluster_kms_region
-  existing_kms_instance_crn   = var.existing_kms_instance_crn
-  key_ring_endpoint_type      = var.kms_endpoint_type
-  key_endpoint_type           = var.kms_endpoint_type
+locals {
   keys = [
     var.kms_encryption_enabled_cluster ? {
       key_ring_name     = local.cluster_key_ring_name
@@ -97,6 +85,24 @@ module "kms" {
       ]
     } : null
   ]
+}
+
+
+# KMS root key for cluster or boot volume
+module "kms" {
+  providers = {
+    ibm = ibm.kms
+  }
+  count                       = (var.kms_encryption_enabled_boot_volume || var.kms_encryption_enabled_cluster) && var.existing_cluster_kms_key_crn == null ? 1 : 0
+  source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
+  version                     = "4.21.2"
+  create_key_protect_instance = false
+  region                      = local.cluster_kms_region
+  existing_kms_instance_crn   = var.existing_kms_instance_crn
+  key_ring_endpoint_type      = var.kms_endpoint_type
+  key_endpoint_type           = var.kms_endpoint_type
+  keys = [for key in local.keys :
+  key if key != null]
 }
 
 ########################################################################################################################
@@ -155,7 +161,7 @@ module "ocp_base" {
   resource_group_id                     = module.resource_group.resource_group_id
   region                                = var.region
   tags                                  = var.cluster_resource_tags
-  cluster_name                          = try("${local.prefix}-${var.cluster_name}", var.cluster_name)
+  cluster_name                          = local.cluster_name
   force_delete_storage                  = var.force_delete_storage
   use_existing_cos                      = true
   existing_cos_id                       = var.existing_cos_instance_crn
