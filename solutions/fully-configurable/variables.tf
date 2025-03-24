@@ -130,52 +130,52 @@ variable "allow_default_worker_pool_replacement" {
 
 variable "machine_type" {
   type        = string
-  description = ""
+  description = "The machine type for worker nodes."
 }
 
 variable "workers_per_zone" {
   type        = number
-  description = ""
+  description = "Number of worker nodes in each zone of the cluster."
 }
 
 variable "operating_system" {
   type        = string
-  description = ""
+  description = "The operating system installed on the worker nodes."
 }
 
 variable "default_worker_pool_labels" {
   type        = map(string)
-  description = ""
+  description = "A set of key-value labels assigned to the worker pool for identification."
   default     = {}
 }
 
 variable "default_worker_pool_secondary_storage" {
   type        = string
-  description = ""
+  description = "The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning."
   default     = null
 }
 
 variable "enable_autoscaling_for_default_pool" {
   type        = bool
-  description = "value"
+  description = "Set `true` to enable automatic scaling of worker based on workload demand."
   default     = false
 }
 
 variable "default_pool_minimum_number_of_nodes" {
   type        = number
-  description = "value"
+  description = "The minimum number of worker nodes allowed in the pool, ensuring at least one worker is always running."
   default     = 1
 }
 
 variable "default_pool_maximum_number_of_nodes" {
   type        = number
-  description = "value"
+  description = "The maximum number of worker nodes allowed in the pool, preventing the pool from exceeding three workers."
   default     = 3
 }
 
 variable "additional_security_group_ids" {
   type        = list(string)
-  description = ""
+  description = "A list of security group IDs that are attached to the worker nodes for additional network security controls."
   default     = []
 }
 
