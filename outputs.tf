@@ -8,6 +8,11 @@ output "cluster_id" {
   depends_on  = [null_resource.confirm_network_healthy]
 }
 
+output "cluster_account_id" {
+  description = "Account ID of cluster created"
+  value       = data.ibm_iam_account_settings.iam_account_settings.account_id
+}
+
 output "cluster_name" {
   description = "Name of the created cluster"
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name
