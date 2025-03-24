@@ -59,11 +59,11 @@
             "dependencies": [
               {
                 "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc",
-                "catalog_id": "586d1ba8-ffac-4bc1-b868-a2363e894c51",
+                "catalog_id": "ec338098-f5fd-4482-abcf-b4f12b3d825c",
                 "flavors": [
                   "fully-configurable"
                 ],
-                "id": "148cd948-0628-4ee6-8625-992edc084413",
+                "id": "f91f9f9f-e298-498d-ba0d-ec3013a68657",
                 "ignore_auto_referencing": [
                   "*"
                 ],
