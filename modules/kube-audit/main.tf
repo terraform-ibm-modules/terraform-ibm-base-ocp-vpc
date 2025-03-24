@@ -1,6 +1,6 @@
-
 data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = var.cluster_id
+  config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
   resource_group_id = var.cluster_resource_group_id
   endpoint_type     = var.cluster_config_endpoint_type != "default" ? var.cluster_config_endpoint_type : null # null value represents default
