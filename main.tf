@@ -47,7 +47,7 @@ locals {
   # get the total workers per pool
   workers_per_pool = {
     for pool in var.worker_pools :
-    pool.pool_name => sum([for zone in pool.zones : pool.workers_per_zone])
+    pool.pool_name => length(pool.vpc_subnets) * pool.workers_per_zone
   }
 
   # retrieve worker specs (CPU & RAM) for all worker pools
