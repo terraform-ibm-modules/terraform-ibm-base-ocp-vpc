@@ -325,27 +325,26 @@ variable "addons" {
   default     = {}
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || (tonumber(local.ocp_version_num) >= 4.16 && tonumber(local.ocp_version_num) < 4.18)
-    error_message = "OCP AI add-on requires OCP version >= 4.16.0 and < 4.18.0."
+    condition     = lookup(var.addons, "openshift-ai", null) == null || (tonumber(local.ocp_version_num) >= 4.16)
+    error_message = "OCP AI add-on requires OCP version >= 4.16.0"
   }
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || local.default_pool.workers_per_zone >= 2
-    error_message = "OCP AI add-on requires at least 2 worker nodes."
+    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
+    error_message = "OCP AI add-on requires at least 2 worker nodes in each worker pool."
   }
 
-  # TODO: VERIFY THIS ONE (See if other operators will be part of addon list & if this comes into play after installing addon, then use precondition)
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
+    error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
+  }
+
   validation {
     condition = lookup(var.addons, "openshift-ai", null) == null || alltrue([
       for dependency in ["openshift-pipelines", "node-feature-discovery", "nvidia-gpu-operator"] :
       lookup(var.addons, dependency, null) == null || !var.disable_outbound_traffic_protection
     ])
     error_message = "Outbound traffic protection must be disabled if OpenShift AI is used with OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators."
-  }
-
-  validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || (local.default_worker_cpu_count >= 8 && local.default_worker_ram_count >= 32)
-    error_message = "To install OCP AI add-on, all worker nodes in the cluster must have a minimum configuration of 8-core CPU and 32GB memory."
   }
 
 }

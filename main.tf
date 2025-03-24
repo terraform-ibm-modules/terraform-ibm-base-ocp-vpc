@@ -39,10 +39,25 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+}
 
-  default_worker_specs     = split(".", local.default_pool.machine_type)[1]
-  default_worker_cpu_count = tonumber(split("x", local.default_worker_specs)[0])
-  default_worker_ram_count = tonumber(split("x", local.default_worker_specs)[1])
+# Local block to verify validations for OCP AI Addon.
+locals {
+
+  # get the total workers per pool
+  workers_per_pool = {
+    for pool in var.worker_pools :
+    pool.pool_name => sum([for zone in pool.zones : pool.workers_per_zone])
+  }
+
+  # retrieve worker specs (CPU & RAM) for all worker pools
+  worker_specs = {
+    for pool in var.worker_pools :
+    pool.pool_name => {
+      cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
+      ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+    }
+  }
 }
 
 # Separate local block to handle os validations
