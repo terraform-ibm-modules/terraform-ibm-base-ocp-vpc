@@ -39,6 +39,10 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+
+  default_worker_specs     = split(".", local.default_pool.machine_type)[1]
+  default_worker_cpu_count = tonumber(split("x", local.default_worker_specs)[0])
+  default_worker_ram_count = tonumber(split("x", local.default_worker_specs)[1])
 }
 
 # Separate local block to handle os validations
@@ -299,7 +303,7 @@ resource "null_resource" "reset_api_key" {
 ##############################################################################
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.enable_ocp_console || var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
+  count             = var.enable_ocp_console != null || var.verify_worker_network_readiness || lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   cluster_name_id   = local.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/374
@@ -458,14 +462,11 @@ resource "null_resource" "confirm_network_healthy" {
 }
 
 ##############################################################################
-# OCP Console Patch enablement
+# Enable or Disable OCP Console Patch
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
-
+  count      = var.enable_ocp_console != null ? 1 : 0
   depends_on = [null_resource.confirm_network_healthy]
-  triggers = {
-    enable_ocp_console = var.enable_ocp_console
-  }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]
@@ -487,7 +488,7 @@ data "ibm_container_addons" "existing_addons" {
 
 locals {
   # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
-  csi_driver_version = [
+  csi_driver_version = anytrue([for key, value in var.addons : true if key == "vpc-block-csi-driver" && value != null]) ? [var.addons["vpc-block-csi-driver"]] : [
     for addon in data.ibm_container_addons.existing_addons.addons :
     addon.version if addon.name == "vpc-block-csi-driver"
   ]
@@ -515,6 +516,13 @@ resource "ibm_container_addons" "addons" {
     content {
       name    = addons.key
       version = addons.value
+    }
+  }
+  # OCP AI addon Validations
+  lifecycle {
+    precondition {
+      condition     = length([for addon in data.ibm_container_addons.existing_addons.addons : addon if addon.name == "openshift-ai"]) == 0
+      error_message = "OCP AI add-on is already installed."
     }
   }
 

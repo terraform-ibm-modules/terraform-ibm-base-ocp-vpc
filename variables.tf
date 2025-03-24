@@ -318,10 +318,36 @@ variable "addons" {
     cluster-autoscaler        = optional(string)
     vpc-block-csi-driver      = optional(string)
     ibm-storage-operator      = optional(string)
+    openshift-ai              = optional(string)
   })
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   nullable    = false
   default     = {}
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || (tonumber(local.ocp_version_num) >= 4.16 && tonumber(local.ocp_version_num) < 4.18)
+    error_message = "OCP AI add-on requires OCP version >= 4.16.0 and < 4.18.0."
+  }
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || local.default_pool.workers_per_zone >= 2
+    error_message = "OCP AI add-on requires at least 2 worker nodes."
+  }
+
+  # TODO: VERIFY THIS ONE (See if other operators will be part of addon list & if this comes into play after installing addon, then use precondition)
+  validation {
+    condition = lookup(var.addons, "openshift-ai", null) == null || alltrue([
+      for dependency in ["openshift-pipelines", "node-feature-discovery", "nvidia-gpu-operator"] :
+      lookup(var.addons, dependency, null) == null || !var.disable_outbound_traffic_protection
+    ])
+    error_message = "Outbound traffic protection must be disabled if OpenShift AI is used with OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators."
+  }
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || (local.default_worker_cpu_count >= 8 && local.default_worker_ram_count >= 32)
+    error_message = "To install OCP AI add-on, all worker nodes in the cluster must have a minimum configuration of 8-core CPU and 32GB memory."
+  }
+
 }
 
 variable "manage_all_addons" {
@@ -343,9 +369,10 @@ variable "cluster_config_endpoint_type" {
 }
 
 variable "enable_ocp_console" {
-  description = "Flag to specify whether to enable or disable the OpenShift console."
+  description = "Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module will not modify the setting currently set on the cluster. Bare in mind when setting this to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint."
   type        = bool
-  default     = true
+  default     = null
+  nullable    = true
 }
 
 ##############################################################################
