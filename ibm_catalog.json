@@ -87,7 +87,7 @@
                         "operating_system" : "RHEL_9_64"
                       },
                       {
-                        "subnet_prefix"    : "gpu",
+                        "subnet_prefix"    : "default",
                         "pool_name"        : "GPU",
                         "machine_type"     : "gx3.16x80.l4",
                         "workers_per_zone" : 2,
