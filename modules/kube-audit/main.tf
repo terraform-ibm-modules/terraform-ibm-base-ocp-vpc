@@ -79,6 +79,12 @@ resource "helm_release" "kube_audit" {
   }
 }
 
+# wait for the kube-audit resources.
+resource "time_sleep" "wait_for_kube_audit" {
+  depends_on      = [helm_release.kube_audit]
+  create_duration = "120s"
+}
+
 locals {
   audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/${var.audit_deployment_name}-service/proxy/post"
 }
@@ -90,7 +96,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [helm_release.kube_audit]
+  depends_on = [time_sleep.wait_for_kube_audit]
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_audit_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.cluster_config_endpoint_type != "default" ? "verbose" : "default"}"
     interpreter = ["/bin/bash", "-c"]
