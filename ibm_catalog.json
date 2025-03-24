@@ -1,108 +1,575 @@
 {
-    "products": [
-      {
-        "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc-ai",
-        "label": "[Add-ons Beta] Cloud automation for Red Hat OpenShift Container Platform with AI addon on VPC",
-        "product_kind": "solution",
-        "tags": [
-          "containers",
-          "target_terraform",
-          "terraform",
-          "solution",
-          "support_ibm",
-          "ibm_created"
-        ],
-        "keywords": [
-          "terraform",
-          "ocp",
-          "cluster",
-          "red_hat_openshift"
-        ],
-        "short_description": "Provisions a Red Hat OpenShift VPC cluster with AI addon on IBM Cloud",
-        "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster along with AI addon.",
-        "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
-        "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
-        "provider_name": "IBM",
-        "features": [
-          {
-            "title": "Create a Red Hat OpenShift VPC cluster with AI addon on IBM Cloud",
-            "description": "Create a Red Hat OpenShift VPC cluster with AI addon on IBM Cloud."
-          }
-        ],
-        "flavors": [
-          {
-            "label": "ocp-ai",
-            "name": "ocp-ai",
-            "install_type": "fullstack",
-            "working_directory": "solutions/ocp-ai",
-            "architecture": {
-              "descriptions": "This architecture creates a single zone OCP VPC cluster.",
-              "features": [
-                {
-                  "title": "Creates an OCP VPC cluster with AI addon",
-                  "description": "Creates an OCP VPC cluster with AI addon"
-                }
+  "products": [
+    {
+      "name": "deploy-arch-ibm-ocp-vpc",
+      "label": "[Add-ons Beta] Cloud automation for Red Hat OpenShift Container Platform on VPC",
+      "product_kind": "solution",
+      "tags": [
+        "containers",
+        "target_terraform",
+        "terraform",
+        "solution",
+        "support_ibm",
+        "ibm_created"
+      ],
+      "keywords": [
+        "terraform",
+        "ocp",
+        "cluster",
+        "red_hat_openshift"
+      ],
+      "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
+      "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
+      "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
+      "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
+      "provider_name": "IBM",
+      "features": [
+        {
+          "title": "Create a Red Hat OpenShift VPC cluster on IBM Cloud",
+          "description": "Create a Red Hat OpenShift VPC cluster on IBM Cloud."
+        }
+      ],
+      "flavors": [
+        {
+          "label": "Fully configurable",
+          "name": "fully-configurable",
+          "install_type": "fullstack",
+          "working_directory": "solutions/fully-configurable",
+          "iam_permissions": [
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "diagrams": [
+              "service_name": "iam-identity"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "hs-crypto"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "kms"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "cloud-object-storage"
+            },
+            {
+              "service_name": "containers-kubernetes",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ]
+            }
+          ],
+          "architecture": {
+            "descriptions": "This architecture creates a fully-configurable OCP VPC cluster.",
+            "features": [
+              {
+                "title": "Creates an OCP VPC cluster",
+                "description": "Creates an OCP VPC cluster"
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Red Hat OpenShift VPC cluster for IBM Cloud.",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/qs/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This architecture creates a fully-configurable OCP VPC cluster."
+              }
+            ]
+          },
+          "configuration": [
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "prefix",
+              "required": true,
+              "description": "The prefix to add to all resources that this solution creates. To not use any prefix value, you can enter the string `__NULL__`."
+            },
+            {
+              "key": "existing_resource_group_name",
+              "required": true
+            },
+            {
+              "key": "existing_vpc_id",
+              "required": true,
+              "custom_config": {
+                "type": "vpc",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "existing_vpc_id"
+                }
+              }
+            },
+            {
+              "key": "existing_cos_instance_crn",
+              "required": true
+            },
+            {
+              "key": "region",
+              "required": true,
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              }
+            },
+            {
+              "key": "cluster_name",
+              "required": true
+            },
+            {
+              "key": "ocp_version",
+              "required": true,
+              "options": [
                 {
-                  "diagram": {
-                    "caption": "Red Hat OpenShift VPC cluster for IBM Cloud with AI addon.",
-                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/qs/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
-                    "type": "image/svg+xml"
-                  },
-                  "description": "This architecture creates a single zone OCP VPC cluster with AI addon."
+                  "displayname": "4.14",
+                  "value": "4.14"
+                },
+                {
+                  "displayname": "4.15",
+                  "value": "4.15"
+                },
+                {
+                  "displayname": "4.16",
+                  "value": "4.16"
+                },
+                {
+                  "displayname": "4.17",
+                  "value": "4.17"
                 }
               ]
             },
-            "configuration": [
-            ],
-            "dependencies": [
-              {
-                "name": "add-ons-beta-deploy-arch-ibm-base-ocp-vpc",
-                "catalog_id": "586d1ba8-ffac-4bc1-b868-a2363e894c51",
-                "flavors": [
-                  "fully-configurable"
-                ],
-                "id": "148cd948-0628-4ee6-8625-992edc084413",
-                "ignore_auto_referencing": [
-                  "*"
-                ],
-                "optional": false,
-                "on_by_default": true,
-                "input_mapping": [
-                  {
-                      "dependency_input": "addons",
-                      "value": {
-                        "openshift-ai" : "416"
-                      }
-                  },
-                  {
-                    "dependency_input": "worker_pools",
-                    "value": [
-                      {
-                        "subnet_prefix"    : "default",
-                        "pool_name"        : "default",
-                        "machine_type"     : "bx2.8x32",
-                        "workers_per_zone" : 2,
-                        "operating_system" : "RHEL_9_64"
-                      },
-                      {
-                        "subnet_prefix"    : "gpu",
-                        "pool_name"        : "GPU",
-                        "machine_type"     : "gx3.16x80.l4",
-                        "workers_per_zone" : 2,
-                        "operating_system" : "RHEL_9_64",
-                        "secondary_storage" : "300gb.5iops-tier"
-                      }
-                    ]
-                  }
-                ],
-                "version": "^v1.0.0"
+            {
+              "key": "ocp_entitlement"
+            },
+            {
+              "key": "cluster_ready_when",
+              "options": [
+                {
+                  "displayname": "Normal",
+                  "value": "Normal"
+                },
+                {
+                  "displayname": "IngressReady",
+                  "value": "IngressReady"
+                },
+                {
+                  "displayname": "OneWorkerNodeReady",
+                  "value": "OneWorkerNodeReady"
+                },
+                {
+                  "displayname": "MasterNodeReady",
+                  "value": "MasterNodeReady"
+                }
+              ]
+            },
+            {
+              "key": "enable_ocp_console"
+            },
+            {
+              "key": "force_delete_storage"
+            },
+            {
+              "key": "worker_pools"
+            },
+            {
+              "key": "additional_security_group_ids"
+            },
+            {
+              "key": "addons"
+            },
+            {
+              "key": "manage_all_addons"
+            },
+            {
+              "key": "worker_pools_taints"
+            },
+            {
+              "key": "ignore_worker_pool_size_changes"
+            },
+            {
+              "key": "allow_default_worker_pool_replacement"
+            },
+            {
+              "key": "use_private_endpoint"
+            },
+            {
+              "key": "disable_public_endpoint"
+            },
+            {
+              "key": "cluster_config_endpoint_type",
+              "options": [
+                {
+                  "displayname": "default",
+                  "value": "default"
+                },
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "vpe",
+                  "value": "vpe"
+                },
+                {
+                  "displayname": "link",
+                  "value": "link"
+                }
+              ]
+            },
+            {
+              "key": "disable_outbound_traffic_protection"
+            },
+            {
+              "key": "verify_worker_network_readiness"
+            },
+            {
+              "key": "pod_subnet_cidr"
+            },
+            {
+              "key": "service_subnet_cidr"
+            },
+            {
+              "key": "custom_security_group_ids"
+            },
+            {
+              "key": "attach_ibm_managed_security_group"
+            },
+            {
+              "key": "additional_lb_security_group_ids"
+            },
+            {
+              "key": "number_of_lbs"
+            },
+            {
+              "key": "additional_vpe_security_group_ids"
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
+            },
+            {
+              "key": "boot_volume_key_name"
+            },
+            {
+              "key": "existing_kms_instance_crn"
+            },
+            {
+              "key": "boot_volume_key_ring_name"
+            },
+            {
+              "key": "cluster_key_name"
+            },
+            {
+              "key": "cluster_key_ring_name"
+            },
+            {
+              "key": "kms_endpoint_type"
+            },
+            {
+              "key": "cluster_resource_tags",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
               }
-            ],
-            "dependency_version_2": true
-          }
-        ]
-      }
-    ]
-  }
+            },
+            {
+              "key": "access_tags",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "default_pool_maximum_number_of_nodes"
+            },
+            {
+              "key": "default_pool_minimum_number_of_nodes"
+            },
+            {
+              "key": "default_worker_pool_labels"
+            },
+            {
+              "key": "default_worker_pool_secondary_storage"
+            },
+            {
+              "key": "enable_autoscaling_for_default_pool"
+            },
+            {
+              "key": "existing_boot_volume_kms_key_crn"
+            },
+            {
+              "key": "existing_cluster_kms_key_crn"
+            },
+            {
+              "key": "existing_subnet_ids"
+            },
+            {
+              "key": "force_delete_kms_key"
+            },
+            {
+              "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "kms_encryption_enabled_boot_volume"
+            },
+            {
+              "key": "kms_encryption_enabled_cluster"
+            },
+            {
+              "key": "machine_type"
+            },
+            {
+              "key": "operating_system"
+            },
+            {
+              "key": "workers_per_zone"
+            },
+            {
+              "key": "cbr_rules"
+            }
+          ],
+          "dependencies": [
+            {
+              "name": "deploy-arch-ibm-vpc",
+              "id": "2af61763-f8ef-4527-a815-b92166f29bc8",
+              "version": "^v1.0.2",
+              "flavors": [
+                "fully-configurable"
+              ],
+              "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_output": "vpc_id",
+                  "version_input": "existing_vpc_id"
+                }
+              ]
+            },
+            {
+              "name": "deploy-arch-ibm-account-infra-base",
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "flavors": [
+                "standard"
+              ],
+              "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_output": "workload_resource_group_name",
+                  "version_input": "existing_resource_group_name"
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                }
+              ],
+              "optional": true,
+              "on_by_default": true,
+              "version": "^v1.18.0"
+            },
+            {
+              "name": "testing-deploy-arch-ibm-kms",
+              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
+              "version": "^v1.2.1",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "enable_kms_encryption",
+                  "value": true,
+                  "reference_version": true
+                },
+                {
+                  "dependency_output": "kms_instance_crn",
+                  "version_input": "existing_kms_instance_crn"
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "region",
+                  "version_input": "region",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "deploy-arch-ibm-cos",
+              "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
+              "version": "^v8.20.1",
+              "flavors": [
+                "instance"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_output": "cos_instance_id",
+                  "version_input": "existing_cos_instance_crn"
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "testing-deploy-arch-ibm-observability",
+              "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
+              "version": "^1.3.0",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "region",
+                  "version_input": "region",
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "testing-deploy-arch-ibm-secrets-manager",
+              "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
+              "version": "^1.2.2",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "region",
+                  "version_input": "region",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                }
+              ]
+            }
+          ],
+          "dependency_version_2": true
+        }
+      ]
+    }
+  ]
+}
