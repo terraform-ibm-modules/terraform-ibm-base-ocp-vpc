@@ -396,10 +396,6 @@
                 {
                   "dependency_output": "vpc_id",
                   "version_input": "existing_vpc_id"
-                },
-                {
-                  "dependency_output": "subnet_ids",
-                  "version_input": "existing_subnet_ids"
                 }
               ]
             },
