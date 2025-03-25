@@ -233,6 +233,7 @@ variable "existing_vpc_id" {
 variable "existing_subnet_ids" {
   type        = list(string)
   description = "Id of the VPC instance where this cluster will be provisioned."
+  default     = []
 }
 
 variable "use_private_endpoint" {

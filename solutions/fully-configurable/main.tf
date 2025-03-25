@@ -109,29 +109,35 @@ module "kms" {
 # OCP VPC cluster
 ########################################################################################################################
 
-# data "ibm_is_subnets" "vpc_subnets" {
-#   # count = length(var.vpc_subnets) > 0 ? 0 : 1
-#   vpc = var.existing_vpc_id
-# }
+data "ibm_is_subnets" "vpc_subnets" {
+  count = length(var.existing_subnet_ids) == 0 ? 1 : 0
+  vpc   = var.existing_vpc_id
+}
 
 data "ibm_is_subnet" "subnets" {
-  count      = length(var.existing_subnet_ids)
+  count      = length(var.existing_subnet_ids) > 0 ? length(var.existing_subnet_ids) : 0
   identifier = var.existing_subnet_ids[count.index]
 }
 
 locals {
   vpc_subnets = {
-    "default" = [
+    # The default behavior is to deploy the worker pool across all subnets within the VPC.
+    "default" = length(var.existing_subnet_ids) > 0 ? [
       for i in range(length(var.existing_subnet_ids)) :
       {
         id         = data.ibm_is_subnet.subnets[i].id
         zone       = data.ibm_is_subnet.subnets[i].zone
         cidr_block = data.ibm_is_subnet.subnets[i].ipv4_cidr_block
       }
+      ] : [
+      for subnet in data.ibm_is_subnets.vpc_subnets[0].subnets :
+      {
+        id         = subnet.id
+        zone       = subnet.zone
+        cidr_block = subnet.ipv4_cidr_block
+      }
     ]
   }
-
-  # validation to check if the subnet passed belong to the same vpc.
 
   worker_pools = concat([
     {
