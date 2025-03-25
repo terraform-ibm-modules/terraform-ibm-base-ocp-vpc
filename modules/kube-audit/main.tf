@@ -39,7 +39,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.set_audit_log_policy]
+  depends_on    = [null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
