@@ -159,8 +159,8 @@ locals {
       }
       additional_security_group_ids = var.additional_security_group_ids
     }
-    ], [for pool in var.worker_pools : pool if length(pool.vpc_subnets) > 0],
-    [for pool in var.worker_pools : {
+    ], [for pool in var.additional_worker_pools : pool if length(pool.vpc_subnets) > 0],
+    [for pool in var.additional_worker_pools : {
       pool_name                         = pool.pool_name
       machine_type                      = pool.machine_type
       workers_per_zone                  = pool.workers_per_zone

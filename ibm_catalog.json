@@ -233,7 +233,7 @@
               "key": "manage_all_addons"
             },
             {
-              "key": "worker_pools"
+              "key": "additional_worker_pools"
             },
             {
               "key": "worker_pools_taints"

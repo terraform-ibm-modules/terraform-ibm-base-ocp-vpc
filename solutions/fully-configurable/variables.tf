@@ -130,7 +130,7 @@ variable "allow_default_worker_pool_replacement" {
 
 variable "default_worker_pool_machine_type" {
   type        = string
-  description = "The machine type for worker nodes."
+  description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
   default     = "bx2.8x32"
 }
 
@@ -142,7 +142,7 @@ variable "default_worker_pool_workers_per_zone" {
 
 variable "default_worker_pool_operating_system" {
   type        = string
-  description = "The operating system installed on the worker nodes."
+  description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
   default     = "RHEL_9_64"
 }
 
@@ -182,7 +182,7 @@ variable "additional_security_group_ids" {
   default     = []
 }
 
-variable "worker_pools" {
+variable "additional_worker_pools" {
   type = list(object({
     vpc_subnets = optional(list(object({
       id         = string
@@ -206,7 +206,7 @@ variable "worker_pools" {
     }))
     additional_security_group_ids = optional(list(string))
   }))
-  description = "List of worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
+  description = "List of additional worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
   default     = []
 }
 
