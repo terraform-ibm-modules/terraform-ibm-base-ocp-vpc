@@ -131,16 +131,19 @@ variable "allow_default_worker_pool_replacement" {
 variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes."
+  default     = "bx2.8x32"
 }
 
 variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
+  default     = 2
 }
 
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes."
+  default     = "RHEL_9_64"
 }
 
 variable "default_worker_pool_labels" {
@@ -205,11 +208,6 @@ variable "worker_pools" {
   }))
   description = "List of worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
   default     = []
-
-  # User cannot set default pool name
-  # validation {
-  #   condition = false
-  # }
 }
 
 ##############################################################
@@ -353,7 +351,7 @@ variable "kms_encryption_enabled_cluster" {
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_scc_cos_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`. A value should not be passed passing existing SCC instance using the `existing_scc_instance_crn` input."
+  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_scc_cos_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
 
   validation {
     condition = anytrue([
