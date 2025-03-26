@@ -158,6 +158,45 @@
               ]
             },
             {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
+            },
+            {
+              "key": "cluster_resource_tags",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "access_tags",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
               "key": "ocp_entitlement"
             },
             {
@@ -188,16 +227,13 @@
               "key": "force_delete_storage"
             },
             {
-              "key": "worker_pools"
-            },
-            {
-              "key": "additional_security_group_ids"
-            },
-            {
               "key": "addons"
             },
             {
               "key": "manage_all_addons"
+            },
+            {
+              "key": "worker_pools"
             },
             {
               "key": "worker_pools_taints"
@@ -207,6 +243,36 @@
             },
             {
               "key": "allow_default_worker_pool_replacement"
+            },
+            {
+              "key": "default_worker_pool_machine_type"
+            },
+            {
+              "key": "default_worker_pool_workers_per_zone"
+            },
+            {
+              "key": "default_worker_pool_operating_system"
+            },
+            {
+              "key": "default_worker_pool_labels"
+            },
+            {
+              "key": "default_worker_pool_secondary_storage"
+            },
+            {
+              "key": "enable_autoscaling_for_default_pool"
+            },
+            {
+              "key": "default_pool_minimum_number_of_nodes"
+            },
+            {
+              "key": "default_pool_maximum_number_of_nodes"
+            },
+            {
+              "key": "additional_security_group_ids"
+            },
+            {
+              "key": "existing_subnet_ids"
             },
             {
               "key": "use_private_endpoint"
@@ -263,30 +329,22 @@
               "key": "additional_vpe_security_group_ids"
             },
             {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
-                }
-              ]
+              "key": "ibmcloud_kms_api_key"
             },
             {
-              "key": "boot_volume_key_name"
+              "key": "kms_encryption_enabled_cluster"
             },
             {
               "key": "existing_kms_instance_crn"
             },
             {
-              "key": "boot_volume_key_ring_name"
+              "key": "force_delete_kms_key"
+            },
+            {
+              "key": "existing_cluster_kms_key_crn"
+            },
+            {
+              "key": "kms_endpoint_type"
             },
             {
               "key": "cluster_key_name"
@@ -295,74 +353,16 @@
               "key": "cluster_key_ring_name"
             },
             {
-              "key": "kms_endpoint_type"
-            },
-            {
-              "key": "cluster_resource_tags",
-              "custom_config": {
-                "type": "array",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "key": "access_tags",
-              "custom_config": {
-                "type": "array",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "key": "default_pool_maximum_number_of_nodes"
-            },
-            {
-              "key": "default_pool_minimum_number_of_nodes"
-            },
-            {
-              "key": "default_worker_pool_labels"
-            },
-            {
-              "key": "default_worker_pool_secondary_storage"
-            },
-            {
-              "key": "enable_autoscaling_for_default_pool"
+              "key": "kms_encryption_enabled_boot_volume"
             },
             {
               "key": "existing_boot_volume_kms_key_crn"
             },
             {
-              "key": "existing_cluster_kms_key_crn"
+              "key": "boot_volume_key_name"
             },
             {
-              "key": "existing_subnet_ids"
-            },
-            {
-              "key": "force_delete_kms_key"
-            },
-            {
-              "key": "ibmcloud_kms_api_key"
-            },
-            {
-              "key": "kms_encryption_enabled_boot_volume"
-            },
-            {
-              "key": "kms_encryption_enabled_cluster"
-            },
-            {
-              "key": "default_worker_pool_machine_type"
-            },
-            {
-              "key": "default_worker_pool_operating_system"
-            },
-            {
-              "key": "default_worker_pool_workers_per_zone"
+              "key": "boot_volume_key_ring_name"
             },
             {
               "key": "cbr_rules"
