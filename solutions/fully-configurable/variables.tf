@@ -128,17 +128,17 @@ variable "allow_default_worker_pool_replacement" {
   nullable    = false
 }
 
-variable "machine_type" {
+variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes."
 }
 
-variable "workers_per_zone" {
+variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
 }
 
-variable "operating_system" {
+variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes."
 }
@@ -181,11 +181,11 @@ variable "additional_security_group_ids" {
 
 variable "worker_pools" {
   type = list(object({
-    vpc_subnets = list(object({
+    vpc_subnets = optional(list(object({
       id         = string
       zone       = string
       cidr_block = string
-    }))
+    })), [])
     pool_name         = string
     machine_type      = string
     workers_per_zone  = number

@@ -356,13 +356,13 @@
               "key": "kms_encryption_enabled_cluster"
             },
             {
-              "key": "machine_type"
+              "key": "default_worker_pool_machine_type"
             },
             {
-              "key": "operating_system"
+              "key": "default_worker_pool_operating_system"
             },
             {
-              "key": "workers_per_zone"
+              "key": "default_worker_pool_workers_per_zone"
             },
             {
               "key": "cbr_rules"

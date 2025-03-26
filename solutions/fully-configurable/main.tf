@@ -143,10 +143,10 @@ locals {
     {
       subnet_prefix     = "default"
       pool_name         = "default"
-      machine_type      = var.machine_type
-      workers_per_zone  = var.workers_per_zone
+      machine_type      = var.default_worker_pool_machine_type
+      workers_per_zone  = var.default_worker_pool_workers_per_zone
       resource_group_id = module.resource_group.resource_group_id
-      operating_system  = var.operating_system
+      operating_system  = var.default_worker_pool_operating_system
       labels            = var.default_worker_pool_labels
       minSize           = var.default_pool_minimum_number_of_nodes
       secondary_storage = var.default_worker_pool_secondary_storage
@@ -159,7 +159,22 @@ locals {
       }
       additional_security_group_ids = var.additional_security_group_ids
     }
-  ], var.worker_pools)
+    ], [for pool in var.worker_pools : pool if length(pool.vpc_subnets) > 0],
+    [for pool in var.worker_pools : {
+      pool_name                         = pool.pool_name
+      machine_type                      = pool.machine_type
+      workers_per_zone                  = pool.workers_per_zone
+      resource_group_id                 = pool.resource_group_id
+      operating_system                  = pool.operating_system
+      labels                            = pool.labels
+      minSize                           = pool.minSize
+      secondary_storage                 = pool.secondary_storage
+      maxSize                           = pool.maxSize
+      enableAutoscaling                 = pool.enableAutoscaling
+      boot_volume_encryption_kms_config = pool.boot_volume_encryption_kms_config
+      additional_security_group_ids     = pool.additional_security_group_ids
+      subnet_prefix                     = "default"
+  } if length(pool.vpc_subnets) == 0])
 }
 
 module "ocp_base" {
