@@ -117,8 +117,12 @@ This variable allows you to configure taints for your worker pools in your OCP c
 
 ### Options for worker_pool_taints
 
-- `all` (optional):
-- `default` (optional):
+- `all` (optional): This applies to all worker pools. Since it's empty ([]), no taints are applied globally.
+- `default` (optional): Represents the default worker pool. It is also empty, meaning no taints are applied by default.
+- `zone-1`(optional): Represents the taint applied to the zone-1 worker pool.
+  - `key`(optional): The key of the taint that the pod will tolerate. It must match a taint key on a node.
+  - `value`(optional): This is the value associated with the taint. The pod will tolerate only taints with the same key and value.
+  - `effect`(optional): Defines what happens to pods that do not tolerate the taint: NoExecute → If a pod does not have this toleration, it will be evicted from the node. This is useful for ensuring only specific workloads run on a node.
 
 ### Example for worker_pool_taints configuration
 
