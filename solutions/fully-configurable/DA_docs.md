@@ -3,7 +3,7 @@
 Several optional input variables in the OCP cluster [deployable architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your deployable architecture.
 
 - [Addons](#options-with-addons) (`addons`)
-- [Worker Pools](#options-with-worker-pools) (`worker_pools`)
+- [Additional Worker Pools](#options-with-additional-worker-pools) (`additional_worker_pools`)
 - [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
 - [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
 - [VPC Subnets](#options-with-vpc-subnets) (`vpc_subnets`)
@@ -38,15 +38,15 @@ addons = {
 }
 ```
 
-## Options with worker_pools <a name="options-with-worker-pools"></a>
+## Options with additional_worker_pools <a name="options-with-additional-worker-pools"></a>
 
 This variable defines the worker node pools for your OCP cluster, with each pool having its own configuration settings.
 
-- Variable name: `worker_pools`.
+- Variable name: `additional_worker_pools`.
 - Type: A list of objects. Each object represents a worker_pool configuration.
 - Default value: An empty list (`[]`).
 
-### Options for worker_pools
+### Options for additional_worker_pools
 
 - `subnet_prefix` (required): The
 - `pool_name` (required): The name of the worker pool.
@@ -63,10 +63,10 @@ This variable defines the worker node pools for your OCP cluster, with each pool
       - `kms_instance_id`(required): The ID of the KMS instance managing the encryption keys.
 - `additional_security_group_ids` (optional): A list of security group IDs that are attached to the worker nodes for additional network security controls.
 
-### Example for worker_pools configuration
+### Example for additional_worker_pools configuration
 
 ```hcl
-worker_pools = [
+additional_worker_pools = [
   {
     subnet_prefix                     = "zone-1"
     pool_name                         = "default"
