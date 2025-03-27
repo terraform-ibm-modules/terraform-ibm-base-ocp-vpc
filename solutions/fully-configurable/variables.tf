@@ -56,11 +56,13 @@ variable "access_tags" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
+  default     = "openshift"
 }
 
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision."
+  default     = "4.17"
 }
 
 variable "ocp_entitlement" {
