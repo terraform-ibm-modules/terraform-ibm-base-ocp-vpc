@@ -377,8 +377,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_output": "vpc_id",
-                  "version_input": "existing_vpc_id"
+                  "dependency_output": "vpc_crn",
+                  "version_input": "existing_vpc_crn"
                 }
               ]
             },
