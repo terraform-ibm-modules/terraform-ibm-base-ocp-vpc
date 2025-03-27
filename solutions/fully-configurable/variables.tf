@@ -29,6 +29,7 @@ variable "prefix" {
 variable "existing_resource_group_name" {
   type        = string
   description = "The name of an existing resource group to provision the cluster."
+  default     = "Default"
 }
 
 variable "region" {
