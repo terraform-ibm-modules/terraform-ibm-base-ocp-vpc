@@ -9,7 +9,6 @@
         "target_terraform",
         "terraform",
         "solution",
-        "support_ibm",
         "ibm_created"
       ],
       "keywords": [

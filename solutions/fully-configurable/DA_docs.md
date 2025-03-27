@@ -149,17 +149,17 @@ This variable allows you to add extra security groups to the Virtual Private End
 
 ### Options for additional_vpe_security_group_ids
 
-- `master` (optional):
-- `registry` (optional):
-- `api` (optional):
+- `master` (optional): The security group ID for the master node VPE, ensuring secure communication for cluster management.
+- `registry` (optional): Security group ID for the container registry VPE, enabling secure access to image repositories.
+- `api` (optional): Security group ID for the API VPE, controlling access to API endpoints for the VPC.
 
 ### Example for additional_vpe_security_group_ids configuration
 
 ```hcl
 additional_vpe_security_group_ids = {
-  master = ["sg-master-ocp-vpc-1", "sg-master-ocp-vpc-2"]
-  registry = ["sg-resgistry-1"]
-  api = ["sg-api-1", "sg-api-2"]
+  master = ["r042-5fbe77a5-a8a5-4828-8395-5e51124b8a2f"]
+  registry = ["r042-4bcdbe33-8434-4d74-95ac-fbebaafc62db"]
+  api = ["r042-e36d58d8-cc9b-4cb6-99a7-d6544f79e584"]
 }
 ```
 
