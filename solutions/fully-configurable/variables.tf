@@ -32,11 +32,6 @@ variable "existing_resource_group_name" {
   default     = "Default"
 }
 
-variable "region" {
-  type        = string
-  description = "Region where resources are created."
-}
-
 variable "cluster_resource_tags" {
   type        = list(string)
   description = "Metadata labels describing this cluster deployment, i.e. test."
@@ -226,14 +221,14 @@ variable "existing_cos_instance_crn" {
 # Network Related
 ##############################################################
 
-variable "existing_vpc_id" {
+variable "existing_vpc_crn" {
   type        = string
-  description = "Id of the VPC instance where this cluster will be provisioned."
+  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the default worker pool will be provisioned across all the subnets in the VPC."
 }
 
 variable "existing_subnet_ids" {
   type        = list(string)
-  description = "Id of the VPC instance where this cluster will be provisioned."
+  description = "The list of IDs of existing subnets where the default worker pool nodes of the cluster will be provisioned."
   default     = []
 }
 

@@ -104,32 +104,12 @@
               "required": true
             },
             {
-              "key": "existing_vpc_id",
-              "required": true,
-              "custom_config": {
-                "type": "vpc",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "identifier": "existing_vpc_id"
-                }
-              }
+              "key": "existing_vpc_crn",
+              "required": true
             },
             {
               "key": "existing_cos_instance_crn",
               "required": true
-            },
-            {
-              "key": "region",
-              "required": true,
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              }
             },
             {
               "key": "cluster_name",

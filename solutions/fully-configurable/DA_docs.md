@@ -6,7 +6,6 @@ Several optional input variables in the OCP cluster [deployable architecture](ht
 - [Additional Worker Pools](#options-with-additional-worker-pools) (`additional_worker_pools`)
 - [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
 - [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
-- [VPC Subnets](#options-with-vpc-subnets) (`vpc_subnets`)
 - [Context Based Restrictions](#options-with-cbr) (`cbr_rules`)
 
 ## Options with addons <a name="options-with-addons"></a>
@@ -31,7 +30,7 @@ This variable configuration allows you to specify which OCP add-ons to install o
 ### Example for addons configuration
 
 ```hcl
-addons = {
+{
   cluster-autoscaler = "1.0.4"
   openshift-data-foundation = "4.12.0"
   vpc-file-csi-driver = "1.1.0"
@@ -48,7 +47,10 @@ This variable defines the worker node pools for your OCP cluster, with each pool
 
 ### Options for additional_worker_pools
 
-- `subnet_prefix` (required): The
+- `vpc_subnets` (optional): (List) A list of object which specify which all subnets the worker pool should deploy its nodes.
+      - `id` (required): A unique identifier for the VPC subnet.
+      - `zone` (required): The zone where the subnet is located.
+      - `cidr_block` (required): This defines the IP address range for the subnet in CIDR notation.
 - `pool_name` (required): The name of the worker pool.
 - `machine_type` (required): The machine type for worker nodes.
 - `workers_per_zone` (required): Number of worker nodes in each zone of the cluster.
@@ -66,24 +68,9 @@ This variable defines the worker node pools for your OCP cluster, with each pool
 ### Example for additional_worker_pools configuration
 
 ```hcl
-additional_worker_pools = [
+[
   {
-    subnet_prefix                     = "zone-1"
-    pool_name                         = "default"
-    machine_type                      = "mx2.4x32"
-    workers_per_zone                  = 1
-    operating_system                  = "REDHAT_9_64"
-    enableAutoscaling                 = true
-    minSize                           = 1
-    maxSize                           = 6
-    boot_volume_encryption_kms_config = {
-                                          crk             = "83df6f1c-b2a2-4fff-b39b-b999a59b308c"
-                                          kms_instance_id = "c123f59b-b7ce-4893-abd8-03089b34f49c"
-                                        }
-  },
-  {
-    subnet_prefix                     = "zone-2"
-    pool_name                         = "zone-2"
+    pool_name                         = "logging"
     machine_type                      = "bx2.4x16"
     workers_per_zone                  = 1
     secondary_storage                 = "300gb.5iops-tier"
@@ -94,7 +81,18 @@ additional_worker_pools = [
                                         }
   },
   {
-    subnet_prefix                     = "zone-3"
+    vpc_subnets                       = [
+      {
+        id = "0717-a4b3c2d1-e5f6-g7h8-i9j0-k1l2m3n4o5p6" # pragma: allowlist secret
+        zone = "us-south-1"
+        cidr_block = " "10.10.10.0/24"
+      },
+      {
+        id = "0717-b4c3d2e1-f5g6-h7i8-j9k0-l1m2n3o4p5q6" # pragma: allowlist secret
+        zone = "us-south-2"
+        cidr_block = "10.20.10.0/24"
+      }
+    ]
     pool_name                         = "zone-3"
     machine_type                      = "bx2.4x16"
     workers_per_zone                  = 1
@@ -127,7 +125,7 @@ This variable allows you to configure taints for your worker pools in your OCP c
 ### Example for worker_pool_taints configuration
 
 ```hcl
-worker_pools_taints = {
+{
   all     = []
   default = []
   zone-1 = [{
@@ -160,48 +158,10 @@ This variable allows you to add extra security groups to the Virtual Private End
 ### Example for additional_vpe_security_group_ids configuration
 
 ```hcl
-additional_vpe_security_group_ids = {
+{
   master = ["r042-5fbe77a5-a8a5-4828-8395-5e51124b8a2f"]
   registry = ["r042-4bcdbe33-8434-4d74-95ac-fbebaafc62db"]
   api = ["r042-e36d58d8-cc9b-4cb6-99a7-d6544f79e584"]
-}
-```
-
-## Options with vpc_subnets <a name="options-with-vpc-subnets"></a>
-
-This variable defines the Virtual Private Cloud (VPC) subnets where your OCP cluster will be deployed.
-
-- Variable name: `vpc_subnets`.
-- Type: A list of objects.
-- Default value: An empty list (`[]`).
-
-### Options for vpc_subnets
-
-- `id` (optional): A unique identifier for the VPC subnet.
-- `zone` (optional): The zone where the subnet is located.
-- `cidr_block` (optional): This defines the IP address range for the subnet in CIDR notation.
-
-### Example for vpc_subnets
-
-```hcl
-vpc_subnets = {
-  "default" = [
-    {
-      id = "0717-a4b3c2d1-e5f6-g7h8-i9j0-k1l2m3n4o5p6" # pragma: allowlist secret
-      zone = "us-south-1"
-      cidr_block = " "10.10.10.0/24"
-    },
-    {
-      id = "0717-b4c3d2e1-f5g6-h7i8-j9k0-l1m2n3o4p5q6" # pragma: allowlist secret
-      zone = "us-south-2"
-      cidr_block = "10.20.10.0/24"
-    },
-    {
-      id = "0717-c4d3e2f1-g5h6-i7j8-k9l0-m1n2o3p4q5r6" # pragma: allowlist secret
-      zone = "us-south-3"
-      cidr_block = "10.30.10.0/24"
-    }
-  ]
 }
 ```
 
