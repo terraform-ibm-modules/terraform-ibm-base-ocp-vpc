@@ -441,11 +441,6 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
-                },
-                {
                   "dependency_input": "use_existing_resource_group",
                   "value": true,
                   "reference_version": true
@@ -505,11 +500,6 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
-                },
-                {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
                 }
               ]
             },
@@ -527,11 +517,6 @@
                 "*"
               ],
               "input_mapping": [
-                {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
-                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
