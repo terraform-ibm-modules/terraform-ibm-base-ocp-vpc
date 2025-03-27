@@ -9,8 +9,8 @@
         "target_terraform",
         "terraform",
         "solution",
-        "support_ibm",
-        "ibm_created"
+        "ibm_created",
+        "ibm_beta"
       ],
       "keywords": [
         "terraform",
@@ -158,6 +158,18 @@
               ]
             },
             {
+              "key": "default_worker_pool_machine_type",
+              "required": true
+            },
+            {
+              "key": "default_worker_pool_workers_per_zone",
+              "required": true
+            },
+            {
+              "key": "default_worker_pool_operating_system",
+              "required": true
+            },
+            {
               "key": "provider_visibility",
               "options": [
                 {
@@ -243,15 +255,6 @@
             },
             {
               "key": "allow_default_worker_pool_replacement"
-            },
-            {
-              "key": "default_worker_pool_machine_type"
-            },
-            {
-              "key": "default_worker_pool_workers_per_zone"
-            },
-            {
-              "key": "default_worker_pool_operating_system"
             },
             {
               "key": "default_worker_pool_labels"
