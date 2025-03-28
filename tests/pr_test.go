@@ -84,7 +84,7 @@ func TestRunAdvancedExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunFullyConfigurable(t *testing.T) {
+func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	t.Parallel()
 
 	// ------------------------------------------------------------------------------------
@@ -119,29 +119,44 @@ func TestRunFullyConfigurable(t *testing.T) {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
 
-		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-			Testing:          t,
-			TerraformDir:     fullyConfigurableTerraformDir,
-			Prefix:           "ocp-fc",
-			CloudInfoService: sharedInfoSvc,
+		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+			Testing: t,
+			Prefix:  "ocp-fc",
+			TarIncludePatterns: []string{
+				"*.tf",
+				fullyConfigurableTerraformDir + "/*.*",
+			},
+			TemplateFolder:         fullyConfigurableTerraformDir,
+			Tags:                   []string{"test-schematic"},
+			DeleteWorkspaceOnFail:  false,
+			WaitJobCompleteMinutes: 60,
 		})
 
-		options.TerraformVars = map[string]interface{}{
-			"prefix":                       options.Prefix,
-			"cluster_name":                 "cluster",
-			"ocp_version":                  ocpVersion1,
-			"access_tags":                  permanentResources["accessTags"],
-			"ocp_entitlement":              "cloud_pak",
-			"kms_endpoint_type":            "public",
-			"provider_visibility":          "public",
-			"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-			"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
-			"existing_vpc_crn":             terraform.Output(t, existingTerraformOptions, "vpc_crn"),
+		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+			{Name: "prefix", Value: options.Prefix, DataType: "string"},
+			{Name: "cluster_name", Value: "cluster", DataType: "string"},
+			{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+			{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		}
 
-		output, err := options.RunTestConsistency()
+		err := options.RunSchematicTest()
 		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
+
+	}
+
+	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
+	if t.Failed() && strings.ToLower(envVal) == "true" {
+		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
+	} else {
+		logger.Log(t, "START: Destroy (existing resources)")
+		terraform.Destroy(t, existingTerraformOptions)
+		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		logger.Log(t, "END: Destroy (existing resources)")
 	}
 }
 
