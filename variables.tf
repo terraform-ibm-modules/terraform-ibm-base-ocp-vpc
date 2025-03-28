@@ -339,6 +339,11 @@ variable "addons" {
     error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
   }
 
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || anytrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_gpu", false)])
+    error_message = "OCP AI add-on requires at least one GPU-enabled worker pool."
+  }
+
 }
 
 variable "manage_all_addons" {

@@ -58,6 +58,7 @@ locals {
     pool.pool_name => {
       cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
       ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+      is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
 }
