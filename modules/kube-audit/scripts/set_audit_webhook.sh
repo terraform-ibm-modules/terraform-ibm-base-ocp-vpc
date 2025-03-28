@@ -74,7 +74,14 @@ get_cloud_endpoint() {
 }
 
 get_cloud_endpoint
-get_ca_cert
+
+attempts=1
+until get_ca_cert || [ $attempts -ge 3 ]; do
+    attempts=$((attempts + 1))
+    echo "Error getting the CA cert..." >&2
+    sleep 60
+done
+
 CERTIFICATE_AUTHORITY=${CERTIFICATE_AUTHORITY//$'\n'/\\n}
 CLIENT_CERT=${CLIENT_CERT//$'\n'/\\n}
 CLIENT_KEY=${CLIENT_KEY//$'\n'/\\n}

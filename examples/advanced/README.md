@@ -10,3 +10,6 @@ The following resources are provisioned by this example:
 - A multi-zone (3 zone) KMS encrypted OCP VPC cluster, with worker pools in each zone.
 - Auto scaling enabled for the default worker pool.
 - Taints against the workers in zone-2 and zone-3.
+- Enable Kubernetes API server audit logs.
+- A Cloud logs instance
+- Logs agent to send logs to the cloud logs.
