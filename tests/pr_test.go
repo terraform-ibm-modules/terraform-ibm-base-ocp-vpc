@@ -73,7 +73,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 }
 
 func TestRunAdvancedExample(t *testing.T) {
-	t.Skip() // Need to remove before merge
+	t.Parallel()
 
 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 	options.PostApplyHook = getClusterIngress
@@ -126,6 +126,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 				"*.tf",
 				fullyConfigurableTerraformDir + "/*.*",
 				"scripts/*.sh",
+				"kubeconfig/README.md",
 			},
 			TemplateFolder:         fullyConfigurableTerraformDir,
 			Tags:                   []string{"test-schematic"},
@@ -180,7 +181,7 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 	return nil
 }
 func TestFSCloudInSchematic(t *testing.T) {
-	t.Skip() //Need to remove before merge
+	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,

@@ -18,15 +18,23 @@
         "cluster",
         "red_hat_openshift"
       ],
-      "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
-      "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
+      "short_description": "Automates Red Hat OpenShift VPC cluster deployment on IBM Cloud, offering full configurability and flexibility for diverse workloads.",
+      "long_description": "This deployable architecture deploys a Red Hat OpenShift cluster on IBM Cloud. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
       "features": [
         {
-          "title": "Create a Red Hat OpenShift VPC cluster on IBM Cloud",
-          "description": "Create a Red Hat OpenShift VPC cluster on IBM Cloud."
+          "title": "OCP on IBM Cloud",
+          "description": "Create and configures a Red Hat OpenShift VPC cluster on IBM Cloud."
+        },
+        {
+          "title": "Object Storage bucket for OpenShift internal registry storage.",
+          "description": "Creates and configures an Object Storage bucket required for OpenShift internal registry storage."
+        },
+        {
+          "title": "KMS encryption",
+          "description": "Supports creating a new key, or using an existing one to encrypt the COS bucket."
         }
       ],
       "flavors": [
