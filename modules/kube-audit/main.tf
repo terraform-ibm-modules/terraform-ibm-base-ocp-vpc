@@ -94,11 +94,10 @@ data "ibm_iam_auth_token" "reset_api_key_tokendata" {
 }
 
 data "ibm_iam_account_settings" "iam_account_settings" {
-  depends_on = [time_sleep.wait_for_kube_audit]
 }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [data.ibm_iam_account_settings.iam_account_settings, data.ibm_iam_auth_token.reset_api_key_tokendata]
+  depends_on = [data.ibm_iam_auth_token.reset_api_key_tokendata]
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_audit_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.cluster_config_endpoint_type != "default" ? "verbose" : "default"}"
     interpreter = ["/bin/bash", "-c"]
