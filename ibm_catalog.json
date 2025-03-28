@@ -75,8 +75,8 @@
             "descriptions": "This architecture creates a fully-configurable OCP VPC cluster.",
             "features": [
               {
-                "title": "Creates an OCP VPC cluster",
-                "description": "Creates an OCP VPC cluster"
+                "title": "Creates a Red Hat OpenShift VPC cluster.",
+                "description": "Creates a Red Hat OpenShift VPC cluster."
               }
             ],
             "diagrams": [
@@ -86,7 +86,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/qs/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture creates a fully-configurable OCP VPC cluster."
+                "description": "This architecture creates a fully-configurable Red Hat OpenShift VPC cluster."
               }
             ]
           },

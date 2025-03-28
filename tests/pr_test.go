@@ -125,6 +125,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 			TarIncludePatterns: []string{
 				"*.tf",
 				fullyConfigurableTerraformDir + "/*.*",
+				"scripts/*.sh",
 			},
 			TemplateFolder:         fullyConfigurableTerraformDir,
 			Tags:                   []string{"test-schematic"},
