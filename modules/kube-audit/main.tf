@@ -13,6 +13,12 @@ data "ibm_container_vpc_cluster" "cluster" {
   wait_till_timeout = var.wait_till_timeout
 }
 
+module "existing_cluster_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = data.ibm_container_vpc_cluster.cluster.crn
+}
+
 locals {
   # tflint-ignore: terraform_unused_declarations
   validate_existing_vpc_id = tonumber(regex("^([0-9]+\\.[0-9]+)", data.ibm_container_vpc_cluster.cluster.kube_version)[0]) > "4.14" ? true : tobool("Kubernetes API server audit logs forwarding is only supported in ocp versions 4.15 and later.")
@@ -93,9 +99,6 @@ data "ibm_iam_auth_token" "reset_api_key_tokendata" {
   depends_on = [time_sleep.wait_for_kube_audit]
 }
 
-data "ibm_iam_account_settings" "iam_account_settings" {
-}
-
 resource "null_resource" "set_audit_webhook" {
   depends_on = [data.ibm_iam_auth_token.reset_api_key_tokendata]
   provisioner "local-exec" {
@@ -103,7 +106,7 @@ resource "null_resource" "set_audit_webhook" {
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN    = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
-      ACCOUNT_ID   = data.ibm_iam_account_settings.iam_account_settings.account_id
+      ACCOUNT_ID   = module.existing_cluster_crn_parser.account_id
       AUDIT_SERVER = local.audit_server
       CLIENT_CERT  = data.ibm_container_cluster_config.cluster_config.admin_certificate
       CLIENT_KEY   = data.ibm_container_cluster_config.cluster_config.admin_key
