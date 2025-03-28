@@ -108,10 +108,19 @@ module "kms" {
 ########################################################################################################################
 # OCP VPC cluster
 ########################################################################################################################
+module "existing_vpc_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_vpc_crn
+}
+
+locals {
+  vpc_region      = module.existing_vpc_crn_parser.region
+  existing_vpc_id = module.existing_vpc_crn_parser.resource
+}
 
 data "ibm_is_subnets" "vpc_subnets" {
-  count = length(var.existing_subnet_ids) == 0 ? 1 : 0
-  vpc   = var.existing_vpc_id
+  vpc = local.existing_vpc_id
 }
 
 data "ibm_is_subnet" "subnets" {
@@ -130,7 +139,7 @@ locals {
         cidr_block = data.ibm_is_subnet.subnets[i].ipv4_cidr_block
       }
       ] : [
-      for subnet in data.ibm_is_subnets.vpc_subnets[0].subnets :
+      for subnet in data.ibm_is_subnets.vpc_subnets.subnets :
       {
         id         = subnet.id
         zone       = subnet.zone
@@ -180,13 +189,13 @@ locals {
 module "ocp_base" {
   source                                = "../.."
   resource_group_id                     = module.resource_group.resource_group_id
-  region                                = var.region
+  region                                = local.vpc_region
   tags                                  = var.cluster_resource_tags
   cluster_name                          = local.cluster_name
   force_delete_storage                  = var.force_delete_storage
   use_existing_cos                      = true
   existing_cos_id                       = var.existing_cos_instance_crn
-  vpc_id                                = var.existing_vpc_id
+  vpc_id                                = local.existing_vpc_id
   vpc_subnets                           = local.vpc_subnets
   ocp_version                           = var.ocp_version
   worker_pools                          = local.worker_pools

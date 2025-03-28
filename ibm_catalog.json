@@ -104,32 +104,12 @@
               "required": true
             },
             {
-              "key": "existing_vpc_id",
-              "required": true,
-              "custom_config": {
-                "type": "vpc",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "identifier": "existing_vpc_id"
-                }
-              }
+              "key": "existing_vpc_crn",
+              "required": true
             },
             {
               "key": "existing_cos_instance_crn",
               "required": true
-            },
-            {
-              "key": "region",
-              "required": true,
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              }
             },
             {
               "key": "cluster_name",
@@ -375,7 +355,7 @@
             {
               "name": "deploy-arch-ibm-vpc",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8",
-              "version": "^v1.0.2",
+              "version": "^v7.21.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -397,8 +377,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_output": "vpc_id",
-                  "version_input": "existing_vpc_id"
+                  "dependency_output": "vpc_crn",
+                  "version_input": "existing_vpc_crn"
                 }
               ]
             },
@@ -461,11 +441,6 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
-                },
-                {
                   "dependency_input": "use_existing_resource_group",
                   "value": true,
                   "reference_version": true
@@ -525,11 +500,6 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
-                },
-                {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
                 }
               ]
             },
@@ -547,11 +517,6 @@
                 "*"
               ],
               "input_mapping": [
-                {
-                  "dependency_input": "region",
-                  "version_input": "region",
-                  "reference_version": true
-                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
