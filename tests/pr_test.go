@@ -128,7 +128,6 @@ func TestRunFullyConfigurable(t *testing.T) {
 		})
 
 		options.TerraformVars = map[string]interface{}{
-			"region":                       region,
 			"prefix":                       options.Prefix,
 			"cluster_name":                 "cluster",
 			"ocp_version":                  ocpVersion1,
@@ -138,7 +137,7 @@ func TestRunFullyConfigurable(t *testing.T) {
 			"provider_visibility":          "public",
 			"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
 			"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
-			"existing_vpc_id":              terraform.Output(t, existingTerraformOptions, "vpc_id"),
+			"existing_vpc_crn":             terraform.Output(t, existingTerraformOptions, "vpc_id"),
 		}
 
 		output, err := options.RunTestConsistency()

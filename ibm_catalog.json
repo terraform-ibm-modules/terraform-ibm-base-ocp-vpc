@@ -21,7 +21,7 @@
       "short_description": "Provisions a Red Hat OpenShift VPC cluster on IBM Cloud",
       "long_description": "This architecture supports creation and configuration of IBM Cloud Red Hat OpenShift cluster.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
-      "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
+      "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
       "features": [
         {
