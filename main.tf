@@ -48,7 +48,7 @@ locals {
   workers_per_pool = {
     for pool in var.worker_pools :
     pool.pool_name => (
-      pool.vpc_subnets != null ? length(pool.vpc_subnets) * pool.workers_per_zone : pool.workers_per_zone
+      pool.vpc_subnets != null ? length(pool.vpc_subnets) * pool.workers_per_zone : length(var.vpc_subnets[pool.subnet_prefix]) * pool.workers_per_zone
     )
   }
 

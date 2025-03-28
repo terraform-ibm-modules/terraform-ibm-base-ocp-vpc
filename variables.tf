@@ -339,14 +339,6 @@ variable "addons" {
     error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
   }
 
-  validation {
-    condition = lookup(var.addons, "openshift-ai", null) == null || alltrue([
-      for dependency in ["openshift-pipelines", "node-feature-discovery", "nvidia-gpu-operator"] :
-      lookup(var.addons, dependency, null) == null || !var.disable_outbound_traffic_protection
-    ])
-    error_message = "Outbound traffic protection must be disabled if OpenShift AI is used with OpenShift Pipelines, Node Feature Discovery, or NVIDIA GPU operators."
-  }
-
 }
 
 variable "manage_all_addons" {
