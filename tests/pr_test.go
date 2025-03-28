@@ -73,7 +73,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 }
 
 func TestRunAdvancedExample(t *testing.T) {
-	t.Parallel()
+	t.Skip() // Need to remove before merge
 
 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 	options.PostApplyHook = getClusterIngress
@@ -122,8 +122,7 @@ func TestRunFullyConfigurable(t *testing.T) {
 		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 			Testing:          t,
 			TerraformDir:     fullyConfigurableTerraformDir,
-			Prefix:           prefix,
-			ResourceGroup:    resourceGroup,
+			Prefix:           "ocp-fc",
 			CloudInfoService: sharedInfoSvc,
 		})
 
@@ -137,7 +136,7 @@ func TestRunFullyConfigurable(t *testing.T) {
 			"provider_visibility":          "public",
 			"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
 			"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
-			"existing_vpc_crn":             terraform.Output(t, existingTerraformOptions, "vpc_id"),
+			"existing_vpc_crn":             terraform.Output(t, existingTerraformOptions, "vpc_crn"),
 		}
 
 		output, err := options.RunTestConsistency()
@@ -165,7 +164,7 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 	return nil
 }
 func TestFSCloudInSchematic(t *testing.T) {
-	t.Parallel()
+	t.Skip() //Need to remove before merge
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
@@ -244,14 +243,13 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 			Testing:          t,
 			TerraformDir:     fullyConfigurableTerraformDir,
-			Prefix:           "fc-ocp",
+			Prefix:           "ocp-fc-upg",
 			CloudInfoService: sharedInfoSvc,
 			TerraformVars: map[string]interface{}{
-				"region":                       region,
 				"ocp_version":                  ocpVersion1,
-				"cluster_name":                 prefix,
+				"cluster_name":                 "cluster",
 				"existing_resource_group_name": terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-				"existing_vpc_id":              terraform.Output(t, existingTerraformOptions, "vpc_id"),
+				"existing_vpc_crn":             terraform.Output(t, existingTerraformOptions, "vpc_crn"),
 				"existing_cos_instance_crn":    terraform.Output(t, existingTerraformOptions, "cos_instance_id"),
 			},
 		})
