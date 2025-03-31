@@ -193,7 +193,6 @@ variable "additional_worker_pools" {
     pool_name                     = string
     machine_type                  = string
     workers_per_zone              = number
-    resource_group_id             = optional(string)
     operating_system              = string
     labels                        = optional(map(string))
     minSize                       = optional(number)

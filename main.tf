@@ -203,6 +203,13 @@ resource "ibm_container_vpc_cluster" "cluster" {
   }
 }
 
+# Get the account id information using CRN Parser
+module "crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = resource.ibm_container_vpc_cluster.cluster[0].crn
+}
+
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   depends_on                          = [null_resource.reset_api_key]
