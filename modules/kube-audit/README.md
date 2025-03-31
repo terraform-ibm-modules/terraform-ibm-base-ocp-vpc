@@ -63,9 +63,7 @@ module "kube_audit" {
 
 ### Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_existing_cluster_crn_parser"></a> [existing\_cluster\_crn\_parser](#module\_existing\_cluster\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
+No modules.
 
 ### Resources
 
