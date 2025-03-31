@@ -109,7 +109,15 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required": true
+              "required": true,
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
             },
             {
               "key": "existing_vpc_crn",

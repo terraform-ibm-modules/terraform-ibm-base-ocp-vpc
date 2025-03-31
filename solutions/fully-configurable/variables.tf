@@ -73,9 +73,10 @@ variable "cluster_ready_when" {
 }
 
 variable "enable_ocp_console" {
-  description = "Flag to specify whether to enable or disable the OpenShift console."
+  description = "Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module will not modify the setting currently set on the cluster. Bare in mind when setting this to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint."
   type        = bool
-  default     = true
+  default     = null
+  nullable    = true
 }
 
 variable "force_delete_storage" {
@@ -147,7 +148,7 @@ variable "default_worker_pool_operating_system" {
 
 variable "default_worker_pool_labels" {
   type        = map(string)
-  description = "A set of key-value labels assigned to the worker pool for identification."
+  description = "A set of key-value labels assigned to the worker pool for identification. For Example: { env = \"prod\", team = \"devops\" }"
   default     = {}
 }
 
@@ -155,6 +156,7 @@ variable "default_worker_pool_secondary_storage" {
   type        = string
   description = "The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning."
   default     = null
+  nullable    = true
 }
 
 variable "enable_autoscaling_for_default_pool" {
@@ -188,21 +190,16 @@ variable "additional_worker_pools" {
       zone       = string
       cidr_block = string
     })), [])
-    pool_name         = string
-    machine_type      = string
-    workers_per_zone  = number
-    resource_group_id = optional(string)
-    operating_system  = string
-    labels            = optional(map(string))
-    minSize           = optional(number)
-    secondary_storage = optional(string)
-    maxSize           = optional(number)
-    enableAutoscaling = optional(bool)
-    boot_volume_encryption_kms_config = optional(object({
-      crk             = string
-      kms_instance_id = string
-      kms_account_id  = optional(string)
-    }))
+    pool_name                     = string
+    machine_type                  = string
+    workers_per_zone              = number
+    resource_group_id             = optional(string)
+    operating_system              = string
+    labels                        = optional(map(string))
+    minSize                       = optional(number)
+    secondary_storage             = optional(string)
+    maxSize                       = optional(number)
+    enableAutoscaling             = optional(bool)
     additional_security_group_ids = optional(list(string))
   }))
   description = "List of additional worker pools. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-worker-pools)"
@@ -215,7 +212,7 @@ variable "additional_worker_pools" {
 
 variable "existing_cos_instance_crn" {
   type        = string
-  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage."
+  description = "The CRN of an already existing Object Storage instance to use for OpenShift internal registry storage."
 }
 
 ##############################################################
@@ -363,7 +360,7 @@ variable "existing_kms_instance_crn" {
 
 variable "force_delete_kms_key" {
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
   description = "If creating a new KMS key, toggle whether is should be force deleted or not on undeploy."
 }
