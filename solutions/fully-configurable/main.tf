@@ -192,7 +192,7 @@ module "ocp_base" {
   region                                = local.vpc_region
   tags                                  = var.cluster_resource_tags
   cluster_name                          = local.cluster_name
-  force_delete_storage                  = var.force_delete_storage
+  force_delete_storage                  = true
   use_existing_cos                      = true
   existing_cos_id                       = var.existing_cos_instance_crn
   vpc_id                                = local.existing_vpc_id

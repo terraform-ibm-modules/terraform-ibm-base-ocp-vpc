@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
 func TestRunBasicExample(t *testing.T) {
@@ -134,4 +135,58 @@ func TestCrossKmsSupportExample(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 
+}
+
+func TestRunAdvancedExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
+	options.PostApplyHook = getClusterIngress
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestFSCloudInSchematic(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "base-ocp-fscloud",
+		TarIncludePatterns: []string{
+			"*.tf",
+			"scripts/*.sh",
+			"examples/fscloud/*.tf",
+			"modules/*/*.tf",
+			"kubeconfig/README.md",
+		},
+		ResourceGroup:          resourceGroup,
+		TemplateFolder:         fscloudExampleDir,
+		Tags:                   []string{"test-schematic"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 240,
+	})
+
+	// If "jp-osa" was the best region selected, default to us-south instead.
+	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
+	if options.Region == "jp-osa" {
+		options.Region = "us-south"
+	}
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "region", Value: options.Region, DataType: "string"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
+		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
+		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+	}
+
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 }

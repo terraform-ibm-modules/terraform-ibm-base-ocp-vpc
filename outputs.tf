@@ -11,7 +11,7 @@ output "cluster_id" {
 output "cluster_account_id" {
   description = "Account ID of cluster created"
   value       = module.crn_parser.account_id
-  depends_on = [null_resource.confirm_network_healthy]
+  depends_on  = [null_resource.confirm_network_healthy]
 }
 
 output "cluster_name" {

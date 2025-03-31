@@ -232,9 +232,6 @@
               "key": "enable_ocp_console"
             },
             {
-              "key": "force_delete_storage"
-            },
-            {
               "key": "addons"
             },
             {

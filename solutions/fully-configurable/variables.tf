@@ -79,12 +79,6 @@ variable "enable_ocp_console" {
   nullable    = true
 }
 
-variable "force_delete_storage" {
-  type        = bool
-  description = "Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false."
-  default     = false
-}
-
 variable "addons" {
   type = object({
     debug-tool                = optional(string)
