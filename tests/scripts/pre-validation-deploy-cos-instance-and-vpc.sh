@@ -2,7 +2,7 @@
 
 ############################################################################################################
 ## This script is used by the catalog pipeline to deploy the COS instance and VPC
-## which are the prerequisites for the fully-configurable ocp vpc cluster.
+## which are the prerequisites for the fully-configurable OCP VPC Cluster.
 ############################################################################################################
 
 set -e
@@ -16,8 +16,10 @@ TF_VARS_FILE="terraform.tfvars"
 (
   cwd=$(pwd)
   cd ${TERRAFORM_SOURCE_DIR}
-  echo "Provisioning prerequisite COS instance and VPC .."
+  echo "Provisioning pre-requisite COS instance and VPC .."
   terraform init || exit 1
+
+  # Providing the required inputs to be written into terraform.tfvars file
   # $VALIDATION_APIKEY is available in the catalog runtime
   {
     echo "ibmcloud_api_key=\"${VALIDATION_APIKEY}\""
@@ -34,8 +36,10 @@ TF_VARS_FILE="terraform.tfvars"
   existing_vpc_value=$(terraform output -state=terraform.tfstate -raw vpc_id)
   existing_cos_instance_name="existing_cos_instance_name"
   existing_cos_instance_value=$(terraform output -state=terraform.tfstate -raw cos_instance_id)
+  existing_cos_instance_crn=$(terraform output -state=terraform.tfstate -raw cos_crn)
+  existing_vpc_crn=$(terraform output -state=terraform.tfstate -raw vpc_crn)
 
-  echo "Appending '${existing_resource_group_name}', '${existing_vpc_name}' and '${existing_cos_instance_name}' input variable values to ${JSON_FILE}.."
+  echo "Appending '${existing_resource_group_name}', '${existing_vpc_name}', '${existing_vpc_crn}' , '${existing_cos_instance_name}' and '${existing_cos_instance_crn}' input variable values to ${JSON_FILE}.."
 
   cd "${cwd}"
   jq -r --arg region_var_name "${region_var_name}" \
@@ -46,7 +50,9 @@ TF_VARS_FILE="terraform.tfvars"
         --arg existing_vpc_value "${existing_vpc_value}" \
         --arg existing_cos_instance_name "${existing_cos_instance_name}" \
         --arg existing_cos_instance_value "${existing_cos_instance_value}" \
-        '. + {($region_var_name): $region_var_value, ($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_cos_instance_name): $existing_cos_instance_value}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
+        --arg existing_cos_instance_crn "${existing_cos_instance_crn}" \
+        --arg existing_vpc_crn "${existing_vpc_crn}" \
+        '. + {($region_var_name): $region_var_value, ($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_cos_instance_name): $existing_cos_instance_value , ($existing_cos_instance_crn): $existing_cos_instance_crn , ($existing_vpc_crn): $existing_vpc_crn}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
 
-  echo "Pre-validation complete successfully"
+  echo "Pre-validation completed successfully."
 )
