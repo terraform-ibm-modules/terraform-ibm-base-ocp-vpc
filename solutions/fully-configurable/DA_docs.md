@@ -1,8 +1,9 @@
 # Configuring complex inputs for OCP in IBM Cloud projects
 
-Several optional input variables in the Red Hat Openshift Cluster [Deployable Architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your Deployable Architecture (DA).
+Several optional input variables in the Red Hat Openshift Cluster [Deployable Architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your Deployable Architectures (DA).
 
 - [Add-ons](#options-with-addons) (`addons`)
+- [Manage All Add-ons](#manage-all-add-ons) (`manage_all_addons`)
 - [Additional Worker Pools](#options-with-additional-worker-pools) (`additional_worker_pools`)
 - [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
 - [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
@@ -48,9 +49,9 @@ Please refer to [this](https://cloud.ibm.com/docs/containers?topic=containers-su
 }
 ```
 
-### Understanding the `manage_all_addons` Variable
+## Manage All Add-ons <a name="manage-addons"></a>
 
-The `manage_all_addons` variable determines whether Terraform manages all add-ons in your cluster.
+The variable `manage_all_addons` determines whether Terraform manages all add-ons in your cluster. This is crucial when working with add-ons.
 
 - If set to `true`, Terraform will manage all add-ons. This includes updating and removing older versions if you specify a new version in the addons block.
 
@@ -67,9 +68,9 @@ This variable defines the worker node pools for your OCP cluster, with each pool
 ### Options for additional_worker_pools
 
 - `vpc_subnets` (optional): (List) A list of object which specify which all subnets the worker pool should deploy its nodes.
-      - `id` (required): A unique identifier for the VPC subnet.
-      - `zone` (required): The zone where the subnet is located.
-      - `cidr_block` (required): This defines the IP address range for the subnet in CIDR notation.
+  - `id` (required): A unique identifier for the VPC subnet.
+  - `zone` (required): The zone where the subnet is located.
+  - `cidr_block` (required): This defines the IP address range for the subnet in CIDR notation.
 - `pool_name` (required): The name of the worker pool.
 - `machine_type` (required): The machine type for worker nodes.
 - `workers_per_zone` (required): Number of worker nodes in each zone of the cluster.
@@ -119,11 +120,11 @@ This variable allows you to configure taints for your worker pools in your OCP c
 
 - Variable name: `worker_pools_taints`.
 - Type: An map of list of object.
-- Default value: null (`null`).
+- Default value: `null`.
 
 ### Options for worker_pool_taints
 
-- `all` (optional): This applies to all worker pools. Since it's empty ([]), no taints are applied globally.
+- `all` (optional): This applies to all worker pools. Since it's empty (`[]`), no taints are applied globally.
 - `default` (optional): Represents the default worker pool. It is also empty, meaning no taints are applied by default.
 - `zone-1`(optional): Represents the taint applied to the zone-1 worker pool.
   - `key`(optional): The key of the taint that the pod will tolerate. It must match a taint key on a node.
