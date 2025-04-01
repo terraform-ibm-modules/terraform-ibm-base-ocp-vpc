@@ -118,40 +118,40 @@ locals {
       minSize                           = 1
       maxSize                           = 6
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      # },
-      # {
-      #   subnet_prefix                     = "zone-2"
-      #   pool_name                         = "zone-2"
-      #   machine_type                      = "bx2.4x16"
-      #   workers_per_zone                  = 1
-      #   secondary_storage                 = "300gb.5iops-tier"
-      #   operating_system                  = "REDHAT_8_64"
-      #   boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
-      # },
-      # {
-      #   subnet_prefix                     = "zone-3"
-      #   pool_name                         = "zone-3"
-      #   machine_type                      = "bx2.4x16"
-      #   workers_per_zone                  = 1
-      #   operating_system                  = "REDHAT_8_64"
-      #   boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
+    },
+    {
+      subnet_prefix                     = "zone-2"
+      pool_name                         = "zone-2"
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 1
+      secondary_storage                 = "300gb.5iops-tier"
+      operating_system                  = "REDHAT_8_64"
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
+    },
+    {
+      subnet_prefix                     = "zone-3"
+      pool_name                         = "zone-3"
+      machine_type                      = "bx2.4x16"
+      workers_per_zone                  = 1
+      operating_system                  = "REDHAT_8_64"
+      boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
 
-  # worker_pools_taints = {
-  #   all     = []
-  #   default = []
-  #   zone-2 = [{
-  #     key    = "dedicated"
-  #     value  = "zone-2"
-  #     effect = "NoExecute"
-  #   }]
-  #   zone-3 = [{
-  #     key    = "dedicated"
-  #     value  = "zone-3"
-  #     effect = "NoExecute"
-  #   }]
-  # }
+  worker_pools_taints = {
+    all     = []
+    default = []
+    zone-2 = [{
+      key    = "dedicated"
+      value  = "zone-2"
+      effect = "NoExecute"
+    }]
+    zone-3 = [{
+      key    = "dedicated"
+      value  = "zone-3"
+      effect = "NoExecute"
+    }]
+  }
 }
 
 module "ocp_base" {
@@ -166,17 +166,17 @@ module "ocp_base" {
   ocp_version          = var.ocp_version
   tags                 = var.resource_tags
   access_tags          = var.access_tags
-  # worker_pools_taints  = local.worker_pools_taints
-  ocp_entitlement = var.ocp_entitlement
+  worker_pools_taints  = local.worker_pools_taints
+  ocp_entitlement      = var.ocp_entitlement
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
-  # addons = {
-  #   "cluster-autoscaler" = "1.2.3"
-  # }
-  # kms_config = {
-  #   instance_id = module.kp_all_inclusive.kms_guid
-  #   crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
-  # }
+  addons = {
+    "cluster-autoscaler" = "1.2.3"
+  }
+  kms_config = {
+    instance_id = module.kp_all_inclusive.kms_guid
+    crk_id      = module.kp_all_inclusive.keys["${local.key_ring}.${local.cluster_key}"].key_id
+  }
 }
 
 data "ibm_container_cluster_config" "cluster_config" {
