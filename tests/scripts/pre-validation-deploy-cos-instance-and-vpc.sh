@@ -36,7 +36,7 @@ TF_VARS_FILE="terraform.tfvars"
   existing_cos_instance_crn_value=$(terraform output -state=terraform.tfstate -raw cos_crn)
 
 
-  echo "Appending '${existing_resource_group_name}', '${existing_vpc_crn_name}' , '${existing_cos_instance_name}' and '${existing_cos_instance_crn_name}' input variable values to ${JSON_FILE}.."
+  echo "Appending '${existing_resource_group_name}', '${existing_vpc_crn_name}' and '${existing_cos_instance_crn_name}' input variable values to ${JSON_FILE}.."
 
   cd "${cwd}"
   jq -r --arg existing_resource_group_name "${existing_resource_group_name}" \
