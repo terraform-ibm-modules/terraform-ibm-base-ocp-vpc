@@ -19,8 +19,9 @@ locals {
 }
 
 resource "null_resource" "set_audit_log_policy" {
-  count = var.audit_log_policy != "default" ? 1 : 0
-
+  triggers = {
+    audit_log_policy = var.audit_log_policy
+  }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_audit_log_policy.sh ${var.audit_log_policy}"
     interpreter = ["/bin/bash", "-c"]
@@ -95,8 +96,11 @@ data "ibm_iam_auth_token" "reset_api_key_tokendata" {
 
 resource "null_resource" "set_audit_webhook" {
   depends_on = [data.ibm_iam_auth_token.reset_api_key_tokendata]
+  triggers = {
+    audit_log_policy = var.audit_log_policy
+  }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_audit_webhook.sh \"${var.region}\" \"${var.use_private_endpoint}\" \"${var.cluster_config_endpoint_type}\" \"${var.cluster_id}\" \"${var.cluster_resource_group_id}\" \"${var.audit_log_policy != "default" ? "verbose" : "default"}\""
+    command     = "${path.module}/scripts/set_audit_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"}"
     interpreter = ["/bin/bash"]
     environment = {
       IAM_TOKEN    = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
