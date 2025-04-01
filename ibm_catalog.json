@@ -334,9 +334,6 @@
               "key": "existing_kms_instance_crn"
             },
             {
-              "key": "force_delete_kms_key"
-            },
-            {
               "key": "existing_cluster_kms_key_crn"
             },
             {

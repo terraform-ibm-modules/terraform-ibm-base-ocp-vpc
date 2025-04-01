@@ -14,11 +14,11 @@ locals {
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
 
-  cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
+  cos_name     = var.use_existing_cos == true || (!var.use_existing_cos && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
   cos_plan     = "standard"
   # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
-  cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
+  cos_instance_crn = var.enable_registry_storage ? (!var.use_existing_cos ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
   delete_timeout = "2h"
   create_timeout = "3h"
@@ -201,13 +201,6 @@ resource "ibm_container_vpc_cluster" "cluster" {
     create = local.create_timeout
     update = local.update_timeout
   }
-}
-
-# Get the account id information using CRN Parser
-module "crn_parser" {
-  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.1.0"
-  crn     = resource.ibm_container_vpc_cluster.cluster[0].crn
 }
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios

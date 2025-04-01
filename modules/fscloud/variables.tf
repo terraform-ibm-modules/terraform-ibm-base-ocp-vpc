@@ -119,9 +119,8 @@ variable "ocp_entitlement" {
 
 variable "force_delete_storage" {
   type        = bool
-  description = "Flag indicating whether or not to delete attached storage when destroying the cluster - Default: true"
-  default     = true
-  nullable    = false
+  description = "Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false"
+  default     = false
 }
 
 variable "existing_cos_id" {

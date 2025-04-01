@@ -67,7 +67,7 @@ locals {
           standard_key             = false
           rotation_interval_month  = 3
           dual_auth_delete_enabled = false
-          force_delete             = var.force_delete_kms_key
+          force_delete             = true
         }
       ]
     } : null,
@@ -80,7 +80,7 @@ locals {
           standard_key             = false
           rotation_interval_month  = 3
           dual_auth_delete_enabled = false
-          force_delete             = var.force_delete_kms_key
+          force_delete             = true
         }
       ]
     } : null
@@ -101,8 +101,7 @@ module "kms" {
   existing_kms_instance_crn   = var.existing_kms_instance_crn
   key_ring_endpoint_type      = var.kms_endpoint_type
   key_endpoint_type           = var.kms_endpoint_type
-  keys = [for key in local.keys :
-  key if key != null]
+  keys                        = [for key in local.keys : key if key != null]
 }
 
 ########################################################################################################################

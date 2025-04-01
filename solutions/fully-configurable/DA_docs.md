@@ -1,31 +1,42 @@
 # Configuring complex inputs for OCP in IBM Cloud projects
 
-Several optional input variables in the OCP cluster [deployable architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your deployable architecture.
+Several optional input variables in the Red Hat Openshift Cluster [Deployable Architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your Deployable Architecture (DA).
 
-- [Addons](#options-with-addons) (`addons`)
+- [Add-ons](#options-with-addons) (`addons`)
 - [Additional Worker Pools](#options-with-additional-worker-pools) (`additional_worker_pools`)
 - [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
 - [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
 - [Context Based Restrictions](#options-with-cbr) (`cbr_rules`)
 
-## Options with addons <a name="options-with-addons"></a>
+## Options with Add-ons <a name="options-with-addons"></a>
 
-This variable configuration allows you to specify which OCP add-ons to install on your cluster and which version of each add-on to use.
+This variable configuration allows you to specify which Red Hat OpenShift add-ons to install on your cluster and the version of each add-on to use.
 
-- Variable name: `addons`.
-- Type: An object represting addons.
+- Variable name: `addons`
+- Type: An object representing Red Hat OpenShift cluster add-ons.
 - Default value: An empty object (`{}`).
 
-### Options for addons
+### Supported Add-ons
 
-- `debug-tool` (optional): The "debug-tool" add-on helps diagnose and troubleshoot cluster issues by running tests and gathering information, which can be accessed through the OpenShift console.
-- `image-key-synchronizer` (optional): The Image Key Synchronizer add-on enables the deployment of containers using encrypted images by synchronizing image keys, ensuring that only authorized users can access and run the encrypted images.
-- `openshift-data-foundation` (optional): To manage persistent storage for your containerized apps with the highly available OpenShift Data Foundation storage solution.
-- `vpc-file-csi-driver` (optional): To create persistent volume claims for fast and flexible network-attached, NFS-based File Storage for VPC.
-- `static-route` (optional): To create static routes that allow worker nodes to re-route response packets through a VPN or gateway to an IP address in an on-premises data center.
-- `cluster-autoscaler` (optional): To automatically scale the worker pools in your cluster based on the sizing needs of your scheduled workloads.
-- `vpc-block-csi-driver` (optional): To copy a storage volume's contents at a particular point in time without creating an entirely new volume.
-- `ibm-storage-operator` (optional): To manage several storage configmaps and resources in your cluster.
+- `debug-tool` (optional): The Debug Tool add-on helps diagnose and troubleshoot cluster issues by running tests and gathering information, accessible through the Red Hat OpenShift console.
+
+- `image-key-synchronizer` (optional): The Image Key Synchronizer add-on enables the deployment of containers using encrypted images by synchronizing image keys, ensuring only authorized users can access and run them.
+
+- `openshift-data-foundation` (optional): The Red Hat OpenShift Data Foundation (ODF) add-on manages persistent storage for containerized applications with a highly available storage solution.
+
+- `vpc-file-csi-driver` (optional): The Virtual Private Cloud File Container Storage Interface Driver add-on enables the creation of persistent volume claims for fast, flexible, network-attached, Network File System-based file storage for Virtual Private Cloud.
+
+- `static-route` (optional): The Static Route add-on allows worker nodes to re-route response packets through a virtual private network or gateway to an Internet Protocol (IP) address in an on-premises data center.
+
+- `cluster-autoscaler` (optional): The Cluster Autoscaler add-on automatically scales worker pools based on the resource demands of scheduled workloads.
+
+- `vpc-block-csi-driver` (optional): The Virtual Private Cloud (VPC) Block Container Storage Interface (CSI) Driver add-on enables snapshotting of storage volumes, allowing users to restore data from specific points in time without duplicating the volume.
+
+- `ibm-storage-operator` (optional): The IBM Storage Operator add-on streamlines the management of storage configuration maps and resources in your cluster.
+
+- `openshift-ai` (optional): The Red Hat OpenShift AI add-on enables quick deployment of Red Hat OpenShift AI on a Red Hat OpenShift Cluster in IBM Cloud.
+
+Please refer to [this](https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions) page for information on supported add-ons and their versions.
 
 ### Example for addons configuration
 
@@ -36,6 +47,14 @@ This variable configuration allows you to specify which OCP add-ons to install o
   vpc-file-csi-driver = "1.1.0"
 }
 ```
+
+### Understanding the `manage_all_addons` Variable
+
+The `manage_all_addons` variable determines whether Terraform manages all add-ons in your cluster.
+
+- If set to `true`, Terraform will manage all add-ons. This includes updating and removing older versions if you specify a new version in the addons block.
+
+- If set to `false`, Terraform will only manage the add-ons listed in the addons map, leaving any others unchanged.
 
 ## Options with additional_worker_pools <a name="options-with-additional-worker-pools"></a>
 

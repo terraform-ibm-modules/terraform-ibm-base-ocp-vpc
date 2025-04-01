@@ -316,7 +316,7 @@ variable "provider_visibility" {
 # KMS Related
 ##############################################################
 variable "kms_encryption_enabled_cluster" {
-  description = "Set to true to enable KMS encryption on the Object Storage bucket created for the Security and Compliance Center instance. When set to true, a value must be passed for either `existing_cluster_kms_key_crn` or `existing_kms_instance_crn` (to create a new key). Can not be set to true if passing a value for `existing_scc_instance_crn`."
+  description = "Set to true to enable KMS encryption for the cluster's Object Storage bucket. When set to true, a value must be passed for either `existing_cluster_kms_key_crn` or `existing_kms_instance_crn` (to create a new key)."
   type        = bool
   default     = false
   nullable    = false
@@ -340,7 +340,7 @@ variable "kms_encryption_enabled_cluster" {
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_scc_cos_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
+  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
 
   validation {
     condition = anytrue([
@@ -351,17 +351,10 @@ variable "existing_kms_instance_crn" {
   }
 }
 
-variable "force_delete_kms_key" {
-  type        = bool
-  default     = true
-  nullable    = false
-  description = "If creating a new KMS key, toggle whether is should be force deleted or not on undeploy."
-}
-
 variable "existing_cluster_kms_key_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS key to use to encrypt the Security and Compliance Center Object Storage bucket. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key, or for the `existing_scc_cos_bucket_name` variable to use an existing bucket."
+  description = "The CRN of an existing KMS key to use for encrypting the Object Storage of the Cluster. If no value is set for this variable, please specify a value for `existing_kms_instance_crn` variable to create a key ring and key."
 
   validation {
     condition = anytrue([
@@ -392,18 +385,18 @@ variable "kms_endpoint_type" {
 variable "cluster_key_ring_name" {
   type        = string
   default     = "cluster-key-ring"
-  description = "The name for the key ring created for the Security and Compliance Center Object Storage bucket key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name of the key ring to be created for the cluster's Object Storage bucket encryption key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "cluster_key_name" {
   type        = string
   default     = "cluster-key"
-  description = "The name for the key created for the Security and Compliance Center Object Storage bucket. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name of the key to be created for the cluster's Object Storage bucket encryption. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "ibmcloud_kms_api_key" {
   type        = string
-  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the Security and Compliance Centre instance. Leave this input empty if the same account owns both instances."
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance for the cluster. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the KMS instance in `existing_kms_instance_crn` is in an account that is different from the cluster's account. Leave this input empty if both the cluster and the KMS instance are in the same account."
   sensitive   = true
   default     = null
 }

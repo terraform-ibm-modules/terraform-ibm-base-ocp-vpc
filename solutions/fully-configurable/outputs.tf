@@ -12,11 +12,6 @@ output "cluster_id" {
   description = "The unique identifier assigned to the provisioned OpenShift cluster."
 }
 
-output "cluster_account_id" {
-  description = "The IBM Cloud account ID associated with the provisioned cluster."
-  value       = module.ocp_base.cluster_account_id
-}
-
 output "cluster_crn" {
   description = "The Cloud Resource Name (CRN) of the provisioned OpenShift cluster."
   value       = module.ocp_base.cluster_crn

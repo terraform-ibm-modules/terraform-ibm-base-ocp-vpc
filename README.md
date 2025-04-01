@@ -248,7 +248,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="module_attach_sg_to_registry_vpe"></a> [attach\_sg\_to\_registry\_vpe](#module\_attach\_sg\_to\_registry\_vpe) | terraform-ibm-modules/security-group/ibm | 2.6.2 |
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.29.0 |
 | <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 8.21.6 |
-| <a name="module_crn_parser"></a> [crn\_parser](#module\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 
 ### Resources
 
@@ -300,7 +299,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_enable_ocp_console"></a> [enable\_ocp\_console](#input\_enable\_ocp\_console) | Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module will not modify the setting currently set on the cluster. Bare in mind when setting this to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint. | `bool` | `null` | no |
 | <a name="input_enable_registry_storage"></a> [enable\_registry\_storage](#input\_enable\_registry\_storage) | Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature. | `bool` | `true` | no |
 | <a name="input_existing_cos_id"></a> [existing\_cos\_id](#input\_existing\_cos\_id) | The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable\_registry\_storage' and 'use\_existing\_cos' are true. | `string` | `null` | no |
-| <a name="input_force_delete_storage"></a> [force\_delete\_storage](#input\_force\_delete\_storage) | Flag indicating whether or not to delete attached storage when destroying the cluster - Default: true | `bool` | `true` | no |
+| <a name="input_force_delete_storage"></a> [force\_delete\_storage](#input\_force\_delete\_storage) | Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false | `bool` | `false` | no |
 | <a name="input_ignore_worker_pool_size_changes"></a> [ignore\_worker\_pool\_size\_changes](#input\_ignore\_worker\_pool\_size\_changes) | Enable if using worker autoscaling. Stops Terraform managing worker count | `bool` | `false` | no |
 | <a name="input_kms_config"></a> [kms\_config](#input\_kms\_config) | Use to attach a KMS instance to the cluster. If account\_id is not provided, defaults to the account in use. | <pre>object({<br/>    crk_id           = string<br/>    instance_id      = string<br/>    private_endpoint = optional(bool, true) # defaults to true<br/>    account_id       = optional(string)     # To attach KMS instance from another account<br/>    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed<br/>  })</pre> | `null` | no |
 | <a name="input_manage_all_addons"></a> [manage\_all\_addons](#input\_manage\_all\_addons) | Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources. | `bool` | `false` | no |
@@ -325,7 +324,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Description |
 |------|-------------|
 | <a name="output_api_vpe"></a> [api\_vpe](#output\_api\_vpe) | Info about the api VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway |
-| <a name="output_cluster_account_id"></a> [cluster\_account\_id](#output\_cluster\_account\_id) | Account ID of cluster created |
 | <a name="output_cluster_crn"></a> [cluster\_crn](#output\_cluster\_crn) | CRN for the created cluster |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of cluster created |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the created cluster |
