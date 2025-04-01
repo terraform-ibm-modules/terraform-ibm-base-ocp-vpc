@@ -9,6 +9,14 @@ CLUSTER_ID="$4"
 RESOURCE_GROUP_ID="$5"
 POLICY="$6"
 
+get_cloud_endpoint() {
+    cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
+    cs_api_endpoint=${cs_api_endpoint#https://}
+    IBMCLOUD_CS_API_ENDPOINT=${cs_api_endpoint%/global}
+}
+
+get_cloud_endpoint
+
 # This is a workaround function added to retrive the CA cert, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6068) is fixed.
 get_ca_cert() {
     if [ "$IBMCLOUD_CS_API_ENDPOINT" = "containers.cloud.ibm.com" ]; then
@@ -31,6 +39,13 @@ get_ca_cert() {
 
     CERTIFICATE_AUTHORITY=$(echo "$result" | jq -r .caCert | base64 -d)
 }
+
+attempts=1
+until get_ca_cert || [ $attempts -ge 3 ]; do
+    attempts=$((attempts + 1))
+    echo "Error getting the CA cert..." >&2
+    sleep 60
+done
 
 curl_request() {
     local endpoint=$1
@@ -66,21 +81,6 @@ curl_request() {
         exit 1
     fi
 }
-
-get_cloud_endpoint() {
-    cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
-    cs_api_endpoint=${cs_api_endpoint#https://}
-    IBMCLOUD_CS_API_ENDPOINT=${cs_api_endpoint%/global}
-}
-
-get_cloud_endpoint
-
-attempts=1
-until get_ca_cert || [ $attempts -ge 3 ]; do
-    attempts=$((attempts + 1))
-    echo "Error getting the CA cert..." >&2
-    sleep 60
-done
 
 CERTIFICATE_AUTHORITY=${CERTIFICATE_AUTHORITY//$'\n'/\\n}
 CLIENT_CERT=${CLIENT_CERT//$'\n'/\\n}
