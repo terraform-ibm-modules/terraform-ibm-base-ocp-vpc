@@ -4,10 +4,59 @@ package test
 import (
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
+
+const resourceGroup = "geretain-test-base-ocp-vpc"
+const advancedExampleDir = "examples/advanced"
+const basicExampleDir = "examples/basic"
+const fscloudExampleDir = "examples/fscloud"
+const crossKmsSupportExampleDir = "examples/cross_kms_support"
+const customsgExampleDir = "examples/custom_sg"
+
+// Ensure there is one test per supported OCP version
+const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
+
+func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:          t,
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
+		ResourceGroup:    resourceGroup,
+		CloudInfoService: sharedInfoSvc,
+		TerraformVars: map[string]interface{}{
+			"ocp_version":     ocpVersion,
+			"access_tags":     permanentResources["accessTags"],
+			"ocp_entitlement": "cloud_pak",
+		},
+	})
+
+	return options
+}
+
+func getClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name" key is present in the outputs
+	expectedOutputs := []string{"cluster_name"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name" is valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+	}
+	return nil
+}
 
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
