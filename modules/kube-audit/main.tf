@@ -105,8 +105,8 @@ resource "null_resource" "set_audit_webhook" {
     environment = {
       IAM_TOKEN    = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
       AUDIT_SERVER = local.audit_server
-      CLIENT_CERT  = data.ibm_container_cluster_config.cluster_config.admin_certificate
-      CLIENT_KEY   = data.ibm_container_cluster_config.cluster_config.admin_key
+      # CLIENT_CERT  = data.ibm_container_cluster_config.cluster_config.admin_certificate
+      # CLIENT_KEY   = data.ibm_container_cluster_config.cluster_config.admin_key
     }
   }
 }
