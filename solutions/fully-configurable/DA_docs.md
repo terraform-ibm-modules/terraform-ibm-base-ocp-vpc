@@ -60,9 +60,6 @@ This variable defines the worker node pools for your OCP cluster, with each pool
 - `maxSize` (optional): The maximum number of worker nodes allowed in the pool.
 - `secondary_storage` (optional): The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning.
 - `enableAutoscaling` (optional): Set `true` to enable automatic scaling of worker based on workload demand.
-- `boot_volume_encryption_kms_config` (optional): to configure the encryption for the boot volume of worker nodes.
-      - `crk` (required): The customer root key used to encrypt to ensure the boot volume is securely encrypted.
-      - `kms_instance_id`(required): The ID of the KMS instance managing the encryption keys.
 - `additional_security_group_ids` (optional): A list of security group IDs that are attached to the worker nodes for additional network security controls.
 
 ### Example for additional_worker_pools configuration
@@ -75,10 +72,6 @@ This variable defines the worker node pools for your OCP cluster, with each pool
     workers_per_zone                  = 1
     secondary_storage                 = "300gb.5iops-tier"
     operating_system                  = "REDHAT_9_64"
-    boot_volume_encryption_kms_config = {
-                                          crk             = "83df6f1c-b2a2-4fff-b39b-b999a59b309c"
-                                          kms_instance_id = "c123f59b-b7ce-4893-abd8-03089b34f49c"
-                                        }
   },
   {
     vpc_subnets                       = [
@@ -97,10 +90,6 @@ This variable defines the worker node pools for your OCP cluster, with each pool
     machine_type                      = "bx2.4x16"
     workers_per_zone                  = 1
     operating_system                  = "REDHAT_9_64"
-    boot_volume_encryption_kms_config = {
-                                          crk             = "83df6f1c-b2a2-4fff-b39b-b999a59b301c"
-                                          kms_instance_id = "c123f59b-b7ce-4893-abd8-03089b34f49c"
-                                        }
   }
 ]
 ```
