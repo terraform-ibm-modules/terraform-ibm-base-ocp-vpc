@@ -316,7 +316,7 @@ variable "provider_visibility" {
 # KMS Related
 ##############################################################
 variable "kms_encryption_enabled_cluster" {
-  description = "Set to true to enable KMS encryption for the cluster's Object Storage bucket. When set to true, a value must be passed for either `existing_cluster_kms_key_crn` or `existing_kms_instance_crn` (to create a new key)."
+  description = "Set to true to enable KMS encryption for the cluster's Object Storage bucket. When set to true, a value must be passed for either `existing_cluster_kms_key_crn` or `existing_kms_instance_crn`."
   type        = bool
   default     = false
   nullable    = false
