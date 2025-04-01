@@ -4,7 +4,7 @@ offerings:
   - name: deploy-arch-ibm-ocp-vpc
     kind: solution
     catalog_id: f64499c8-eb50-4985-bf91-29f9e605a433
-    offering_id: 1f81ede7-d69d-4a07-b8d6-071b38720d6a
+    offering_id: 1728a4fd-f561-4cf9-82ef-2b1eeb5da1a8
     variations:
       - name: fully-configurable
         mark_ready: true
