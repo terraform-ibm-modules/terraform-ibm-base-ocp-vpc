@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ############################################################################################################
-## This script is used by the catalog pipeline to deploy the COS instance and VPC
+## This script is used by the catalog pipeline to deploy the VPC instance
 ## which are the prerequisites for the fully-configurable OCP VPC Cluster.
 ############################################################################################################
 
@@ -20,6 +20,7 @@ TF_VARS_FILE="terraform.tfvars"
 
   # $VALIDATION_APIKEY is available in the catalog runtime
   {
+    echo "ibmcloud_api_key=\"${VALIDATION_APIKEY}\""
     echo "prefix=\"ocp-$(openssl rand -hex 2)\""
   } >> ${TF_VARS_FILE}
   terraform apply -input=false -auto-approve -var-file=${TF_VARS_FILE} || exit 1
