@@ -19,7 +19,6 @@ import (
 const resourceGroup = "geretain-test-base-ocp-vpc"
 const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
-
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const customsgExampleDir = "examples/custom_sg"
