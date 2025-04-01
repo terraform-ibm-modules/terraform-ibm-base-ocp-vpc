@@ -34,12 +34,15 @@ TF_VARS_FILE="terraform.tfvars"
   existing_resource_group_value=$(terraform output -state=terraform.tfstate -raw resource_group_name)
   existing_vpc_name="existing_vpc_id"
   existing_vpc_value=$(terraform output -state=terraform.tfstate -raw vpc_id)
+  existing_vpc_crn_name="existing_vpc_crn"
+  existing_vpc_crn_value=$(terraform output -state=terraform.tfstate -raw vpc_crn)
   existing_cos_instance_name="existing_cos_instance_name"
   existing_cos_instance_value=$(terraform output -state=terraform.tfstate -raw cos_instance_id)
-  existing_cos_instance_crn=$(terraform output -state=terraform.tfstate -raw cos_crn)
-  existing_vpc_crn=$(terraform output -state=terraform.tfstate -raw vpc_crn)
+  existing_cos_instance_crn_name="existing_cos_instance_crn"
+  existing_cos_instance_crn_value=$(terraform output -state=terraform.tfstate -raw cos_crn)
 
-  echo "Appending '${existing_resource_group_name}', '${existing_vpc_name}', '${existing_vpc_crn}' , '${existing_cos_instance_name}' and '${existing_cos_instance_crn}' input variable values to ${JSON_FILE}.."
+
+  echo "Appending '${existing_resource_group_name}', '${existing_vpc_name}', '${existing_vpc_crn_name}' , '${existing_cos_instance_name}' and '${existing_cos_instance_crn_name}' input variable values to ${JSON_FILE}.."
 
   cd "${cwd}"
   jq -r --arg region_var_name "${region_var_name}" \
@@ -48,11 +51,13 @@ TF_VARS_FILE="terraform.tfvars"
         --arg existing_resource_group_value "${existing_resource_group_value}" \
         --arg existing_vpc_name "${existing_vpc_name}" \
         --arg existing_vpc_value "${existing_vpc_value}" \
+        --arg existing_vpc_crn_name "${existing_vpc_crn_name}" \
+        --arg existing_vpc_crn_value "${existing_vpc_crn_value}" \
         --arg existing_cos_instance_name "${existing_cos_instance_name}" \
         --arg existing_cos_instance_value "${existing_cos_instance_value}" \
-        --arg existing_cos_instance_crn "${existing_cos_instance_crn}" \
-        --arg existing_vpc_crn "${existing_vpc_crn}" \
-        '. + {($region_var_name): $region_var_value, ($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_cos_instance_name): $existing_cos_instance_value , ($existing_cos_instance_crn): $existing_cos_instance_crn , ($existing_vpc_crn): $existing_vpc_crn}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
+        --arg existing_cos_instance_crn_name "${existing_cos_instance_crn_name}" \
+        --arg existing_cos_instance_crn_value "${existing_cos_instance_crn_value}" \
+        '. + {($region_var_name): $region_var_value, ($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_cos_instance_name): $existing_cos_instance_value , ($existing_cos_instance_crn_name): $existing_cos_instance_crn_value , ($existing_vpc_crn_name): $existing_vpc_crn_value}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
 
   echo "Pre-validation completed successfully."
 )
