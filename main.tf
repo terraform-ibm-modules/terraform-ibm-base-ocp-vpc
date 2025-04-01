@@ -14,11 +14,11 @@ locals {
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
 
-  cos_name     = var.use_existing_cos || (!var.use_existing_cos && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
+  cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
   cos_location = "global"
   cos_plan     = "standard"
   # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
-  cos_instance_crn = var.enable_registry_storage ? (!var.use_existing_cos ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
+  cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
   delete_timeout = "2h"
   create_timeout = "3h"
@@ -35,7 +35,7 @@ locals {
 
   # attach_ibm_managed_security_group is false and custom_security_group_ids is not set => default behavior, so set to null
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
-  cluster_security_groups = var.attach_ibm_managed_security_group ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
+  cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
