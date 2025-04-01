@@ -101,7 +101,7 @@ resource "null_resource" "set_audit_webhook" {
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"}"
-    interpreter = ["/bin/bash"]
+    interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN    = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
       AUDIT_SERVER = local.audit_server
