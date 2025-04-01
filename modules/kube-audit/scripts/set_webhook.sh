@@ -74,11 +74,10 @@ curl_request() {
     fi
 
     if [ "${status_code}" == "204" ]; then
-        echo "$endpoint successfully executed."
+        echo "$status_code"
     else
         echo "ERROR:: $endpoint FAILED"
         echo "$result"
-        exit 1
     fi
 }
 
@@ -87,9 +86,42 @@ CLIENT_CERT=${CLIENT_CERT//$'\n'/\\n}
 CLIENT_KEY=${CLIENT_KEY//$'\n'/\\n}
 
 JSON_BODY="{\"auditServer\": \"$AUDIT_SERVER\",\"caCertificate\": \"$CERTIFICATE_AUTHORITY\",\"clientCertificate\": \"$CLIENT_CERT\",\"clientKey\": \"$CLIENT_KEY\",\"policy\": \"$POLICY\"}"
-response=$(curl_request "v1/clusters/$CLUSTER_ID/apiserverconfigs/auditwebhook" "$JSON_BODY")
-echo "$response"
+
+webhook_attempts=1
+while true; do
+    response=$(curl_request "v1/clusters/$CLUSTER_ID/apiserverconfigs/auditwebhook" "$JSON_BODY")
+    echo "Webhook status: $response"
+    if [[ "$response" == "204" ]]; then
+        echo "webhook set successfully"
+        break
+    else
+        webhook_attempts=$((webhook_attempts + 1))
+        if [ $webhook_attempts -ge 10 ]; then
+            echo "Webhook status: $response"
+            break
+        fi
+        echo "Sleeping for 30 secs.."
+        sleep 30
+    fi
+    response=""
+done
 sleep 60
 
-response2=$(curl_request "v1/logging/$CLUSTER_ID/refresh" "")
-echo "$response2"
+refresh_attempts=1
+while true; do
+    response2=$(curl_request "v1/logging/$CLUSTER_ID/refresh" "")
+    echo "Refresh status: $response2"
+    if [[ "$response2" == "204" ]]; then
+        echo "Cluster refreshed successfully"
+        break
+    else
+        refresh_attempts=$((refresh_attempts + 1))
+        if [ $refresh_attempts -ge 10 ]; then
+            echo "Refresh status: $response2"
+            break
+        fi
+        echo "Sleeping for 30 secs.."
+        sleep 30
+    fi
+    response2=""
+done
