@@ -8,7 +8,7 @@ The following resources are provisioned by this example:
 - Cluster keys if an existing KMS instance is passed.
 
 
-![ocp-cluster](../../reference-architecture/deployable-architecture-ocp-cluster-qs.svg)
+![ocp-cluster](../../reference-architecture/deployable-architecture-ocp-cluster.svg)
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
