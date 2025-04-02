@@ -98,12 +98,12 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:                t,
-		Prefix:                 "ocp-fc",
-		TarIncludePatterns:     []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", "scripts/*.sh", "kubeconfig/README.md"},
-		TemplateFolder:         fullyConfigurableTerraformDir,
-		Tags:                   []string{"test-schematic"},
-		DeleteWorkspaceOnFail:  false,
+		Testing:               t,
+		Prefix:                "ocp-fc",
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", "scripts/*.sh", "kubeconfig/README.md"},
+		TemplateFolder:        fullyConfigurableTerraformDir,
+		Tags:                  []string{"test-schematic"},
+		DeleteWorkspaceOnFail: false,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -131,12 +131,12 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:                t,
-		Prefix:                 "ocp-fc-upg",
-		TarIncludePatterns:     []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/*.*"},
-		TemplateFolder:         fullyConfigurableTerraformDir,
-		Tags:                   []string{"test-schematic"},
-		DeleteWorkspaceOnFail:  false,
+		Testing:               t,
+		Prefix:                "ocp-fc-upg",
+		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/*.*"},
+		TemplateFolder:        fullyConfigurableTerraformDir,
+		Tags:                  []string{"test-schematic"},
+		DeleteWorkspaceOnFail: false,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
