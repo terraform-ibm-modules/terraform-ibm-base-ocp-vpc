@@ -92,7 +92,7 @@
               {
                 "diagram": {
                   "caption": "Red Hat OpenShift VPC cluster for IBM Cloud.",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture creates a fully-configurable Red Hat OpenShift VPC cluster."
