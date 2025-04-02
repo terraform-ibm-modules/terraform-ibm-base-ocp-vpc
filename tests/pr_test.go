@@ -104,7 +104,6 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		TemplateFolder:         fullyConfigurableTerraformDir,
 		Tags:                   []string{"test-schematic"},
 		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 60,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -138,7 +137,6 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		TemplateFolder:         fullyConfigurableTerraformDir,
 		Tags:                   []string{"test-schematic"},
 		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 60,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
