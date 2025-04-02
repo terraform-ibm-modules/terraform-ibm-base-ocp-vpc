@@ -38,14 +38,17 @@ get_ca_cert() {
     fi
 
     CERTIFICATE_AUTHORITY=$(echo "$result" | jq -r .caCert | base64 -d)
+    echo "$CERTIFICATE_AUTHORITY"
 }
 
-attempts=1
-until get_ca_cert || [ $attempts -ge 3 ]; do
-    attempts=$((attempts + 1))
-    echo "Error getting the CA cert..." >&2
-    sleep 60
-done
+get_ca_cert
+
+# attempts=1
+# until get_ca_cert || [ $attempts -ge 3 ]; do
+#     attempts=$((attempts + 1))
+#     echo "Error getting the CA cert..." >&2
+#     sleep 60
+# done
 
 curl_request() {
     local endpoint=$1
@@ -98,7 +101,7 @@ while true; do
         webhook_attempts=$((webhook_attempts + 1))
         if [ $webhook_attempts -ge 10 ]; then
             echo "Webhook status: $response"
-            break
+            exit 1
         fi
         echo "Sleeping for 30 secs.."
         sleep 30
@@ -118,7 +121,7 @@ while true; do
         refresh_attempts=$((refresh_attempts + 1))
         if [ $refresh_attempts -ge 10 ]; then
             echo "Refresh status: $response2"
-            break
+            exit 1
         fi
         echo "Sleeping for 30 secs.."
         sleep 30
