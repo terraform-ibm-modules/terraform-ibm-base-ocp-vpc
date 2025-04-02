@@ -91,11 +91,11 @@ locals {
 }
 
 data "ibm_iam_auth_token" "webhook_api_key_tokendata" {
-  depends_on = [time_sleep.wait_for_kube_audit]
+  depends_on = [data.ibm_container_cluster_config.cluster_config]
 }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [data.ibm_iam_auth_token.webhook_api_key_tokendata]
+  depends_on = [time_sleep.wait_for_kube_audit]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
