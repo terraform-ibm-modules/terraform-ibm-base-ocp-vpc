@@ -196,6 +196,7 @@ module "kube_audit" {
   cluster_resource_group_id = module.resource_group.resource_group_id
   audit_log_policy          = "WriteRequestBodies"
   region                    = var.region
+  ibmcloud_api_key          = var.ibmcloud_api_key
 }
 
 

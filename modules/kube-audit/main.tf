@@ -90,9 +90,10 @@ locals {
   audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/${var.audit_deployment_name}-service/proxy/post"
 }
 
-data "ibm_iam_auth_token" "webhook_api_key_tokendata" {
-  depends_on = [data.ibm_container_cluster_config.cluster_config]
-}
+# see [issue](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107)
+# data "ibm_iam_auth_token" "webhook_api_key_tokendata" {
+#   depends_on = [data.ibm_container_cluster_config.cluster_config]
+# }
 
 resource "null_resource" "set_audit_webhook" {
   depends_on = [time_sleep.wait_for_kube_audit]
@@ -103,10 +104,10 @@ resource "null_resource" "set_audit_webhook" {
     command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
-      IAM_TOKEN    = nonsensitive(data.ibm_iam_auth_token.webhook_api_key_tokendata.iam_access_token)
-      AUDIT_SERVER = nonsensitive(local.audit_server)
-      CLIENT_CERT  = nonsensitive(data.ibm_container_cluster_config.cluster_config.admin_certificate)
-      CLIENT_KEY   = nonsensitive(data.ibm_container_cluster_config.cluster_config.admin_key)
+      IAM_API_KEY  = var.ibmcloud_api_key
+      AUDIT_SERVER = local.audit_server
+      CLIENT_CERT  = data.ibm_container_cluster_config.cluster_config.admin_certificate
+      CLIENT_KEY   = data.ibm_container_cluster_config.cluster_config.admin_key
     }
   }
 }
