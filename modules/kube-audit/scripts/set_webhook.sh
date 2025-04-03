@@ -32,7 +32,7 @@ fetch_token() {
         IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
     fi
 
-    token=$(curl -i -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IAM_API_KEY" -X POST "$IAM_URL") #pragma: allowlist secret
+    token=$(curl -s -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IAM_API_KEY" -X POST "$IAM_URL") #pragma: allowlist secret
     IAM_TOKEN=$(echo "$token" | jq -r .access_token)
 }
 
