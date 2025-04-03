@@ -122,6 +122,7 @@ variable "force_delete_storage" {
   description = "Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false"
   default     = false
 }
+
 variable "existing_cos_id" {
   type        = string
   description = "The COS id of an already existing COS instance"
@@ -159,6 +160,7 @@ variable "addons" {
     cluster-autoscaler        = optional(string)
     vpc-block-csi-driver      = optional(string)
     ibm-storage-operator      = optional(string)
+    openshift-ai              = optional(string)
   })
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   default     = {}
@@ -215,7 +217,7 @@ variable "number_of_lbs" {
   nullable    = false
   validation {
     condition     = var.number_of_lbs >= 1
-    error_message = "Please set the number_of_lbs to a minumum of."
+    error_message = "Please set the number_of_lbs to a minimum of 1."
   }
 }
 

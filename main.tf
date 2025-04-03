@@ -41,6 +41,28 @@ locals {
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
 }
 
+# Local block to verify validations for OCP AI Addon.
+locals {
+
+  # get the total workers per pool
+  workers_per_pool = {
+    for pool in var.worker_pools :
+    pool.pool_name => (
+      pool.vpc_subnets != null ? length(pool.vpc_subnets) * pool.workers_per_zone : length(var.vpc_subnets[pool.subnet_prefix]) * pool.workers_per_zone
+    )
+  }
+
+  # retrieve worker specs (CPU & RAM) for all worker pools
+  worker_specs = {
+    for pool in var.worker_pools :
+    pool.pool_name => {
+      cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
+      ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+      is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
+    }
+  }
+}
+
 # Separate local block to handle os validations
 locals {
   os_rhel  = "REDHAT_8_64"
@@ -463,7 +485,6 @@ resource "null_resource" "confirm_network_healthy" {
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
   depends_on = [null_resource.confirm_network_healthy]
-
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]

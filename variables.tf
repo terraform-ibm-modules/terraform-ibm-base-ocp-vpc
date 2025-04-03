@@ -125,13 +125,13 @@ variable "worker_pools_taints" {
 }
 
 variable "attach_ibm_managed_security_group" {
-  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if custom_security_group_ids is set."
+  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if `custom_security_group_ids` is set."
   type        = bool
   default     = true
 }
 
 variable "custom_security_group_ids" {
-  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if attach_ibm_managed_security_group is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
+  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if `attach_ibm_managed_security_group` is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
   type        = list(string)
   default     = null
   validation {
@@ -141,7 +141,7 @@ variable "custom_security_group_ids" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the number_of_lbs is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
@@ -152,13 +152,13 @@ variable "additional_lb_security_group_ids" {
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the additional_lb_security_group_names security group with."
+  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
   type        = number
   default     = 1
   nullable    = false
   validation {
     condition     = var.number_of_lbs >= 1
-    error_message = "Please set the number_of_lbs to a minumum of."
+    error_message = "Please set the number_of_lbs to a minimum of 1."
   }
 }
 
@@ -280,7 +280,7 @@ variable "access_tags" {
 
 variable "disable_outbound_traffic_protection" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for `ocp_version` 4.15"
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
   default     = false
 }
 
@@ -318,10 +318,32 @@ variable "addons" {
     cluster-autoscaler        = optional(string)
     vpc-block-csi-driver      = optional(string)
     ibm-storage-operator      = optional(string)
+    openshift-ai              = optional(string)
   })
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   nullable    = false
   default     = {}
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || (tonumber(local.ocp_version_num) >= 4.16)
+    error_message = "OCP AI add-on requires OCP version >= 4.16.0"
+  }
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
+    error_message = "OCP AI add-on requires at least 2 worker nodes in each worker pool."
+  }
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
+    error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
+  }
+
+  validation {
+    condition     = lookup(var.addons, "openshift-ai", null) == null || anytrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_gpu", false)])
+    error_message = "OCP AI add-on requires at least one GPU-enabled worker pool."
+  }
+
 }
 
 variable "manage_all_addons" {
