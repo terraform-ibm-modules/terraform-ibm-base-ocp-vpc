@@ -125,13 +125,13 @@ variable "worker_pools_taints" {
 }
 
 variable "attach_ibm_managed_security_group" {
-  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if custom_security_group_ids is set."
+  description = "Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if `custom_security_group_ids` is set."
   type        = bool
   default     = true
 }
 
 variable "custom_security_group_ids" {
-  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if attach_ibm_managed_security_group is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
+  description = "Security groups to add to all worker nodes. This comes in addition to the IBM maintained security group if `attach_ibm_managed_security_group` is set to true. If this variable is set, the default VPC security group is NOT assigned to the worker nodes."
   type        = list(string)
   default     = null
   validation {
@@ -141,7 +141,7 @@ variable "custom_security_group_ids" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the number_of_lbs is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
@@ -152,13 +152,13 @@ variable "additional_lb_security_group_ids" {
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the additional_lb_security_group_names security group with."
+  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
   type        = number
   default     = 1
   nullable    = false
   validation {
     condition     = var.number_of_lbs >= 1
-    error_message = "Please set the number_of_lbs to a minumum of."
+    error_message = "Please set the number_of_lbs to a minimum of 1."
   }
 }
 
@@ -280,7 +280,7 @@ variable "access_tags" {
 
 variable "disable_outbound_traffic_protection" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for `ocp_version` 4.15"
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
   default     = false
 }
 
