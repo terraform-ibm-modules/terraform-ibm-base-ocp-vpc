@@ -59,17 +59,9 @@ get_ca_cert() {
     fi
 
     CERTIFICATE_AUTHORITY=$(echo "$result" | jq -r .caCert | base64 -d)
-    echo "$CERTIFICATE_AUTHORITY"
 }
 
 get_ca_cert
-
-# attempts=1
-# until get_ca_cert || [ $attempts -ge 3 ]; do
-#     attempts=$((attempts + 1))
-#     echo "Error getting the CA cert..." >&2
-#     sleep 60
-# done
 
 curl_request() {
     local endpoint=$1
