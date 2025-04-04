@@ -93,9 +93,9 @@ module "kms" {
   providers = {
     ibm = ibm.kms
   }
-  count                       = (var.kms_encryption_enabled_boot_volume || var.kms_encryption_enabled_cluster) && var.existing_cluster_kms_key_crn == null ? 1 : 0
+  count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "4.21.2"
+  version                     = "4.21.4"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -167,7 +167,12 @@ locals {
       }
       additional_security_group_ids = var.additional_security_group_ids
     }
-    ], [for pool in var.additional_worker_pools : pool if length(pool.vpc_subnets) > 0],
+    ], [for pool in var.additional_worker_pools : merge(pool, { resource_group_id = module.resource_group.resource_group_id
+      boot_volume_encryption_kms_config = {
+        crk             = local.boot_volume_kms_key_id
+        kms_instance_id = local.boot_volume_existing_kms_guid
+        kms_account_id  = local.boot_volume_kms_account_id
+    } }) if length(pool.vpc_subnets) > 0],
     [for pool in var.additional_worker_pools : {
       pool_name         = pool.pool_name
       machine_type      = pool.machine_type
