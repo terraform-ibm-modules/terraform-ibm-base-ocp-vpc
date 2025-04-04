@@ -169,19 +169,23 @@ locals {
     }
     ], [for pool in var.additional_worker_pools : pool if length(pool.vpc_subnets) > 0],
     [for pool in var.additional_worker_pools : {
-      pool_name                         = pool.pool_name
-      machine_type                      = pool.machine_type
-      workers_per_zone                  = pool.workers_per_zone
-      resource_group_id                 = pool.resource_group_id
-      operating_system                  = pool.operating_system
-      labels                            = pool.labels
-      minSize                           = pool.minSize
-      secondary_storage                 = pool.secondary_storage
-      maxSize                           = pool.maxSize
-      enableAutoscaling                 = pool.enableAutoscaling
-      boot_volume_encryption_kms_config = pool.boot_volume_encryption_kms_config
-      additional_security_group_ids     = pool.additional_security_group_ids
-      subnet_prefix                     = "default"
+      pool_name         = pool.pool_name
+      machine_type      = pool.machine_type
+      workers_per_zone  = pool.workers_per_zone
+      resource_group_id = module.resource_group.resource_group_id
+      operating_system  = pool.operating_system
+      labels            = pool.labels
+      minSize           = pool.minSize
+      secondary_storage = pool.secondary_storage
+      maxSize           = pool.maxSize
+      enableAutoscaling = pool.enableAutoscaling
+      boot_volume_encryption_kms_config = {
+        crk             = local.boot_volume_kms_key_id
+        kms_instance_id = local.boot_volume_existing_kms_guid
+        kms_account_id  = local.boot_volume_kms_account_id
+      }
+      additional_security_group_ids = pool.additional_security_group_ids
+      subnet_prefix                 = "default"
   } if length(pool.vpc_subnets) == 0])
 }
 
