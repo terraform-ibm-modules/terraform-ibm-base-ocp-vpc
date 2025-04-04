@@ -133,7 +133,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
-		Prefix:                "ocp-fc-upg",
+		Prefix:                "fc-upg",
 		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
