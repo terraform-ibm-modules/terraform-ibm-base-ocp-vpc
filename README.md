@@ -26,6 +26,7 @@ Optionally, the module supports advanced security group management for the worke
 * [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
 * [Submodules](./modules)
     * [fscloud](./modules/fscloud)
+    * [kube-audit](./modules/kube-audit)
 * [Examples](./examples)
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
