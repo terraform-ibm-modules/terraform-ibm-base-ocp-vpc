@@ -117,6 +117,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 	}
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 	cleanupTerraform(t, existingTerraformOptions, prefix)
@@ -132,7 +133,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
-		Prefix:                "ocp-fc-upg",
+		Prefix:                "fc-upg",
 		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
