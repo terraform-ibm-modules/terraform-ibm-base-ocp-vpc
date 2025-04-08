@@ -21,6 +21,7 @@ import (
 )
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
+const securityEnforcedTerraformDir = "solutions/security-enforced"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -122,6 +123,37 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	cleanupTerraform(t, existingTerraformOptions, prefix)
 }
 
+func TestRunSecurityEnforcedInSchematics(t *testing.T) {
+	t.Parallel()
+
+	// Provision resources first
+	prefix := fmt.Sprintf("ocp-se-%s", strings.ToLower(random.UniqueId()))
+	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:               t,
+		Prefix:                "ocp-se",
+		TarIncludePatterns:    []string{"*.tf", securityEnforcedTerraformDir + "/*.*", "scripts/*.sh", "kubeconfig/README.md"},
+		TemplateFolder:        securityEnforcedTerraformDir,
+		Tags:                  []string{"test-schematic"},
+		DeleteWorkspaceOnFail: false,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "cluster_name", Value: "cluster", DataType: "string"},
+		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+	}
+	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
+	cleanupTerraform(t, existingTerraformOptions, prefix)
+}
+
 // Upgrade Test does not require KMS encryption
 func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
@@ -147,6 +179,37 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
 		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
 		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+	}
+
+	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
+	cleanupTerraform(t, existingTerraformOptions, prefix)
+}
+
+func TestRunUpgradeSecurityEnforced(t *testing.T) {
+	t.Parallel()
+
+	// Provision existing resources first
+	prefix := fmt.Sprintf("ocp-se-upg-%s", strings.ToLower(random.UniqueId()))
+	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:               t,
+		Prefix:                "ocp-se-upg",
+		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", securityEnforcedTerraformDir + "/*.*"},
+		TemplateFolder:        securityEnforcedTerraformDir,
+		Tags:                  []string{"test-schematic"},
+		DeleteWorkspaceOnFail: false,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "cluster_name", Value: "cluster", DataType: "string"},
+		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
+		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 	}
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
