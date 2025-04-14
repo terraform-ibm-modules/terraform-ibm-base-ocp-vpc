@@ -52,7 +52,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.22.7"
+  version           = "7.22.10"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix

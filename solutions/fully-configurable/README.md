@@ -17,7 +17,7 @@ The following resources are provisioned by this example:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.76.3 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.77.0 |
 
 ### Modules
 
@@ -27,7 +27,7 @@ The following resources are provisioned by this example:
 | <a name="module_existing_cluster_kms_key_crn_parser"></a> [existing\_cluster\_kms\_key\_crn\_parser](#module\_existing\_cluster\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_kms_crn_parser"></a> [existing\_kms\_crn\_parser](#module\_existing\_kms\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 4.21.6 |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 4.21.8 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
 
@@ -35,8 +35,8 @@ The following resources are provisioned by this example:
 
 | Name | Type |
 |------|------|
-| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/data-sources/is_subnets) | data source |
+| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_subnets) | data source |
 
 ### Inputs
 
