@@ -611,6 +611,10 @@ resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
   depends_on = [data.ibm_iam_auth_token.tokendata]
 
+  triggers = {
+    confirm_lb_active = var.additional_lb_security_group_ids[count.index]
+  }
+
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
