@@ -211,7 +211,7 @@ locals {
 
 module "observability_instances" {
   source                     = "terraform-ibm-modules/observability-instances/ibm"
-  version                    = "3.4.3"
+  version                    = "3.5.0"
   resource_group_id          = module.resource_group.resource_group_id
   region                     = var.region
   cloud_logs_plan            = "standard"
@@ -223,7 +223,7 @@ module "observability_instances" {
 
 module "trusted_profile" {
   source                      = "terraform-ibm-modules/trusted-profile/ibm"
-  version                     = "2.0.1"
+  version                     = "2.1.1"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
   # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agents and routers sending logs.
@@ -248,7 +248,7 @@ module "trusted_profile" {
 module "observability_agents" {
   depends_on                = [module.kube_audit]
   source                    = "terraform-ibm-modules/observability-agents/ibm"
-  version                   = "2.6.0"
+  version                   = "2.6.2"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   # Cloud Logs agent
