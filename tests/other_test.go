@@ -29,6 +29,11 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 		Prefix:           prefix,
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
+		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
+			List: []string{
+				"module.observability_agents.module.logs_agent[0].helm_release.logs_agent",
+			},
+		},
 		TerraformVars: map[string]interface{}{
 			"ocp_version":     ocpVersion,
 			"access_tags":     permanentResources["accessTags"],

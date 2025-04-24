@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.21.8"
+  version                   = "4.21.10"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -183,4 +183,86 @@ data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = module.ocp_base.cluster_id
   resource_group_id = module.ocp_base.resource_group_id
   config_dir        = "${path.module}/../../kubeconfig"
+}
+
+########################################################################################################################
+# Kube Audit
+########################################################################################################################
+
+module "kube_audit" {
+  depends_on                = [module.ocp_base] # Wait for the cluster to completely deploy.
+  source                    = "../../modules/kube-audit"
+  cluster_id                = module.ocp_base.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  audit_log_policy          = "WriteRequestBodies"
+  region                    = var.region
+  ibmcloud_api_key          = var.ibmcloud_api_key
+}
+
+
+########################################################################################################################
+# Observability (Instance + Agents)
+########################################################################################################################
+
+locals {
+  logs_agent_namespace = "ibm-observe"
+  logs_agent_name      = "logs-agent"
+}
+
+module "observability_instances" {
+  source                     = "terraform-ibm-modules/observability-instances/ibm"
+  version                    = "3.5.0"
+  resource_group_id          = module.resource_group.resource_group_id
+  region                     = var.region
+  cloud_logs_plan            = "standard"
+  cloud_monitoring_plan      = "graduated-tier"
+  enable_platform_metrics    = false
+  cloud_logs_instance_name   = "${var.prefix}-cloud-logs"
+  cloud_monitoring_provision = false
+}
+
+module "trusted_profile" {
+  source                      = "terraform-ibm-modules/trusted-profile/ibm"
+  version                     = "2.1.1"
+  trusted_profile_name        = "${var.prefix}-profile"
+  trusted_profile_description = "Logs agent Trusted Profile"
+  # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agents and routers sending logs.
+  trusted_profile_policies = [{
+    roles = ["Sender"]
+    resources = [{
+      service = "logs"
+    }]
+  }]
+  # Set up fine-grained authorization for `logs-agent` running in ROKS cluster in `ibm-observe` namespace.
+  trusted_profile_links = [{
+    cr_type = "ROKS_SA"
+    links = [{
+      crn       = module.ocp_base.cluster_crn
+      namespace = local.logs_agent_namespace
+      name      = local.logs_agent_name
+    }]
+    }
+  ]
+}
+
+module "observability_agents" {
+  depends_on                = [module.kube_audit]
+  source                    = "terraform-ibm-modules/observability-agents/ibm"
+  version                   = "2.6.2"
+  cluster_id                = module.ocp_base.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  # Cloud Logs agent
+  logs_agent_trusted_profile  = module.trusted_profile.trusted_profile.id
+  logs_agent_namespace        = local.logs_agent_namespace
+  logs_agent_name             = local.logs_agent_name
+  cloud_logs_ingress_endpoint = module.observability_instances.cloud_logs_ingress_private_endpoint
+  cloud_logs_ingress_port     = 3443
+  # example of how to add additional metadata to the logs agents
+  logs_agent_additional_metadata = [{
+    key   = "cluster_id"
+    value = module.ocp_base.cluster_id
+  }]
+  # example of how to add only kube-audit log source path
+  logs_agent_selected_log_source_paths = ["/var/log/audit/*.log"]
+  cloud_monitoring_enabled             = false
 }

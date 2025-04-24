@@ -108,7 +108,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.8"
+  version                = "8.21.13"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -611,6 +611,10 @@ resource "null_resource" "confirm_lb_active" {
   count      = length(var.additional_lb_security_group_ids)
   depends_on = [data.ibm_iam_auth_token.tokendata]
 
+  triggers = {
+    confirm_lb_active = var.additional_lb_security_group_ids[count.index]
+  }
+
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
     interpreter = ["/bin/bash", "-c"]
@@ -714,7 +718,7 @@ locals {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.29.0"
+  version          = "1.30.0"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts

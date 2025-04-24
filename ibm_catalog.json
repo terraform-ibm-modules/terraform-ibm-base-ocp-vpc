@@ -44,6 +44,15 @@
           "name": "fully-configurable",
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "IBM Cloud Framework for Financial Services",
+                "profile_version": "1.7.0"
+              }
+            ]
+          },
           "iam_permissions": [
             {
               "role_crns": [
@@ -446,9 +455,8 @@
               ],
               "input_mapping": [
                 {
-                  "dependency_input": "kms_encryption_enabled_cluster",
-                  "value": true,
-                  "reference_version": true
+                  "version_input": "kms_encryption_enabled_cluster",
+                  "value": true
                 },
                 {
                   "dependency_output": "kms_instance_crn",
