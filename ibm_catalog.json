@@ -482,7 +482,7 @@
             {
               "name": "deploy-arch-ibm-cos",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "^v8.20.1",
+              "version": "^v8.21.10",
               "flavors": [
                 "instance"
               ],
@@ -494,7 +494,7 @@
               ],
               "input_mapping": [
                 {
-                  "dependency_output": "cos_instance_id",
+                  "dependency_output": "cos_instance_crn",
                   "version_input": "existing_cos_instance_crn"
                 },
                 {
