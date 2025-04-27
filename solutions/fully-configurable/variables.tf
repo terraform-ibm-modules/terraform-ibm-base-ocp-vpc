@@ -382,13 +382,13 @@ variable "kms_endpoint_type" {
   }
 }
 
-variable "cluster_key_ring_name" {
+variable "cluster_kms_key_ring_name" {
   type        = string
   default     = "cluster-key-ring"
   description = "The name of the key ring to be created for the cluster's Object Storage bucket encryption key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
-variable "cluster_key_name" {
+variable "cluster_kms_key_name" {
   type        = string
   default     = "cluster-key"
   description = "The name of the key to be created for the cluster's Object Storage bucket encryption. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
@@ -437,13 +437,13 @@ variable "existing_boot_volume_kms_key_crn" {
   }
 }
 
-variable "boot_volume_key_ring_name" {
+variable "boot_volume_kms_key_ring_name" {
   type        = string
   default     = "boot-volume-key-ring"
   description = "The name for the key ring created for the block storage volumes key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
-variable "boot_volume_key_name" {
+variable "boot_volume_kms_key_name" {
   type        = string
   default     = "boot-volume-key"
   description = "The name for the key created for the block storage volumes. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."

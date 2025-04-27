@@ -29,7 +29,7 @@
           "description": "Create and configures a Red Hat OpenShift VPC cluster on IBM Cloud."
         },
         {
-          "title": "Object Storage bucket for OpenShift internal registry storage.",
+          "title": "Object Storage bucket for OpenShift internal registry storage",
           "description": "Creates and configures an Object Storage bucket required for OpenShift internal registry storage."
         },
         {
@@ -189,23 +189,6 @@
               ]
             },
             {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
-                }
-              ]
-            },
-            {
               "key": "cluster_resource_tags",
               "custom_config": {
                 "type": "array",
@@ -360,13 +343,23 @@
               "key": "existing_cluster_kms_key_crn"
             },
             {
-              "key": "kms_endpoint_type"
+              "key": "kms_endpoint_type",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                }
+              ]
             },
             {
-              "key": "cluster_key_name"
+              "key": "cluster_kms_key_name"
             },
             {
-              "key": "cluster_key_ring_name"
+              "key": "cluster_kms_key_ring_name"
             },
             {
               "key": "kms_encryption_enabled_boot_volume"
@@ -375,13 +368,30 @@
               "key": "existing_boot_volume_kms_key_crn"
             },
             {
-              "key": "boot_volume_key_name"
+              "key": "boot_volume_kms_key_name"
             },
             {
-              "key": "boot_volume_key_ring_name"
+              "key": "boot_volume_kms_key_ring_name"
             },
             {
               "key": "cbr_rules"
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
             }
           ],
           "dependencies": [
