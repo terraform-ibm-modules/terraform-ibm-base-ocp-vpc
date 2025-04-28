@@ -29,15 +29,31 @@
           "description": "Create and configures a Red Hat OpenShift VPC cluster on IBM Cloud."
         },
         {
+          "title": "Creates worker pools",
+          "description": "With worker pools, you can group and manage worker nodes with similar configurations, such as compute resources and availability zones."
+        },
+        {
+          "title": "Configures subnets for containers",
+          "description": "Configures the subnets for the cluster, and specifies the subnets to deploy the worker nodes in."
+        },
+        {
+          "title": "Supports private and public endpoints",
+          "description": "Configures private and public endpoints for the cluster."
+        },
+        {
+          "title": "Configures ingress",
+          "description": "Configures the ingress controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
+        },
+        {
           "title": "Object Storage bucket for OpenShift internal registry storage",
           "description": "Creates and configures an Object Storage bucket required for OpenShift internal registry storage."
         },
         {
-          "title": "KMS encryption",
+          "title": "Key Management Services Encryption",
           "description": "Supports creating a new key, or using an existing one to encrypt the COS bucket."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
+      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center. ",
       "flavors": [
         {
           "label": "Fully configurable",
@@ -104,7 +120,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture creates a fully-configurable Red Hat OpenShift VPC cluster."
+                "description": "The fully configurable variation of Red Hat OpenShift Container Platform on VPC creates a Red Hat OpenShift Container Platform workload clusters on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon if existing vpc is not provided. You can also configure whether to enable observability on the cluster and encrypt the COS bucket used as OpenShift internal registry storage."
               }
             ]
           },
