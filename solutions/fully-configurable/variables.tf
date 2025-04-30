@@ -485,6 +485,7 @@ variable "enable_secrets_manager_for_ingress" {
   type        = bool
   description = "Whether to enable secrets manager for storing ingress certificate."
   default     = false
+  nullable    = false
   validation {
     condition = anytrue([
       !var.enable_secrets_manager_for_ingress,
