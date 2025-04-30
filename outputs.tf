@@ -104,3 +104,8 @@ output "registry_vpe" {
   description = "Info about the registry VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
   value       = local.registry_vpe_id
 }
+
+output "ingress_secrets_group" {
+  description = "Info of secrets group for storing ingress certificates"
+  value       = var.enable_secrets_manager_for_ingress ? ibm_container_ingress_instance.instance[0] : null
+}

@@ -101,3 +101,8 @@ output "registry_vpe" {
   description = "Details of the registry Virtual Private Endpoint (VPE), if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway"
   value       = module.ocp_base.registry_vpe
 }
+
+output "ingress_secrets_group" {
+  description = "Info of secrets group for storing ingress certificates"
+  value       = module.ocp_base.ingress_secrets_group
+}

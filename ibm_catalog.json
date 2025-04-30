@@ -382,6 +382,18 @@
             },
             {
               "key": "cbr_rules"
+            },
+            {
+              "key": "enable_secrets_manager_for_ingress"
+            },
+            {
+              "key": "existing_secrets_manager_instance_crn"
+            },
+            {
+              "key": "secrets_manager_secret_group_id"
+            },
+            {
+              "key": "is_default_secrets_manager_instance"
             }
           ],
           "dependencies": [
