@@ -753,6 +753,6 @@ resource "ibm_container_ingress_instance" "instance" {
   depends_on      = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
   cluster         = var.cluster_name
   instance_crn    = var.existing_secrets_manager_instance_crn
-  is_default      = var.is_default_secrets_manager_instance
+  is_default      = true
   secret_group_id = var.secrets_manager_secret_group_id
 }

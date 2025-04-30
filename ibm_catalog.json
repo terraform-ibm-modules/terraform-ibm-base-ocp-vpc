@@ -391,9 +391,6 @@
             },
             {
               "key": "secrets_manager_secret_group_id"
-            },
-            {
-              "key": "is_default_secrets_manager_instance"
             }
           ],
           "dependencies": [

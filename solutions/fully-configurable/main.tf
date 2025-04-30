@@ -233,5 +233,4 @@ module "ocp_base" {
   enable_secrets_manager_for_ingress    = var.enable_secrets_manager_for_ingress
   existing_secrets_manager_instance_crn = var.existing_secrets_manager_instance_crn
   secrets_manager_secret_group_id       = var.secrets_manager_secret_group_id
-  is_default_secrets_manager_instance   = var.is_default_secrets_manager_instance
 }

@@ -486,7 +486,10 @@ variable "enable_secrets_manager_for_ingress" {
   description = "Whether to enable secrets manager for storing ingress certificate."
   default     = false
   validation {
-    condition     = !var.enable_secrets_manager_for_ingress || var.existing_secrets_manager_instance_crn != null
+    condition = anytrue([
+      !var.enable_secrets_manager_for_ingress,
+      var.existing_secrets_manager_instance_crn != null
+    ])
     error_message = "'existing_secrets_manager_instance_crn' should be provided if setting 'enable_secrets_manager_for_ingress' to true."
   }
 }
@@ -500,15 +503,5 @@ variable "existing_secrets_manager_instance_crn" {
 variable "secrets_manager_secret_group_id" {
   type        = string
   description = "Secret group id where ingress secrets will be kept in the secrets manager instance. If not specified, default group will be used."
-  default     = ""
-}
-
-variable "is_default_secrets_manager_instance" {
-  type        = bool
-  description = "Whether the secrets manager instance provided will be default for storing ingress certificates."
-  default     = true
-  validation {
-    condition     = var.is_default_secrets_manager_instance || var.secrets_manager_secret_group_id == null
-    error_message = "Secret groups are only supported for default Secrets Manager instances. Either set 'is_default_secrets_manager_instance' to true or do not provide a value for 'secrets_manager_secret_group_id'."
-  }
+  default     = null
 }
