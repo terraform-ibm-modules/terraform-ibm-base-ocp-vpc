@@ -105,7 +105,7 @@ output "registry_vpe" {
   value       = local.registry_vpe_id
 }
 
-output "ingress_secrets_group" {
+output "secrets_manager_integration_config" {
   description = "Info of secrets group for storing ingress certificates"
   value       = var.enable_secrets_manager_integration ? ibm_container_ingress_instance.instance[0] : null
 }

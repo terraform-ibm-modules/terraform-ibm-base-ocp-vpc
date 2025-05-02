@@ -102,7 +102,7 @@ output "registry_vpe" {
   value       = module.ocp_base.registry_vpe
 }
 
-output "ingress_secrets_group" {
+output "secrets_manager_integration_config" {
   description = "Info of secrets group for storing ingress certificates"
-  value       = module.ocp_base.ingress_secrets_group
+  value       = module.ocp_base.secrets_manager_integration_config
 }

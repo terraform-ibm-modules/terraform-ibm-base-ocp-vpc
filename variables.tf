@@ -407,7 +407,7 @@ variable "cbr_rules" {
 
 variable "enable_secrets_manager_integration" {
   type        = bool
-  description = "Enable integration with IBM Cloud Secrets Manager so you can centrally manage Ingress subdomain certificates and other secrets. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-secrets-mgr)"
+  description = "Integrate with IBM Cloud Secrets Manager so you can centrally manage Ingress subdomain certificates and other secrets. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-secrets-mgr)"
   default     = false
   nullable    = false
   validation {
@@ -421,7 +421,7 @@ variable "enable_secrets_manager_integration" {
 
 variable "existing_secrets_manager_instance_crn" {
   type        = string
-  description = "CRN of secrets manager instance where ingress certificate secrets will be stored."
+  description = "CRN of the Secrets Manager instance where Ingress certificate secrets will be stored."
   default     = null
 }
 
