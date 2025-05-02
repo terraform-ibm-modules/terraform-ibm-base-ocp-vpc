@@ -749,7 +749,7 @@ module "cbr_rule" {
 ##############################################################
 
 resource "ibm_container_ingress_instance" "instance" {
-  count           = var.enable_secrets_manager_for_ingress ? 1 : 0
+  count           = var.enable_secrets_manager_integration ? 1 : 0
   depends_on      = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
   cluster         = var.cluster_name
   instance_crn    = var.existing_secrets_manager_instance_crn

@@ -107,5 +107,5 @@ output "registry_vpe" {
 
 output "ingress_secrets_group" {
   description = "Info of secrets group for storing ingress certificates"
-  value       = var.enable_secrets_manager_for_ingress ? ibm_container_ingress_instance.instance[0] : null
+  value       = var.enable_secrets_manager_integration ? ibm_container_ingress_instance.instance[0] : null
 }

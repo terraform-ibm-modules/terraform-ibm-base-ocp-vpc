@@ -230,7 +230,7 @@ module "ocp_base" {
   use_private_endpoint                  = var.use_private_endpoint
   verify_worker_network_readiness       = var.verify_worker_network_readiness
   worker_pools_taints                   = var.worker_pools_taints
-  enable_secrets_manager_for_ingress    = var.enable_secrets_manager_for_ingress
+  enable_secrets_manager_integration    = var.enable_secrets_manager_integration
   existing_secrets_manager_instance_crn = var.existing_secrets_manager_instance_crn
   secrets_manager_secret_group_id       = var.secrets_manager_secret_group_id
 }

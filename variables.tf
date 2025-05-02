@@ -405,14 +405,14 @@ variable "cbr_rules" {
 # Ingress Secrets Manager Integration
 ##############################################################
 
-variable "enable_secrets_manager_for_ingress" {
+variable "enable_secrets_manager_integration" {
   type        = bool
-  description = "Whether to enable secrets manager for storing ingress certificate."
+  description = "Enable integration with IBM Cloud Secrets Manager so you can centrally manage Ingress subdomain certificates and other secrets. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-secrets-mgr)"
   default     = false
   nullable    = false
   validation {
     condition = anytrue([
-      !var.enable_secrets_manager_for_ingress,
+      !var.enable_secrets_manager_integration,
       var.existing_secrets_manager_instance_crn != null
     ])
     error_message = "'existing_secrets_manager_instance_crn' should be provided if setting 'enable_secrets_manager_for_ingress' to true."
