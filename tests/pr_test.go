@@ -118,7 +118,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
-		{Name: "enable_secrets_manager_for_ingress", Value: "true", DataType: "bool"},
+		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 	}
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
