@@ -5,17 +5,17 @@
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string
-  description = "The Id of an existing IBM Cloud resource group where the cluster will be grouped."
+  description = "The ID of an existing IBM Cloud resource group where the cluster is grouped."
 }
 
 variable "region" {
   type        = string
-  description = "The IBM Cloud region where the cluster will be provisioned."
+  description = "The IBM Cloud region where the cluster is provisioned."
 }
 
 variable "use_private_endpoint" {
   type        = bool
-  description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
+  description = "Set this to true to force all API calls to use the IBM Cloud private endpoints."
   default     = false
 }
 
@@ -28,7 +28,7 @@ variable "tags" {
 
 variable "cluster_name" {
   type        = string
-  description = "The name that will be assigned to the provisioned cluster"
+  description = "The name that is assigned to the provisioned cluster."
 }
 
 variable "vpc_subnets" {
@@ -37,7 +37,7 @@ variable "vpc_subnets" {
     zone       = string
     cidr_block = string
   })))
-  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster will be created"
+  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster is created."
 }
 
 variable "allow_default_worker_pool_replacement" {
@@ -74,7 +74,7 @@ variable "worker_pools" {
   }))
   description = "List of worker pools"
   validation {
-    error_message = "Please provide value for minSize and maxSize while enableAutoscaling is set to true."
+    error_message = "Provide a value for minSize and maxSize while enableAutoscaling is set to true."
     condition = length(
       flatten(
         [
@@ -198,12 +198,12 @@ variable "ocp_version" {
 
 variable "cluster_ready_when" {
   type        = string
-  description = "The cluster is ready when one of the following: MasterNodeReady (not recommended), OneWorkerNodeReady, Normal, IngressReady"
+  description = "The cluster is ready based on one of the following:: MasterNodeReady (not recommended), OneWorkerNodeReady, Normal, IngressReady"
   default     = "IngressReady"
 
   validation {
     condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
-    error_message = "The input variable cluster_ready_when must one of: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
+    error_message = "The input variable cluster_ready_when must be one of the following: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
   }
 }
 variable "disable_public_endpoint" {
@@ -299,12 +299,12 @@ variable "service_subnet_cidr" {
 # VPC Variables
 variable "vpc_id" {
   type        = string
-  description = "Id of the VPC instance where this cluster will be provisioned"
+  description = "ID of the VPC instance where this cluster is provisioned."
 }
 
 variable "verify_worker_network_readiness" {
   type        = bool
-  description = "By setting this to true, a script will run kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, this should be set to false."
+  description = "By setting this to true, a script runs kubectl commands to verify that all worker nodes can communicate successfully with the master. If the runtime does not have access to the kube cluster to run kubectl commands, set this value to false."
   default     = true
 }
 
@@ -350,11 +350,11 @@ variable "manage_all_addons" {
   type        = bool
   default     = false
   nullable    = false # null values are set to default value
-  description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources."
+  description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module destroys any addons that were installed by other sources."
 }
 
 variable "cluster_config_endpoint_type" {
-  description = "Specify which type of endpoint to use for for cluster config access: 'default', 'private', 'vpe', 'link'. 'default' value will use the default endpoint of the cluster."
+  description = "Specify which type of endpoint to use for cluster config access: 'default', 'private', 'vpe', 'link'. A 'default' value uses the default endpoint of the cluster."
   type        = string
   default     = "default"
   nullable    = false # use default if null is passed in
@@ -365,7 +365,7 @@ variable "cluster_config_endpoint_type" {
 }
 
 variable "enable_ocp_console" {
-  description = "Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module will not modify the setting currently set on the cluster. Bare in mind when setting this to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint."
+  description = "Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module does not modify the current setting on the cluster. Keep in mind that when this input is set to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint."
   type        = bool
   default     = null
   nullable    = true
@@ -421,12 +421,12 @@ variable "enable_secrets_manager_integration" {
 
 variable "existing_secrets_manager_instance_crn" {
   type        = string
-  description = "CRN of the Secrets Manager instance where Ingress certificate secrets will be stored."
+  description = "CRN of the Secrets Manager instance where Ingress certificate secrets are stored."
   default     = null
 }
 
 variable "secrets_manager_secret_group_id" {
   type        = string
-  description = "Secret group id where ingress secrets will be kept in the secrets manager instance. If not specified, default group will be used."
+  description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If not specified, the default group is used."
   default     = null
 }

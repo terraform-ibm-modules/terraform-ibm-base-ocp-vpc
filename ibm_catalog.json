@@ -391,6 +391,9 @@
             },
             {
               "key": "secrets_manager_secret_group_id"
+            },
+            {
+              "key": "secrets_manager_endpoint_type"
             }
           ],
           "dependencies": [
@@ -564,8 +567,13 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "resource_group_name",
-                  "version_input": "existing_resource_group_name",
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "secrets_manager_endpoint_type",
+                  "version_input": "secrets_manager_endpoint_type",
                   "reference_version": true
                 },
                 {

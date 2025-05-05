@@ -232,5 +232,25 @@ module "ocp_base" {
   worker_pools_taints                   = var.worker_pools_taints
   enable_secrets_manager_integration    = var.enable_secrets_manager_integration
   existing_secrets_manager_instance_crn = var.existing_secrets_manager_instance_crn
-  secrets_manager_secret_group_id       = var.secrets_manager_secret_group_id
+  secrets_manager_secret_group_id       = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
+}
+
+module "existing_secrets_manager_instance_parser" {
+  count   = var.enable_secrets_manager_integration ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
+module "secret_group" {
+  count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
+  version                  = "1.3.4"
+  region                   = module.existing_secrets_manager_instance_parser[0].region
+  secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
+  secret_group_name        = module.ocp_base.cluster_id
+  secret_group_description = "Secret group created for storing ingress certificates"
+  endpoint_type            = var.secrets_manager_endpoint_type
+  create_access_group      = true
+  access_group_roles       = ["Writer"]
 }

@@ -103,6 +103,6 @@ output "registry_vpe" {
 }
 
 output "secrets_manager_integration_config" {
-  description = "Info of secrets group for storing ingress certificates"
+  description = "Information about the Secrets Manager instance that is used to store the Ingress certificates."
   value       = module.ocp_base.secrets_manager_integration_config
 }

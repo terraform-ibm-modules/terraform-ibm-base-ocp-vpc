@@ -3,19 +3,19 @@
 ##############################################################################
 
 output "cluster_id" {
-  description = "ID of cluster created"
+  description = "ID of the cluster"
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
   depends_on  = [null_resource.confirm_network_healthy]
 }
 
 output "cluster_name" {
-  description = "Name of the created cluster"
+  description = "Name of the cluster"
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name
   depends_on  = [null_resource.confirm_network_healthy]
 }
 
 output "cluster_crn" {
-  description = "CRN for the created cluster"
+  description = "CRN of the cluster"
   value       = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn
   depends_on  = [null_resource.confirm_network_healthy]
 }
@@ -41,7 +41,7 @@ output "vpc_id" {
 }
 
 output "region" {
-  description = "Region cluster is deployed in"
+  description = "Region that the cluster is deployed to"
   value       = var.region
 }
 
@@ -106,6 +106,6 @@ output "registry_vpe" {
 }
 
 output "secrets_manager_integration_config" {
-  description = "Info of secrets group for storing ingress certificates"
+  description = "Information about the Secrets Manager instance that is used to store the Ingress certificates."
   value       = var.enable_secrets_manager_integration ? ibm_container_ingress_instance.instance[0] : null
 }
