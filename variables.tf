@@ -411,11 +411,8 @@ variable "enable_secrets_manager_integration" {
   default     = false
   nullable    = false
   validation {
-    condition = anytrue([
-      !var.enable_secrets_manager_integration,
-      var.existing_secrets_manager_instance_crn != null
-    ])
-    error_message = "'existing_secrets_manager_instance_crn' should be provided if setting 'enable_secrets_manager_for_ingress' to true."
+    condition     = var.enable_secrets_manager_integration ? var.existing_secrets_manager_instance_crn != null : true
+    error_message = "'existing_secrets_manager_instance_crn' should be provided if setting 'enable_secrets_manager_integration' to true."
   }
 }
 
@@ -427,6 +424,12 @@ variable "existing_secrets_manager_instance_crn" {
 
 variable "secrets_manager_secret_group_id" {
   type        = string
-  description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If not specified, the default group is used."
+  description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If 'enable_secrets_manager_integration' is set to true and 'secrets_manager_secret_group_id' is not provided, a new group will be created with the same name as cluster_id."
   default     = null
+}
+
+variable "skip_ocp_secrets_manager_iam_auth_policy" {
+  type        = bool
+  description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
+  default     = false
 }

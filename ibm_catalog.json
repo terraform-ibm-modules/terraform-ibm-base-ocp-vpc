@@ -394,6 +394,9 @@
             },
             {
               "key": "secrets_manager_endpoint_type"
+            },
+            {
+              "key": "skip_ocp_secrets_manager_iam_auth_policy"
             }
           ],
           "dependencies": [
@@ -561,11 +564,6 @@
                 "*"
               ],
               "input_mapping": [
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",

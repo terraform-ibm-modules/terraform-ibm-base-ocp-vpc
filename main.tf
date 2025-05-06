@@ -748,13 +748,20 @@ module "cbr_rule" {
 # Ingress Secrets Manager Integration
 ##############################################################
 
+module "existing_secrets_manager_instance_parser" {
+  count   = var.enable_secrets_manager_integration ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
 resource "ibm_iam_authorization_policy" "ocp_secrets_manager_iam_auth_policy" {
-  count                       = var.enable_secrets_manager_integration ? 1 : 0
+  count                       = var.enable_secrets_manager_integration && !var.skip_ocp_secrets_manager_iam_auth_policy ? 1 : 0
   depends_on                  = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
   source_service_name         = "containers-kubernetes"
   source_resource_instance_id = local.cluster_id
   target_service_name         = "secrets-manager"
-  target_resource_instance_id = split(":", var.existing_secrets_manager_instance_crn)[7]
+  target_resource_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
   roles                       = ["Manager"]
 }
 
