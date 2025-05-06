@@ -748,14 +748,26 @@ module "cbr_rule" {
 # Ingress Secrets Manager Integration
 ##############################################################
 
-resource "time_sleep" "wait_for_secrets_manager_access_group_creation" {
-  depends_on      = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
-  create_duration = "120s"
+resource "ibm_iam_authorization_policy" "ocp_secrets_manager_iam_auth_policy" {
+  count                       = var.enable_secrets_manager_integration ? 1 : 0
+  depends_on                  = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  source_service_name         = "containers-kubernetes"
+  source_resource_instance_id = local.cluster_id
+  target_service_name         = "secrets-manager"
+  target_resource_instance_id = split(":", var.existing_secrets_manager_instance_crn)[7]
+  roles                       = ["Manager"]
 }
+
+resource "time_sleep" "wait_for_auth_policy" {
+  count           = var.enable_secrets_manager_integration ? 1 : 0
+  depends_on      = [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy[0]]
+  create_duration = "30s"
+}
+
 
 resource "ibm_container_ingress_instance" "instance" {
   count           = var.enable_secrets_manager_integration ? 1 : 0
-  depends_on      = [time_sleep.wait_for_secrets_manager_access_group_creation]
+  depends_on      = [time_sleep.wait_for_auth_policy]
   cluster         = var.cluster_name
   instance_crn    = var.existing_secrets_manager_instance_crn
   is_default      = true
