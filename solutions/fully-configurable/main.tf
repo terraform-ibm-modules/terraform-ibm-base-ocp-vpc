@@ -243,6 +243,21 @@ module "existing_secrets_manager_instance_parser" {
   crn     = var.existing_secrets_manager_instance_crn
 }
 
+resource "terraform_data" "delete_secrets" {
+
+  count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  input = {
+    secret_id                = module.secret_group[0].secret_group_id
+    api_key                  = var.ibmcloud_api_key
+    secrets_manager_crn      = var.existing_secrets_manager_instance_crn
+    secrets_manager_endpoint = var.secrets_manager_endpoint_type
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/delete_secrets.sh ${self.input.secret_id} ${self.input.api_key} ${self.input.secrets_manager_crn} ${self.input.secrets_manager_endpoint}"
+  }
+}
+
 module "secret_group" {
   providers = {
     ibm = ibm.secrets_manager
