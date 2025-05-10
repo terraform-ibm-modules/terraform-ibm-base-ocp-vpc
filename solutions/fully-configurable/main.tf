@@ -39,11 +39,11 @@ locals {
   cluster_existing_kms_guid = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.existing_kms_crn_parser[0].service_instance : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].service_instance : null
   cluster_kms_account_id    = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.existing_kms_crn_parser[0].account_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].account_id : null
   cluster_kms_key_id        = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_cluster ? module.kms[0].keys[format("%s.%s", local.cluster_key_ring_name, local.cluster_key_name)].key_id : var.existing_cluster_kms_key_crn != null ? module.existing_cluster_kms_key_crn_parser[0].resource : null
-  cluster_key_ring_name     = "${local.prefix}${var.cluster_key_ring_name}"
-  cluster_key_name          = "${local.prefix}${var.cluster_key_name}"
+  cluster_key_ring_name     = "${local.prefix}${var.cluster_kms_key_ring_name}"
+  cluster_key_name          = "${local.prefix}${var.cluster_kms_key_name}"
 
-  boot_volume_key_ring_name     = "${local.prefix}${var.boot_volume_key_ring_name}"
-  boot_volume_key_name          = "${local.prefix}${var.boot_volume_key_name}"
+  boot_volume_key_ring_name     = "${local.prefix}${var.boot_volume_kms_key_ring_name}"
+  boot_volume_key_name          = "${local.prefix}${var.boot_volume_kms_key_name}"
   boot_volume_existing_kms_guid = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.existing_kms_crn_parser[0].service_instance : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].service_instance : null
   boot_volume_kms_account_id    = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.existing_kms_crn_parser[0].account_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].account_id : null
   boot_volume_kms_key_id        = var.existing_kms_instance_crn != null && var.kms_encryption_enabled_boot_volume ? module.kms[0].keys[format("%s.%s", local.boot_volume_key_ring_name, local.boot_volume_key_name)].key_id : var.existing_boot_volume_kms_key_crn != null ? module.existing_boot_volume_kms_key_crn_parser[0].resource : null
