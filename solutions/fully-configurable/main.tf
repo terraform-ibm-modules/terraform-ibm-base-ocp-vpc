@@ -253,8 +253,9 @@ resource "terraform_data" "delete_secrets" {
     secrets_manager_endpoint = var.secrets_manager_endpoint_type
   }
   provisioner "local-exec" {
-    when    = destroy
-    command = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.api_key} ${self.input.secrets_manager_crn} ${self.input.secrets_manager_endpoint}"
+    when        = destroy
+    command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.api_key} ${self.input.secrets_manager_crn} ${self.input.secrets_manager_endpoint}"
+    interpreter = ["/bin/bash", "-c"]
   }
 }
 
