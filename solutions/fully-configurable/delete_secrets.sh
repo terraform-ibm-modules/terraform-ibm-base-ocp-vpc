@@ -2,7 +2,10 @@
 
 API_KEY=$2
 
-iam_token=$(curl -s -X POST "https://iam.cloud.ibm.com/identity/token" --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --data-urlencode "grant_type=urn:ibm:params:oauth:grant-type:apikey" --data-urlencode "apikey=$API_KEY" | jq -r '.access_token')  # pragma: allowlist secret
+iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
+IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
+
+iam_token=$(curl -s -X POST "https://${IBMCLOUD_IAM_API_ENDPOINT}/identity/token" --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --data-urlencode "grant_type=urn:ibm:params:oauth:grant-type:apikey" --data-urlencode "apikey=$API_KEY" | jq -r '.access_token')  # pragma: allowlist secret
 
 secret_group_id=$1
 secrets_manager_crn=$3
