@@ -72,13 +72,6 @@ variable "wait_till_timeout" {
   default     = 90
 }
 
-variable "manage_all_addons" {
-  type        = bool
-  default     = false
-  nullable    = false # null values are set to default value
-  description = "Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module will destroy any addons that were installed by other sources."
-}
-
 variable "provision_odf_addon" {
   type        = bool
   default     = false

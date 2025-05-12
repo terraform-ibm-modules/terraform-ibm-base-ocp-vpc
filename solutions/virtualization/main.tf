@@ -21,13 +21,20 @@ resource "ibm_container_addons" "addons" {
   resource_group_id = var.cluster_resource_group_id
 
   # setting to false means we do not want Terraform to manage addons that are managed elsewhere
-  manage_all_addons = var.manage_all_addons
+  manage_all_addons = false
 
   dynamic "addons" {
     for_each = local.addons
     content {
-      name    = addons.key
-      version = addons.value
+      name            = addons.key
+      version         = addons.value
+      parameters_json = addons.key != "openshift-data-foundation" ? null : <<PARAMETERS_JSON
+        {
+            "osdStorageClassName":"localblock",
+            "odfDeploy":"true",
+            "autoDiscoverDevices":"true"
+        }
+        PARAMETERS_JSON
     }
   }
 
@@ -84,6 +91,18 @@ resource "time_sleep" "wait_for_default_storage" {
   create_duration = "240s"
 }
 
+resource "null_resource" "enable_catalog_source" {
+  depends_on = [time_sleep.wait_for_default_storage]
+
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/enable_catalog_source.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+    }
+  }
+}
+
 ########################################################################################################################
 # Subscribing to the OpenShift Virtualization catalog
 ########################################################################################################################
@@ -95,7 +114,7 @@ locals {
 }
 
 resource "helm_release" "subscription" {
-  depends_on       = [time_sleep.wait_for_default_storage]
+  depends_on       = [null_resource.enable_catalog_source]
   name             = "${data.ibm_container_vpc_cluster.cluster.name}-subscription"
   chart            = local.subscription_chart_location
   namespace        = local.namespace
@@ -128,8 +147,14 @@ locals {
   operator_chart_location = "${path.module}/chart/operator"
 }
 
+resource "time_sleep" "wait_for_subscription" {
+  depends_on = [helm_release.subscription]
+
+  create_duration = "60s"
+}
+
 resource "helm_release" "operator" {
-  depends_on       = [helm_release.subscription]
+  depends_on       = [time_sleep.wait_for_subscription]
   name             = "${data.ibm_container_vpc_cluster.cluster.name}-operator"
   chart            = local.operator_chart_location
   namespace        = local.namespace
