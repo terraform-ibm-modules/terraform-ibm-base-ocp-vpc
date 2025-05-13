@@ -90,7 +90,6 @@
             }
           ],
           "architecture": {
-            "descriptions": "This architecture creates a fully-configurable OCP VPC cluster.",
             "features": [
               {
                 "title": "Creates a Red Hat OpenShift VPC cluster.",
