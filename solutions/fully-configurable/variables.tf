@@ -146,13 +146,6 @@ variable "default_worker_pool_labels" {
   default     = {}
 }
 
-variable "default_worker_pool_secondary_storage" {
-  type        = string
-  description = "The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning."
-  default     = null
-  nullable    = true
-}
-
 variable "enable_autoscaling_for_default_pool" {
   type        = bool
   description = "Set `true` to enable automatic scaling of worker based on workload demand."
