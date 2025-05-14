@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "8.21.17"
+  version                       = "8.21.21"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -30,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "8.21.17"
+  version = "8.21.21"
 
   bucket_configs = [
     {
@@ -52,7 +52,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.23.2"
+  version           = "7.23.7"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -225,7 +225,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-lb-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.6.2"
+  version                      = "2.7.0"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
