@@ -15,12 +15,6 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
-const customsgExampleDir = "examples/custom_sg"
-
-// Ensure there is one test per supported OCP version
-const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
 
 func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -67,17 +61,6 @@ func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
-
-	output, err := options.RunTestConsistency()
-
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestRunCustomsgExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp-customsg", customsgExampleDir, ocpVersion2)
 
 	output, err := options.RunTestConsistency()
 
@@ -140,28 +123,6 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion4,
-		},
-	})
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestCustomSGExample(t *testing.T) {
-	t.Parallel()
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  "examples/custom_sg",
-		Prefix:        "cust-sg",
-		ResourceGroup: resourceGroup,
-		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
-		},
-		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
-		ImplicitRequired: false,
-		TerraformVars: map[string]interface{}{
-			"ocp_version": ocpVersion2,
 		},
 	})
 	output, err := options.RunTestConsistency()
