@@ -391,6 +391,10 @@
             },
             {
               "key": "cbr_rules"
+            },
+            {
+              "key":"region",
+              "virtual": true
             }
           ],
           "dependencies": [
@@ -416,6 +420,11 @@
                 {
                   "dependency_input": "existing_resource_group_name",
                   "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input":"region",
+                  "version_input":"region",
                   "reference_version": true
                 },
                 {
