@@ -116,6 +116,15 @@ variable "worker_pools" {
     ])
     error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64)"
   }
+
+  validation {
+    condition = alltrue([
+      for pool in var.worker_pools :
+      length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", pool.machine_type)) > 0
+    ])
+    error_message = "Invalid value provided for one or more machine type."
+  }
+
 }
 
 variable "worker_pools_taints" {
