@@ -601,30 +601,7 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
-
-data "ibm_iam_auth_token" "tokendata" {
-  depends_on = [data.ibm_is_lbs.all_lbs]
-}
-
-resource "null_resource" "confirm_lb_active" {
-  count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_iam_auth_token.tokendata]
-
-  triggers = {
-    confirm_lb_active = var.additional_lb_security_group_ids[count.index]
-  }
-
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
-    }
-  }
-}
-
 module "attach_sg_to_lb" {
-  depends_on                     = [null_resource.confirm_lb_active]
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
   version                        = "2.7.0"
