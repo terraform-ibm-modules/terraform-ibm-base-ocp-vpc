@@ -235,7 +235,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.71.0, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.78.2, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1, < 3.0.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
@@ -267,7 +267,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_resource_tag.cos_access_tag](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/resource_tag) | resource |
 | [kubernetes_config_map_v1_data.set_autoscaling](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/config_map_v1_data) | resource |
 | [null_resource.config_map_status](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [null_resource.confirm_lb_active](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.confirm_network_healthy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ocp_console_management](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.reset_api_key](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
@@ -278,7 +277,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_container_vpc_worker_pool.all_pools](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_vpc_worker_pool) | data source |
 | [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_account_settings) | data source |
 | [ibm_iam_auth_token.reset_api_key_tokendata](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
-| [ibm_iam_auth_token.tokendata](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 | [ibm_is_lbs.all_lbs](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_lbs) | data source |
 | [ibm_is_virtual_endpoint_gateway.api_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
 | [ibm_is_virtual_endpoint_gateway.master_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
