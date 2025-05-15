@@ -251,7 +251,18 @@
               ]
             },
             {
-              "key": "enable_ocp_console"
+              "key": "enable_ocp_console",
+              "type": "string",
+              "options": [
+                {
+                  "displayname": "true",
+                  "value": "true"
+                },
+                {
+                  "displayname": "false",
+                  "value": "false"
+                }
+              ]
             },
             {
               "key": "addons"
