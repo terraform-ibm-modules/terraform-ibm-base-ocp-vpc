@@ -2,3 +2,13 @@
 operator:
   # renovate: datasource=docker depName=icr.io/ext/logdna-agent versioning=regex:^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-(?<build>\d{8}).\w+?$
   version: "v4.17.4"
+
+infra_node_selectors:
+  - label: ibm-cloud.kubernetes.io/server-type
+    values:
+      - virtual
+
+workloads_node_selectors:
+  - label: ibm-cloud.kubernetes.io/server-type
+    values:
+      - physical

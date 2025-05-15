@@ -129,14 +129,6 @@ resource "helm_release" "subscription" {
     type  = "string"
     value = local.subscription_version
   }
-
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm-rollout-status.sh hco-operator ${local.namespace}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
-    }
-  }
 }
 
 #########################################################################################################################
@@ -150,7 +142,7 @@ locals {
 resource "time_sleep" "wait_for_subscription" {
   depends_on = [helm_release.subscription]
 
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
 resource "helm_release" "operator" {
@@ -163,6 +155,14 @@ resource "helm_release" "operator" {
   wait             = true
   recreate_pods    = true
   force_update     = true
+  disable_webhooks = true
+
+  values = [
+    yamlencode({
+      infra_node_selectors     = var.infra_node_selectors
+      workloads_node_selectors = var.workloads_node_selectors
+    })
+  ]
 }
 
 # Wait until StorageProfile resources are created for each StorageClass.

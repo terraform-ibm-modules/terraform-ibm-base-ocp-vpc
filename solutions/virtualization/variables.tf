@@ -91,3 +91,27 @@ variable "vpc_file_default_storage_class" {
   type        = string
   default     = "ibmc-vpc-file-metro-1000-iops"
 }
+
+variable "infra_node_selectors" {
+  type = list(object({
+    label  = string
+    values = list(string)
+  }))
+  description = "List of infra node selectors to apply to HyperConverged pods."
+  default = [{
+    label  = "ibm-cloud.kubernetes.io/server-type"
+    values = ["virtual", "physical"]
+  }]
+}
+
+variable "workloads_node_selectors" {
+  type = list(object({
+    label  = string
+    values = list(string)
+  }))
+  description = "List of workload node selectors to apply to HyperConverged pods."
+  default = [{
+    label  = "ibm-cloud.kubernetes.io/server-type"
+    values = ["physical"]
+  }]
+}
