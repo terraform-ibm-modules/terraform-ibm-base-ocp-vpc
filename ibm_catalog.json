@@ -393,8 +393,9 @@
               "key": "cbr_rules"
             },
             {
-              "key":"flow_logs_cos_bucket_name",
-              "virtual": true
+              "key":"region",
+              "virtual": true,
+              "type": "string"
             }
           ],
           "dependencies": [
@@ -423,8 +424,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input":"flow_logs_cos_bucket_name",
-                  "version_input":"flow_logs_cos_bucket_name",
+                  "dependency_input":"region",
+                  "version_input":"region",
                   "reference_version": true
                 },
                 {
