@@ -7,6 +7,7 @@ RESOURCE_GROUP_ID="$2"
 APIKEY_KEY_NAME="containers-kubernetes-key"
 PRIVATE_ENV="$3"
 CLUSTER_ENDPOINT="$4"
+MAX_ATTEMPTS=10
 
 if [[ -z "${REGION}" ]]; then
     echo "Region must be passed as first input script argument" >&2
@@ -65,16 +66,25 @@ fetch_data() {
 
 fetch_data
 
+attempt=0
+retry_wait_time=5
+
 if [ "${reset}" == true ]; then
-    if [ "$IBMCLOUD_CS_API_ENDPOINT" = "containers.cloud.ibm.com" ]; then
-        if [ "$PRIVATE_ENV" = true ]; then
-            if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
-                RESET_URL="https://private.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
-                result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
-                status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
-            elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
-                RESET_URL="https://api.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
-                result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+    while [ $attempt -lt $MAX_ATTEMPTS ]; do
+        if [ "$IBMCLOUD_CS_API_ENDPOINT" = "containers.cloud.ibm.com" ]; then
+            if [ "$PRIVATE_ENV" = true ]; then
+                if [ "$CLUSTER_ENDPOINT" == "private" ] || [ "$CLUSTER_ENDPOINT" == "default" ]; then
+                    RESET_URL="https://private.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
+                    result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+                    status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
+                elif [ "$CLUSTER_ENDPOINT" == "vpe" ]; then
+                    RESET_URL="https://api.$REGION.$IBMCLOUD_CS_API_ENDPOINT/v1/keys"
+                    result=$(curl -i -H "accept: application/json" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" 2>/dev/null)
+                    status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
+                fi
+            else
+                RESET_URL="https://$IBMCLOUD_CS_API_ENDPOINT/global/v1/keys"
+                result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
                 status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
             fi
         else
@@ -82,19 +92,20 @@ if [ "${reset}" == true ]; then
             result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
             status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
         fi
-    else
-        RESET_URL="https://$IBMCLOUD_CS_API_ENDPOINT/global/v1/keys"
-        result=$(curl -i -H "accept: application/json" -H "X-Region: $REGION" -H "Authorization: $IAM_TOKEN" -H "X-Auth-Resource-Group: $RESOURCE_GROUP_ID" -X POST "$RESET_URL" -d '' 2>/dev/null)
-        status_code=$(echo "$result" | head -n 1 | cut -d$' ' -f2)
-    fi
 
-    if [ "${status_code}" == "204" ] || [ "${status_code}" == "200" ]; then
-        echo "The IAM API key is successfully reset."
-    else
-        echo "ERROR:: FAILED TO RESET THE IAM API KEY"
-        echo "$result"
-        exit 1
-    fi
-    # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
-    sleep 10
+        if [ "${status_code}" == "204" ] || [ "${status_code}" == "200" ]; then
+            echo "The IAM API key is successfully reset."
+            sleep 10
+            exit 0
+        else
+            echo "ERROR:: FAILED TO RESET THE IAM API KEY"
+            echo "$result"
+            sleep $retry_wait_time
+            ((attempt++))
+        fi
+        # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
+    done
 fi
+
+echo "Maximum retry attempts reached. Could not reset api key."
+exit 1
