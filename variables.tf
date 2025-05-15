@@ -418,7 +418,7 @@ variable "enable_secrets_manager_integration" {
 
 variable "existing_secrets_manager_instance_crn" {
   type        = string
-  description = "CRN of the Secrets Manager instance where Ingress certificate secrets are stored."
+  description = "CRN of the Secrets Manager instance where Ingress certificate secrets are stored. If 'enable_secrets_manager_integration' is set to true then this value is required."
   default     = null
 }
 
