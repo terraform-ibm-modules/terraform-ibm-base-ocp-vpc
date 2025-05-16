@@ -393,9 +393,10 @@
               "key": "cbr_rules"
             },
             {
-              "key":"region",
-              "virtual": true,
-              "type": "string"
+              "key": "region",
+              "type": "string",
+              "description": "Region for OCP AI.",
+              "virtual": false
             }
           ],
           "dependencies": [

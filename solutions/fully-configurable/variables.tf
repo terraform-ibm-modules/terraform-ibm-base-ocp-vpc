@@ -476,3 +476,9 @@ variable "cbr_rules" {
   description = "The list of context-based restriction rules to create. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-cbr)"
   default     = []
 }
+# tflint-ignore: terraform_unused_declarations
+variable "region" {
+  default     = "us-south"
+  description = "Region to deploy the VPC."
+  type        = string
+}
