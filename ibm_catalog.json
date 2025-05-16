@@ -396,7 +396,7 @@
               "key": "region",
               "type": "string",
               "description": "Region for OCP AI.",
-              "virtual": false
+              "virtual": true
             }
           ],
           "dependencies": [
