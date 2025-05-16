@@ -105,7 +105,6 @@ if [ "${reset}" == true ]; then
         fi
         # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
     done
+    echo "Maximum retry attempts reached. Could not reset api key."
+    exit 1
 fi
-
-echo "Maximum retry attempts reached. Could not reset api key."
-exit 1
