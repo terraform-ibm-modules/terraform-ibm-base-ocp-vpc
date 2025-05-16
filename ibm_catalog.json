@@ -398,6 +398,7 @@
               "description": "Region for OCP AI.",
               "virtual": true,
               "required": true,
+              "default_value": "us-south",
               "custom_config": {
                 "config_constraints": {
                   "generationType": "2"
