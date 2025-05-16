@@ -43,7 +43,6 @@ locals {
 
 # Local block to verify validations for OCP AI Addon.
 locals {
-
   # get the total workers per pool
   workers_per_pool = {
     for pool in var.worker_pools :
@@ -56,8 +55,8 @@ locals {
   worker_specs = {
     for pool in var.worker_pools :
     pool.pool_name => {
-      cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
-      ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+      cpu_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[0])
+      ram_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[1])
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
