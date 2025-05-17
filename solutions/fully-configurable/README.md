@@ -17,7 +17,7 @@ The following resources are provisioned by this example:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.77.1 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.2 |
 
 ### Modules
 
@@ -27,7 +27,7 @@ The following resources are provisioned by this example:
 | <a name="module_existing_cluster_kms_key_crn_parser"></a> [existing\_cluster\_kms\_key\_crn\_parser](#module\_existing\_cluster\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_kms_crn_parser"></a> [existing\_kms\_crn\_parser](#module\_existing\_kms\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.0.1 |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.1.2 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
 
@@ -35,8 +35,8 @@ The following resources are provisioned by this example:
 
 | Name | Type |
 |------|------|
-| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/is_subnets) | data source |
+| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/is_subnets) | data source |
 
 ### Inputs
 
@@ -65,7 +65,6 @@ The following resources are provisioned by this example:
 | <a name="input_default_worker_pool_labels"></a> [default\_worker\_pool\_labels](#input\_default\_worker\_pool\_labels) | A set of key-value labels assigned to the worker pool for identification. For Example: { env = "prod", team = "devops" } | `map(string)` | `{}` | no |
 | <a name="input_default_worker_pool_machine_type"></a> [default\_worker\_pool\_machine\_type](#input\_default\_worker\_pool\_machine\_type) | The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors) | `string` | `"bx2.8x32"` | no |
 | <a name="input_default_worker_pool_operating_system"></a> [default\_worker\_pool\_operating\_system](#input\_default\_worker\_pool\_operating\_system) | The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors) | `string` | `"RHEL_9_64"` | no |
-| <a name="input_default_worker_pool_secondary_storage"></a> [default\_worker\_pool\_secondary\_storage](#input\_default\_worker\_pool\_secondary\_storage) | The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning. | `string` | `null` | no |
 | <a name="input_default_worker_pool_workers_per_zone"></a> [default\_worker\_pool\_workers\_per\_zone](#input\_default\_worker\_pool\_workers\_per\_zone) | Number of worker nodes in each zone of the cluster. | `number` | `2` | no |
 | <a name="input_disable_outbound_traffic_protection"></a> [disable\_outbound\_traffic\_protection](#input\_disable\_outbound\_traffic\_protection) | Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. | `bool` | `false` | no |
 | <a name="input_disable_public_endpoint"></a> [disable\_public\_endpoint](#input\_disable\_public\_endpoint) | Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. | `bool` | `true` | no |

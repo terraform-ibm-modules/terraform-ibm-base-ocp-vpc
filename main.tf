@@ -43,7 +43,6 @@ locals {
 
 # Local block to verify validations for OCP AI Addon.
 locals {
-
   # get the total workers per pool
   workers_per_pool = {
     for pool in var.worker_pools :
@@ -56,8 +55,8 @@ locals {
   worker_specs = {
     for pool in var.worker_pools :
     pool.pool_name => {
-      cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
-      ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+      cpu_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[0])
+      ram_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[1])
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
@@ -108,7 +107,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.17"
+  version                = "8.21.21"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -602,33 +601,10 @@ locals {
   lbs_associated_with_cluster = length(var.additional_lb_security_group_ids) > 0 ? [for lb in data.ibm_is_lbs.all_lbs[0].load_balancers : lb.id if strcontains(lb.name, local.cluster_id)] : []
 }
 
-
-data "ibm_iam_auth_token" "tokendata" {
-  depends_on = [data.ibm_is_lbs.all_lbs]
-}
-
-resource "null_resource" "confirm_lb_active" {
-  count      = length(var.additional_lb_security_group_ids)
-  depends_on = [data.ibm_iam_auth_token.tokendata]
-
-  triggers = {
-    confirm_lb_active = var.additional_lb_security_group_ids[count.index]
-  }
-
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_lb_active.sh ${var.region} ${local.lbs_associated_with_cluster[count.index]} ${var.use_private_endpoint}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IAM_TOKEN = data.ibm_iam_auth_token.tokendata.iam_access_token
-    }
-  }
-}
-
 module "attach_sg_to_lb" {
-  depends_on                     = [null_resource.confirm_lb_active]
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.2"
+  version                        = "2.7.0"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -679,7 +655,7 @@ locals {
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.2"
+  version                        = "2.7.0"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -688,7 +664,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.2"
+  version                        = "2.7.0"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -697,7 +673,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.6.2"
+  version                        = "2.7.0"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]

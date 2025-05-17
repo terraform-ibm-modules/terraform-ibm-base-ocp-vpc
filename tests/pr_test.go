@@ -15,18 +15,23 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
+const customsgExampleDir = "examples/custom_sg"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.17" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
 
 var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
@@ -152,4 +157,34 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
 	cleanupTerraform(t, existingTerraformOptions, prefix)
+}
+
+// Adding the custom_sg example test to PR test.
+// The custom_sg example was the subject of an IBM-Cloud provider bug in the past that has been resolved,
+// so we want to keep testing this use-case in the PR pipelines.
+func TestRunCustomsgExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:          t,
+		TerraformDir:     customsgExampleDir,
+		Prefix:           "base-ocp-customsg",
+		ResourceGroup:    "geretain-test-base-ocp-vpc",
+		CloudInfoService: sharedInfoSvc,
+		ImplicitDestroy: []string{
+			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.null_resource.reset_api_key",
+		},
+		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version":     ocpVersion2,
+			"access_tags":     permanentResources["accessTags"],
+			"ocp_entitlement": "cloud_pak",
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }

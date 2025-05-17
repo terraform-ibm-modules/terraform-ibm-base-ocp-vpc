@@ -106,7 +106,6 @@
             }
           ],
           "architecture": {
-            "descriptions": "This architecture creates a fully-configurable OCP VPC cluster.",
             "features": [
               {
                 "title": "Creates a Red Hat OpenShift VPC cluster.",
@@ -275,9 +274,6 @@
               "key": "default_worker_pool_labels"
             },
             {
-              "key": "default_worker_pool_secondary_storage"
-            },
-            {
               "key": "enable_autoscaling_for_default_pool"
             },
             {
@@ -362,12 +358,12 @@
               "key": "kms_endpoint_type",
               "options": [
                 {
-                  "displayname": "private",
-                  "value": "private"
+                  "displayname": "Public",
+                  "value": "public"
                 },
                 {
-                  "displayname": "public",
-                  "value": "public"
+                  "displayname": "Private",
+                  "value": "private"
                 }
               ]
             },
