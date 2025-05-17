@@ -275,9 +275,6 @@
               "key": "default_worker_pool_labels"
             },
             {
-              "key": "default_worker_pool_secondary_storage"
-            },
-            {
               "key": "enable_autoscaling_for_default_pool"
             },
             {
