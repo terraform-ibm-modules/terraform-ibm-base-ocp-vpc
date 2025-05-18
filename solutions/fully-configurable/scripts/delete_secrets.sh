@@ -36,30 +36,32 @@ base_url="${base_url}.${secrets_manager_region}.secrets-manager.appdomain.cloud"
 
 # list the secrets inside the secret group and store them in secret_ids array
 
-# curl command would return the list of secrets, jq is used to fetch IDs of the secrets as they will be
+# curl command would return the list of secrets, jq is used to fetch length of secrets array in json output and fetching secret at particular index
 # used while making the DELETE request
 
-IFS=$'\n' read -r -a secret_ids < <(curl --retry 3 -s -X GET --location \
-    --header "Authorization: Bearer ${iam_token}" \
-    --header "Accept: application/json" \
-    "${base_url}/api/v2/secrets?groups=$secret_group_id" | \
-  jq -r '.secrets[]?.id')
 
-unset IFS
+json_output=$(curl --retry 3 -s -X GET --location \
+  --header "Authorization: Bearer ${iam_token}" \
+  --header "Accept: application/json" \
+  "${base_url}/api/v2/secrets?groups=$secret_group_id")
+
+secrets_length=$(echo "$json_output" | jq '.secrets | length')
 
 
 
 # delete the secrets inside the secret group
-
+# retrycount for deleting a particular secret incase curl command for delete command fails
 retryCount=2;
 
-for secret_id in "${secret_ids[@]}"; do
+for ((i=0; i<secrets_length; i++)); do
+
+  secret_id=$(echo "$json_output" | jq -r ".secrets[$i].id")
 
   echo "Deleting secret with id ${secret_id}"
 
-  for ((i=1; i<=retryCount; i++)); do
+  for ((j=1; j<=retryCount; j++)); do
     if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${iam_token}" "${base_url}/api/v2/secrets/${secret_id}";then
-      if [[ "$i" == "$retryCount" ]];then
+      if [[ "$j" == "$retryCount" ]];then
         echo "Failed to delete the secret.. please delete manually"
         exit 1
       fi
