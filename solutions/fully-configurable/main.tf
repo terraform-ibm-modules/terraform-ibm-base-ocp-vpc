@@ -157,7 +157,6 @@ locals {
       operating_system  = var.default_worker_pool_operating_system
       labels            = var.default_worker_pool_labels
       minSize           = var.default_pool_minimum_number_of_nodes
-      secondary_storage = var.default_worker_pool_secondary_storage
       maxSize           = var.default_pool_maximum_number_of_nodes
       enableAutoscaling = var.enable_autoscaling_for_default_pool
       boot_volume_encryption_kms_config = {

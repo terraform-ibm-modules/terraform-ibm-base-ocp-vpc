@@ -126,6 +126,10 @@ variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
   default     = "bx2.8x32"
+  validation {
+    condition     = length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", var.default_worker_pool_machine_type)) > 0
+    error_message = "Invalid value provided for the machine type."
+  }
 }
 
 variable "default_worker_pool_workers_per_zone" {
@@ -144,13 +148,6 @@ variable "default_worker_pool_labels" {
   type        = map(string)
   description = "A set of key-value labels assigned to the worker pool for identification. For Example: { env = \"prod\", team = \"devops\" }"
   default     = {}
-}
-
-variable "default_worker_pool_secondary_storage" {
-  type        = string
-  description = "The secondary storage attached to the worker nodes. Secondary storage is immutable and can't be changed after provisioning."
-  default     = null
-  nullable    = true
 }
 
 variable "enable_autoscaling_for_default_pool" {
