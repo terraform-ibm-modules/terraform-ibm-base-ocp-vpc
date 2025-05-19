@@ -220,12 +220,6 @@ variable "existing_subnet_ids" {
   default     = []
 }
 
-variable "use_private_endpoint" {
-  type        = bool
-  description = "Set this to true to force all api calls to use the IBM Cloud private endpoints."
-  default     = true
-}
-
 variable "disable_public_endpoint" {
   type        = bool
   description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`."
