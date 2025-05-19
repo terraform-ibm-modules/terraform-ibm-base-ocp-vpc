@@ -43,7 +43,6 @@ locals {
 
 # Local block to verify validations for OCP AI Addon.
 locals {
-
   # get the total workers per pool
   workers_per_pool = {
     for pool in var.worker_pools :
@@ -56,8 +55,8 @@ locals {
   worker_specs = {
     for pool in var.worker_pools :
     pool.pool_name => {
-      cpu_count = tonumber(split("x", split(".", pool.machine_type)[1])[0])
-      ram_count = tonumber(split("x", split(".", pool.machine_type)[1])[1])
+      cpu_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[0])
+      ram_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[1])
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
@@ -108,7 +107,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.21"
+  version                = "8.21.25"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan

@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.1.2"
+  version                     = "5.1.5"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -157,7 +157,6 @@ locals {
       operating_system  = var.default_worker_pool_operating_system
       labels            = var.default_worker_pool_labels
       minSize           = var.default_pool_minimum_number_of_nodes
-      secondary_storage = var.default_worker_pool_secondary_storage
       maxSize           = var.default_pool_maximum_number_of_nodes
       enableAutoscaling = var.enable_autoscaling_for_default_pool
       boot_volume_encryption_kms_config = {
