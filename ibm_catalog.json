@@ -395,6 +395,7 @@
             {
               "key": "enable_vpc_flow_logs",
               "virtual": true,
+              "type": "bool",
               "default_value": true
             }
           ],
