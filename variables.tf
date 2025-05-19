@@ -433,7 +433,7 @@ variable "existing_secrets_manager_instance_crn" {
 
 variable "secrets_manager_secret_group_id" {
   type        = string
-  description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If 'enable_secrets_manager_integration' is set to true and 'secrets_manager_secret_group_id' is not provided, a new group will be created with the same name as cluster_id."
+  description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance."
   default     = null
 }
 
