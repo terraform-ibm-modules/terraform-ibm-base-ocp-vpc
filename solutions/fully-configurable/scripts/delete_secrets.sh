@@ -6,7 +6,6 @@ set -e
 # got created as part of the DA since it is not a good practice to store secrets in
 # default group.
 
-
 secret_group_id=$1
 provider_visibility=$2
 secrets_manager_instance_id=$3
@@ -36,8 +35,6 @@ if [[ $secrets_manager_endpoint == "private" ]];then
 fi
 base_url="${base_url}.${secrets_manager_region}.secrets-manager.appdomain.cloud"
 
-
-
 # curl command would return the list of secrets, jq is used to fetch length of secrets array in json output and fetching id of secret at particular index
 # which will be used while making the DELETE request
 
@@ -49,18 +46,14 @@ json_output=$(curl --retry 3 -s -X GET --location \
 
 secrets_length=$(echo "$json_output" | jq '.secrets | length')
 
-
-
 # delete the secrets inside the secret group
 # retrycount for deleting a particular secret incase curl command for delete command fails
-retryCount=2;
 
+retryCount=2;
 for ((i=0; i<secrets_length; i++)); do
 
   secret_id=$(echo "$json_output" | jq -r ".secrets[$i].id")
-
   echo "Deleting secret with id ${secret_id}"
-
   for ((j=1; j<=retryCount; j++)); do
     if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${iam_token}" "${base_url}/api/v2/secrets/${secret_id}";then
       if [[ "$j" == "$retryCount" ]];then
@@ -83,7 +76,6 @@ secret_count=$(curl --retry 3 -s -X GET --location \
     --header "Accept: application/json" \
     "${base_url}/api/v2/secrets?groups=$secret_group_id" | \
   jq '.secrets | length')
-
 
 if [[ "$secret_count" == 0 ]];then
     echo "successfully deleted all the secrets in the group"
