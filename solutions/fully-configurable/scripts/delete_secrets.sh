@@ -27,6 +27,9 @@ fi
 # generate iam_token from the ibmcloud_api_key. This will be used to make API requests to secrets manager instance endpoint for fetching and deleting secrets
 
 iam_token=$(curl --retry 3 -s -X POST "https://${IBMCLOUD_IAM_API_ENDPOINT}/identity/token" --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --data-urlencode "grant_type=urn:ibm:params:oauth:grant-type:apikey" --data-urlencode "apikey=$API_KEY" | jq -r '.access_token')  # pragma: allowlist secret
+
+# deciding the url of secrets_manager_instance depending upon whether secrets_manager_endpoint is public or private
+
 base_url=https://${secrets_manager_instance_id}
 if [[ $secrets_manager_endpoint == "private" ]];then
   base_url="${base_url}.private"
@@ -34,10 +37,9 @@ fi
 base_url="${base_url}.${secrets_manager_region}.secrets-manager.appdomain.cloud"
 
 
-# list the secrets inside the secret group and store them in secret_ids array
 
-# curl command would return the list of secrets, jq is used to fetch length of secrets array in json output and fetching secret at particular index
-# used while making the DELETE request
+# curl command would return the list of secrets, jq is used to fetch length of secrets array in json output and fetching id of secret at particular index
+# which will be used while making the DELETE request
 
 
 json_output=$(curl --retry 3 -s -X GET --location \
