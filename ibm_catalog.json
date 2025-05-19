@@ -393,9 +393,8 @@
               "key": "cbr_rules"
             },
             {
-              "key": "kms_key_name",
-              "virtual": true,
-              "default_value": "kms"
+              "key": "enable_vpc_flow_logs",
+              "virtual": true
             }
           ],
           "dependencies": [
@@ -424,8 +423,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input":"kms_key_name",
-                  "version_input":"kms_key_name",
+                  "dependency_input":"enable_vpc_flow_logs",
+                  "version_input":"enable_vpc_flow_logs",
                   "reference_version": true
                 },
                 {
