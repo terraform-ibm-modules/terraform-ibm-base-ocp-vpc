@@ -173,7 +173,6 @@ func TestRunCustomsgExample(t *testing.T) {
 		CloudInfoService: sharedInfoSvc,
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
 		},
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
