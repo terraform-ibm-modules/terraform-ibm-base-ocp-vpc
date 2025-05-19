@@ -396,17 +396,7 @@
               "key": "region",
               "type": "string",
               "description": "Region for OCP AI.",
-              "virtual": true,
-              "required": true,
-              "default_value": "us-south",
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              }
+              "virtual": true
             }
           ],
           "dependencies": [
