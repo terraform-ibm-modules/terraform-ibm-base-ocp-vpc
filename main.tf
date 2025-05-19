@@ -133,7 +133,7 @@ resource "ibm_resource_tag" "cos_access_tag" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.ignore_worker_pool_size_changes ? 0 : 1
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -204,7 +204,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.ignore_worker_pool_size_changes ? 1 : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -298,22 +298,17 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # new key, and simply use the key created by this script. So hence should not face 404s anymore.
 # The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
 
-data "ibm_iam_auth_token" "reset_api_key_tokendata" {
+resource "ibm_container_api_key_reset" "reset_api_key" {
+  region            = var.region
+  resource_group_id = var.resource_group_id
 }
 
-data "ibm_iam_account_settings" "iam_account_settings" {
+resource "time_sleep" "wait_for_reset_api_key" {
+  depends_on      = [ibm_container_api_key_reset.reset_api_key]
+  create_duration = "10s"
 }
 
-resource "null_resource" "reset_api_key" {
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
-      ACCOUNT_ID = data.ibm_iam_account_settings.iam_account_settings.account_id
-    }
-  }
-}
+
 
 ##############################################################################
 # Access cluster to kick off RBAC synchronisation
