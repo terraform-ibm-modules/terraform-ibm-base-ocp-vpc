@@ -393,9 +393,8 @@
               "key": "cbr_rules"
             },
             {
-              "key": "region",
-              "virtual": true,
-              "default_value": "us-south"
+              "key": "kms_key_name",
+              "virtual": true
             }
           ],
           "dependencies": [
@@ -424,8 +423,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input":"region",
-                  "version_input":"region",
+                  "dependency_input":"kms_key_name",
+                  "version_input":"kms_key_name",
                   "reference_version": true
                 },
                 {
