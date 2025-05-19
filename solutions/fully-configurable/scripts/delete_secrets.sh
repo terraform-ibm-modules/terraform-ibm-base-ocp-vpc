@@ -2,7 +2,7 @@
 
 set -e
 
-# This script is going to delete the ingress certificate secret inside the secret group ID which
+# This script is going to delete the ingress certificate secret inside the secret group which
 # got created as part of the DA since it is not a good practice to store secrets in
 # default group.
 
