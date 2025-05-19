@@ -394,7 +394,8 @@
             },
             {
               "key": "kms_key_name",
-              "virtual": true
+              "virtual": true,
+              "default_value": "kms"
             }
           ],
           "dependencies": [
