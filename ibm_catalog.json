@@ -397,6 +397,14 @@
               "virtual": true,
               "type": "bool",
               "default_value": true
+            },
+            {
+              "key": "region",
+              "type": "string",
+              "description": "Region for VPC.",
+              "required": true,
+              "virtual": true,
+              "default_value": "us-south"
             }
           ],
           "dependencies": [
@@ -432,6 +440,11 @@
                 {
                   "dependency_output": "vpc_crn",
                   "version_input": "existing_vpc_crn"
+                },
+                {
+                  "dependency_input": "region",
+                  "version_input": "region",
+                  "reference_version": true
                 }
               ]
             },
