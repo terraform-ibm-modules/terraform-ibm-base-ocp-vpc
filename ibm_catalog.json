@@ -393,9 +393,8 @@
               "key": "cbr_rules"
             },
             {
-              "key": "enable_vpc_flow_logs",
+              "key": "region",
               "virtual": true,
-              "type": "bool",
               "default_value": true
             }
           ],
@@ -425,8 +424,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input":"enable_vpc_flow_logs",
-                  "version_input":"enable_vpc_flow_logs",
+                  "dependency_input":"region",
+                  "version_input":"region",
                   "reference_version": true
                 },
                 {
