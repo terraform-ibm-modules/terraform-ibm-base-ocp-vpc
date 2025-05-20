@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.1.4"
+  version                     = "5.1.5"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -194,39 +194,86 @@ locals {
 }
 
 module "ocp_base" {
-  source                                = "../.."
-  resource_group_id                     = module.resource_group.resource_group_id
-  region                                = local.vpc_region
-  tags                                  = var.cluster_resource_tags
-  cluster_name                          = local.cluster_name
-  force_delete_storage                  = true
-  use_existing_cos                      = true
-  existing_cos_id                       = var.existing_cos_instance_crn
-  vpc_id                                = local.existing_vpc_id
-  vpc_subnets                           = local.vpc_subnets
-  ocp_version                           = var.ocp_version
-  worker_pools                          = local.worker_pools
-  access_tags                           = var.access_tags
-  ocp_entitlement                       = var.ocp_entitlement
-  additional_lb_security_group_ids      = var.additional_lb_security_group_ids
-  additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
-  addons                                = var.addons
-  allow_default_worker_pool_replacement = var.allow_default_worker_pool_replacement
-  attach_ibm_managed_security_group     = var.attach_ibm_managed_security_group
-  cluster_config_endpoint_type          = var.cluster_config_endpoint_type
-  cbr_rules                             = var.cbr_rules
-  cluster_ready_when                    = var.cluster_ready_when
-  custom_security_group_ids             = var.custom_security_group_ids
-  disable_outbound_traffic_protection   = var.disable_outbound_traffic_protection
-  disable_public_endpoint               = var.disable_public_endpoint
-  enable_ocp_console                    = var.enable_ocp_console
-  ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
-  kms_config                            = local.kms_config
-  manage_all_addons                     = var.manage_all_addons
-  number_of_lbs                         = var.number_of_lbs
-  pod_subnet_cidr                       = var.pod_subnet_cidr
-  service_subnet_cidr                   = var.service_subnet_cidr
-  use_private_endpoint                  = var.use_private_endpoint
-  verify_worker_network_readiness       = var.verify_worker_network_readiness
-  worker_pools_taints                   = var.worker_pools_taints
+  source                                   = "../.."
+  resource_group_id                        = module.resource_group.resource_group_id
+  region                                   = local.vpc_region
+  tags                                     = var.cluster_resource_tags
+  cluster_name                             = local.cluster_name
+  force_delete_storage                     = true
+  use_existing_cos                         = true
+  existing_cos_id                          = var.existing_cos_instance_crn
+  vpc_id                                   = local.existing_vpc_id
+  vpc_subnets                              = local.vpc_subnets
+  ocp_version                              = var.ocp_version
+  worker_pools                             = local.worker_pools
+  access_tags                              = var.access_tags
+  ocp_entitlement                          = var.ocp_entitlement
+  additional_lb_security_group_ids         = var.additional_lb_security_group_ids
+  additional_vpe_security_group_ids        = var.additional_vpe_security_group_ids
+  addons                                   = var.addons
+  allow_default_worker_pool_replacement    = var.allow_default_worker_pool_replacement
+  attach_ibm_managed_security_group        = var.attach_ibm_managed_security_group
+  cluster_config_endpoint_type             = var.cluster_config_endpoint_type
+  cbr_rules                                = var.cbr_rules
+  cluster_ready_when                       = var.cluster_ready_when
+  custom_security_group_ids                = var.custom_security_group_ids
+  disable_outbound_traffic_protection      = var.disable_outbound_traffic_protection
+  disable_public_endpoint                  = var.disable_public_endpoint
+  enable_ocp_console                       = var.enable_ocp_console
+  ignore_worker_pool_size_changes          = var.ignore_worker_pool_size_changes
+  kms_config                               = local.kms_config
+  manage_all_addons                        = var.manage_all_addons
+  number_of_lbs                            = var.number_of_lbs
+  pod_subnet_cidr                          = var.pod_subnet_cidr
+  service_subnet_cidr                      = var.service_subnet_cidr
+  use_private_endpoint                     = var.use_private_endpoint
+  verify_worker_network_readiness          = var.verify_worker_network_readiness
+  worker_pools_taints                      = var.worker_pools_taints
+  enable_secrets_manager_integration       = var.enable_secrets_manager_integration
+  existing_secrets_manager_instance_crn    = var.existing_secrets_manager_instance_crn
+  secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
+  skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
+}
+
+module "existing_secrets_manager_instance_parser" {
+  count   = var.enable_secrets_manager_integration ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
+resource "terraform_data" "delete_secrets" {
+
+  count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  input = {
+    secret_id                   = module.secret_group[0].secret_group_id
+    api_key                     = var.ibmcloud_api_key
+    provider_visibility         = var.provider_visibility
+    secrets_manager_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
+    secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
+    secrets_manager_endpoint    = var.secrets_manager_endpoint_type
+  }
+  provisioner "local-exec" {
+    when        = destroy
+    command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.provider_visibility} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
+    interpreter = ["/bin/bash", "-c"]
+
+    environment = {
+      API_KEY = self.input.api_key
+    }
+  }
+}
+
+module "secret_group" {
+  providers = {
+    ibm = ibm.secrets_manager
+  }
+  count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
+  version                  = "1.3.4"
+  region                   = module.existing_secrets_manager_instance_parser[0].region
+  secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
+  secret_group_name        = module.ocp_base.cluster_id
+  secret_group_description = "Secret group for storing ingress certificates for cluster ${var.cluster_name} with id: ${module.ocp_base.cluster_id}"
+  endpoint_type            = var.secrets_manager_endpoint_type
 }

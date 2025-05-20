@@ -107,7 +107,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.24"
+  version                = "8.21.25"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -718,4 +718,41 @@ module "cbr_rule" {
     ],
   }]
   operations = var.cbr_rules[count.index].operations == null ? local.default_operations : var.cbr_rules[count.index].operations
+}
+
+##############################################################
+# Ingress Secrets Manager Integration
+##############################################################
+
+module "existing_secrets_manager_instance_parser" {
+  count   = var.enable_secrets_manager_integration ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
+resource "ibm_iam_authorization_policy" "ocp_secrets_manager_iam_auth_policy" {
+  count                       = var.enable_secrets_manager_integration && !var.skip_ocp_secrets_manager_iam_auth_policy ? 1 : 0
+  depends_on                  = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  source_service_name         = "containers-kubernetes"
+  source_resource_instance_id = local.cluster_id
+  target_service_name         = "secrets-manager"
+  target_resource_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
+  roles                       = ["Manager"]
+}
+
+resource "time_sleep" "wait_for_auth_policy" {
+  count           = var.enable_secrets_manager_integration ? 1 : 0
+  depends_on      = [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy[0]]
+  create_duration = "30s"
+}
+
+
+resource "ibm_container_ingress_instance" "instance" {
+  count           = var.enable_secrets_manager_integration ? 1 : 0
+  depends_on      = [time_sleep.wait_for_auth_policy]
+  cluster         = var.cluster_name
+  instance_crn    = var.existing_secrets_manager_instance_crn
+  is_default      = true
+  secret_group_id = var.secrets_manager_secret_group_id
 }
