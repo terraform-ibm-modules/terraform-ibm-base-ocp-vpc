@@ -403,8 +403,7 @@
               "type": "string",
               "description": "Region for VPC.",
               "required": true,
-              "virtual": true,
-              "default_value": "us-south"
+              "virtual": true
             }
           ],
           "dependencies": [
