@@ -45,7 +45,7 @@ reset=true
 # Function to fetch data and handle pagination
 fetch_data() {
     local url="$IAM_URL"
-
+    echo "IAM_URL: $IAM_URL"
     while [ "$url" != "null" ]; do
         # Fetch data from the API
         response=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
@@ -99,6 +99,7 @@ if [ "${reset}" == true ]; then
             exit 0
         else
             echo "ERROR:: FAILED TO RESET THE IAM API KEY"
+            echo "RESET_URL: $RESET_URL"
             echo "$result"
             sleep $retry_wait_time
             ((attempt++))
