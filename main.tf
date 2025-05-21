@@ -531,8 +531,9 @@ resource "ibm_container_addons" "addons" {
   dynamic "addons" {
     for_each = local.addons
     content {
-      name    = addons.key
-      version = addons.value
+      name            = addons.key
+      version         = addons.value.version
+      parameters_json = addons.value.parameters_json
     }
   }
 
