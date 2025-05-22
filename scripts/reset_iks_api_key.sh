@@ -48,25 +48,24 @@ fetch_data() {
 
     while [ "$url" != "null" ]; do
         # Fetch data from the API
-        response=$(curl -s -w "%{http_code}" "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
-        status_code="${response: -3}"
-        response_body="${response%???}"
-        if [[ "$status_code" == "200" ]]; then
-            # Extract next URL and current data
-            next_url=$(echo "$response_body" | jq -r '.next')
-            key_descriptions=$(echo "$response_body" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
-            for i in "${key_descriptions[@]}"; do
-                if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
-                    echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
-                    reset=false
-                    break
-                fi
-            done
-        else
-            echo "Request failed. Status code: $status_code"
-            echo "Error message: $response_body"
-            exit 1 # Indicate an error
+        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
+
+        ERROR_MESSAGE=$(echo "${IAM_RESPONSE}" | jq 'has("errors")')
+        if [[ "${ERROR_MESSAGE}" != false ]]; then
+            echo "${IAM_RESPONSE}" | jq '.errors'
+            echo "Could not obtain api keys"
+            exit 1
         fi
+
+        next_url=$(echo "${IAM_RESPONSE}" | jq -r '.next')
+        key_descriptions=$(echo "$IAM_RESPONSE" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
+        for i in "${key_descriptions[@]}"; do
+            if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
+                echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
+                reset=false
+                break
+            fi
+        done
         url=$next_url
     done
 }
