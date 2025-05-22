@@ -48,7 +48,7 @@ fetch_data() {
 
     while [ "$url" != "null" ]; do
         # Fetch data from the API
-        response=$(curl -s -w "%{http_code}" "$url" --header "Authorization: 4" --header "Content-Type: application/json")
+        response=$(curl -s -w "%{http_code}" "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
         status_code="${response: -3}"
         response_body="${response%???}"
         if [[ "$status_code" == "200" ]]; then
