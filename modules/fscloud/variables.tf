@@ -152,15 +152,42 @@ variable "verify_worker_network_readiness" {
 
 variable "addons" {
   type = object({
-    debug-tool                = optional(string)
-    image-key-synchronizer    = optional(string)
-    openshift-data-foundation = optional(string)
-    vpc-file-csi-driver       = optional(string)
-    static-route              = optional(string)
-    cluster-autoscaler        = optional(string)
-    vpc-block-csi-driver      = optional(string)
-    ibm-storage-operator      = optional(string)
-    openshift-ai              = optional(string)
+    debug-tool = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    image-key-synchronizer = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    openshift-data-foundation = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    vpc-file-csi-driver = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    static-route = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    cluster-autoscaler = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    vpc-block-csi-driver = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    ibm-storage-operator = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    openshift-ai = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
   })
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   default     = {}

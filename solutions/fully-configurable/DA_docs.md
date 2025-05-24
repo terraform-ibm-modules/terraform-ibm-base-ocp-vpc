@@ -19,23 +19,41 @@ This variable configuration allows you to specify which Red Hat OpenShift add-on
 
 ### Supported Add-ons
 
-- `debug-tool` (optional): The Debug Tool add-on helps diagnose and troubleshoot cluster issues by running tests and gathering information, accessible through the Red Hat OpenShift console.
+- `debug-tool` (optional): (Object) The Debug Tool add-on helps diagnose and troubleshoot cluster issues by running tests and gathering information, accessible through the Red Hat OpenShift console.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `image-key-synchronizer` (optional): The Image Key Synchronizer add-on enables the deployment of containers using encrypted images by synchronizing image keys, ensuring only authorized users can access and run them.
+- `image-key-synchronizer` (optional): (Object) The Image Key Synchronizer add-on enables the deployment of containers using encrypted images by synchronizing image keys, ensuring only authorized users can access and run them.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `openshift-data-foundation` (optional): The Red Hat OpenShift Data Foundation (ODF) add-on manages persistent storage for containerized applications with a highly available storage solution.
+- `openshift-data-foundation` (optional): (Object) The Red Hat OpenShift Data Foundation (ODF) add-on manages persistent storage for containerized applications with a highly available storage solution.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `vpc-file-csi-driver` (optional): The Virtual Private Cloud File Container Storage Interface Driver add-on enables the creation of persistent volume claims for fast, flexible, network-attached, Network File System-based file storage for Virtual Private Cloud.
+- `vpc-file-csi-driver` (optional): (Object) The Virtual Private Cloud File Container Storage Interface Driver add-on enables the creation of persistent volume claims for fast, flexible, network-attached, Network File System-based file storage for Virtual Private Cloud.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `static-route` (optional): The Static Route add-on allows worker nodes to re-route response packets through a virtual private network or gateway to an Internet Protocol (IP) address in an on-premises data center.
+- `static-route` (optional): (Object) The Static Route add-on allows worker nodes to re-route response packets through a virtual private network or gateway to an Internet Protocol (IP) address in an on-premises data center.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `cluster-autoscaler` (optional): The Cluster Autoscaler add-on automatically scales worker pools based on the resource demands of scheduled workloads.
+- `cluster-autoscaler` (optional): (Object) The Cluster Autoscaler add-on automatically scales worker pools based on the resource demands of scheduled workloads.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `vpc-block-csi-driver` (optional): The Virtual Private Cloud (VPC) Block Container Storage Interface (CSI) Driver add-on enables snapshotting of storage volumes, allowing users to restore data from specific points in time without duplicating the volume.
+- `vpc-block-csi-driver` (optional): (Object) The Virtual Private Cloud (VPC) Block Container Storage Interface (CSI) Driver add-on enables snapshotting of storage volumes, allowing users to restore data from specific points in time without duplicating the volume.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `ibm-storage-operator` (optional): The IBM Storage Operator add-on streamlines the management of storage configuration maps and resources in your cluster.
+- `ibm-storage-operator` (optional): (Object) The IBM Storage Operator add-on streamlines the management of storage configuration maps and resources in your cluster.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
-- `openshift-ai` (optional): The Red Hat OpenShift AI add-on enables quick deployment of Red Hat OpenShift AI on a Red Hat OpenShift Cluster in IBM Cloud.
+- `openshift-ai` (optional): (Object) The Red Hat OpenShift AI add-on enables quick deployment of Red Hat OpenShift AI on a Red Hat OpenShift Cluster in IBM Cloud.
+  - `version` (optional): The add-on version. Omit the version that you want to use as the default version.This is required when you want to update the add-on to specified version.
+  - `parameters_json` (optional): Add-On parameters to pass in a JSON string format.
 
 Please refer to [this](https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions) page for information on supported add-ons and their versions.
 
@@ -43,9 +61,22 @@ Please refer to [this](https://cloud.ibm.com/docs/containers?topic=containers-su
 
 ```hcl
 {
-  cluster-autoscaler = "1.0.4"
-  openshift-data-foundation = "4.12.0"
-  vpc-file-csi-driver = "1.1.0"
+  cluster-autoscaler = {
+    version = "1.0.4"
+  }
+  openshift-data-foundation = {
+    version         = "4.12.0"
+    parameters_json = <<PARAMETERS_JSON
+        {
+            "osdStorageClassName":"localblock",
+            "odfDeploy":"true",
+            "autoDiscoverDevices":"true"
+        }
+        PARAMETERS_JSON
+  }
+  vpc-file-csi-driver = {
+    version = "1.1.0"
+  }
 }
 ```
 
