@@ -71,38 +71,42 @@
           },
           "iam_permissions": [
             {
+              "service_name": "iam-identity",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
-              "service_name": "iam-identity"
+              ]
             },
             {
+              "service_name": "hs-crypto",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "hs-crypto"
+              "notes": "[Optional] Required if HPCS encryption is enabled for encryption of COS bucket which is used for OpenShift internal registry storage."
             },
             {
+              "service_name": "kms",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "kms"
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of COS bucket which is used for OpenShift internal registry storage."
             },
             {
+              "service_name": "cloud-object-storage",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "cloud-object-storage"
+              "notes": "[Optional] Required if you are enabling IBM Cloud Object Storage for the Red Hat OpenShift internal image registry"
             },
             {
               "service_name": "containers-kubernetes",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
-              ]
+              ],
+              "notes": "Required for creating,editing and completing priviledged actions related to Openshift cluster and related resources."
             }
           ],
           "architecture": {
