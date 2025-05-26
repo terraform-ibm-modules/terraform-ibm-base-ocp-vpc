@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.5"
+  version                   = "5.1.7"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -248,7 +248,7 @@ module "trusted_profile" {
 module "observability_agents" {
   depends_on                = [module.kube_audit]
   source                    = "terraform-ibm-modules/observability-agents/ibm"
-  version                   = "2.7.2"
+  version                   = "2.7.3"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   # Cloud Logs agent
