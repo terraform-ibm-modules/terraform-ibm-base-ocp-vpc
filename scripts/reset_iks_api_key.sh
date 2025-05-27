@@ -48,11 +48,17 @@ fetch_data() {
 
     while [ "$url" != "null" ]; do
         # Fetch data from the API
-        response=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
+        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
 
-        # Extract next URL and current data
-        next_url=$(echo "$response" | jq -r '.next')
-        key_descriptions=$(echo "$response" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
+        ERROR_MESSAGE=$(echo "${IAM_RESPONSE}" | jq 'has("errors")')
+        if [[ "${ERROR_MESSAGE}" != false ]]; then
+            echo "${IAM_RESPONSE}" | jq '.errors'
+            echo "Could not obtain api keys"
+            exit 1
+        fi
+
+        next_url=$(echo "${IAM_RESPONSE}" | jq -r '.next')
+        key_descriptions=$(echo "$IAM_RESPONSE" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
         for i in "${key_descriptions[@]}"; do
             if [[ "$i" =~ ${REGION} ]] && [[ "$i" =~ ${RESOURCE_GROUP_ID} ]]; then
                 echo "Found key named ${APIKEY_KEY_NAME} which covers clusters in ${REGION} and resource group ID ${RESOURCE_GROUP_ID}"
