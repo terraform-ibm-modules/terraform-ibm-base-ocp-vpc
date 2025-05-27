@@ -464,6 +464,7 @@
                 "resource-group-only",
                 "resource-groups-with-account-settings"
               ],
+              "default_flavor": "resource-group-only",
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
               "ignore_auto_referencing": [
                 "*"
