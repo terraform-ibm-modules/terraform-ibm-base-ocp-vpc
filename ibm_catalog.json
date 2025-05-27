@@ -558,7 +558,7 @@
               "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
               "version": "v3.0.3",
               "flavors": [
-                "Instances"
+                "instances"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
