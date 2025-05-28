@@ -218,6 +218,8 @@ You need the following permissions to run this module.
   - **VPC Infrastructure** service
     - `Administrator` platform access
     - `Manager` service access
+  - **IAM Identity Service** service
+    - `User API key creator` service access
 
 Optionally, you need the following permissions to attach Access Management tags to resources in this module.
 
