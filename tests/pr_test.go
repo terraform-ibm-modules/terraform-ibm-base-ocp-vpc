@@ -13,6 +13,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/stretchr/testify/assert"
@@ -191,4 +192,37 @@ func TestRunCustomsgExample(t *testing.T) {
 
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func setupAddonOptions(t *testing.T, prefix string) *testaddons.TestAddonOptions {
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:           t,
+		Prefix:            prefix,
+		ResourceGroup:     "geretain-vipin-rg",
+		SkipRefValidation: true,
+	})
+
+	return options
+}
+
+func TestRunTerraformAddon(t *testing.T) {
+	t.Parallel()
+
+	options := setupAddonOptions(t, "sac3")
+
+	// Using the specialized Terraform helper function
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,            // prefix for unique resource naming
+		"deploy-arch-ibm-ocp-vpc", // offering name
+		"fully-configurable",      // offering flavor
+		map[string]interface{}{ // inputs
+			"prefix":                       options.Prefix,
+			"existing_resource_group_name": "geretain-vipin-rg",
+			"existing_cos_instance_crn":    "crn:v1:bluemix:public:cloud-object-storage:global:a/abac0df06b644a9cabc6e44f55b3880e:855ed836-05ce-4f39-98fa-508774f29323::",
+			"existing_vpc_crn":             "crn:v1:bluemix:public:is:eu-es:a/abac0df06b644a9cabc6e44f55b3880e::vpc:r050-61547c37-49c8-4b85-afdf-7ca8bba3f41c",
+		},
+	)
+
+	err := options.RunAddonTest()
+	assert.Nil(t, err, "This should not have errored")
 }
