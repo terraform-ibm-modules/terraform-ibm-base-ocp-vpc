@@ -137,6 +137,7 @@
             },
             {
               "key": "existing_resource_group_name",
+              "displayname": "resource_group",
               "required": true,
               "custom_config": {
                 "type": "resource_group",
@@ -615,7 +616,8 @@
               ]
             }
           ],
-          "dependency_version_2": true
+          "dependency_version_2": true,
+          "terraform_version": "1.10.5"
         }
       ]
     }
