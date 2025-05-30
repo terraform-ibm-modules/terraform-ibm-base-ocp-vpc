@@ -56,9 +56,11 @@
           "iam_permissions": [
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Administrator",
+                "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "service_name": "iam-identity"
+              "service_name": "iam-identity",
+              "notes": "Allows IBM Cloud OpenShift to create the containers-kubernetes-key required by the service"
             },
             {
               "role_crns": [
