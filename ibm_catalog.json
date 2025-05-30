@@ -19,25 +19,41 @@
         "red_hat_openshift"
       ],
       "short_description": "Automates Red Hat OpenShift VPC cluster deployment on IBM Cloud, offering full configurability and flexibility for diverse workloads.",
-      "long_description": "This deployable architecture deploys a Red Hat OpenShift cluster on IBM Cloud. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
+      "long_description": "This deployable architecture deploys a [Red Hat OpenShift](https://www.ibm.com/products/openshift) cluster on IBM Cloud. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
       "features": [
         {
-          "title": "OCP on IBM Cloud",
+          "title": "Red Hat OpenShift",
           "description": "Create and configures a Red Hat OpenShift VPC cluster on IBM Cloud."
         },
         {
-          "title": "Object Storage bucket for OpenShift internal registry storage.",
+          "title": "Creates worker pools",
+          "description": "With worker pools, you can group and manage worker nodes with similar configurations, such as compute resources and availability zones."
+        },
+        {
+          "title": "Configures subnets for containers",
+          "description": "Configures the subnets for the cluster, and specifies the subnets to deploy the worker nodes in."
+        },
+        {
+          "title": "Supports private and public endpoints",
+          "description": "Configures private and public endpoints for the cluster."
+        },
+        {
+          "title": "Configures ingress",
+          "description": "Configures the ingress controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
+        },
+        {
+          "title": "Object Storage bucket for OpenShift internal registry storage",
           "description": "Creates and configures an Object Storage bucket required for OpenShift internal registry storage."
         },
         {
-          "title": "KMS encryption",
+          "title": "Key Management Services Encryption",
           "description": "Supports creating a new key, or using an existing one to encrypt the COS bucket."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
+      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center. ",
       "flavors": [
         {
           "label": "Fully configurable",
@@ -55,38 +71,42 @@
           },
           "iam_permissions": [
             {
+              "service_name": "iam-identity",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
-              "service_name": "iam-identity"
+              ]
             },
             {
+              "service_name": "hs-crypto",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "hs-crypto"
+              "notes": "[Optional] Required if HPCS encryption is enabled for encryption of COS bucket which is used for OpenShift internal registry storage."
             },
             {
+              "service_name": "kms",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "kms"
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of COS bucket which is used for OpenShift internal registry storage."
             },
             {
+              "service_name": "cloud-object-storage",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "cloud-object-storage"
+              "notes": "[Optional] Required if you are enabling IBM Cloud Object Storage for the Red Hat OpenShift internal image registry"
             },
             {
               "service_name": "containers-kubernetes",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
-              ]
+              ],
+              "notes": "Required for creating,editing and completing priviledged actions related to Openshift cluster and related resources."
             }
           ],
           "architecture": {
@@ -103,7 +123,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture creates a fully-configurable Red Hat OpenShift VPC cluster."
+                "description": "The fully configurable variation of Red Hat OpenShift Container Platform on VPC creates a Red Hat OpenShift Container Platform workload clusters on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon if existing vpc is not provided. You can also configure whether to enable observability on the cluster and encrypt the COS bucket used as OpenShift internal registry storage."
               }
             ]
           },
@@ -117,6 +137,7 @@
             },
             {
               "key": "existing_resource_group_name",
+              "displayname": "resource_group",
               "required": true,
               "custom_config": {
                 "type": "resource_group",
@@ -184,23 +205,6 @@
                 {
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
-                }
-              ]
-            },
-            {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
                 }
               ]
             },
@@ -366,13 +370,14 @@
                   "displayname": "Private",
                   "value": "private"
                 }
-              ]
+              ],
+              "hidden": true
             },
             {
-              "key": "cluster_key_name"
+              "key": "cluster_kms_key_name"
             },
             {
-              "key": "cluster_key_ring_name"
+              "key": "cluster_kms_key_ring_name"
             },
             {
               "key": "kms_encryption_enabled_boot_volume"
@@ -381,10 +386,10 @@
               "key": "existing_boot_volume_kms_key_crn"
             },
             {
-              "key": "boot_volume_key_name"
+              "key": "boot_volume_kms_key_name"
             },
             {
-              "key": "boot_volume_key_ring_name"
+              "key": "boot_volume_kms_key_ring_name"
             },
             {
               "key": "cbr_rules"
@@ -403,6 +408,24 @@
             },
             {
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ],
+              "hidden": true
             }
           ],
           "dependencies": [
@@ -438,10 +461,13 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
+              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default—and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings.",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
-                "standard"
+                "resource-group-only",
+                "resource-groups-with-account-settings"
               ],
+              "default_flavor": "resource-group-only",
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
               "ignore_auto_referencing": [
                 "*"
@@ -455,18 +481,24 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
+                },
+                {
+                  "dependency_input": "provider_visibility",
+                  "version_input": "provider_visibility",
+                  "reference_version": true
                 }
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "^v1.18.0"
+              "version": "v3.0.7"
             },
             {
-              "name": "testing-deploy-arch-ibm-kms",
-              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
-              "version": "^v1.2.1",
+              "name": "deploy-arch-ibm-kms",
+              "description": "Enable Cloud Automation for Key Protect when you want services to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption.",
+              "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
+              "version": "v5.1.4",
               "flavors": [
-                "standard"
+                "fully-configurable"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
@@ -484,7 +516,7 @@
                   "version_input": "existing_kms_instance_crn"
                 },
                 {
-                  "dependency_input": "resource_group_name",
+                  "dependency_input": "existing_resource_group_name",
                   "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
@@ -492,18 +524,13 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
-                },
-                {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
-                  "reference_version": true
                 }
               ]
             },
             {
               "name": "deploy-arch-ibm-cos",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "^v8.20.1",
+              "version": "v9.0.2",
               "flavors": [
                 "instance"
               ],
@@ -515,7 +542,7 @@
               ],
               "input_mapping": [
                 {
-                  "dependency_output": "cos_instance_id",
+                  "dependency_output": "cos_instance_crn",
                   "version_input": "existing_cos_instance_crn"
                 },
                 {
@@ -524,23 +551,18 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "resource_group_name",
+                  "dependency_input": "existing_resource_group_name",
                   "version_input": "existing_resource_group_name",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
                   "reference_version": true
                 }
               ]
             },
             {
-              "name": "testing-deploy-arch-ibm-observability",
-              "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
-              "version": "^1.3.0",
+              "name": "deploy-arch-ibm-observability",
+              "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
+              "version": "v3.0.3",
               "flavors": [
-                "standard"
+                "instances"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
@@ -557,11 +579,11 @@
               ]
             },
             {
-              "name": "testing-deploy-arch-ibm-secrets-manager",
-              "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
-              "version": "^1.2.2",
+              "name": "deploy-arch-ibm-secrets-manager",
+              "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
+              "version": "v2.4.0",
               "flavors": [
-                "standard"
+                "fully-configurable"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
@@ -581,8 +603,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -596,7 +618,8 @@
               ]
             }
           ],
-          "dependency_version_2": true
+          "dependency_version_2": true,
+          "terraform_version": "1.10.5"
         }
       ]
     }
