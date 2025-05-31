@@ -17,7 +17,7 @@ The following resources are provisioned by this example:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.3 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.4 |
 
 ### Modules
 
@@ -38,8 +38,8 @@ The following resources are provisioned by this example:
 | Name | Type |
 |------|------|
 | [terraform_data.delete_secrets](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/is_subnets) | data source |
+| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.4/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.4/docs/data-sources/is_subnets) | data source |
 
 ### Inputs
 
