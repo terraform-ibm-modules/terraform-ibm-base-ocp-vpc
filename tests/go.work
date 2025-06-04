@@ -1,5 +1,0 @@
-go 1.24.1
-
-use .
-
-replace github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper => /Users/vipinkumar/ibmcloud-terratest-wrapper
