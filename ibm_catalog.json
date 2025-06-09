@@ -523,6 +523,7 @@
             },
             {
               "name": "deploy-arch-ibm-cos",
+              "description": "Enable Cloud Automation for Cloud Object Storage for using COS bucket as OpenShift internal registry storage.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
               "version": "v9.0.2",
               "flavors": [
@@ -574,6 +575,7 @@
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
+              "description": "Enable Cloud Automation for Secrets Manager for centrally managing Ingress subdomain certificates and other secrets.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
               "version": "v2.4.0",
               "flavors": [
