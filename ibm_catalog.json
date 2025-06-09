@@ -440,7 +440,7 @@
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
-              "on_by_default": true,
+              "on_by_default": false,
               "ignore_auto_referencing": [
                 "*"
               ],
