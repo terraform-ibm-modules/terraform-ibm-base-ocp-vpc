@@ -319,37 +319,64 @@ variable "verify_worker_network_readiness" {
 
 variable "addons" {
   type = object({
-    debug-tool                = optional(string)
-    image-key-synchronizer    = optional(string)
-    openshift-data-foundation = optional(string)
-    vpc-file-csi-driver       = optional(string)
-    static-route              = optional(string)
-    cluster-autoscaler        = optional(string)
-    vpc-block-csi-driver      = optional(string)
-    ibm-storage-operator      = optional(string)
-    openshift-ai              = optional(string)
+    debug-tool = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    image-key-synchronizer = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    openshift-data-foundation = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    vpc-file-csi-driver = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    static-route = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    cluster-autoscaler = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    vpc-block-csi-driver = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    ibm-storage-operator = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    openshift-ai = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
   })
   description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions"
   nullable    = false
   default     = {}
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || (tonumber(local.ocp_version_num) >= 4.16)
+    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || (tonumber(local.ocp_version_num) >= 4.16)
     error_message = "OCP AI add-on requires OCP version >= 4.16.0"
   }
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
+    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
     error_message = "OCP AI add-on requires at least 2 worker nodes in each worker pool."
   }
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
+    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
     error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
   }
 
   validation {
-    condition     = lookup(var.addons, "openshift-ai", null) == null || anytrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_gpu", false)])
+    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || anytrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_gpu", false)])
     error_message = "OCP AI add-on requires at least one GPU-enabled worker pool."
   }
 
