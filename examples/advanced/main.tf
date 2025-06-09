@@ -171,7 +171,7 @@ module "ocp_base" {
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
-    "cluster-autoscaler" = "1.2.3"
+    "cluster-autoscaler" = { version = "1.2.3" }
   }
   kms_config = {
     instance_id = module.kp_all_inclusive.kms_guid
@@ -248,7 +248,7 @@ module "trusted_profile" {
 module "observability_agents" {
   depends_on                = [module.kube_audit]
   source                    = "terraform-ibm-modules/observability-agents/ibm"
-  version                   = "2.7.3"
+  version                   = "2.8.0"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   # Cloud Logs agent
