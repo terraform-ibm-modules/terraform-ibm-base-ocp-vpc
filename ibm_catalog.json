@@ -594,6 +594,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "service_plan",
+                  "version_input": "secrets_manager_service_plan",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "secrets_manager_endpoint_type",
                   "version_input": "secrets_manager_endpoint_type",
                   "reference_version": true

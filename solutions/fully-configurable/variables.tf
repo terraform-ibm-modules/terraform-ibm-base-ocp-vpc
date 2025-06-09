@@ -524,6 +524,20 @@ variable "secrets_manager_endpoint_type" {
   }
 }
 
+variable "secrets_manager_service_plan" {
+  type        = string
+  description = "The pricing plan to use when provisioning a Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+  default     = "standard"
+  validation {
+    condition     = contains(["standard", "trial"], var.service_plan)
+    error_message = "Only 'standard' and 'trial' are allowed values for 'service_plan'. Applies only if not providing a value for the 'existing_secrets_manager_crn' input."
+  }
+  validation {
+    condition     = var.existing_secrets_manager_crn == null ? var.service_plan != null : true
+    error_message = "A value for 'service_plan' is required if not providing a value for 'existing_secrets_manager_crn'"
+  }
+}
+
 variable "skip_ocp_secrets_manager_iam_auth_policy" {
   type        = bool
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
