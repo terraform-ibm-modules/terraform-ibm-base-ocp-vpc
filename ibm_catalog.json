@@ -121,7 +121,7 @@
               {
                 "diagram": {
                   "caption": "Red Hat OpenShift VPC cluster for IBM Cloud.",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/da-improvement/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "The fully configurable variation of Red Hat OpenShift Container Platform on VPC creates a Red Hat OpenShift Container Platform workload clusters on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon if existing vpc is not provided. You can also configure whether to enable observability on the cluster and encrypt the COS bucket used as OpenShift internal registry storage."
