@@ -24,35 +24,35 @@
       "provider_name": "IBM",
       "features": [
         {
-          "title": "Red Hat OpenShift",
-          "description": "Create and configures a Red Hat OpenShift VPC cluster on IBM Cloud."
+          "title": "Red Hat OpenShift Cluster",
+          "description": "Create and configures a [Red Hat OpenShift VPC cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud."
         },
         {
-          "title": "Creates worker pools",
-          "description": "With worker pools, you can group and manage worker nodes with similar configurations, such as compute resources and availability zones."
+          "title": "Worker pools",
+          "description": "Creates worker pools through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) with similar configurations, such as compute resources and availability zones."
         },
         {
-          "title": "Configures subnets for containers",
-          "description": "Configures the subnets for the cluster, and specifies the subnets to deploy the worker nodes in."
+          "title": "Container Subnets",
+          "description": "Configures the [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets) for the cluster to deploy the worker nodes in."
         },
         {
-          "title": "Supports private and public endpoints",
-          "description": "Configures private and public endpoints for the cluster."
+          "title": "Access Endpoints",
+          "description": "Configures [private and public endpoints](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster) for the cluster."
         },
         {
-          "title": "Configures ingress",
-          "description": "Configures the ingress controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
+          "title": "Ingress",
+          "description": "Configures the [ingress](https://cloud.ibm.com/docs/openshift?topic=openshift-ingress-configure) controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
         },
         {
-          "title": "Object Storage bucket for OpenShift internal registry storage",
-          "description": "Creates and configures an Object Storage bucket required for OpenShift internal registry storage."
+          "title": "Object Storage",
+          "description": "Creates and configures an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) required for pods which need persistent volumes and also acts as OpenShift internal registry storage."
         },
         {
           "title": "Key Management Services Encryption",
-          "description": "Supports creating a new key, or using an existing one to encrypt the COS bucket."
+          "description": "Enables [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and COS bucket using either a newly created key or an existing one."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center. ",
+      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
           "label": "Fully configurable",
@@ -75,8 +75,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "service_name": "iam-identity",
-              "notes": "Allows IBM Cloud OpenShift to create the containers-kubernetes-key required by the service"
+              "notes": "Required to allow IBM Cloud OpenShift to create the containers-kubernetes-key needed by the service."
             },
             {
               "service_name": "hs-crypto",
@@ -84,7 +83,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if HPCS encryption is enabled for encryption of COS bucket which is used for OpenShift internal registry storage."
+              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Kubernetes Secrets and COS bucket for OpenShift internal registry storage."
             },
             {
               "service_name": "kms",
@@ -92,7 +91,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of COS bucket which is used for OpenShift internal registry storage."
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Kubernetes Secrets and Object Storage bucket which is used for OpenShift internal registry storage."
             },
             {
               "service_name": "cloud-object-storage",
@@ -108,7 +107,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating,editing and completing priviledged actions related to Openshift cluster and related resources."
+              "notes": "Required for creating, editing and completing priviledged actions related to Openshift cluster and related resources."
             }
           ],
           "architecture": {
@@ -138,9 +137,15 @@
               "required": true
             },
             {
+              "key": "region",
+              "type": "string",
+              "description": "Region for OCP Cluster.",
+              "virtual": true,
+              "default_value": "us-south"
+            },
+            {
               "key": "existing_resource_group_name",
               "displayname": "resource_group",
-              "required": true,
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -409,6 +414,9 @@
               "key": "secrets_manager_endpoint_type"
             },
             {
+              "key": "secrets_manager_service_plan"
+            },
+            {
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
             },
             {
@@ -434,16 +442,13 @@
             {
               "name": "deploy-arch-ibm-vpc",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
-              "version": "^v7.21.0",
+              "version": "v7.24.0",
               "flavors": [
                 "fully-configurable"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
-              "on_by_default": false,
-              "ignore_auto_referencing": [
-                "*"
-              ],
+              "on_by_default": true,
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
@@ -456,6 +461,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input":"region",
+                  "version_input":"region",
+                  "reference_version": true
+                },
+                {
                   "dependency_output": "vpc_crn",
                   "version_input": "existing_vpc_crn"
                 }
@@ -463,7 +473,7 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default—and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings.",
+              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings.",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
                 "resource-group-only",
@@ -471,9 +481,6 @@
               ],
               "default_flavor": "resource-group-only",
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_output": "workload_resource_group_name",
@@ -486,7 +493,7 @@
                 }
               ],
               "optional": true,
-              "on_by_default": true,
+              "on_by_default": false,
               "version": "v3.0.7"
             },
             {
@@ -526,7 +533,7 @@
             },
             {
               "name": "deploy-arch-ibm-cos",
-              "description": "Enable Cloud Automation for Cloud Object Storage for using COS bucket as OpenShift internal registry storage.",
+              "description": "Enable Cloud Automation for Cloud Object Storage to create a COS instance, where a bucket can be provisioned and used as the internal registry storage for OpenShift.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
               "version": "v9.0.2",
               "flavors": [
