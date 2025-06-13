@@ -18,7 +18,7 @@
         "red_hat_openshift"
       ],
       "short_description": "Automates the deployment of Red Hat OpenShift container platform on IBM Cloud with optional integration of security and logging services.",
-      "long_description": "The Red Hat OpenShift Container Platform on VPC provides the tools to deploy a Red Hat OpenShift Container Platform cluster in a single Virtual Private Cloud (VPC) network. The VPC is a multi-zoned, multi-subnet implementation that keeps your VPC secure and highly available.\n",
+      "long_description": "The Cloud automation for Red Hat OpenShift Container Platform on VPC provides the tools to deploy a Red Hat OpenShift cluster in a single Virtual Private Cloud (VPC) network. This can be used as a base deployable architecture for deployable architectures like [Cloud automation for Red Hat OpenShift AI](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-ai-ba708aed-bb8a-4ac0-83a7-53a066701db5-global) to deploy mission critical applications and AI initiatives to market with a secure, managed OpenShift offering.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
@@ -46,6 +46,10 @@
         {
           "title": "KMS Encryption",
           "description": "Enables key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and Object Storage bucket using either a newly created key or an existing one."
+        },
+        {
+          "title": "Optional Integrations",
+          "description": "This solution can be integrated with [Cloud automation for Observability](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-observability-a3137d28-79e0-479d-8a24-758ebd5a0eab-global) that supports configuring resources for logging, monitoring and activity tracker event routing, [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates,[Cloud Automation for VPC](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-vpc-2af61763-f8ef-4527-a815-b92166f29bc8-global) for creating VPC Instance in which the cluster will be deployed,[Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) for creating Cloud Object Storage (COS) Instance in which bucket can be created which acts as internal registry for the OpenShift Cluster and encryption of the bucket is also supported."
         }
       ],
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
@@ -53,6 +57,7 @@
         {
           "label": "Fully configurable",
           "name": "fully-configurable",
+          "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -164,7 +169,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/da-improvement/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "The fully configurable variation of Red Hat OpenShift Container Platform on VPC creates a Red Hat OpenShift Container Platform workload clusters on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon if existing vpc is not provided. You can also configure whether to enable observability on the cluster and encrypt the COS bucket used as OpenShift internal registry storage."
+                "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon dependency if existing vpc is not provided. While the diagram illustrates a three-zone deployment, the VPC can also be provisioned in a single-zone or two-zone configuration, depending on your availability requirements.<br><br>The default configuration deploys a VPC with three zone subnets, configures the predefined ACLs, and attaches a public gateway with one of the subnets. You can also enable <b>Observability</b> for your cluster for logging and monitoring needs. Secrets Manager Integration can also be enabled for centrally managing Ingress subdomain certificates. Additionally, you can also create Cloud Object Storage instance if not providing an existing one in which object storage object gets created which acts as internal registry storage for the OpenShift cluster and bucket can be encrypted using Key Protect for enhanced security."
               }
             ]
           },
@@ -357,10 +362,12 @@
               "key": "manage_all_addons"
             },
             {
-              "key": "additional_worker_pools"
+              "key": "additional_worker_pools",
+              "type": "textarea"
             },
             {
-              "key": "worker_pools_taints"
+              "key": "worker_pools_taints",
+              "type": "textarea"
             },
             {
               "key": "ignore_worker_pool_size_changes"
@@ -485,7 +492,8 @@
               "key": "boot_volume_kms_key_ring_name"
             },
             {
-              "key": "cbr_rules"
+              "key": "cbr_rules",
+              "type": "textarea"
             },
             {
               "key": "enable_secrets_manager_integration"
@@ -497,7 +505,8 @@
               "key": "secrets_manager_secret_group_id"
             },
             {
-              "key": "secrets_manager_endpoint_type"
+              "key": "secrets_manager_endpoint_type",
+              "hidden": true
             },
             {
               "key": "secrets_manager_service_plan"
