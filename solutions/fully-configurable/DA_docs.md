@@ -127,12 +127,12 @@ This variable defines the worker node pools for your OCP cluster, with each pool
   {
     vpc_subnets                       = [
       {
-        id = "0717-a4b3c2d1-e5f6-g7h8-i9j0-k1l2m3n4o5p6" # pragma: allowlist secret
+        id = "<REPLACE ME>"
         zone = "us-south-1"
         cidr_block = " "10.10.10.0/24"
       },
       {
-        id = "0717-b4c3d2e1-f5g6-h7i8-j9k0-l1m2n3o4p5q6" # pragma: allowlist secret
+        id = "<REPLACE ME>"
         zone = "us-south-2"
         cidr_block = "10.20.10.0/24"
       }
@@ -230,10 +230,10 @@ This variable allows you to provide a rule for the target service to enforce acc
 ### Example for cbr_rules
 
 ```hcl
-cbr_rules = [
+[
   {
   description = "Event Notifications can be accessed from xyz"
-  account_id = "defc0df06b644a9cabc6e44f55b3880s."
+  account_id = "<REPLACE ME>"
   rule_contexts= [{
       attributes = [
                 {
@@ -242,11 +242,11 @@ cbr_rules = [
                 },
                 {
                   name  = "networkZoneId"
-                  value = "93a51a1debe2674193217209601dde6f" # pragma: allowlist secret
+                  value = "<REPLACE ME>"
                 }
         ]
      }
-   ]
+  ]
   enforcement_mode = "enabled"
   operations = [{
     api_types = [{
