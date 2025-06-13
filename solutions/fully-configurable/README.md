@@ -17,20 +17,20 @@ The following resources are provisioned by this example:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.4 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.79.2 |
 
 ### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_existing_cluster_kms_key_crn_parser"></a> [existing\_cluster\_kms\_key\_crn\_parser](#module\_existing\_cluster\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_existing_kms_crn_parser"></a> [existing\_kms\_crn\_parser](#module\_existing\_kms\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_existing_secrets_manager_instance_parser"></a> [existing\_secrets\_manager\_instance\_parser](#module\_existing\_secrets\_manager\_instance\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.1.7 |
+| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_existing_cluster_kms_key_crn_parser"></a> [existing\_cluster\_kms\_key\_crn\_parser](#module\_existing\_cluster\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_existing_kms_crn_parser"></a> [existing\_kms\_crn\_parser](#module\_existing\_kms\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_existing_secrets_manager_instance_parser"></a> [existing\_secrets\_manager\_instance\_parser](#module\_existing\_secrets\_manager\_instance\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.1.8 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
-| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
+| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.1 |
 | <a name="module_secret_group"></a> [secret\_group](#module\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.7 |
 
 ### Resources
@@ -38,8 +38,8 @@ The following resources are provisioned by this example:
 | Name | Type |
 |------|------|
 | [terraform_data.delete_secrets](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.4/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.4/docs/data-sources/is_subnets) | data source |
+| [ibm_is_subnet.subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.79.2/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnets.vpc_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.79.2/docs/data-sources/is_subnets) | data source |
 
 ### Inputs
 
