@@ -17,7 +17,7 @@
         "cluster",
         "red_hat_openshift"
       ],
-      "short_description": "Automates Red Hat OpenShift VPC cluster deployment on IBM Cloud, offering full configurability and flexibility for diverse workloads.",
+      "short_description": "Automates the deployment of Red Hat OpenShift container platform on IBM Cloud with optional integration of security and logging services.",
       "long_description": "The Red Hat OpenShift Container Platform on VPC provides the tools to deploy a Red Hat OpenShift Container Platform cluster in a single Virtual Private Cloud (VPC) network. The VPC is a multi-zoned, multi-subnet implementation that keeps your VPC secure and highly available.\n",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
@@ -25,31 +25,27 @@
       "features": [
         {
           "title": "Red Hat OpenShift Cluster",
-          "description": "Create and configures a [Red Hat OpenShift VPC cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud."
+          "description": "Create a [Red Hat OpenShift Cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud."
         },
         {
           "title": "Worker pools",
-          "description": "Creates worker pools through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) with similar configurations, such as compute resources and availability zones."
-        },
-        {
-          "title": "Container Subnets",
-          "description": "Configures the [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets) for the cluster to deploy the worker nodes in."
+          "description": "Configures worker pools in cluster through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) with similar configurations, such as compute resources and availability zones."
         },
         {
           "title": "Access Endpoints",
-          "description": "Configures [private and public endpoints](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster) for the cluster."
+          "description": "Offers support for [private and public endpoints](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster) to connect to the cluster, if the cluster is accessed only by applications running on IBM Cloud, only private endpoint can be enabled for enhanced security."
         },
         {
-          "title": "Ingress",
-          "description": "Configures the [ingress](https://cloud.ibm.com/docs/openshift?topic=openshift-ingress-configure) controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
+          "title": "Ingress Controller",
+          "description": "Sets up the [ingress controller](https://cloud.ibm.com/docs/openshift?topic=openshift-ingress-configure) controller for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
         },
         {
           "title": "Object Storage",
-          "description": "Creates and configures an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) required for pods which need persistent volumes and also acts as OpenShift internal registry storage."
+          "description": "Deploys an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) which acts as OpenShift internal registry storage."
         },
         {
-          "title": "Key Management Services Encryption",
-          "description": "Enables [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and COS bucket using either a newly created key or an existing one."
+          "title": "KMS Encryption",
+          "description": "Enables key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and Object Storage bucket using either a newly created key or an existing one."
         }
       ],
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
@@ -75,7 +71,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "notes": "Required to allow IBM Cloud OpenShift to create the containers-kubernetes-key needed by the service."
+              "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud."
             },
             {
               "service_name": "hs-crypto",
@@ -83,7 +79,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Kubernetes Secrets and COS bucket for OpenShift internal registry storage."
+              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Kubernetes Secrets and Object Storage bucket."
             },
             {
               "service_name": "kms",
@@ -91,7 +87,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Kubernetes Secrets and Object Storage bucket which is used for OpenShift internal registry storage."
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Kubernetes Secrets and Object Storage bucket."
             },
             {
               "service_name": "cloud-object-storage",
@@ -99,7 +95,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if you are enabling IBM Cloud Object Storage for the Red Hat OpenShift internal image registry"
+              "notes": "Required to create Cloud Object Storage (COS) Instance."
             },
             {
               "service_name": "containers-kubernetes",
@@ -107,20 +103,64 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating, editing and completing priviledged actions related to Openshift cluster and related resources."
+              "notes": "Required to create and edit OpenShift cluster and the related resources."
+            },
+            {
+              "service_name": "is.vpc",
+              "role_crns": ["crn:v1:bluemix:public:iam::::role:Administrator"],
+               "notes": "Required for creating Virtual Private Cloud(VPC)."
+            },
+            {
+              "service_name": "sysdig-monitor",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Cloud monitoring."
+            },
+            {
+              "service_name": "logs",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Cloud logs."
+            },
+            {
+              "service_name": "logs-router",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+               "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Logs Routing."
+            },
+            {
+              "service_name": "atracker",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Writer",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Activity Tracker Event Routing."
+            },
+            {
+              "service_name": "secrets-manager",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "notes": "[Optional] Required for creating an Secrets Manager instance. 'Manager' access required to create new secret groups."
             }
           ],
           "architecture": {
             "features": [
               {
-                "title": "Creates a Red Hat OpenShift VPC cluster.",
-                "description": "Creates a Red Hat OpenShift VPC cluster."
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift VPC cluster for IBM Cloud.",
+                  "caption": "Red Hat OpenShift cluster topology",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/da-improvement/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
@@ -134,29 +174,6 @@
             },
             {
               "key": "prefix",
-              "required": true
-            },
-            {
-              "key": "region",
-              "type": "string",
-              "description": "Region for OCP Cluster.",
-              "virtual": true,
-              "default_value": "us-south"
-            },
-            {
-              "key": "existing_resource_group_name",
-              "displayname": "resource_group",
-              "custom_config": {
-                "type": "resource_group",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "identifier": "rg_name"
-                }
-              }
-            },
-            {
-              "key": "existing_vpc_crn",
               "required": true
             },
             {
@@ -214,6 +231,75 @@
                   "value": "REDHAT_8_64"
                 }
               ]
+            },
+            {
+              "key": "existing_vpc_crn",
+              "required": true
+            },
+            {
+              "key": "vpc_name",
+               "default_value": "vpc",
+               "virtual": true
+            },
+            {
+              "key": "vpc_region",
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              },
+              "description": "Region for VPC to deply the cluster in",
+              "virtual": true,
+              "default_value": "us-south"
+            },
+            {
+              "key": "enable_platform_metrics",
+              "type": "string",
+              "default_value": "true",
+              "description": "When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
+              "required": true,
+              "virtual": true,
+              "options": [
+                {
+                  "displayname": "true",
+                  "value": "true"
+                },
+                {
+                  "displayname": "false",
+                  "value": "false"
+                }
+              ]
+            },
+            {
+              "key": "logs_routing_tenant_regions",
+              "type": "list(string)",
+              "default_value": [],
+              "description": "To manage platform logs that are generated by IBM Cloud services in a region of IBM Cloud, you must create a tenant in each region that you operate. Pass a list of regions to create a tenant in. [Learn more](https://cloud.ibm.com/docs/logs-router?topic=logs-router-about-platform-logs).",
+              "required": true,
+              "virtual": true,
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "existing_resource_group_name",
+              "displayname": "resource_group",
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
             },
             {
               "key": "cluster_resource_tags",
@@ -441,6 +527,7 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
+              "description": "Defines the VPC instance and subnets where the cluster will be deployed.",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
               "version": "v7.24.0",
               "flavors": [
@@ -462,7 +549,7 @@
                 },
                 {
                   "dependency_input":"region",
-                  "version_input":"region",
+                  "version_input":"vpc_region",
                   "reference_version": true
                 },
                 {
@@ -507,9 +594,6 @@
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "version_input": "kms_encryption_enabled_cluster",
@@ -533,7 +617,7 @@
             },
             {
               "name": "deploy-arch-ibm-cos",
-              "description": "Enable Cloud Automation for Cloud Object Storage to create a COS instance, where a bucket can be provisioned and used as the internal registry storage for OpenShift.",
+              "description": "Enable to create a Cloud Object Storage (COS) instance, where an object storage bucket can be provisioned and used as the internal registry storage for OpenShift cluster.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
               "version": "v9.0.2",
               "flavors": [
@@ -542,9 +626,6 @@
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_output": "cos_instance_crn",
@@ -564,6 +645,7 @@
             },
             {
               "name": "deploy-arch-ibm-observability",
+              "description": "Configure IBM Cloud Logs, Cloud Monitoring and Activity Tracker event routing for analysing logs and metrics generated by the VPC instance.",
               "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
               "version": "v3.0.3",
               "flavors": [
@@ -572,20 +654,27 @@
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "enable_platform_metrics",
+                  "version_input": "enable_platform_metrics",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "logs_routing_tenant_regions",
+                  "version_input": "logs_routing_tenant_regions",
                   "reference_version": true
                 }
               ]
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
-              "description": "Enable Cloud Automation for Secrets Manager for centrally managing Ingress subdomain certificates and other secrets.",
+              "description": "Enable Secrets Manager for centrally managing Ingress subdomain certificates and other secrets.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
               "version": "v2.4.0",
               "flavors": [
@@ -594,9 +683,6 @@
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
