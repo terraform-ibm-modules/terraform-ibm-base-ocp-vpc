@@ -503,6 +503,7 @@
             },
             {
               "key": "cbr_rules",
+              "displayname": "openshift_cluster_cbr_rules",
               "type": "array",
               "custom_config": {
                 "type": "textarea",
