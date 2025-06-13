@@ -296,7 +296,7 @@
             },
             {
               "key": "existing_resource_group_name",
-              "displayname": "resource_group",
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -503,7 +503,7 @@
             },
             {
               "key": "cbr_rules",
-              "displayname": "openshift_cluster_cbr_rules",
+              "display_name": "openshift_cluster_cbr_rules",
               "type": "array",
               "custom_config": {
                 "type": "textarea",
