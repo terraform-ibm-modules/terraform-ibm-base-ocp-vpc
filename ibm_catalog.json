@@ -71,12 +71,33 @@
           },
           "iam_permissions": [
             {
+              "service_name": "containers-kubernetes",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required to create and edit OpenShift cluster and the related resources."
+            },
+            {
               "service_name": "iam-identity",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
               "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud."
+            },
+            {
+              "service_name": "is.vpc",
+              "role_crns": ["crn:v1:bluemix:public:iam::::role:Administrator"],
+               "notes": "Required for creating Virtual Private Cloud(VPC)."
+            },
+            {
+              "service_name": "cloud-object-storage",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required to create Cloud Object Storage (COS) Instance."
             },
             {
               "service_name": "hs-crypto",
@@ -93,27 +114,6 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Kubernetes Secrets and Object Storage bucket."
-            },
-            {
-              "service_name": "cloud-object-storage",
-              "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Editor"
-              ],
-              "notes": "Required to create Cloud Object Storage (COS) Instance."
-            },
-            {
-              "service_name": "containers-kubernetes",
-              "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Editor"
-              ],
-              "notes": "Required to create and edit OpenShift cluster and the related resources."
-            },
-            {
-              "service_name": "is.vpc",
-              "role_crns": ["crn:v1:bluemix:public:iam::::role:Administrator"],
-               "notes": "Required for creating Virtual Private Cloud(VPC)."
             },
             {
               "service_name": "sysdig-monitor",
@@ -169,7 +169,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/da-improvement/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon dependency if existing vpc is not provided. While the diagram illustrates a three-zone deployment, the VPC can also be provisioned in a single-zone or two-zone configuration, depending on your availability requirements.<br><br>The default configuration deploys a VPC with three zone subnets, configures the predefined ACLs, and attaches a public gateway with one of the subnets. You can also enable <b>Observability</b> for your cluster for logging and monitoring needs. Secrets Manager Integration can also be enabled for centrally managing Ingress subdomain certificates. Additionally, you can also create Cloud Object Storage instance if not providing an existing one in which object storage object gets created which acts as internal registry storage for the OpenShift cluster and bucket can be encrypted using Key Protect for enhanced security."
+                "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> on a Virtual Private Cloud (VPC) network. You can deploy the cluster on an existing VPC and this architecture supports creation of new VPC and subnets by selecting the VPC addon dependency if existing vpc is not provided. While the diagram illustrates a three-zone deployment, the VPC can also be provisioned in a single-zone or two-zone configuration, depending on your availability requirements.<br><br>The default configuration deploys a VPC with three zone subnets, configures the predefined ACLs, and attaches a public gateway with one of the subnets. You can also enable <b>Observability</b> for your cluster for logging and monitoring needs. <b>Secrets Manager</b> Integration can also be enabled for centrally managing Ingress subdomain certificates. Additionally, you can also create <b>Cloud Object Storage</b> instance if not providing an existing one in which object storage object gets created which acts as internal registry storage for the OpenShift cluster and bucket can be encrypted using <b>Key Protect</b> for enhanced security."
               }
             ]
           },
@@ -278,21 +278,6 @@
                   "value": "false"
                 }
               ]
-            },
-            {
-              "key": "logs_routing_tenant_regions",
-              "type": "list(string)",
-              "default_value": [],
-              "description": "To manage platform logs that are generated by IBM Cloud services in a region of IBM Cloud, you must create a tenant in each region that you operate. Pass a list of regions to create a tenant in. [Learn more](https://cloud.ibm.com/docs/logs-router?topic=logs-router-about-platform-logs).",
-              "required": true,
-              "virtual": true,
-              "custom_config": {
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string"
-                }
-              }
             },
             {
               "key": "existing_resource_group_name",
@@ -672,11 +657,6 @@
                 {
                   "dependency_input": "enable_platform_metrics",
                   "version_input": "enable_platform_metrics",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "logs_routing_tenant_regions",
-                  "version_input": "logs_routing_tenant_regions",
                   "reference_version": true
                 }
               ]
