@@ -182,10 +182,6 @@
               "required": true
             },
             {
-              "key": "existing_cos_instance_crn",
-              "required": true
-            },
-            {
               "key": "cluster_name",
               "required": true
             },
@@ -260,6 +256,10 @@
               "description": "Region for VPC to deploy the cluster in.",
               "virtual": true,
               "default_value": "us-south"
+            },
+            {
+              "key": "existing_cos_instance_crn",
+              "required": true
             },
             {
               "key": "enable_platform_metrics",
