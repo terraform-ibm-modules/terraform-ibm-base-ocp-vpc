@@ -253,7 +253,7 @@
                 "original_grouping": "deployment",
                 "type": "vpc_region"
               },
-              "description": "Region for VPC to deploy the cluster in.",
+              "description": "Region for VPC to deploy the cluster in. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
               "virtual": true,
               "default_value": "us-south"
             },
