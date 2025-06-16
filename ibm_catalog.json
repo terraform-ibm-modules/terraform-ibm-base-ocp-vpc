@@ -41,15 +41,19 @@
         },
         {
           "title": "Object Storage",
-          "description": "Creates and configures an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) which acts as OpenShift internal registry storage."
+          "description": "Creates and configures an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) which acts as OpenShift internal registry storage. You can provide an existing COS Instance or use the [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) for creating a new instance."
         },
         {
           "title": "KMS Encryption",
-          "description": "Enables key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and Object Storage bucket using either a newly created key or an existing one."
+          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and Object Storage bucket using either a newly created key or an existing one."
         },
         {
-          "title": "Optional Integrations",
-          "description": "This solution can be integrated with [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) for creating the Object Storage (COS) Instance, [Cloud automation for Observability](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-observability-a3137d28-79e0-479d-8a24-758ebd5a0eab-global) that supports configuring resources for logging, monitoring and activity tracker event routing and [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates."
+          "title": "Secrets Manager",
+          "description": "Optional integration with [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates."
+        },
+        {
+          "title": "Observability",
+          "description": "This solution can leverage [Cloud automation for Observability](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-observability-a3137d28-79e0-479d-8a24-758ebd5a0eab-global) that supports configuring resources for logging, monitoring and activity tracker event routing (optional)."
         }
       ],
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
@@ -232,10 +236,6 @@
                   "value": "bx2.8x32"
                 },
                 {
-                  "displayname": "bx2d.metal.96x384 (only Toronto (ca-tor))",
-                  "value": "bx2d.metal.96x384"
-                },
-                {
                   "displayname": "bx3d.128x640",
                   "value": "bx3d.128x640"
                 },
@@ -277,10 +277,6 @@
                 {
                   "displayname": "cx2.48x96",
                   "value": "cx2.48x96"
-                },
-                {
-                  "displayname": "cx2d.metal.96x192 (only Toronto (ca-tor)) ",
-                  "value": "cx2d.metal.96x192"
                 },
                 {
                   "displayname": "cx3d.128x320",
@@ -335,10 +331,6 @@
                   "value": "mx2.8x64"
                 },
                 {
-                  "displayname": "mx2d.metal.96x768 (only Toronto (ca-tor))) ",
-                  "value": "mx2d.metal.96x768"
-                },
-                {
                   "displayname": "mx3d.128x1280",
                   "value": "mx3d.128x1280"
                 },
@@ -361,6 +353,18 @@
                 {
                   "displayname": "mx3d.96x960",
                   "value": "mx3d.96x960"
+                },
+                {
+                  "displayname": "bx2d.metal.96x384 (Only available in Toronto (ca-tor))",
+                  "value": "bx2d.metal.96x384"
+                },
+                {
+                  "displayname": "cx2d.metal.96x192 (Only available in Toronto (ca-tor)) ",
+                  "value": "cx2d.metal.96x192"
+                },
+                {
+                  "displayname": "mx2d.metal.96x768 (Only available in Toronto (ca-tor))) ",
+                  "value": "mx2d.metal.96x768"
                 },
                 { "displayname": "mx2.16x128.2000gb (Not available in Sao Paulo (br-sao), Montreal (ca-mon), Madrid (eu-es), Osaka (jp-osa))",
                   "value": "mx2.16x128.2000gb"
@@ -429,7 +433,7 @@
                 "original_grouping": "deployment",
                 "type": "vpc_region"
               },
-              "description": "Region in which all resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
+              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
               "virtual": true,
               "default_value": "us-south"
             },
@@ -441,7 +445,7 @@
               "key": "enable_platform_metrics",
               "type": "string",
               "default_value": "true",
-              "description": "⚠️ When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
+              "description": "When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. ⚠️ You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
               "required": true,
               "virtual": true,
               "options": [
