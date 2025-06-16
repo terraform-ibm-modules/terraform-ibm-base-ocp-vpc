@@ -213,7 +213,183 @@
             },
             {
               "key": "default_worker_pool_machine_type",
-              "required": true
+              "required": true,
+              "options": [
+                {
+                  "displayname": "bx2.16x64",
+                  "value": "bx2.16x64"
+                },
+                {
+                  "displayname": "bx2.32x128",
+                  "value": "bx2.32x128"
+                },
+                {
+                  "displayname": "bx2.48x192",
+                  "value": "bx2.48x192"
+                },
+                {
+                  "displayname": "bx2.8x32",
+                  "value": "bx2.8x32"
+                },
+                {
+                  "displayname": "bx2d.metal.96x384 (only Toronto (ca-tor))",
+                  "value": "bx2d.metal.96x384"
+                },
+                {
+                  "displayname": "bx3d.128x640",
+                  "value": "bx3d.128x640"
+                },
+                {
+                  "displayname": "bx3d.16x80",
+                  "value": "bx3d.16x80"
+                },
+                {
+                  "displayname": "bx3d.24x120",
+                  "value": "bx3d.24x120"
+                },
+                {
+                  "displayname": "bx3d.32x160",
+                  "value": "bx3d.32x160"
+                },
+                {
+                  "displayname": "bx3d.48x240",
+                  "value": "bx3d.48x240"
+                },
+                {
+                  "displayname": "bx3d.64x320",
+                  "value": "bx3d.64x320"
+                },
+                {
+                  "displayname": "bx3d.8x40",
+                  "value": "bx3d.8x40"
+                },
+                {
+                  "displayname": "bx3d.96x480",
+                  "value": "bx3d.96x480"
+                },
+                {
+                  "displayname": "cx2.16x32",
+                  "value": "cx2.16x32"
+                },{
+                  "displayname": "cx2.32x64",
+                  "value": "cx2.32x64"
+                },
+                {
+                  "displayname": "cx2.48x96",
+                  "value": "cx2.48x96"
+                },
+                {
+                  "displayname": "cx2d.metal.96x192 (only Toronto (ca-tor)) ",
+                  "value": "cx2d.metal.96x192"
+                },
+                {
+                  "displayname": "cx3d.128x320",
+                  "value": "cx3d.128x320"
+                },
+                {
+                  "displayname": "cx3d.16x40",
+                  "value": "cx3d.16x40"
+                },
+                {
+                  "displayname": "cx3d.24x60",
+                  "value": "cx3d.24x60"
+                },
+                {
+                  "displayname": "cx3d.32x80",
+                  "value": "cx3d.32x80"
+                },
+                {
+                  "displayname": "cx3d.48x120",
+                  "value": "cx3d.48x120"
+                },
+                {
+                  "displayname": "cx3d.64x160",
+                  "value": "cx3d.64x160"
+                },
+                {
+                  "displayname": "cx3d.96x240",
+                  "value": "cx3d.96x240"
+                },
+                {
+                  "displayname": "mx2.128x1024",
+                  "value": "mx2.128x1024"
+                },
+                {
+                  "displayname": "mx2.16x128",
+                  "value": "mx2.16x128"
+                },
+                {
+                  "displayname": "mx2.32x256",
+                  "value": "mx2.32x256"
+                },
+                {
+                  "displayname": "mx2.48x384",
+                  "value": "mx2.48x384"
+                },
+                {
+                  "displayname": "mx2.64x512",
+                  "value": "mx2.64x512"
+                },
+                {
+                  "displayname": "mx2.8x64",
+                  "value": "mx2.8x64"
+                },
+                {
+                  "displayname": "mx2d.metal.96x768 (only Toronto (ca-tor))) ",
+                  "value": "mx2d.metal.96x768"
+                },
+                {
+                  "displayname": "mx3d.128x1280",
+                  "value": "mx3d.128x1280"
+                },
+                {
+                  "displayname": "mx3d.24x240",
+                  "value": "mx3d.24x240"
+                },
+                {
+                  "displayname": "mx3d.32x320",
+                  "value": "mx3d.32x320"
+                },
+                {
+                  "displayname": "mx3d.48x480",
+                  "value": "mx3d.48x480"
+                },
+                {
+                  "displayname": "mx3d.64x640",
+                  "value": "mx3d.64x640"
+                },
+                {
+                  "displayname": "mx3d.96x960",
+                  "value": "mx3d.96x960"
+                },
+                { "displayname": "mx2.16x128.2000gb (Not available in Sao Paulo (br-sao), Montreal (ca-mon), Madrid (eu-es), Osaka (jp-osa))",
+                  "value": "mx2.16x128.2000gb"
+                },
+                {
+                  "displayname": "ox2.128x1024 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.128x1024"
+                },
+                {
+                  "displayname": "ox2.16x128 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.16x128"
+                },
+                {
+                  "displayname": "ox2.32x256 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.32x256"
+                },
+                {
+                  "displayname": "ox2.64x512 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.64x512"
+                },
+                {
+                  "displayname": "ox2.8x64 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.8x64"
+                },
+                {
+                  "displayname": "ox2.96x768 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
+                  "value": "ox2.96x768"
+                }
+              ]
             },
             {
               "key": "default_worker_pool_workers_per_zone",
@@ -242,7 +418,7 @@
               "required": true
             },
             {
-              "key": "vpc_region",
+              "key": "region",
               "required": true,
               "type": "string",
               "custom_config": {
@@ -253,7 +429,7 @@
                 "original_grouping": "deployment",
                 "type": "vpc_region"
               },
-              "description": "Region for VPC to deploy the cluster in. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
+              "description": "Region in which all resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
               "virtual": true,
               "default_value": "us-south"
             },
@@ -265,7 +441,7 @@
               "key": "enable_platform_metrics",
               "type": "string",
               "default_value": "true",
-              "description": "When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
+              "description": "⚠️ When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
               "required": true,
               "virtual": true,
               "options": [
@@ -283,7 +459,7 @@
               "key": "logs_routing_tenant_regions",
               "type": "list(string)",
               "default_value": "[]",
-              "description": "To manage platform logs that are generated by IBM Cloud services in a region of IBM Cloud, you must create a tenant in each region that you operate. Pass a list of regions to create a tenant in. [Learn more](https://cloud.ibm.com/docs/logs-router?topic=logs-router-about-platform-logs).",
+              "description": "To manage platform logs that are generated by IBM Cloud services in a region of IBM Cloud, you must create a tenant in each region that you operate. Pass a list of regions to create a tenant in. For example: [\"us-south\", \"us-east\"]. [Learn more](https://cloud.ibm.com/docs/logs-router?topic=logs-router-about-platform-logs).",
               "required": true,
               "virtual": true,
               "custom_config": {
@@ -574,7 +750,7 @@
                 },
                 {
                   "dependency_input":"region",
-                  "version_input":"vpc_region",
+                  "version_input":"region",
                   "reference_version": true
                 },
                 {
