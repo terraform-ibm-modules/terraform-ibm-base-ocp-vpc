@@ -37,7 +37,7 @@ variable "resource_tags" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
-  default     = "4.17"
+  default     = "4.14"
 }
 
 variable "access_tags" {
