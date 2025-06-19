@@ -13,18 +13,31 @@ variable "ibmcloud_api_key" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
   nullable    = true
+  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0405-ocp. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+
   validation {
-    condition = (var.prefix == null ? true :
+    # - null and empty string is allowed
+    # - Must not contain consecutive hyphens (--): length(regexall("--", var.prefix)) == 0
+    # - Starts with a lowercase letter: [a-z]
+    # - Contains only lowercase letters (a–z), digits (0–9), and hyphens (-)
+    # - Must not end with a hyphen (-): [a-z0-9]
+    condition = (var.prefix == null || var.prefix == "" ? true :
       alltrue([
-        can(regex("^[a-z]{0,1}[-a-z0-9]{0,14}[a-z0-9]{0,1}$", var.prefix)),
-        length(regexall("^.*--.*", var.prefix)) == 0
+        can(regex("^[a-z][-a-z0-9]*[a-z0-9]$", var.prefix)),
+        length(regexall("--", var.prefix)) == 0
       ])
     )
-    error_message = "Prefix must begin with a lowercase letter, contain only lowercase letters, numbers, and - characters. Prefixes must end with a lowercase letter or number and be 16 or fewer characters."
+    error_message = "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--')."
+  }
+
+  validation {
+    # must not exceed 16 characters in length
+    condition     = length(var.prefix) <= 16
+    error_message = "Prefix must not exceed 16 characters."
   }
 }
+
 
 variable "existing_resource_group_name" {
   type        = string
@@ -118,7 +131,7 @@ variable "addons" {
       parameters_json = optional(string)
     }))
   })
-  description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-addons)"
+  description = "Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). [Check supported addons and versions here](https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions). [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#options-with-addons)"
   nullable    = false
   default     = {}
 }
@@ -406,13 +419,13 @@ variable "kms_endpoint_type" {
   }
 }
 
-variable "cluster_key_ring_name" {
+variable "cluster_kms_key_ring_name" {
   type        = string
   default     = "cluster-key-ring"
   description = "The name of the key ring to be created for the cluster's Object Storage bucket encryption key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
-variable "cluster_key_name" {
+variable "cluster_kms_key_name" {
   type        = string
   default     = "cluster-key"
   description = "The name of the key to be created for the cluster's Object Storage bucket encryption. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
@@ -461,13 +474,13 @@ variable "existing_boot_volume_kms_key_crn" {
   }
 }
 
-variable "boot_volume_key_ring_name" {
+variable "boot_volume_kms_key_ring_name" {
   type        = string
   default     = "boot-volume-key-ring"
   description = "The name for the key ring created for the block storage volumes key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
-variable "boot_volume_key_name" {
+variable "boot_volume_kms_key_name" {
   type        = string
   default     = "boot-volume-key"
   description = "The name for the key created for the block storage volumes. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
@@ -535,6 +548,21 @@ variable "secrets_manager_endpoint_type" {
   validation {
     condition     = contains(["public", "private"], var.secrets_manager_endpoint_type)
     error_message = "The specified service endpoint is not a valid selection!"
+  }
+}
+
+# tflint-ignore: all
+variable "secrets_manager_service_plan" {
+  type        = string
+  description = "The pricing plan to use when provisioning a Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+  default     = "standard"
+  validation {
+    condition     = contains(["standard", "trial"], var.secrets_manager_service_plan)
+    error_message = "Only 'standard' and 'trial' are allowed values for 'service_plan'. Applies only if not providing a value for the 'existing_secrets_manager_instance_crn' input."
+  }
+  validation {
+    condition     = var.existing_secrets_manager_instance_crn == null && var.enable_secrets_manager_integration ? var.secrets_manager_service_plan != null : true
+    error_message = "A value for 'service_plan' is required if not providing a value for 'existing_secrets_manager_instance_crn'"
   }
 }
 
