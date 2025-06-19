@@ -28,7 +28,7 @@ function apply_oc_patch() {
     else
       echo "Failed to apply patch. Retrying in ${retry_wait_time}s..."
       sleep $retry_wait_time
-      ((attempt++))
+      attempt=$((attempt+1))
     fi
   done
 
@@ -50,7 +50,7 @@ function remove_oc_patch() {
     else
       echo "Failed to remove patch. Retrying in ${retry_wait_time}s..."
       sleep $retry_wait_time
-      ((attempt++))
+      attempt=$((attempt+1))
     fi
   done
 
