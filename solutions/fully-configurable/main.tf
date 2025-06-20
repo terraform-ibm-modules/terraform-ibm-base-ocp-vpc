@@ -191,6 +191,13 @@ locals {
       additional_security_group_ids = pool.additional_security_group_ids
       subnet_prefix                 = "default"
   } if length(pool.vpc_subnets) == 0])
+
+  # Managing the ODF version accordingly, as it changes with each OCP version.
+  addons = lookup(var.addons, "openshift-data-foundation", null) != null ? lookup(var.addons["openshift-data-foundation"], "version", null) == null ? { for key, value in var.addons :
+    key => value != null ? {
+      version         = lookup(value, "version", null) == null && key == "openshift-data-foundation" ? "${var.ocp_version}.0" : lookup(value, "version", null)
+      parameters_json = lookup(value, "parameters_json", null)
+  } : null } : var.addons : var.addons
 }
 
 module "ocp_base" {
@@ -210,7 +217,7 @@ module "ocp_base" {
   ocp_entitlement                          = var.ocp_entitlement
   additional_lb_security_group_ids         = var.additional_lb_security_group_ids
   additional_vpe_security_group_ids        = var.additional_vpe_security_group_ids
-  addons                                   = var.addons
+  addons                                   = local.addons
   allow_default_worker_pool_replacement    = var.allow_default_worker_pool_replacement
   attach_ibm_managed_security_group        = var.attach_ibm_managed_security_group
   cluster_config_endpoint_type             = var.cluster_config_endpoint_type
