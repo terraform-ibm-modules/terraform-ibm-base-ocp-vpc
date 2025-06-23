@@ -92,8 +92,10 @@
             },
             {
               "service_name": "is.vpc",
-              "role_crns": ["crn:v1:bluemix:public:iam::::role:Administrator"],
-               "notes": "Required for creating Virtual Private Cloud(VPC)."
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "notes": "Required for creating Virtual Private Cloud(VPC)."
             },
             {
               "service_name": "cloud-object-storage",
@@ -140,7 +142,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
-               "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Logs Routing."
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Logs Routing."
             },
             {
               "service_name": "atracker",
@@ -266,7 +268,8 @@
                 {
                   "displayname": "cx2.16x32",
                   "value": "cx2.16x32"
-                },{
+                },
+                {
                   "displayname": "cx2.32x64",
                   "value": "cx2.32x64"
                 },
@@ -362,7 +365,8 @@
                   "displayname": "mx2d.metal.96x768 (Only available in Toronto (ca-tor))) ",
                   "value": "mx2d.metal.96x768"
                 },
-                { "displayname": "mx2.16x128.2000gb (Not available in Sao Paulo (br-sao), Montreal (ca-mon), Madrid (eu-es), Osaka (jp-osa))",
+                {
+                  "displayname": "mx2.16x128.2000gb (Not available in Sao Paulo (br-sao), Montreal (ca-mon), Madrid (eu-es), Osaka (jp-osa))",
                   "value": "mx2.16x128.2000gb"
                 },
                 {
@@ -707,6 +711,9 @@
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
             },
             {
+              "key": "subnets"
+            },
+            {
               "key": "provider_visibility",
               "options": [
                 {
@@ -749,13 +756,18 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input":"region",
-                  "version_input":"region",
+                  "dependency_input": "region",
+                  "version_input": "region",
                   "reference_version": true
                 },
                 {
                   "dependency_output": "vpc_crn",
                   "version_input": "existing_vpc_crn"
+                },
+                {
+                  "dependency_input": "subnets",
+                  "version_input": "subnets",
+                  "reference_version": true
                 }
               ]
             },
