@@ -631,9 +631,4 @@ variable "subnets" {
       }
     ]
   }
-
-  validation {
-    condition     = alltrue([for key, value in var.subnets : value != null ? length([for subnet in value : subnet.public_gateway if subnet.public_gateway]) > 1 ? false : true : true])
-    error_message = "var.subnets has more than one public gateway in a zone. Only one public gateway can be attached to a zone for the virtual private cloud."
-  }
 }
