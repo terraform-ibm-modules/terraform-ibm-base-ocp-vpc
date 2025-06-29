@@ -70,7 +70,7 @@ variable "cluster_name" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision."
-  default     = "4.17"
+  default     = "4.18"
 }
 
 variable "ocp_entitlement" {
@@ -181,7 +181,7 @@ variable "default_worker_pool_workers_per_zone" {
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
-  default     = "RHEL_9_64"
+  default     = "RHCOS"
 }
 
 variable "default_worker_pool_labels" {
