@@ -21,3 +21,17 @@ provider "ibm" {
   region           = var.enable_secrets_manager_integration ? module.existing_secrets_manager_instance_parser[0].region : local.vpc_region
   visibility       = var.provider_visibility
 }
+
+provider "helm" {
+  kubernetes {
+    host                   = data.ibm_container_cluster_config.cluster_config[0].host
+    token                  = data.ibm_container_cluster_config.cluster_config[0].token
+    cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
+  }
+}
+
+provider "kubernetes" {
+  host                   = data.ibm_container_cluster_config.cluster_config[0].host
+  token                  = data.ibm_container_cluster_config.cluster_config[0].token
+  cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
+}

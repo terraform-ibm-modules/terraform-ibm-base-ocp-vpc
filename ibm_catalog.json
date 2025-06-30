@@ -405,6 +405,21 @@
             },
             {
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
+            },
+            {
+              "key": "audit_deployment_name"
+            },
+            {
+              "key": "audit_log_policy"
+            },
+            {
+              "key": "audit_namespace"
+            },
+            {
+              "key": "audit_webhook_listener_image"
+            },
+            {
+              "key": "audit_webhook_listener_image_version"
             }
           ],
           "dependencies": [
