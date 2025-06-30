@@ -556,3 +556,47 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
   default     = false
 }
+
+##############################################################
+# Kube Audit
+##############################################################
+
+variable "audit_log_policy" {
+  type        = string
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
+  default     = "default"
+
+  validation {
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
+    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+  }
+}
+
+variable "audit_namespace" {
+  type        = string
+  description = "The name of the namespace where log collection service and a deployment will be created."
+  default     = "ibm-kube-audit"
+}
+
+variable "audit_deployment_name" {
+  type        = string
+  description = "The name of log collection deployement and service."
+  default     = "ibmcloud-kube-audit"
+}
+
+variable "audit_webhook_listener_image" {
+  type        = string
+  description = "The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.The sub-module uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image."
+  default     = "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
+}
+
+variable "audit_webhook_listener_image_version" {
+  type        = string
+  description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
+  nullable    = false
+  default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144" # See, https://github.ibm.com/GoldenEye/issues/issues/13371
+  validation {
+    condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_version))
+    error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
+  }
+}
