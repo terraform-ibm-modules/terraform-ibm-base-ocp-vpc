@@ -38,17 +38,3 @@ provider "kubernetes" {
   token                  = data.ibm_container_cluster_config.cluster_config[0].token
   cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
 }
-
-provider "helm" {
-  kubernetes {
-    host                   = data.ibm_container_cluster_config.cluster_config[0].host
-    token                  = data.ibm_container_cluster_config.cluster_config[0].token
-    cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
-  }
-}
-
-provider "kubernetes" {
-  host                   = data.ibm_container_cluster_config.cluster_config[0].host
-  token                  = data.ibm_container_cluster_config.cluster_config[0].token
-  cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
-}

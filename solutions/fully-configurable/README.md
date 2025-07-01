@@ -17,9 +17,9 @@ The following resources are provisioned by this example:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.15.0, <3.0.0 |
+| <a name="requirement_helm"></a> [helm](#requirement\_helm) | 2.17.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.79.2 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.37.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | = 0.9.1 |
 
 ### Modules
