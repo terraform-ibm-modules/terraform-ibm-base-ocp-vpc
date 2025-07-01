@@ -248,7 +248,7 @@ module "trusted_profile" {
 module "observability_agents" {
   depends_on                = [module.kube_audit]
   source                    = "terraform-ibm-modules/observability-agents/ibm"
-  version                   = "2.8.0"
+  version                   = "2.8.3"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   # Cloud Logs agent
