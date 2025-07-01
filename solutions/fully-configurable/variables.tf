@@ -561,6 +561,12 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
 # Kube Audit
 ##############################################################
 
+variable "enable_kube_audit" {
+  type        = bool
+  description = "Set true to enable kube audit by default."
+  default     = true
+}
+
 variable "audit_log_policy" {
   type        = string
   description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
