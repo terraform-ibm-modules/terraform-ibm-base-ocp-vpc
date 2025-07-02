@@ -28,10 +28,10 @@ const customsgExampleDir = "examples/custom_sg"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.17" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.16" // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.15" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.14" // used by TestRunAddRulesToSGExample and TestRunBasicExample
+const ocpVersion1 = "4.18" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.17" // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.16" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.15" // used by TestRunAddRulesToSGExample and TestRunBasicExample
 
 var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
