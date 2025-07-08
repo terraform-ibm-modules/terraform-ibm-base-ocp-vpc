@@ -838,7 +838,7 @@
             },
             {
               "name": "deploy-arch-ibm-cos",
-              "description": "Set up a Cloud Object Storage (COS) instance, where an object storage bucket will be created and used as the internal registry storage for OpenShift cluster.",
+              "description": "Set up a Cloud Object Storage (COS) instance, where an object storage bucket will be created and used as the internal registry storage for OpenShift cluster. ",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
               "version": "v9.0.2",
               "flavors": [
