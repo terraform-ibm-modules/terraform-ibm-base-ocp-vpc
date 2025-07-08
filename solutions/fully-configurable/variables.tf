@@ -69,7 +69,7 @@ variable "cluster_name" {
 
 variable "ocp_version" {
   type        = string
-  description = "Version of the OpenShift Container Platform cluster to provision."
+  description = "Version of the OpenShift cluster to provision."
   default     = "4.17"
 }
 
