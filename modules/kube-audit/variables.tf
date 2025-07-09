@@ -94,10 +94,10 @@ variable "audit_webhook_listener_image" {
 variable "audit_webhook_listener_image_version" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
-  nullable    = false
-  default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144" # See, https://github.ibm.com/GoldenEye/issues/issues/13371
+  nullable    = true
+  default     = null
   validation {
-    condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_version))
+    condition     = var.audit_webhook_listener_image_version == null || can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_version))
     error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
   }
 }

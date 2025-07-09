@@ -141,7 +141,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "fc-upg",
-		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", "kubeconfig/.gitignore", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/scripts/*.*", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/kube-audit/helm-charts/kube-audit/values.yaml"},
+		TarIncludePatterns:    []string{"*.tf", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/scripts/*.*", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/kube-audit/helm-charts/kube-audit/values.yaml", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,

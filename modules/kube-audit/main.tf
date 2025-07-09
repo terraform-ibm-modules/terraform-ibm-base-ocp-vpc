@@ -18,6 +18,10 @@ locals {
   validate_existing_vpc_id = tonumber(regex("^([0-9]+\\.[0-9]+)", data.ibm_container_vpc_cluster.cluster.kube_version)[0]) > "4.14" ? true : tobool("Kubernetes API server audit logs forwarding is only supported in ocp versions 4.15 and later.")
 }
 
+locals {
+  audit_webhook_listener_image_version = var.audit_webhook_listener_image_version != null ? var.audit_webhook_listener_image_version : "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144"
+}
+
 resource "null_resource" "set_audit_log_policy" {
   triggers = {
     audit_log_policy = var.audit_log_policy
@@ -68,7 +72,7 @@ resource "helm_release" "kube_audit" {
   set {
     name  = "image.tag"
     type  = "string"
-    value = var.audit_webhook_listener_image_version
+    value = local.audit_webhook_listener_image_version
   }
 
   provisioner "local-exec" {
