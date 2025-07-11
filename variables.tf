@@ -368,8 +368,8 @@ variable "addons" {
   }
 
   validation {
-    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
-    error_message = "OCP AI add-on requires at least 2 worker nodes in each worker pool."
+    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || length(data.ibm_container_vpc_cluster.cluster.workers) >= 2
+    error_message = "OCP AI add-on requires at least 2 worker nodes in the cluster."
   }
 
   validation {

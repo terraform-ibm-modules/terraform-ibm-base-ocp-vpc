@@ -43,13 +43,6 @@ locals {
 
 # Local block to verify validations for OCP AI Addon.
 locals {
-  # get the total workers per pool
-  workers_per_pool = {
-    for pool in var.worker_pools :
-    pool.pool_name => (
-      pool.vpc_subnets != null ? length(pool.vpc_subnets) * pool.workers_per_zone : length(var.vpc_subnets[pool.subnet_prefix]) * pool.workers_per_zone
-    )
-  }
 
   # retrieve worker specs (CPU & RAM) for all worker pools
   worker_specs = {
@@ -101,6 +94,11 @@ locals {
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
+}
+
+# To get the workers information required for OCP AI validation
+data "ibm_container_vpc_cluster" "cluster" {
+  name = var.cluster_name
 }
 
 module "cos_instance" {
