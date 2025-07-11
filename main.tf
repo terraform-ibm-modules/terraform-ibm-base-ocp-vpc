@@ -96,11 +96,6 @@ data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
 }
 
-# To get the workers information required for OCP AI validation
-data "ibm_container_vpc_cluster" "cluster" {
-  name = var.cluster_name
-}
-
 module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
@@ -474,6 +469,12 @@ resource "null_resource" "confirm_network_healthy" {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
+}
+
+# To get the workers information required for OCP AI validation
+data "ibm_container_vpc_cluster" "cluster" {
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  name       = var.cluster_name
 }
 
 ##############################################################################
