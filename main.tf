@@ -43,13 +43,6 @@ locals {
 
 # Local block to verify validations for OCP AI Addon.
 locals {
-  # get the total workers per pool
-  workers_per_pool = {
-    for pool in var.worker_pools :
-    pool.pool_name => (
-      pool.vpc_subnets != null ? length(pool.vpc_subnets) * pool.workers_per_zone : length(var.vpc_subnets[pool.subnet_prefix]) * pool.workers_per_zone
-    )
-  }
 
   # retrieve worker specs (CPU & RAM) for all worker pools
   worker_specs = {
@@ -476,6 +469,12 @@ resource "null_resource" "confirm_network_healthy" {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
     }
   }
+}
+
+# To get the workers information required for OCP AI validation
+data "ibm_container_vpc_cluster" "cluster" {
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  name       = var.cluster_name
 }
 
 ##############################################################################
