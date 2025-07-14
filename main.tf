@@ -471,12 +471,6 @@ resource "null_resource" "confirm_network_healthy" {
   }
 }
 
-# To get the workers information required for OCP AI validation
-data "ibm_container_vpc_cluster" "cluster" {
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
-  name       = var.cluster_name
-}
-
 ##############################################################################
 # Enable or Disable OCP Console Patch
 ##############################################################################
