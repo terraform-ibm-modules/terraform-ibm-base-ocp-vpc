@@ -368,11 +368,6 @@ variable "addons" {
   }
 
   validation {
-    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for workers in values(local.workers_per_pool) : workers >= 2])
-    error_message = "OCP AI add-on requires at least 2 worker nodes in each worker pool."
-  }
-
-  validation {
     condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
     error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
   }
