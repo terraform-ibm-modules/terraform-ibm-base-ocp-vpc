@@ -107,7 +107,7 @@ if [ "${reset}" == true ]; then
             echo "ERROR:: FAILED TO RESET THE IAM API KEY"
             echo "$result"
             sleep $retry_wait_time
-            ((attempt++))
+            attempt=$((attempt+1))
         fi
         # sleep for 10 secs to allow the new key to be replicated across backend DB instances before attempting to create cluster
     done

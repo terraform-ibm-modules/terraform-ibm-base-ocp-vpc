@@ -732,6 +732,14 @@
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
             },
             {
+              "key": "subnets",
+              "type": "object",
+              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
+              "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
+              "required": false,
+              "virtual": true
+            },
+            {
               "key": "provider_visibility",
               "options": [
                 {
@@ -781,6 +789,11 @@
                 {
                   "dependency_output": "vpc_crn",
                   "version_input": "existing_vpc_crn"
+                },
+                {
+                  "dependency_input": "subnets",
+                  "version_input": "subnets",
+                  "reference_version": true
                 }
               ]
             },

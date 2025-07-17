@@ -27,7 +27,7 @@ function apply_oc_patch() {
         else
             echo "Failed to apply patch. Retrying in ${RETRY_WAIT}s..."
             sleep $RETRY_WAIT
-            ((attempt++))
+            attempt=$((attempt+1))
             RETRY_WAIT=$((RETRY_WAIT * 2))
         fi
     done
