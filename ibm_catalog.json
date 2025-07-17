@@ -5,11 +5,12 @@
       "label": "Cloud automation for Red Hat OpenShift Container Platform on VPC",
       "product_kind": "solution",
       "tags": [
-        "containers",
+        "ibm_created",
         "target_terraform",
         "terraform",
         "solution",
-        "ibm_created"
+        "containers",
+        "converged_infra"
       ],
       "keywords": [
         "terraform",
@@ -193,7 +194,7 @@
             },
             {
               "key": "ocp_version",
-              "display_name":"openshift_version",
+              "display_name": "openshift_version",
               "required": true,
               "options": [
                 {
