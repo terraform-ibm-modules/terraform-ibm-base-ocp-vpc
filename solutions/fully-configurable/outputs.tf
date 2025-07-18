@@ -106,3 +106,28 @@ output "secrets_manager_integration_config" {
   description = "Information about the Secrets Manager instance that is used to store the Ingress certificates."
   value       = module.ocp_base.secrets_manager_integration_config
 }
+
+output "kube_audit_namespace" {
+  description = "The namespace where the audit webhook is deployed."
+  value       = module.kube_audit[0].audit_namespace
+}
+
+output "kube_audit_deployment_name" {
+  description = "The name of the audit webhook listener deployment."
+  value       = module.kube_audit[0].audit_deployment_name
+}
+
+output "kube_audit_webhook_listener_image" {
+  description = "The image used for the audit webhook listener."
+  value       = module.kube_audit[0].webhook_listener_image
+}
+
+output "kube_audit_webhook_listener_image_version" {
+  description = "The version of the audit webhook listener image."
+  value       = module.kube_audit[0].webhook_listener_image_version
+}
+
+output "kube_audit_log_policy" {
+  description = "The audit log policy configuration applied to the webhook listener."
+  value       = module.kube_audit[0].audit_log_policy
+}
