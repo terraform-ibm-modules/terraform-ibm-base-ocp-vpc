@@ -774,6 +774,12 @@
             },
             {
               "key": "audit_webhook_listener_image_version"
+            },
+            {
+              "key":"wait_till"
+            },
+            {
+              "key":"wait_till_timeout"
             }
           ],
           "dependencies": [

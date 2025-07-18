@@ -96,11 +96,5 @@ No modules.
 
 ### Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_audit_deployment_name"></a> [audit\_deployment\_name](#output\_audit\_deployment\_name) | The name of the audit webhook listener deployment. |
-| <a name="output_audit_log_policy"></a> [audit\_log\_policy](#output\_audit\_log\_policy) | The audit log policy configuration applied to the webhook listener. |
-| <a name="output_audit_namespace"></a> [audit\_namespace](#output\_audit\_namespace) | The namespace where the audit webhook is deployed. |
-| <a name="output_webhook_listener_image"></a> [webhook\_listener\_image](#output\_webhook\_listener\_image) | The image used for the audit webhook listener. |
-| <a name="output_webhook_listener_image_version"></a> [webhook\_listener\_image\_version](#output\_webhook\_listener\_image\_version) | The version of the audit webhook listener image. |
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

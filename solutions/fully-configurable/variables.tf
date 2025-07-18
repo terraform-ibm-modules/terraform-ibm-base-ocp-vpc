@@ -561,6 +561,18 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
 # Kube Audit
 ##############################################################
 
+variable "wait_till" {
+  description = "To avoid long wait times when you run your Terraform code, you can specify the stage when you want Terraform to mark the cluster resource creation as completed. Depending on what stage you choose, the cluster creation might not be fully completed and continues to run in the background. However, your Terraform code can continue to run without waiting for the cluster to be fully created. Supported args are `MasterNodeReady`, `OneWorkerNodeReady`, `IngressReady` and `Normal`"
+  type        = string
+  default     = "IngressReady"
+}
+
+variable "wait_till_timeout" {
+  description = "Timeout for wait_till in minutes."
+  type        = number
+  default     = 90
+}
+
 variable "enable_kube_audit" {
   type        = bool
   description = "Set true to enable kube audit by default."
