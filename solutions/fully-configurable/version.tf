@@ -7,5 +7,17 @@ terraform {
       source  = "IBM-Cloud/ibm"
       version = "1.80.4"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.17.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.37.1"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = "0.13.1"
+    }
   }
 }

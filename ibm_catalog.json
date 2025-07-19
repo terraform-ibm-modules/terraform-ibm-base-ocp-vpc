@@ -756,6 +756,30 @@
                 }
               ],
               "hidden": true
+            },
+            {
+              "key":"enable_kube_audit"
+            },
+            {
+              "key": "audit_deployment_name"
+            },
+            {
+              "key": "audit_log_policy"
+            },
+            {
+              "key": "audit_namespace"
+            },
+            {
+              "key": "audit_webhook_listener_image"
+            },
+            {
+              "key": "audit_webhook_listener_image_version"
+            },
+            {
+              "key":"wait_till"
+            },
+            {
+              "key":"wait_till_timeout"
             }
           ],
           "dependencies": [
