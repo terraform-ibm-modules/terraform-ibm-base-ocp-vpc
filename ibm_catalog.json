@@ -52,7 +52,7 @@
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
-          "label": "Fully configurable",
+          "label": "[Experimental] Fully configurable",
           "name": "fully-configurable",
           "index": 1,
           "install_type": "fullstack",
