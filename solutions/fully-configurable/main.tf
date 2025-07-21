@@ -294,12 +294,6 @@ data "ibm_container_cluster_config" "cluster_config" {
   endpoint_type     = var.cluster_config_endpoint_type != "default" ? var.cluster_config_endpoint_type : null
 }
 
-# Wait time to allow cluster refreshes components after provisioning
-resource "time_sleep" "wait_45_seconds" {
-  depends_on      = [data.ibm_container_cluster_config.cluster_config]
-  create_duration = "45s"
-}
-
 module "kube_audit" {
   count                                = var.enable_kube_audit ? 1 : 0
   ibmcloud_api_key                     = var.ibmcloud_api_key
