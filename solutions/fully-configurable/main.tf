@@ -307,13 +307,11 @@ module "kube_audit" {
   cluster_id                           = module.ocp_base.cluster_id
   cluster_resource_group_id            = module.ocp_base.resource_group_id
   region                               = module.ocp_base.region
-  wait_till                            = var.wait_till
-  wait_till_timeout                    = var.wait_till_timeout
   use_private_endpoint                 = var.use_private_endpoint
   cluster_config_endpoint_type         = var.cluster_config_endpoint_type
   audit_log_policy                     = var.audit_log_policy
   audit_namespace                      = var.audit_namespace
-  audit_deployment_name                = var.audit_deployment_name
+  audit_deployment_name                = "${var.prefix}-${var.audit_deployment_name}"
   audit_webhook_listener_image         = var.audit_webhook_listener_image
   audit_webhook_listener_image_version = var.audit_webhook_listener_image_version
 }
