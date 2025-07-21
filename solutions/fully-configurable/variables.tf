@@ -563,7 +563,7 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
 
 variable "enable_kube_audit" {
   type        = bool
-  description = "Kubernetes audit logging provides a chronological record of operations performed on the cluster, including by users, administrators, and system components.It is useful for compliance, security monitoring, and forensic investigations. Set true to enable kube audit by default. [Learn more](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/)"
+  description = "Kubernetes audit logging provides a chronological record of operations performed on the cluster, including by users, administrators, and system components. It is useful for compliance, and security monitoring. Set true to enable kube audit by default. [Learn more](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/)"
   default     = true
 }
 
