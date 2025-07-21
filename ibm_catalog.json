@@ -29,7 +29,7 @@
       "provider_name": "IBM",
       "features": [
         {
-          "description": "Creates and configures one or more clusters to handle workloads. You can specify the version and cluster size.\n",
+          "description": "Creates and configures one or more [clusters](https://cloud.ibm.com/docs/openshift) to handle workloads. You can specify the version and cluster size.\n",
           "title": "Creates Open Shift Container Platform clusters for workloads"
         },
         {
