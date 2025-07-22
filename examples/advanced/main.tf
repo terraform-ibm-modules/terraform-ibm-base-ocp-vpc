@@ -209,16 +209,13 @@ locals {
   logs_agent_name      = "logs-agent"
 }
 
-module "observability_instances" {
-  source                     = "terraform-ibm-modules/observability-instances/ibm"
-  version                    = "3.5.3"
+module "cloud_logs" {
+  source                     = "terraform-ibm-modules/cloud-logs/ibm"
+  version                    = "1.5.11"
   resource_group_id          = module.resource_group.resource_group_id
   region                     = var.region
   cloud_logs_plan            = "standard"
-  cloud_monitoring_plan      = "graduated-tier"
-  enable_platform_metrics    = false
   cloud_logs_instance_name   = "${var.prefix}-cloud-logs"
-  cloud_monitoring_provision = false
 }
 
 module "trusted_profile" {
@@ -245,18 +242,17 @@ module "trusted_profile" {
   ]
 }
 
-module "observability_agents" {
-  depends_on                = [module.kube_audit]
-  source                    = "terraform-ibm-modules/observability-agents/ibm"
-  version                   = "2.8.3"
-  cluster_id                = module.ocp_base.cluster_id
-  cluster_resource_group_id = module.resource_group.resource_group_id
-  # Cloud Logs agent
-  logs_agent_trusted_profile  = module.trusted_profile.trusted_profile.id
-  logs_agent_namespace        = local.logs_agent_namespace
-  logs_agent_name             = local.logs_agent_name
-  cloud_logs_ingress_endpoint = module.observability_instances.cloud_logs_ingress_private_endpoint
-  cloud_logs_ingress_port     = 3443
+module "logs_agents" {
+  depends_on                     = [module.kube_audit]
+  source                         = "terraform-ibm-modules/logs-agent/ibm"
+  version                        = "1.1.10"
+  cluster_id                     = module.ocp_base.cluster_id
+  cluster_resource_group_id      = module.resource_group.resource_group_id
+  logs_agent_trusted_profile_id  = module.trusted_profile.trusted_profile.id
+  logs_agent_namespace           = local.logs_agent_namespace
+  logs_agent_name                = local.logs_agent_name
+  cloud_logs_ingress_endpoint    = module.cloud_logs.cloud_logs_ingress_private_endpoint
+  cloud_logs_ingress_port        = 3443
   # example of how to add additional metadata to the logs agents
   logs_agent_additional_metadata = [{
     key   = "cluster_id"
