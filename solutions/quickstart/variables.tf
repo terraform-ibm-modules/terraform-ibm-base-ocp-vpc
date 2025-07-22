@@ -6,7 +6,7 @@ variable "ibmcloud_api_key" {
 }
 variable "existing_resource_group_name" {
   type        = string
-  description = "Name of the existing resource group. Required if not creating new resource group"
+  description = "The name of an existing resource group to provision the cluster."
   default     = "Default"
 }
 variable "provider_visibility" {
@@ -44,26 +44,16 @@ variable "region" {
 }
 variable "ocp_version" {
   type        = string
-  description = "The version of the OpenShift cluster."
+  description = "Version of the OpenShift cluster to provision."
   default     = "4.17"
-
-  validation {
-    condition = anytrue([
-      var.ocp_version == null,
-      var.ocp_version == "default",
-      var.ocp_version == "4.18",
-      var.ocp_version == "4.15",
-      var.ocp_version == "4.16",
-      var.ocp_version == "4.17",
-    ])
-    error_message = "The specified ocp_version is not of the valid versions."
-  }
 }
+
 variable "cluster_name" {
   type        = string
-  description = "Name of new IBM Cloud OpenShift Cluster"
-  default     = "ocp-qs"
+  description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
+  default     = "openshift-qs"
 }
+
 variable "address_prefix" {
   description = "The IP range that will be defined for the VPC for a certain location. Use only with manual address prefixes."
   type        = string
@@ -79,9 +69,10 @@ variable "ocp_entitlement" {
 
 variable "default_worker_pool_operating_system" {
   type        = string
-  description = "Provide the operating system for the worker nodes in the default worker pool. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-ai-addon-install&interface=ui#ai-min)"
-  default     = "RHCOS"
+  description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
+  default     = "RHEL_9_64"
 }
+
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module."
@@ -90,6 +81,18 @@ variable "access_tags" {
 
 variable "size" {
   type        = string
-  description = "A list of access tags to apply to the resources created by the module."
+  description = "Defines the cluster size and capacity. Valid options are `mini`, `small`, `medium`, and `large`. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster."
   default     = "mini"
+}
+
+variable "disable_public_endpoint" {
+  type        = bool
+  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`."
+  default     = false
+}
+
+variable "disable_outbound_traffic_protection" {
+  type        = bool
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
+  default     = true
 }

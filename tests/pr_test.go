@@ -23,6 +23,7 @@ import (
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
+const quickStartTerraformDir = "solutions/quickstart"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -82,6 +83,28 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 	require.NoError(t, err, "Init and Apply of temp existing resource failed")
 
 	return existingTerraformOptions
+}
+func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSchematicOptions {
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  prefix,
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartTerraformDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartTerraformDir,
+		Tags:                   []string{"test-schematic"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 360,
+	})
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "region", Value: "us-south", DataType: "string"},
+		{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
+		{Name: "size", Value: "mini", DataType: "string"},
+	}
+	return options
 }
 
 func cleanupTerraform(t *testing.T, options *terraform.Options, prefix string) {
@@ -191,4 +214,26 @@ func TestRunCustomsgExample(t *testing.T) {
 
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+/*******************************************************************
+* TESTS FOR THE TERRAFORM BASED QUICKSTART DEPLOYABLE ARCHITECTURE *
+********************************************************************/
+func TestRunQuickstartSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := setupQuickstartOptions(t, "ocp-qs")
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
+}
+
+// Upgrade test for the Quickstart DA
+func TestRunQuickstartUpgradeSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := setupQuickstartOptions(t, "ocp-qs-upg")
+	err := options.RunSchematicUpgradeTest()
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+	}
 }

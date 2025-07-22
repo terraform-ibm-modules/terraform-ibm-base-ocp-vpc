@@ -18,6 +18,7 @@ locals {
 locals {
   octets = split(".", split("/", var.address_prefix)[0])
   mask   = split("/", var.address_prefix)[1]
+
   subnets = {
     for count in range(1, 4) :
     "zone-${count}" => count <= local.selected.zones ? [
@@ -138,7 +139,7 @@ module "ocp_base" {
   vpc_id                              = module.vpc.vpc_id
   vpc_subnets                         = module.vpc.subnet_detail_map
   worker_pools                        = local.worker_pools
-  disable_outbound_traffic_protection = true
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   access_tags                         = var.access_tags
-  disable_public_endpoint             = true
+  disable_public_endpoint             = var.disable_public_endpoint
 }

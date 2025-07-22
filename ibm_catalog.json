@@ -956,6 +956,222 @@
           ],
           "dependency_version_2": true,
           "terraform_version": "1.10.5"
+        },
+        {
+          "label": "[Experimental] Quickstart",
+          "name": "quickstart",
+          "index": 2,
+          "install_type": "fullstack",
+          "working_directory": "solutions/quickstart",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "IBM Cloud Framework for Financial Services",
+                "profile_version": "1.7.0"
+              }
+            ]
+          },
+          "iam_permissions": [
+            {
+              "service_name": "containers-kubernetes",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "notes": "Required to create and edit OpenShift cluster and the related resources."
+            },
+            {
+              "service_name": "iam-identity",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator",
+                "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
+              ],
+              "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud."
+            },
+            {
+              "service_name": "is.vpc",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "notes": "Required for creating Virtual Private Cloud(VPC)."
+            },
+            {
+              "service_name": "cloud-object-storage",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required to create Cloud Object Storage (COS) Instance."
+            }
+          ],
+          "architecture": {
+            "features": [
+              {
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Red Hat OpenShift cluster topology - Quickstart",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This QuickStart Deployable Architecture enables <b>single-click deployment</b> of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC) using a single monolithic Terraform configuration. It provisions both the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large</b> — each size determining the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor) accordingly. The machine type defines the CPU, memory, and disk capacity of worker nodes, directly shaping the cluster’s performance and capacity.<br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster, ensuring seamless storage integration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with IBM Cloud’s proven infrastructure, integrated storage services, and right-sized compute resources."
+              }
+            ]
+          },
+          "configuration": [
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "existing_resource_group_name",
+              "required":true,
+              "display_name": "resource_group",
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
+            },
+            {
+              "key": "prefix",
+              "required": true
+            },
+            {
+              "key": "region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              }
+            },
+            {
+              "key": "size",
+              "required": true,
+              "options": [
+                {
+                  "displayname": "mini",
+                  "value": "mini"
+                },
+                {
+                  "displayname": "small",
+                  "value": "small"
+                },
+                {
+                  "displayname": "medium",
+                  "value": "medium"
+                },
+                {
+                  "displayname": "large",
+                  "value": "large"
+                }
+              ]
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ],
+              "hidden": true
+            },
+            {
+              "key": "cluster_name",
+              "hidden":true
+            },
+            {
+              "key": "ocp_version",
+              "display_name": "openshift_version",
+              "options": [
+                {
+                  "displayname": "4.18",
+                  "value": "4.18"
+                },
+                {
+                  "displayname": "4.17",
+                  "value": "4.17"
+                },
+                {
+                  "displayname": "4.16",
+                  "value": "4.16"
+                },
+                {
+                  "displayname": "4.15",
+                  "value": "4.15"
+                },
+                {
+                  "displayname": "4.14",
+                  "value": "4.14"
+                }
+              ]
+            },
+            {
+              "key": "default_worker_pool_operating_system",
+              "hidden": true,
+              "options": [
+                {
+                  "displayname": "RHEL 9",
+                  "value": "RHEL_9_64"
+                },
+                {
+                  "displayname": "Red Hat CoreOS",
+                  "value": "RHCOS"
+                },
+                {
+                  "displayname": "RHEL 8",
+                  "value": "REDHAT_8_64"
+                }
+              ]
+            },
+            {
+              "key": "address_prefix",
+              "hidden":true
+            },
+            {
+              "key": "ocp_entitlement",
+              "hidden":true
+            },
+            {
+              "key": "access_tags",
+              "hidden":true,
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "disable_public_endpoint"
+            },
+            {
+              "key": "disable_outbound_traffic_protection"
+            }
+          ]
         }
       ]
     }
