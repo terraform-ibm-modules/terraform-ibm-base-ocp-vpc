@@ -24,6 +24,7 @@ import (
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
 const quickStartTerraformDir = "solutions/quickstart"
+const resourceGroup = "geretain-test-base-ocp-vpc"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"

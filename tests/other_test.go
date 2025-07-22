@@ -10,7 +10,6 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
-const resourceGroup = "geretain-test-base-ocp-vpc"
 const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
