@@ -86,8 +86,9 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 }
 func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSchematicOptions {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		Prefix:  prefix,
+		Testing:       t,
+		Prefix:        prefix,
+		ResourceGroup: resourceGroup,
 		TarIncludePatterns: []string{
 			"*.tf",
 			quickStartTerraformDir + "/*.tf",

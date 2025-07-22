@@ -63,7 +63,7 @@ variable "address_prefix" {
 variable "ocp_entitlement" {
   type        = string
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
-  default     = null
+  default     = "cloud_pak"
 }
 
 
