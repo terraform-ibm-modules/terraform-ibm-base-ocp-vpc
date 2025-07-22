@@ -251,7 +251,7 @@ module "logs_agents" {
   logs_agent_trusted_profile_id  = module.trusted_profile.trusted_profile.id
   logs_agent_namespace           = local.logs_agent_namespace
   logs_agent_name                = local.logs_agent_name
-  cloud_logs_ingress_endpoint    = module.cloud_logs.cloud_logs_ingress_private_endpoint
+  cloud_logs_ingress_endpoint    = module.cloud_logs.ingress_private_endpoint
   cloud_logs_ingress_port        = 3443
   # example of how to add additional metadata to the logs agents
   logs_agent_additional_metadata = [{
