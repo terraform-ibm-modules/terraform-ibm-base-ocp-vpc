@@ -172,13 +172,13 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 ########################################################################################################################
 
 module "monitoring_instance" {
-  source                         = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                        = "1.5.0"
-  resource_group_id              = module.resource_group.resource_group_id
-  region                         = var.region
-  plan                           = "graduated-tier"
-  enable_platform_metrics        = false
-  instance_name                  = "${var.prefix}-mon"
+  source                  = "terraform-ibm-modules/cloud-monitoring/ibm"
+  version                 = "1.5.0"
+  resource_group_id       = module.resource_group.resource_group_id
+  region                  = var.region
+  plan                    = "graduated-tier"
+  enable_platform_metrics = false
+  instance_name           = "${var.prefix}-mon"
 }
 
 ########################################################################################################################
@@ -189,22 +189,22 @@ module "monitoring_agent_1" {
   providers = {
     helm = helm.helm_cluster_1
   }
-  source                     = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                    = "1.4.1"
-  cluster_id                 = module.ocp_base_cluster_1.cluster_id
-  cluster_resource_group_id  = module.resource_group.resource_group_id
-  access_key                 = module.monitoring_instance.access_key
-  instance_region            = var.region
+  source                    = "terraform-ibm-modules/monitoring-agent/ibm"
+  version                   = "1.4.1"
+  cluster_id                = module.ocp_base_cluster_1.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  access_key                = module.monitoring_instance.access_key
+  instance_region           = var.region
 }
 
 module "monitoring_agent_2" {
   providers = {
     helm = helm.helm_cluster_2
   }
-  source                     = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                    = "1.4.1"
-  cluster_id                 = module.ocp_base_cluster_2.cluster_id
-  cluster_resource_group_id  = module.resource_group.resource_group_id
-  access_key                 = module.monitoring_instance.access_key
-  instance_region            = var.region
+  source                    = "terraform-ibm-modules/monitoring-agent/ibm"
+  version                   = "1.4.1"
+  cluster_id                = module.ocp_base_cluster_2.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  access_key                = module.monitoring_instance.access_key
+  instance_region           = var.region
 }

@@ -210,12 +210,12 @@ locals {
 }
 
 module "cloud_logs" {
-  source                     = "terraform-ibm-modules/cloud-logs/ibm"
-  version                    = "1.5.11"
-  resource_group_id          = module.resource_group.resource_group_id
-  region                     = var.region
-  cloud_logs_plan            = "standard"
-  cloud_logs_instance_name   = "${var.prefix}-cloud-logs"
+  source            = "terraform-ibm-modules/cloud-logs/ibm"
+  version           = "1.5.11"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  plan              = "standard"
+  instance_name     = "${var.prefix}-cloud-logs"
 }
 
 module "trusted_profile" {
@@ -243,16 +243,16 @@ module "trusted_profile" {
 }
 
 module "logs_agents" {
-  depends_on                     = [module.kube_audit]
-  source                         = "terraform-ibm-modules/logs-agent/ibm"
-  version                        = "1.1.10"
-  cluster_id                     = module.ocp_base.cluster_id
-  cluster_resource_group_id      = module.resource_group.resource_group_id
-  logs_agent_trusted_profile_id  = module.trusted_profile.trusted_profile.id
-  logs_agent_namespace           = local.logs_agent_namespace
-  logs_agent_name                = local.logs_agent_name
-  cloud_logs_ingress_endpoint    = module.cloud_logs.ingress_private_endpoint
-  cloud_logs_ingress_port        = 3443
+  depends_on                    = [module.kube_audit]
+  source                        = "terraform-ibm-modules/logs-agent/ibm"
+  version                       = "1.1.10"
+  cluster_id                    = module.ocp_base.cluster_id
+  cluster_resource_group_id     = module.resource_group.resource_group_id
+  logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
+  logs_agent_namespace          = local.logs_agent_namespace
+  logs_agent_name               = local.logs_agent_name
+  cloud_logs_ingress_endpoint   = module.cloud_logs.ingress_private_endpoint
+  cloud_logs_ingress_port       = 3443
   # example of how to add additional metadata to the logs agents
   logs_agent_additional_metadata = [{
     key   = "cluster_id"
@@ -260,5 +260,4 @@ module "logs_agents" {
   }]
   # example of how to add only kube-audit log source path
   logs_agent_selected_log_source_paths = ["/var/log/audit/*.log"]
-  cloud_monitoring_enabled             = false
 }
