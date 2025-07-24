@@ -563,7 +563,7 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
 
 variable "enable_kube_audit" {
   type        = bool
-  description = "Kubernetes audit logging provides a chronological record of operations performed on the cluster, including by users, administrators, and system components. It is useful for compliance, and security monitoring. Set true to enable kube audit by default. [Learn more](https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/)"
+  description = "Kubernetes audit logging provides a chronological record of operations performed on the cluster, including by users, administrators, and system components. It is useful for compliance, and security monitoring. Set true to enable kube audit by default. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server)"
   default     = true
 }
 
@@ -571,6 +571,11 @@ variable "audit_log_policy" {
   type        = string
   description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
   default     = "default"
+
+  validation {
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
+    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+  }
 }
 
 variable "audit_namespace" {
@@ -587,12 +592,17 @@ variable "audit_deployment_name" {
 
 variable "audit_webhook_listener_image" {
   type        = string
-  description = "The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.This solution uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image."
+  description = "The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`. This solution uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image."
   default     = "icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"
 }
 
-variable "audit_webhook_listener_image_version" {
+variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144"
+
+  validation {
+    condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_tag_digest))
+    error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
+  }
 }
