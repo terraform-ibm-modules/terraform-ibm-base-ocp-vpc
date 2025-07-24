@@ -556,3 +556,128 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
   default     = false
 }
+
+# tflint-ignore: all
+variable "network_acls" {
+  description = "The list of ACLs to create. Provide at least one rule for each ACL. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#network-acls-)."
+  type = list(
+    object({
+      name                         = string
+      add_ibm_cloud_internal_rules = optional(bool)
+      add_vpc_connectivity_rules   = optional(bool)
+      prepend_ibm_rules            = optional(bool)
+      rules = list(
+        object({
+          name        = string
+          action      = string
+          destination = string
+          direction   = string
+          source      = string
+          tcp = optional(
+            object({
+              port_max        = optional(number)
+              port_min        = optional(number)
+              source_port_max = optional(number)
+              source_port_min = optional(number)
+            })
+          )
+          udp = optional(
+            object({
+              port_max        = optional(number)
+              port_min        = optional(number)
+              source_port_max = optional(number)
+              source_port_min = optional(number)
+            })
+          )
+          icmp = optional(
+            object({
+              type = optional(number)
+              code = optional(number)
+            })
+          )
+        })
+      )
+    })
+  )
+
+  default = [
+    {
+      name                         = "vpc-acl"
+      add_ibm_cloud_internal_rules = true
+      add_vpc_connectivity_rules   = true
+      prepend_ibm_rules            = true
+      rules = [
+        {
+          name      = "allow-all-443-inbound"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-all-80-inbound"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            port_min        = 80
+            port_max        = 80
+            source_port_min = 80
+            source_port_max = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-all-ingress-inbound"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 30000
+            source_port_max = 32767
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-all-443-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            source_port_min = 443
+            source_port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-all-80-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            source_port_min = 80
+            source_port_max = 80
+            port_min        = 80
+            port_max        = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-all-ingress-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 30000
+            port_max = 32767
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        }
+      ]
+    }
+  ]
+}
