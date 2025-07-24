@@ -92,7 +92,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		ResourceGroup: resourceGroup,
 		TarIncludePatterns: []string{
 			"*.tf",
-			quickStartTerraformDir + "/*.tf",
+			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
 		},
 		TemplateFolder:         quickStartTerraformDir,
 		Tags:                   []string{"test-schematic"},

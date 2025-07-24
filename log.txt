@@ -1,0 +1,161 @@
+cd tests && go test -run TestRunQuickstartSchematics -count=1 -v -timeout 600m
+=== RUN   TestRunQuickstartSchematics
+=== PAUSE TestRunQuickstartSchematics
+=== CONT  TestRunQuickstartSchematics
+2025/07/24 11:10:18 Region au-syd VPC count: 6
+2025/07/24 11:10:18 --- new best region is au-syd
+2025/07/24 11:10:21 Region ca-tor VPC count: 6
+2025/07/24 11:10:26 Region br-sao VPC count: 6
+2025/07/24 11:10:30 Region eu-de VPC count: 14
+2025/07/24 11:10:35 Region eu-es VPC count: 5
+2025/07/24 11:10:35 --- new best region is eu-es
+2025/07/24 11:10:40 Region eu-gb VPC count: 5
+2025/07/24 11:10:44 Region us-east VPC count: 16
+2025/07/24 11:10:48 Region us-south VPC count: 35
+2025/07/24 11:10:53 Region jp-osa VPC count: 6
+2025/07/24 11:10:58 Region jp-tok VPC count: 7
+2025/07/24 11:10:58 Best region was found!: eu-es
+    tests.go:347: [SCHEMATICS] Random Workspace region chosen: eu
+    schematics.go:137: [SCHEMATICS] Schematics API for region eu: https://eu.schematics.cloud.ibm.com
+    tests.go:101: [SCHEMATICS] Creating Test Workspace
+    tests.go:107: [SCHEMATICS] Workspace Created: ocp-qs-bx9 (eu-de.workspace.ocp-qs-bx9.59f672e3)
+    tests.go:124: Starting with variable validation for branch: quickstart-ocp 
+    schematics.go:234: [SCHEMATICS] Creating TAR file
+    schematics.go:240: [SCHEMATICS] Uploading TAR file
+    schematics.go:558: [SCHEMATICS] ... still waiting for job TAR_WORKSPACE_UPLOAD to complete: 1 minutes
+    schematics.go:567: [SCHEMATICS] The status of job TAR_WORKSPACE_UPLOAD is: COMPLETED
+    tests.go:146: [SCHEMATICS] Updating Workspace Variablestore
+    tests.go:162: [SCHEMATICS] Starting PLAN job ...
+    schematics.go:558: [SCHEMATICS] ... still waiting for job PLAN to complete: 1 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job PLAN to complete: 2 minutes
+    schematics.go:567: [SCHEMATICS] The status of job PLAN is: COMPLETED
+    tests.go:196: [SCHEMATICS] Starting APPLY job ...
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 1 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 2 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 3 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 4 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 5 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 6 minutes
+    schematics.go:512: [SCHEMATICS] RETRY GetWorkspaceActivity, status code: 500
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 7 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 8 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 9 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 10 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 11 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 12 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 13 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 14 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 15 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 16 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 18 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 19 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 20 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 21 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 22 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 23 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 24 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 25 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 26 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 27 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 28 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 29 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 30 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 31 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 32 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 33 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 34 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 35 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 36 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 37 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 38 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 39 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 40 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 41 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 42 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 43 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 44 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 45 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 46 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 47 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 48 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 49 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 50 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 51 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 52 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 53 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 54 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 55 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 56 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 57 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 58 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 59 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 60 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 61 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 62 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 63 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 64 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 65 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 66 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 67 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 68 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 69 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 70 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 71 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 72 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 73 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 74 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 75 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 76 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 77 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 78 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 79 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 80 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 81 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 82 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 83 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 84 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 85 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 86 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 87 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 88 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 89 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 90 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 91 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 92 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 94 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 95 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 96 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 97 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 98 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 99 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 100 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job APPLY to complete: 101 minutes
+    schematics.go:567: [SCHEMATICS] The status of job APPLY is: COMPLETED
+    tests.go:262: [SCHEMATICS] Starting CONSISTENCY PLAN job ...
+    schematics.go:558: [SCHEMATICS] ... still waiting for job PLAN to complete: 1 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job PLAN to complete: 2 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job PLAN to complete: 3 minutes
+    schematics.go:567: [SCHEMATICS] The status of job PLAN is: COMPLETED
+    tests.go:455: [SCHEMATICS] Starting DESTROY job ...
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 1 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 2 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 3 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 4 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 5 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 6 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 7 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 8 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 9 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 10 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 11 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 12 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 13 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 14 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 15 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 16 minutes
+    schematics.go:558: [SCHEMATICS] ... still waiting for job DESTROY to complete: 17 minutes
+    schematics.go:567: [SCHEMATICS] The status of job DESTROY is: COMPLETED
+    tests.go:482: [SCHEMATICS] Deleting Workspace
+--- PASS: TestRunQuickstartSchematics (7559.46s)
+PASS
+ok  	github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc	7561.419s

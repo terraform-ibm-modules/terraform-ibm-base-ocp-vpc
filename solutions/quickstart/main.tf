@@ -130,7 +130,7 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
-  source                              = "../../"
+  source                              = "../.."
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
@@ -142,4 +142,6 @@ module "ocp_base" {
   disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   access_tags                         = var.access_tags
   disable_public_endpoint             = var.disable_public_endpoint
+  use_private_endpoint                = var.use_private_endpoint
+  cluster_config_endpoint_type        = var.cluster_config_endpoint_type
 }

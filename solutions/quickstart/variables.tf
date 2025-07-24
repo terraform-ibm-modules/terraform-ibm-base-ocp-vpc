@@ -96,3 +96,16 @@ variable "disable_outbound_traffic_protection" {
   description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
   default     = true
 }
+
+variable "use_private_endpoint" {
+  type        = bool
+  description = "Set this to true to force all API calls to use the IBM Cloud private endpoints."
+  default     = true
+}
+
+variable "cluster_config_endpoint_type" {
+  description = "Specify which type of endpoint to use for cluster config access: 'default', 'private', 'vpe', 'link'. A 'default' value uses the default endpoint of the cluster."
+  type        = string
+  default     = "default"
+  nullable    = true
+}

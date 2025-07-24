@@ -1150,6 +1150,28 @@
               "hidden":true
             },
             {
+              "key": "cluster_config_endpoint_type",
+              "options": [
+                {
+                  "displayname": "default",
+                  "value": "default"
+                },
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "vpe",
+                  "value": "vpe"
+                },
+                {
+                  "displayname": "link",
+                  "value": "link"
+                }
+              ],
+              "hidden":true
+            },
+            {
               "key": "ocp_entitlement",
               "hidden":true
             },
@@ -1170,7 +1192,11 @@
             },
             {
               "key": "disable_outbound_traffic_protection"
+            },
+            {
+              "key": "use_private_endpoint"
             }
+
           ]
         }
       ]
