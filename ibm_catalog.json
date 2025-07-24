@@ -740,93 +740,6 @@
               "virtual": true
             },
             {
-              "key": "network_acls",
-              "type": "array",
-              "default_value": [
-                {
-                  "add_ibm_cloud_internal_rules": true,
-                  "add_vpc_connectivity_rules": true,
-                  "name": "vpc-acl",
-                  "prepend_ibm_rules": true,
-                  "rules": [
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "inbound",
-                      "name": "allow-all-443-inbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "port_max": 443,
-                        "port_min": 443
-                      }
-                    },
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "inbound",
-                      "name": "allow-all-80-inbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "port_max": 80,
-                        "port_min": 80,
-                        "source_port_max": 80,
-                        "source_port_min": 80
-                      }
-                    },
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "inbound",
-                      "name": "allow-all-ingress-inbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "source_port_max": 32767,
-                        "source_port_min": 30000
-                      }
-                    },
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "outbound",
-                      "name": "allow-all-443-outbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "source_port_max": 443,
-                        "source_port_min": 443
-                      }
-                    },
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "outbound",
-                      "name": "allow-all-80-outbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "port_max": 80,
-                        "port_min": 80,
-                        "source_port_max": 80,
-                        "source_port_min": 80
-                      }
-                    },
-                    {
-                      "action": "allow",
-                      "destination": "0.0.0.0/0",
-                      "direction": "outbound",
-                      "name": "allow-all-ingress-outbound",
-                      "source": "0.0.0.0/0",
-                      "tcp": {
-                        "port_max": 32767,
-                        "port_min": 30000
-                      }
-                    }
-                  ]
-                }
-              ],
-              "description": "The list of ACLs to create. Provide at least one rule for each ACL. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#network-acls-).",
-              "required": false,
-              "virtual": true
-            },
-            {
               "key": "provider_visibility",
               "options": [
                 {
@@ -849,12 +762,12 @@
             {
               "name": "deploy-arch-ibm-vpc",
               "description": "Configure the VPC instance and subnets where the OpenShift cluster will be deployed. ",
-              "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
+              "id": "225cd8fc-306b-4e2c-b36e-cc19d446c442",
               "version": "v7.24.0",
               "flavors": [
                 "fully-configurable"
               ],
-              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "catalog_id": "82ed1d12-ff30-4895-bb45-44f73e6f884a",
               "optional": true,
               "on_by_default": true,
               "input_mapping": [
@@ -880,11 +793,6 @@
                 {
                   "dependency_input": "subnets",
                   "version_input": "subnets",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "network_acls",
-                  "version_input": "network_acls",
                   "reference_version": true
                 }
               ]
