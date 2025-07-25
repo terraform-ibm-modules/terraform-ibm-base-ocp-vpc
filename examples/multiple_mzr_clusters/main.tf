@@ -168,46 +168,43 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 }
 
 ########################################################################################################################
-# Observability instances : Create Cloud Logs and Cloud monitoring instances.
+# Cloud monitoring instance
 ########################################################################################################################
 
-module "observability_instances" {
-  source                         = "terraform-ibm-modules/observability-instances/ibm"
-  version                        = "3.5.3"
-  resource_group_id              = module.resource_group.resource_group_id
-  region                         = var.region
-  cloud_monitoring_plan          = "graduated-tier"
-  enable_platform_metrics        = false
-  cloud_monitoring_instance_name = "${var.prefix}-sysdig"
-  cloud_logs_provision           = false
+module "monitoring_instance" {
+  source                  = "terraform-ibm-modules/cloud-monitoring/ibm"
+  version                 = "1.5.0"
+  resource_group_id       = module.resource_group.resource_group_id
+  region                  = var.region
+  plan                    = "graduated-tier"
+  enable_platform_metrics = false
+  instance_name           = "${var.prefix}-mon"
 }
 
 ########################################################################################################################
-# Observability agents
+# Cloud monitoring agents
 ########################################################################################################################
 
-module "observability_agents_1" {
-  source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "2.8.3"
+module "monitoring_agent_1" {
   providers = {
     helm = helm.helm_cluster_1
   }
-  cluster_id                       = module.ocp_base_cluster_1.cluster_id
-  cluster_resource_group_id        = module.resource_group.resource_group_id
-  cloud_monitoring_access_key      = module.observability_instances.cloud_monitoring_access_key
-  cloud_monitoring_instance_region = var.region
-  logs_agent_enabled               = false
+  source                    = "terraform-ibm-modules/monitoring-agent/ibm"
+  version                   = "1.4.1"
+  cluster_id                = module.ocp_base_cluster_1.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  access_key                = module.monitoring_instance.access_key
+  instance_region           = var.region
 }
 
-module "observability_agents_2" {
-  source  = "terraform-ibm-modules/observability-agents/ibm"
-  version = "2.8.3"
+module "monitoring_agent_2" {
   providers = {
     helm = helm.helm_cluster_2
   }
-  cluster_id                       = module.ocp_base_cluster_2.cluster_id
-  cluster_resource_group_id        = module.ocp_base_cluster_2.resource_group_id
-  cloud_monitoring_access_key      = module.observability_instances.cloud_monitoring_access_key
-  cloud_monitoring_instance_region = var.region
-  logs_agent_enabled               = false
+  source                    = "terraform-ibm-modules/monitoring-agent/ibm"
+  version                   = "1.4.1"
+  cluster_id                = module.ocp_base_cluster_2.cluster_id
+  cluster_resource_group_id = module.resource_group.resource_group_id
+  access_key                = module.monitoring_instance.access_key
+  instance_region           = var.region
 }
