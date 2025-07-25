@@ -70,7 +70,7 @@ module "vpc" {
   version             = "7.25.10"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
-  name                = "${local.prefix}vpc"
+  name                = "vpc"
   prefix              = var.prefix
   subnets             = local.subnets
   network_acls        = [local.network_acl]
@@ -117,7 +117,7 @@ locals {
     [
       for count in range(2, local.selected.zones + 1) : {
         subnet_prefix    = "zone-${count}"
-        pool_name        = "default-${count}"
+        pool_name        = "workerpool-${count}" # 'workerpool-2', 'workerpool-3', etc.
         machine_type     = local.selected.flavor
         workers_per_zone = local.selected.workers_per_zone
         operating_system = var.default_worker_pool_operating_system

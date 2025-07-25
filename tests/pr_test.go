@@ -2,8 +2,10 @@
 package test
 
 import (
+	"crypto/rand"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 	"strings"
 	"testing"
@@ -28,6 +30,19 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
+
+var validClusterRegions = []string{
+	"us-south",
+	"br-sao",
+	"eu-gb",
+	"jp-tok",
+	"au-syd",
+	"eu-de",
+	"eu-gb",
+	"eu-es",
+	"jp-osa",
+	"us-east",
+}
 
 // Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.18" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
@@ -67,6 +82,10 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 	apiKey := validateEnvVariable(t, "TF_VAR_ibmcloud_api_key")
 	region, err := testhelper.GetBestVpcRegion(apiKey, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
 	require.NoError(t, err, "Failed to get best VPC region")
+	// # Temp workaround for : https://watson.service-now.com/nav_to.do?uri=sn_customerservice_case.do?sys_id=a9dbcdef47bae2504fc04c4a516d4372%26sysparm_view=case
+	if strings.HasPrefix(region, "eu") {
+		region = "us-south"
+	}
 
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir,
@@ -86,10 +105,21 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 	return existingTerraformOptions
 }
 func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSchematicOptions {
+	rand, err := rand.Int(rand.Reader, big.NewInt(int64(len(validClusterRegions))))
+	if err != nil {
+		fmt.Println("Error generating random number:", err)
+		return nil
+	}
+	region := validClusterRegions[rand.Int64()]
+	// # Temp workaround for : https://watson.service-now.com/nav_to.do?uri=sn_customerservice_case.do?sys_id=a9dbcdef47bae2504fc04c4a516d4372%26sysparm_view=case
+	if strings.HasPrefix(region, "eu") {
+		region = "us-south"
+	}
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:       t,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
+		Region:        region,
 		TarIncludePatterns: []string{
 			"*.tf",
 			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
@@ -102,7 +132,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "region", Value: "us-south", DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
 		{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 		{Name: "size", Value: "mini", DataType: "string"},
 	}

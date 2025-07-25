@@ -62,7 +62,7 @@
         {
           "label": "Fully configurable",
           "name": "fully-configurable",
-          "index": 1,
+          "index": 2,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -978,7 +978,7 @@
         {
           "label": "[Experimental] Quickstart",
           "name": "quickstart",
-          "index": 2,
+          "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
           "compliance": {
@@ -1116,11 +1116,11 @@
               "hidden": true
             },
             {
-              "key": "cluster_name",
-              "hidden":true
+              "key": "cluster_name"
             },
             {
               "key": "ocp_version",
+              "required": true,
               "display_name": "openshift_version",
               "options": [
                 {
@@ -1147,6 +1147,7 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "display_name":"operating_system",
               "hidden": true,
               "options": [
                 {
