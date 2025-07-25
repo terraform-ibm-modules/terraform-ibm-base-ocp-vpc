@@ -33,12 +33,12 @@
           "description": "Creates a [Red Hat OpenShift Cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud that helps businesses manage their containerized applications at scale with added enterprise features such as security, scalability, and automation."
         },
         {
-          "description": "With worker pools, you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) with similar configurations, such as compute resources and availability zones.\n",
-          "title": "Creates worker pools"
+          "description": "Configures worker pools in cluster through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) of similar configurations, such as compute resources and availability zones.\n",
+          "title": "Worker pools"
         },
         {
           "description": "Configures the subnets for the cluster, and specifies the subnets to deploy the worker nodes in.\n",
-          "title": "Configures subnets for containers"
+          "title": "Subnets"
         },
         {
           "title": "Access Endpoints",
@@ -70,7 +70,6 @@
         {
           "label": "[Experimental] Fully configurable",
           "name": "fully-configurable",
-          "index": 3,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -173,8 +172,12 @@
           "architecture": {
             "features": [
               {
-                "title": " ",
-                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
+                "description": " ",
+                "title": "One VPC with three zone subnets"
+              },
+              {
+                "description": " ",
+                "title": "Configures OCP cluster with a single worker pool distributed across all three zones, with two worker nodes per zone "
               }
             ],
             "diagrams": [
