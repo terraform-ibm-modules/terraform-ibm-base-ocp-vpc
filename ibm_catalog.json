@@ -1148,7 +1148,7 @@
             {
               "key": "default_worker_pool_operating_system",
               "display_name":"operating_system",
-              "hidden": true,
+              "required": true,
               "options": [
                 {
                   "displayname": "RHEL 9",
