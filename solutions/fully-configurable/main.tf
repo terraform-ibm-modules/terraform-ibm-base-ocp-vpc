@@ -284,3 +284,28 @@ module "secret_group" {
   secret_group_description = "Secret group for storing ingress certificates for cluster ${var.cluster_name} with id: ${module.ocp_base.cluster_id}"
   endpoint_type            = var.secrets_manager_endpoint_type
 }
+
+data "ibm_container_cluster_config" "cluster_config" {
+  count             = var.enable_kube_audit ? 1 : 0
+  cluster_name_id   = module.ocp_base.cluster_id
+  config_dir        = "${path.module}/kubeconfig"
+  admin             = true
+  resource_group_id = module.ocp_base.resource_group_id
+  endpoint_type     = var.cluster_config_endpoint_type != "default" ? var.cluster_config_endpoint_type : null
+}
+
+module "kube_audit" {
+  count                                   = var.enable_kube_audit ? 1 : 0
+  ibmcloud_api_key                        = var.ibmcloud_api_key
+  source                                  = "../../modules/kube-audit"
+  cluster_id                              = module.ocp_base.cluster_id
+  cluster_resource_group_id               = module.ocp_base.resource_group_id
+  region                                  = module.ocp_base.region
+  use_private_endpoint                    = var.use_private_endpoint
+  cluster_config_endpoint_type            = var.cluster_config_endpoint_type
+  audit_log_policy                        = var.audit_log_policy
+  audit_namespace                         = var.audit_namespace
+  audit_deployment_name                   = var.audit_deployment_name
+  audit_webhook_listener_image            = var.audit_webhook_listener_image
+  audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+}
