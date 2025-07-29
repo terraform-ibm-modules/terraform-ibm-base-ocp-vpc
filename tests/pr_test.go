@@ -105,7 +105,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "ocp-fc",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/**/*"},
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
@@ -141,7 +141,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "fc-upg",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/**/*"},
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
