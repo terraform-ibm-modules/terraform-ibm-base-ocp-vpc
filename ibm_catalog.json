@@ -452,6 +452,10 @@
               "required": true
             },
             {
+              "key": "disable_public_endpoint",
+              "required": true
+            },
+            {
               "key": "enable_platform_metrics",
               "type": "string",
               "default_value": "true",
@@ -595,9 +599,6 @@
             },
             {
               "key": "use_private_endpoint"
-            },
-            {
-              "key": "disable_public_endpoint"
             },
             {
               "key": "cluster_config_endpoint_type",
