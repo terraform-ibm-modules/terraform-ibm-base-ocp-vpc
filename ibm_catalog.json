@@ -37,7 +37,7 @@
           "title": "Worker pools"
         },
         {
-          "description": "Configures the subnets for the cluster, and specifies the subnets to deploy the worker nodes in.\n",
+          "description": "Configures the [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets&interface=ui#vpc_basics_subnets) for the cluster, and specifies the subnets to deploy the worker nodes in.\n",
           "title": "Subnets"
         },
         {
