@@ -268,8 +268,8 @@ variable "use_private_endpoint" {
 
 variable "disable_public_endpoint" {
   type        = bool
-  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`."
-  default     = false
+  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. Warning: Set this field to `false` if you want to retain public access to the cluster. Once the cluster is created, this cannot be changed."
+  default     = true
 }
 
 variable "cluster_config_endpoint_type" {
