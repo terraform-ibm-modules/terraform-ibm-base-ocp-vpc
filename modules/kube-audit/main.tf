@@ -68,7 +68,7 @@ resource "helm_release" "kube_audit" {
   set {
     name  = "image.tag"
     type  = "string"
-    value = var.audit_webhook_listener_image_version
+    value = var.audit_webhook_listener_image_tag_digest
   }
 
   provisioner "local-exec" {
