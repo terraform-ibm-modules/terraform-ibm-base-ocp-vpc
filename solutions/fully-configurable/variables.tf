@@ -145,6 +145,10 @@ variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
   default     = "bx2.8x32"
+  validation {
+    condition     = length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", var.default_worker_pool_machine_type)) > 0
+    error_message = "Invalid value provided for the machine type."
+  }
 }
 
 variable "default_worker_pool_workers_per_zone" {
@@ -359,6 +363,7 @@ variable "existing_cluster_kms_key_crn" {
   type        = string
   default     = null
   description = "The CRN of an existing KMS key to use for encrypting the Object Storage of the Cluster. If no value is set for this variable, specify a value for `existing_kms_instance_crn` variable to create a key ring and key."
+
   validation {
     condition     = var.existing_cluster_kms_key_crn != null ? var.existing_kms_instance_crn == null : true
     error_message = "A value should not be passed for 'existing_kms_instance_crn' when passing an existing key value using the 'existing_cluster_kms_key_crn' input."
@@ -368,9 +373,13 @@ variable "existing_cluster_kms_key_crn" {
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The endpoint for communicating with the KMS instance. Applies only if `kms_encryption_enabled_cluster` is true"
+  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_cluster` is true"
   default     = "private"
   nullable    = false
+  validation {
+    condition     = can(regex("public|private", var.kms_endpoint_type))
+    error_message = "The kms_endpoint_type value must be 'public' or 'private'."
+  }
 }
 
 variable "cluster_kms_key_ring_name" {

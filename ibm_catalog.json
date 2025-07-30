@@ -682,11 +682,6 @@
             },
             {
               "key": "kms_endpoint_type",
-              "value_constraint": {
-								"type": "regex",
-								"description": "The kms_endpoint_type value must be 'public' or 'private'.",
-								"value": "public|private"
-							},
               "options": [
                 {
                   "displayname": "Public",
