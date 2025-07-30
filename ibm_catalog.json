@@ -990,7 +990,7 @@
         {
           "label": "[Experimental] Dummy variation",
           "name": "dummy-variation",
-          "index":1,
+          "index":3,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
