@@ -19,6 +19,18 @@ if [[ -z "${RESOURCE_GROUP_ID}" ]]; then
     exit 1
 fi
 
+# ENVIRONMENT VARIABLE VALIDATION
+if [[ -z "${IAM_TOKEN}" ]]; then
+    echo "Environment variable IAM_TOKEN is not set." >&2
+    exit 1
+fi
+
+if [[ -z "${ACCOUNT_ID}" ]]; then
+    echo "Environment variable ACCOUNT_ID is not set." >&2
+    exit 1
+fi
+
+
 get_cloud_endpoint() {
     iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
     IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
@@ -48,7 +60,14 @@ fetch_data() {
 
     while [ "$url" != "null" ]; do
         # Fetch data from the API
-        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
+        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: Bearer $IAM_TOKEN" --header "Content-Type: application/json")
+
+        # check if the response is valid JSON.
+        if ! echo "${IAM_RESPONSE}" | jq -e . >/dev/null 2>&1; then
+            echo "Error: API did not return valid JSON." >&2
+            echo "Response was: ${IAM_RESPONSE}" >&2
+            exit 1
+        fi
 
         ERROR_MESSAGE=$(echo "${IAM_RESPONSE}" | jq 'has("errors")')
         if [[ "${ERROR_MESSAGE}" != false ]]; then
