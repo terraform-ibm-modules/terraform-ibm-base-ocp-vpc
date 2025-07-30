@@ -69,6 +69,7 @@
       "flavors": [
         {
           "label": "[Experimental] Fully configurable",
+          "index":2,
           "name": "fully-configurable",
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
@@ -989,6 +990,7 @@
         {
           "label": "[Experimental] Dummy variation",
           "name": "dummy-variation",
+          "index":1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
