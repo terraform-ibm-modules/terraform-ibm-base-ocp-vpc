@@ -29,19 +29,6 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
-var validClusterRegions = []string{
-	"us-south",
-	"br-sao",
-	"eu-gb",
-	"jp-tok",
-	"au-syd",
-	"eu-de",
-	"eu-gb",
-	"eu-es",
-	"jp-osa",
-	"us-east",
-}
-
 // Ensure there is one test per supported OCP version
 const ocpVersion1 = "4.18" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
 const ocpVersion2 = "4.17" // used by TestCustomSGExample and TestRunCustomsgExample
