@@ -82,10 +82,6 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 	apiKey := validateEnvVariable(t, "TF_VAR_ibmcloud_api_key")
 	region, err := testhelper.GetBestVpcRegion(apiKey, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
 	require.NoError(t, err, "Failed to get best VPC region")
-	// # Temp workaround for : https://watson.service-now.com/nav_to.do?uri=sn_customerservice_case.do?sys_id=a9dbcdef47bae2504fc04c4a516d4372%26sysparm_view=case
-	if strings.HasPrefix(region, "eu") {
-		region = "us-south"
-	}
 
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir,
@@ -111,10 +107,6 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		return nil
 	}
 	region := validClusterRegions[rand.Int64()]
-	// # Temp workaround for : https://watson.service-now.com/nav_to.do?uri=sn_customerservice_case.do?sys_id=a9dbcdef47bae2504fc04c4a516d4372%26sysparm_view=case
-	if strings.HasPrefix(region, "eu") {
-		region = "us-south"
-	}
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:       t,
 		Prefix:        prefix,
