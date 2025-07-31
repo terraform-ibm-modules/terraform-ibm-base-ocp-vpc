@@ -14,6 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
+  default     = null
   description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. Example: prod-0405-ocp. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 }
 
