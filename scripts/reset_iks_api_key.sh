@@ -60,7 +60,7 @@ fetch_data() {
 
     while [ "$url" != "null" ]; do
         # Fetch data from the API
-        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: Bearer $IAM_TOKEN" --header "Content-Type: application/json")
+        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
 
         # check if the response is valid JSON.
         if ! echo "${IAM_RESPONSE}" | jq -e . >/dev/null 2>&1; then
