@@ -2,10 +2,8 @@
 package test
 
 import (
-	"crypto/rand"
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"strings"
 	"testing"
@@ -101,12 +99,9 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 	return existingTerraformOptions
 }
 func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSchematicOptions {
-	rand, err := rand.Int(rand.Reader, big.NewInt(int64(len(validClusterRegions))))
-	if err != nil {
-		fmt.Println("Error generating random number:", err)
-		return nil
-	}
-	region := validClusterRegions[rand.Int64()]
+	apiKey := validateEnvVariable(t, "TF_VAR_ibmcloud_api_key")
+	region, err := testhelper.GetBestVpcRegion(apiKey, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
+	require.NoError(t, err, "Failed to get best VPC region")
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:       t,
 		Prefix:        prefix,
