@@ -102,7 +102,7 @@ locals {
     }
   }
 
-  selected = lookup(local.size_config, var.size, local.size_config["mini"])
+  selected = lookup(local.size_config, var.size, local.size_config[var.size])
 
   worker_pools = concat(
     [
