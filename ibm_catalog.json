@@ -192,10 +192,10 @@
               "key": "prefix",
               "required": true,
               "value_constraint": {
-								"type": "regex",
-								"description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters",
-								"value": "^$|^__NULL__$|^[a-z](?!.*--)[a-z0-9-]{0,14}[a-z0-9]$"
-							}
+                "type": "regex",
+                "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters",
+                "value": "^$|^__NULL__$|^[a-z](?!.*--)[a-z0-9-]{0,14}[a-z0-9]$"
+              }
             },
             {
               "key": "cluster_name",
@@ -662,18 +662,18 @@
             {
               "key": "existing_kms_instance_crn",
               "value_constraint": {
-								"type": "regex",
-								"description": "The value provided for 'existing_kms_instance_crn' is not valid.",
-								"value": "^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
-							}
+                "type": "regex",
+                "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
+                "value": "^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+              }
             },
             {
               "key": "existing_cluster_kms_key_crn",
               "value_constraint": {
-								"type": "regex",
-								"description": "The value provided for 'existing_cluster_kms_key_crn' in not valid.",
-								"value": "^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-							}
+                "type": "regex",
+                "description": "The value provided for 'existing_cluster_kms_key_crn' in not valid.",
+                "value": "^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
             },
             {
               "key": "kms_endpoint_type",
@@ -796,7 +796,7 @@
               "hidden": true
             },
             {
-              "key":"enable_kube_audit"
+              "key": "enable_kube_audit"
             },
             {
               "key": "audit_deployment_name"
@@ -823,10 +823,10 @@
             {
               "key": "audit_webhook_listener_image_tag_digest",
               "value_constraint": {
-								"type": "regex",
-								"description": "The value of the audit webhook listener image version must match the tag and sha256 image digest format",
-								"value": "^[a-f0-9]{40}@sha256:[a-f0-9]{64}$"
-							}
+                "type": "regex",
+                "description": "The value of the audit webhook listener image version must match the tag and sha256 image digest format",
+                "value": "^[a-f0-9]{40}@sha256:[a-f0-9]{64}$"
+              }
             }
           ],
           "dependencies": [
