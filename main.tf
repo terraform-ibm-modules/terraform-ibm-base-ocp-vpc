@@ -24,10 +24,8 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id   = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id)
-  cluster_crn  = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn : ibm_container_vpc_cluster.cluster_with_upgrade[0].crn) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn)
-  cluster_name = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].name : ibm_container_vpc_cluster.cluster_with_upgrade[0].name) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name)
-
+  cluster_id  = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id)
+  cluster_crn = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn : ibm_container_vpc_cluster.cluster_with_upgrade[0].crn) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn)
 
   # security group attached to worker pool
   # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
@@ -337,6 +335,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   }
 }
 
+# copy of the cluster resource above which allows major openshift version upgrade
 resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
   depends_on                          = [null_resource.reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 1 : 0) : 0
