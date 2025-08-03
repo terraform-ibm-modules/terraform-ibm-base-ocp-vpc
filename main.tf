@@ -24,7 +24,10 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+  cluster_id   = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id)
+  cluster_crn  = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn : ibm_container_vpc_cluster.cluster_with_upgrade[0].crn) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn)
+  cluster_name = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].name : ibm_container_vpc_cluster.cluster_with_upgrade[0].name) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name)
+
 
   # security group attached to worker pool
   # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
@@ -127,7 +130,7 @@ resource "ibm_resource_tag" "cos_access_tag" {
 
 resource "ibm_container_vpc_cluster" "cluster" {
   depends_on                          = [null_resource.reset_api_key]
-  count                               = var.ignore_worker_pool_size_changes ? 0 : 1
+  count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 0 : 1)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
   tags                                = var.tags
@@ -195,10 +198,78 @@ resource "ibm_container_vpc_cluster" "cluster" {
   }
 }
 
+# copy of the cluster resource above which allows major openshift version upgrade
+resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 0 : 1) : 0
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  secondary_storage                   = local.default_pool.secondary_storage
+  pod_subnet                          = var.pod_subnet_cidr
+  service_subnet                      = var.service_subnet_cidr
+  operating_system                    = local.default_pool.operating_system
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
+
+  # default workers are mapped to the subnets that are "private"
+  dynamic "zones" {
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
+    content {
+      subnet_id = zones.value.id
+      name      = zones.value.zone
+    }
+  }
+
+  # Apply taints to the default worker pools i.e private
+
+  dynamic "taints" {
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["default"])
+    content {
+      effect = taints.value.effect
+      key    = taints.value.key
+      value  = taints.value.value
+    }
+  }
+
+  dynamic "kms_config" {
+    for_each = var.kms_config != null ? [1] : []
+    content {
+      crk_id           = var.kms_config.crk_id
+      instance_id      = var.kms_config.instance_id
+      private_endpoint = var.kms_config.private_endpoint == null ? true : var.kms_config.private_endpoint
+      account_id       = var.kms_config.account_id
+      wait_for_apply   = var.kms_config.wait_for_apply
+    }
+  }
+
+  timeouts {
+    # Extend create, update and delete timeout to static values.
+    delete = local.delete_timeout
+    create = local.create_timeout
+    update = local.update_timeout
+  }
+}
+
+
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   depends_on                          = [null_resource.reset_api_key]
-  count                               = var.ignore_worker_pool_size_changes ? 1 : 0
+  count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 1 : 0)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
   tags                                = var.tags
@@ -266,13 +337,83 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   }
 }
 
+resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
+  depends_on                          = [null_resource.reset_api_key]
+  count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 1 : 0) : 0
+  name                                = var.cluster_name
+  vpc_id                              = var.vpc_id
+  tags                                = var.tags
+  kube_version                        = local.ocp_version
+  flavor                              = local.default_pool.machine_type
+  entitlement                         = var.ocp_entitlement
+  cos_instance_crn                    = local.cos_instance_crn
+  worker_count                        = local.default_pool.workers_per_zone
+  resource_group_id                   = var.resource_group_id
+  wait_till                           = var.cluster_ready_when
+  force_delete_storage                = var.force_delete_storage
+  operating_system                    = local.default_pool.operating_system
+  secondary_storage                   = local.default_pool.secondary_storage
+  pod_subnet                          = var.pod_subnet_cidr
+  service_subnet                      = var.service_subnet_cidr
+  disable_public_service_endpoint     = var.disable_public_endpoint
+  worker_labels                       = local.default_pool.labels
+  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
+  kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
+  kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
+
+  security_groups = local.cluster_security_groups
+
+  lifecycle {
+    ignore_changes = [worker_count]
+  }
+
+  # default workers are mapped to the subnets that are "private"
+  dynamic "zones" {
+    for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
+    content {
+      subnet_id = zones.value.id
+      name      = zones.value.zone
+    }
+  }
+
+  # Apply taints to the default worker pools i.e private
+
+  dynamic "taints" {
+    for_each = var.worker_pools_taints == null ? [] : concat(var.worker_pools_taints["all"], var.worker_pools_taints["default"])
+    content {
+      effect = taints.value.effect
+      key    = taints.value.key
+      value  = taints.value.value
+    }
+  }
+
+  dynamic "kms_config" {
+    for_each = var.kms_config != null ? [1] : []
+    content {
+      crk_id           = var.kms_config.crk_id
+      instance_id      = var.kms_config.instance_id
+      private_endpoint = var.kms_config.private_endpoint
+      account_id       = var.kms_config.account_id
+      wait_for_apply   = var.kms_config.wait_for_apply
+    }
+  }
+
+  timeouts {
+    # Extend create, update and delete timeout to static values.
+    delete = local.delete_timeout
+    create = local.create_timeout
+    update = local.update_timeout
+  }
+}
+
 ##############################################################################
 # Cluster Access Tag
 ##############################################################################
 
 resource "ibm_resource_tag" "cluster_access_tag" {
   count       = length(var.access_tags) == 0 ? 0 : 1
-  resource_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn
+  resource_id = local.cluster_crn
   tags        = var.access_tags
   tag_type    = "access"
 }
@@ -460,7 +601,7 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
@@ -514,7 +655,7 @@ resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
@@ -587,7 +728,7 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
 ##############################################################################
 
 data "ibm_is_lbs" "all_lbs" {
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   count      = length(var.additional_lb_security_group_ids) > 0 ? 1 : 0
 }
 
@@ -623,19 +764,19 @@ locals {
 
 data "ibm_is_virtual_endpoint_gateway" "master_vpe" {
   count      = length(var.additional_vpe_security_group_ids["master"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["master"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "api_vpe" {
   count      = length(var.additional_vpe_security_group_ids["api"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["api"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "registry_vpe" {
   count      = length(var.additional_vpe_security_group_ids["registry"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["registry"]
 }
 
@@ -701,7 +842,7 @@ module "cbr_rule" {
       },
       {
         name     = "serviceInstance"
-        value    = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+        value    = local.cluster_id
         operator = "stringEquals"
       },
       {
