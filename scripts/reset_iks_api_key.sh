@@ -57,24 +57,51 @@ reset=true
 # Function to fetch data and handle pagination
 fetch_data() {
     local url="$IAM_URL"
+    local fetch_attempt=0
+    local retry_wait_time=5
 
     while [ "$url" != "null" ]; do
-        # Fetch data from the API
-        IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
+        fetch_attempt=0
+        # Retry loop for each API call
+        while [ $fetch_attempt -lt $MAX_ATTEMPTS ]; do
 
-        # check if the response is valid JSON.
-        if ! echo "${IAM_RESPONSE}" | jq -e . >/dev/null 2>&1; then
-            echo "Error: API did not return valid JSON." >&2
-            echo "Response was: ${IAM_RESPONSE}" >&2
-            exit 1
-        fi
+            # Fetch data from the API
+            IAM_RESPONSE=$(curl -s "$url" --header "Authorization: $IAM_TOKEN" --header "Content-Type: application/json")
 
-        ERROR_MESSAGE=$(echo "${IAM_RESPONSE}" | jq 'has("errors")')
-        if [[ "${ERROR_MESSAGE}" != false ]]; then
-            echo "${IAM_RESPONSE}" | jq '.errors'
-            echo "Could not obtain api keys"
-            exit 1
-        fi
+            # check if the response is valid JSON.
+            if ! echo "${IAM_RESPONSE}" | jq -e . >/dev/null 2>&1; then
+                echo "Error: API did not return valid JSON on attempt $((fetch_attempt + 1))." >&2
+                echo "Response was: ${IAM_RESPONSE}" >&2
+                fetch_attempt=$((fetch_attempt + 1))
+
+                if [ $fetch_attempt -lt $MAX_ATTEMPTS ]; then
+                    echo "Retrying in ${retry_wait_time} seconds..." >&2
+                    sleep $retry_wait_time
+                    continue
+                else
+                    echo "Maximum retry attempts reached for fetching data." >&2
+                    exit 1
+                fi
+            fi
+
+            ERROR_MESSAGE=$(echo "${IAM_RESPONSE}" | jq 'has("errors")')
+            if [[ "${ERROR_MESSAGE}" != false ]]; then
+                echo "API returned errors on attempt $((fetch_attempt + 1)):" >&2
+                echo " ${IAM_RESPONSE}" >&2
+                fetch_attempt=$((fetch_attempt + 1))
+
+                if [ $fetch_attempt -lt $MAX_ATTEMPTS ]; then
+                    echo "Retrying in ${retry_wait_time} seconds..." >&2
+                    sleep $retry_wait_time
+                    continue
+                else
+                    echo "Maximum retry attempts reached. Could not obtain api keys." >&2
+                    exit 1
+                fi
+            fi
+            # Success - break out of retry loop
+            break
+        done
 
         next_url=$(echo "${IAM_RESPONSE}" | jq -r '.next')
         key_descriptions=$(echo "$IAM_RESPONSE" | jq -r --arg name "${APIKEY_KEY_NAME}" '.apikeys | .[] | select(.name == $name) | .description')
