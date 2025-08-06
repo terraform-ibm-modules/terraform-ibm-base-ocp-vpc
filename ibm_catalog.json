@@ -190,12 +190,7 @@
             },
             {
               "key": "prefix",
-              "required": true,
-              "value_constraint": {
-                "type": "regex",
-                "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters",
-                "value": "^$|^__NULL__$|^[a-z](?!.*--)[a-z0-9-]{0,14}[a-z0-9]$"
-              }
+              "required": true
             },
             {
               "key": "cluster_name",
@@ -660,20 +655,10 @@
               "key": "kms_encryption_enabled_cluster"
             },
             {
-              "key": "existing_kms_instance_crn",
-              "value_constraint": {
-                "type": "regex",
-                "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
-                "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
-              }
+              "key": "existing_kms_instance_crn"
             },
             {
-              "key": "existing_cluster_kms_key_crn",
-              "value_constraint": {
-                "type": "regex",
-                "description": "The value provided for 'existing_cluster_kms_key_crn' in not valid.",
-                "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-              }
+              "key": "existing_cluster_kms_key_crn"
             },
             {
               "key": "kms_endpoint_type",
@@ -699,12 +684,7 @@
               "key": "kms_encryption_enabled_boot_volume"
             },
             {
-              "key": "existing_boot_volume_kms_key_crn",
-              "value_constraint": {
-                "type": "regex",
-                "description": "The value provided for 'existing_boot_volume_kms_key_crn' in not valid.",
-                "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-              }
+              "key": "existing_boot_volume_kms_key_crn"
             },
             {
               "key": "boot_volume_kms_key_name"
