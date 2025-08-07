@@ -1058,7 +1058,7 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configures quickstart deployment of a Red Hat OpenShift cluster within an IBM Cloud VPC with limited options."
+                "description": "Configures QuickStart deployment of a Red Hat OpenShift cluster within an IBM Cloud VPC with limited options."
               }
             ],
             "diagrams": [
@@ -1068,7 +1068,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This quickstart variation of deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster, ensuring seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large</b> — each size determining the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor) accordingly. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).( <br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with IBM Cloud's proven infrastructure, integrated storage services, and right-sized compute resources."
+                "description": "This QuickStart variation of deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster. Thus, it helps ensure seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large.</b> Each size determining the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor) .  [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).( <br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with the infrastructure, integrated storage services, and right-sized compute resources of IBM Cloud."
               }
             ]
           },
@@ -1151,7 +1151,6 @@
             {
               "key": "ocp_version",
               "required": true,
-              "display_name": "openshift_version",
               "options": [
                 {
                   "displayname": "4.18",
@@ -1177,7 +1176,6 @@
             },
             {
               "key": "default_worker_pool_operating_system",
-              "display_name":"operating_system",
               "options": [
                 {
                   "displayname": "RHEL 9",

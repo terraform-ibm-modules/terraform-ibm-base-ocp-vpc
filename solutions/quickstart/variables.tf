@@ -50,7 +50,7 @@ variable "region" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
-  default     = "4.17"
+  default     = null
 }
 
 variable "cluster_name" {
@@ -61,14 +61,14 @@ variable "cluster_name" {
 
 
 variable "address_prefix" {
-  description = "The IP range that will be defined for the VPC for a certain location. Use only with manual address prefixes."
+  description = "The IP range that defines a certain location for the VPC. Use only with manual address prefixes."
   type        = string
   default     = "10.10.10.0/24"
 }
 
 variable "ocp_entitlement" {
   type        = string
-  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  description = "Value that is applied to the entitlements for OCP cluster provisioning."
   default     = null
 }
 
