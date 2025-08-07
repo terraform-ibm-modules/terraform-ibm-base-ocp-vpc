@@ -80,50 +80,59 @@ module "vpc" {
 locals {
   size_config = {
     mini = {
-      flavor           = "bx2.4x16"
-      workers_per_zone = 2
-      zones            = 2
+      flavor        = "bx2.4x16"
+      total_workers = 2
+      zones         = 2
 
     }
     small = {
-      flavor           = "bx2.8x32"
-      workers_per_zone = 3
-      zones            = 3
+      flavor        = "bx2.8x32"
+      total_workers = 3
+      zones         = 3
     }
     medium = {
-      flavor           = "bx2.8x32"
-      workers_per_zone = 5
-      zones            = 3
+      flavor        = "bx2.8x32"
+      total_workers = 5
+      zones         = 3
     }
     large = {
-      flavor           = "bx2.16x64"
-      workers_per_zone = 7
-      zones            = 3
+      flavor        = "bx2.16x64"
+      total_workers = 7
+      zones         = 3
     }
   }
 
-  selected = lookup(local.size_config, var.size, local.size_config[var.size])
+  selected              = lookup(local.size_config, var.size, local.size_config[var.size])
+  base_workers_per_zone = floor(local.selected.total_workers / local.selected.zones)
+  extra_workers         = local.selected.total_workers % local.selected.zones
 
-  worker_pools = concat(
-    [
-      {
-        subnet_prefix    = "zone-1"
-        pool_name        = "default" # Exactly 'default' here
-        machine_type     = local.selected.flavor
-        workers_per_zone = local.selected.workers_per_zone
-        operating_system = var.default_worker_pool_operating_system
-      }
-    ],
-    [
-      for count in range(2, local.selected.zones + 1) : {
-        subnet_prefix    = "zone-${count}"
-        pool_name        = "workerpool-${count}" # 'workerpool-2', 'workerpool-3', etc.
-        machine_type     = local.selected.flavor
-        workers_per_zone = local.selected.workers_per_zone
-        operating_system = var.default_worker_pool_operating_system
+
+  workers_distribution = [
+    for i in range(local.selected.zones) :
+    local.base_workers_per_zone + (i < local.extra_workers ? 1 : 0)
+  ]
+  # Build the vpc_subnets for default pool
+  cluster_vpc_subnets = {
+    default = [
+      for i in range(local.selected.zones) : {
+        id         = module.vpc.subnet_zone_list[i].id
+        cidr_block = module.vpc.subnet_zone_list[i].cidr
+        zone       = module.vpc.subnet_zone_list[i].zone
       }
     ]
-  )
+  }
+  max_workers_per_zone = max(local.workers_distribution...)
+
+  worker_pools = [
+    {
+      pool_name        = "default"
+      machine_type     = local.selected.flavor
+      operating_system = var.default_worker_pool_operating_system
+      workers_per_zone = local.max_workers_per_zone
+      vpc_subnets      = local.cluster_vpc_subnets["default"]
+
+    }
+  ]
 }
 
 ########################################################################################################################
@@ -137,7 +146,7 @@ module "ocp_base" {
   ocp_version                         = var.ocp_version
   ocp_entitlement                     = var.ocp_entitlement
   vpc_id                              = module.vpc.vpc_id
-  vpc_subnets                         = module.vpc.subnet_detail_map
+  vpc_subnets                         = local.cluster_vpc_subnets
   worker_pools                        = local.worker_pools
   disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   access_tags                         = var.access_tags

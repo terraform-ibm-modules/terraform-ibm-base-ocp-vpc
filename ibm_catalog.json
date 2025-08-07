@@ -1050,10 +1050,10 @@
             {
                 "service_name": "cloud-object-storage",
                 "role_crns": [
-                    "crn:v1:bluemix:public:iam::::serviceRole:Writer",
+                    "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                     "crn:v1:bluemix:public:iam::::role:Editor"
                 ],
-                "notes": "Required to write data and manage the OpenShift cluster's internal registry storage bucket."
+                "notes": "Required to edit data and manage the OpenShift cluster's internal registry storage bucket."
             },
             {
               "role_crns": [
@@ -1156,11 +1156,11 @@
               "hidden": true
             },
             {
-              "key": "cluster_name"
+              "key": "cluster_name",
+              "hidden": true
             },
             {
               "key": "ocp_version",
-              "required": true,
               "display_name": "openshift_version",
               "options": [
                 {
@@ -1188,7 +1188,6 @@
             {
               "key": "default_worker_pool_operating_system",
               "display_name":"operating_system",
-              "required": true,
               "options": [
                 {
                   "displayname": "RHEL 9",
@@ -1205,7 +1204,8 @@
               ]
             },
             {
-              "key": "address_prefix"
+              "key": "address_prefix",
+              "hidden": true
             },
             {
               "key": "cluster_config_endpoint_type",
@@ -1252,7 +1252,8 @@
               "key": "disable_outbound_traffic_protection"
             },
             {
-              "key": "use_private_endpoint"
+              "key": "use_private_endpoint",
+              "hidden": true
             }
 
           ]

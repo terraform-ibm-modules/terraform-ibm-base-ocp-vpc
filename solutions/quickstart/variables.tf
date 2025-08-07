@@ -12,7 +12,7 @@ variable "existing_resource_group_name" {
 }
 
 variable "provider_visibility" {
-  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints). [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
   type        = string
   default     = "private"
 
@@ -87,7 +87,7 @@ variable "access_tags" {
 
 variable "size" {
   type        = string
-  description = "Defines the cluster size and capacity. Valid options are `mini`, `small`, `medium`, and `large`. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster."
+  description = "Defines the cluster size and capacity. Valid options are `mini`, `small`, `medium`, and `large`. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md”"
   default     = "mini"
 }
 
