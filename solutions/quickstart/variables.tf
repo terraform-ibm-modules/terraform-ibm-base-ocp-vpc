@@ -87,7 +87,7 @@ variable "access_tags" {
 
 variable "size" {
   type        = string
-  description = "Defines the cluster size and capacity. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md)."
+  description = "Defines the cluster size configuration. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md)."
   default     = "mini"
 }
 
