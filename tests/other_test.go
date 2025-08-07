@@ -25,7 +25,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 		CloudInfoService: sharedInfoSvc,
 		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
 			List: []string{
-				"module.observability_agents.module.logs_agent[0].helm_release.logs_agent",
+				"module.logs_agents.helm_release.logs_agent",
 			},
 		},
 		TerraformVars: map[string]interface{}{
