@@ -776,7 +776,7 @@
               "hidden": true
             },
             {
-              "key":"enable_kube_audit"
+              "key": "enable_kube_audit"
             },
             {
               "key": "audit_deployment_name"
