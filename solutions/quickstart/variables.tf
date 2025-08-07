@@ -7,8 +7,8 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the cluster."
-  default     = "Default"
+  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
+  default     = null
 }
 
 variable "provider_visibility" {
@@ -69,7 +69,7 @@ variable "address_prefix" {
 variable "ocp_entitlement" {
   type        = string
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
-  default     = "cloud_pak"
+  default     = null
 }
 
 
@@ -87,31 +87,18 @@ variable "access_tags" {
 
 variable "size" {
   type        = string
-  description = "Defines the cluster size and capacity. Valid options are `mini`, `small`, `medium`, and `large`. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md”"
+  description = "Defines the cluster size and capacity. This setting determines the number of availability zones, worker nodes per zone, and the machine type used for the OpenShift cluster. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md)."
   default     = "mini"
 }
 
 variable "disable_public_endpoint" {
   type        = bool
-  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`."
+  description = "Disables the public endpoint, which allows internet access to the cluster, during creation only."
   default     = false
 }
 
 variable "disable_outbound_traffic_protection" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
+  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound)."
   default     = true
-}
-
-variable "use_private_endpoint" {
-  type        = bool
-  description = "Set this to true to force all API calls to use the IBM Cloud private endpoints."
-  default     = true
-}
-
-variable "cluster_config_endpoint_type" {
-  description = "Specify which type of endpoint to use for cluster config access: 'default', 'private', 'vpe', 'link'. A 'default' value uses the default endpoint of the cluster."
-  type        = string
-  default     = "default"
-  nullable    = true
 }

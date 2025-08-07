@@ -1030,7 +1030,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "notes": "Required to reset API keys, create and edit the OpenShift cluster, and manage all related resources."
+              "notes": "Required to reset the cluster API key, create and edit the OpenShift cluster, and manage all related resources."
             },
             {
               "service_name": "iam-identity",
@@ -1038,14 +1038,14 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud and for managing and operating resources within the IBM Cloud environment."
+              "notes": "Required to create the cluster API key needed by the OpenShift cluster on IBM Cloud and for managing and operating resources within the IBM Cloud environment."
             },
             {
               "service_name": "is.vpc",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating Virtual Private Cloud(VPC)."
+              "notes": "Required for creating Virtual Private Cloud (VPC)."
             },
             {
                 "service_name": "cloud-object-storage",
@@ -1053,7 +1053,7 @@
                     "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                     "crn:v1:bluemix:public:iam::::role:Editor"
                 ],
-                "notes": "Required to edit data and manage the OpenShift cluster's internal registry storage bucket."
+                "notes": "Required for creating  the OpenShift cluster's internal registry storage bucket."
             },
             {
               "role_crns": [
@@ -1077,7 +1077,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This quickstart variation of deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster, ensuring seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large</b> — each size determining the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor) accordingly. <br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with IBM Cloud's proven infrastructure, integrated storage services, and right-sized compute resources."
+                "description": "This quickstart variation of deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster, ensuring seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large</b> — each size determining the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor) accordingly. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).( <br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with IBM Cloud's proven infrastructure, integrated storage services, and right-sized compute resources."
               }
             ]
           },
@@ -1087,7 +1087,6 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required":true,
               "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
@@ -1156,11 +1155,11 @@
               "hidden": true
             },
             {
-              "key": "cluster_name",
-              "hidden": true
+              "key": "cluster_name"
             },
             {
               "key": "ocp_version",
+              "required": true,
               "display_name": "openshift_version",
               "options": [
                 {
@@ -1208,30 +1207,7 @@
               "hidden": true
             },
             {
-              "key": "cluster_config_endpoint_type",
-              "options": [
-                {
-                  "displayname": "default",
-                  "value": "default"
-                },
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "vpe",
-                  "value": "vpe"
-                },
-                {
-                  "displayname": "link",
-                  "value": "link"
-                }
-              ],
-              "hidden":true
-            },
-            {
-              "key": "ocp_entitlement",
-              "hidden":true
+              "key": "ocp_entitlement"
             },
             {
               "key": "access_tags",
@@ -1250,12 +1226,7 @@
             },
             {
               "key": "disable_outbound_traffic_protection"
-            },
-            {
-              "key": "use_private_endpoint",
-              "hidden": true
             }
-
           ]
         }
       ]

@@ -109,6 +109,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		{Name: "region", Value: region, DataType: "string"},
 		{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 		{Name: "size", Value: "mini", DataType: "string"},
+		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 	}
 	return options
 }
