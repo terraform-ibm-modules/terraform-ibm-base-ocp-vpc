@@ -1009,20 +1009,11 @@
           "terraform_version": "1.10.5"
         },
         {
-          "label": "Quickstart",
+          "label": "QuickStart",
           "name": "quickstart",
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
-          "compliance": {
-            "authority": "scc-v3",
-            "profiles": [
-              {
-                "profile_name": "IBM Cloud Framework for Financial Services",
-                "profile_version": "1.7.0"
-              }
-            ]
-          },
           "iam_permissions": [
             {
               "service_name": "containers-kubernetes",
