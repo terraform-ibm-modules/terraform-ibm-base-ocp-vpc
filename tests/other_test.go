@@ -24,7 +24,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 		CloudInfoService: sharedInfoSvc,
 		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
 			List: []string{
-				"module.observability_agents.module.logs_agent[0].helm_release.logs_agent",
+				"module.logs_agents.helm_release.logs_agent",
 			},
 		},
 		TerraformVars: map[string]interface{}{
@@ -81,20 +81,6 @@ func TestRunMultiClusterExample(t *testing.T) {
 				"module.ocp_base_cluster_2.null_resource.confirm_network_healthy",
 				"module.ocp_base_cluster_2.null_resource.reset_api_key",
 			},
-		},
-		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
-			List: []string{
-				"module.observability_agents_1.helm_release.sysdig_agent",
-				"module.observability_agents_2.helm_release.sysdig_agent",
-				"module.observability_agents_1.helm_release.cloud_monitoring_agent",
-				"module.observability_agents_2.helm_release.cloud_monitoring_agent",
-			},
-		},
-		ImplicitDestroy: []string{ // Ignore full destroy to speed up tests
-			"module.observability_agents_1.helm_release.sysdig_agent",
-			"module.observability_agents_2.helm_release.sysdig_agent",
-			"module.observability_agents_1.helm_release.cloud_monitoring_agent",
-			"module.observability_agents_2.helm_release.cloud_monitoring_agent",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
