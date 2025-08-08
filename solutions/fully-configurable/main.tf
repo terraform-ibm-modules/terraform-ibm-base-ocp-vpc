@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.2.1"
+  version                      = "1.3.0"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.1.14"
+  version                     = "5.1.16"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -277,10 +277,35 @@ module "secret_group" {
   }
   count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.11"
+  version                  = "1.3.12"
   region                   = module.existing_secrets_manager_instance_parser[0].region
   secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
   secret_group_name        = module.ocp_base.cluster_id
   secret_group_description = "Secret group for storing ingress certificates for cluster ${var.cluster_name} with id: ${module.ocp_base.cluster_id}"
   endpoint_type            = var.secrets_manager_endpoint_type
+}
+
+data "ibm_container_cluster_config" "cluster_config" {
+  count             = var.enable_kube_audit ? 1 : 0
+  cluster_name_id   = module.ocp_base.cluster_id
+  config_dir        = "${path.module}/kubeconfig"
+  admin             = true
+  resource_group_id = module.ocp_base.resource_group_id
+  endpoint_type     = var.cluster_config_endpoint_type != "default" ? var.cluster_config_endpoint_type : null
+}
+
+module "kube_audit" {
+  count                                   = var.enable_kube_audit ? 1 : 0
+  ibmcloud_api_key                        = var.ibmcloud_api_key
+  source                                  = "../../modules/kube-audit"
+  cluster_id                              = module.ocp_base.cluster_id
+  cluster_resource_group_id               = module.ocp_base.resource_group_id
+  region                                  = module.ocp_base.region
+  use_private_endpoint                    = var.use_private_endpoint
+  cluster_config_endpoint_type            = var.cluster_config_endpoint_type
+  audit_log_policy                        = var.audit_log_policy
+  audit_namespace                         = var.audit_namespace
+  audit_deployment_name                   = var.audit_deployment_name
+  audit_webhook_listener_image            = var.audit_webhook_listener_image
+  audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
 }

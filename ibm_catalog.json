@@ -1384,6 +1384,10 @@
               "required": true
             },
             {
+              "key": "disable_public_endpoint",
+              "required": true
+            },
+            {
               "key": "enable_platform_metrics",
               "type": "string",
               "default_value": "true",
@@ -1527,9 +1531,6 @@
             },
             {
               "key": "use_private_endpoint"
-            },
-            {
-              "key": "disable_public_endpoint"
             },
             {
               "key": "cluster_config_endpoint_type",
@@ -1705,6 +1706,34 @@
                 }
               ],
               "hidden": true
+            },
+            {
+              "key": "enable_kube_audit"
+            },
+            {
+              "key": "audit_deployment_name"
+            },
+            {
+              "key": "audit_log_policy",
+              "options": [
+                {
+                  "displayname": "Default",
+                  "value": "default"
+                },
+                {
+                  "displayname": "Write Request Bodies",
+                  "value": "WriteRequestBodies"
+                }
+              ]
+            },
+            {
+              "key": "audit_namespace"
+            },
+            {
+              "key": "audit_webhook_listener_image"
+            },
+            {
+              "key": "audit_webhook_listener_image_tag_digest"
             }
           ],
           "dependencies": [
