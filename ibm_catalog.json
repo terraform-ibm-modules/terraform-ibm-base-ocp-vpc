@@ -199,7 +199,7 @@
             {
               "key": "ocp_version",
               "required": true,
-              "default_value": "4.18"
+              "default_value": "4.18",
               "options": [
                 {
                   "displayname": "4.18",
