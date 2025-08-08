@@ -69,7 +69,6 @@
           "description": "Deploys the Kube Audit solution to monitor and log Kubernetes API server activity. It captures events such as user actions, configuration changes, and access attempts, helping meet security and compliance requirements through centralized [audit logging](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server)."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
           "label": "[Experimental] Fully configurable",
