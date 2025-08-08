@@ -23,7 +23,7 @@
         "OCP"
       ],
       "short_description": "Creates Red Hat OpenShift workload clusters on IBM Cloud within a secure VPC network, with optional integration of security and logging services",
-      "long_description": "The Red Hat OpenShift Container Platform on VPC landing zone provides the tools to deploy a Red Hat OpenShift Container Platform cluster within a single Virtual Private Cloud (VPC) network, enabling a scalable and flexible cloud environment for containerized applications with seamless integration to security and observability services. The VPC is implemented as a multi-zone, multi-subnet architecture, ensuring that your environment remains secure and highly available.",
+      "long_description": "The Red Hat OpenShift Container Platform on VPC landing zone provides the tools to deploy a Red Hat OpenShift Container Platform cluster within an IBM Cloud Virtual Private Cloud (VPC), enabling a scalable and flexible cloud environment for containerized applications with seamless integration to security and observability services. The VPC is implemented as a multi-zone, multi-subnet architecture, ensuring that your environment remains secure and highly available.",
       "offering_docs_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-overview#overview-ocp",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone/main/.docs/images/deploy-arch-slz-ocp-lt.svg",
       "provider_name": "IBM",
