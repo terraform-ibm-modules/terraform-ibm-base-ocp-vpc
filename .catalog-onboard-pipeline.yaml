@@ -8,7 +8,7 @@ offerings:
     include_git_submodules: true
     variations:
       - name: fully-configurable
-        mark_ready: true
+        mark_ready: false
         install_type: fullstack
         pre_validation: "tests/scripts/pre-validation-deploy-cos-instance-and-vpc.sh"
         post_validation: "tests/scripts/post-validation-destroy-cos-instance-and-vpc.sh"
@@ -17,5 +17,5 @@ offerings:
           region: us-south
           scope_resource_group_var_name: existing_resource_group_name
       - name: quickstart
-        mark_ready: true
+        mark_ready: false
         install_type: fullstack
