@@ -1068,19 +1068,11 @@
             "features": [
               {
                 "description": " ",
-                "title": "Enables rapid deployment of Red Hat OpenShift on IBM Cloud"
+                "title": "Configures OpenShift cluster with a single worker pool distributed across zones on a VPC based on the predefined configuration."
               },
               {
                 "description": " ",
-                "title": "Leverages IBM Cloud Virtual Private Cloud (VPC) "
-              },
-              {
-                "description": " ",
-                "title": "Reduces failure by using multizone regions"
-              },
-              {
-                "description": " ",
-                "title": "Automatically provisions an OpenShift cluster within the VPC"
+                "title": "Provides predefined cluster size configuration."
               }
             ],
             "diagrams": [
