@@ -70,7 +70,7 @@ variable "cluster_name" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
-  default     = "4.17"
+  default     = null
 }
 
 variable "ocp_entitlement" {
