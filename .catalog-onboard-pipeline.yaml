@@ -8,7 +8,7 @@ offerings:
     include_git_submodules: true
     variations:
       - name: fully-configurable
-        mark_ready: false
+        mark_ready: true
         install_type: fullstack
         pre_validation: "tests/scripts/pre-validation-deploy-cos-instance-and-vpc.sh"
         post_validation: "tests/scripts/post-validation-destroy-cos-instance-and-vpc.sh"
