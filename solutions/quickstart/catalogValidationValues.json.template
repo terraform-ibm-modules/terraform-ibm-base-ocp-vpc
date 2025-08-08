@@ -1,0 +1,6 @@
+{
+  "ibmcloud_api_key": $VALIDATION_APIKEY,
+  "prefix": $PREFIX,
+  "size": "mini",
+  "existing_resource_group_name": "Default"
+}
