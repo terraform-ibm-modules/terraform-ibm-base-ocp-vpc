@@ -1044,7 +1044,7 @@
                     "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                     "crn:v1:bluemix:public:iam::::role:Editor"
                 ],
-                "notes": "Required for creating  the OpenShift cluster's internal registry storage bucket."
+                "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
             },
             {
               "role_crns": [
