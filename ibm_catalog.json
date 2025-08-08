@@ -1150,6 +1150,7 @@
             },
             {
               "key": "ocp_version",
+              "default_value": "4.17",
               "required": true,
               "options": [
                 {
