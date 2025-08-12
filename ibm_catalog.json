@@ -16,7 +16,8 @@
         "terraform",
         "ocp",
         "cluster",
-        "red_hat_openshift"
+        "red_hat_openshift",
+        "ROKS"
       ],
       "short_description": "Automates the deployment of Red Hat OpenShift container platform on IBM Cloud with optional integration of security and logging services.",
       "long_description": "The Cloud automation for Red Hat OpenShift Container Platform on VPC enables a scalable and flexible cloud environment for containerized applications with seamless integration to other security and observability services. This architecture can be deployed independently while also serving as a foundational deployable architecture for other architectures like [Cloud automation for Red Hat OpenShift AI](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-ai-ba708aed-bb8a-4ac0-83a7-53a066701db5-global) to deploy mission critical applications and AI-driven initiatives to market quickly and securely with a managed OpenShift service.\n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
@@ -807,7 +808,7 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
-              "description": "Configure the VPC instance and subnets where the OpenShift cluster will be deployed. ",
+              "description": "Configure the VPC instance and subnets where the OpenShift cluster will be deployed.  If not enabled, you must provide an existing VPC, if any. ",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
               "version": "v7.24.0",
               "flavors": [
@@ -850,7 +851,7 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings. ",
+              "description": "Cloud automation for Account Configuration creates resource groups by default and, if  \"with Account Settings\" is enabled, it applies baseline security and governance settings that impact cluster placement and access controls. ",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
                 "resource-group-only",
@@ -875,9 +876,9 @@
             },
             {
               "name": "deploy-arch-ibm-kms",
-              "description": "Enable Cloud Automation for Key Protect when you want services to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption. ",
+              "description": "Enable Cloud Automation for Key Protect when you want the cluster to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption. ",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.1.4",
+              "version": "v5.1.19",
               "flavors": [
                 "fully-configurable"
               ],
@@ -964,7 +965,7 @@
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
-              "description": "Configure Secrets Manager instance for centrally managing Ingress subdomain certificates and other secrets. ",
+              "description": "Configure Secrets Manager instance for centrally managing Ingress subdomain certificates and other secrets for the cluster. ",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
               "version": "v2.4.0",
               "flavors": [
