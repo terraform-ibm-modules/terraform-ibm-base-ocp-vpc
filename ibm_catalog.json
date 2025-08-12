@@ -177,11 +177,15 @@
             "features": [
               {
                 "description": " ",
-                "title": "One VPC with three zone subnets"
+                "title": "One VPC with three zone subnets as a default"
               },
               {
                 "description": " ",
-                "title": "Configures OCP cluster with a single worker pool distributed across all three zones, with two worker nodes per zone "
+                "title": "Configures OpenShift cluster with a single worker pool distributed across all three zones, with two worker nodes per zone"
+              },
+              {
+                "description": " ",
+                "title": "Follow IBM secure-by-default standards, but can be customised to fit your use case"
               }
             ],
             "diagrams": [
@@ -1068,7 +1072,11 @@
             "features": [
               {
                 "description": " ",
-                "title": "Configures OpenShift cluster with a single worker pool distributed across zones on a VPC based on the predefined configuration."
+                "title": "One VPC with two zone subnets as a default"
+              },
+              {
+                "description": " ",
+                "title": "Configures OpenShift cluster with a single worker pool distributed across zones on a predefined configuration."
               },
               {
                 "description": " ",
