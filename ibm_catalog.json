@@ -1014,6 +1014,15 @@
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "CIS IBM Cloud Foundations Benchmark v1.1.0",
+                "profile_version": "1.1.0"
+              }
+            ]
+          },
           "iam_permissions": [
             {
               "service_name": "containers-kubernetes",
