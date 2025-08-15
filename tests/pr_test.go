@@ -4,6 +4,7 @@ package test
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 
 	"github.com/stretchr/testify/assert"
@@ -39,6 +41,21 @@ var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
 	permanentResources map[string]interface{}
 )
+
+var validRegions = []string{
+	"au-syd",
+	"jp-osa",
+	"jp-tok",
+	"eu-de",
+	"eu-gb",
+	"eu-es",
+	"us-east",
+	"us-south",
+	"ca-tor",
+	"br-sao",
+	"eu-fr2",
+	"ca-mon",
+}
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
@@ -243,4 +260,49 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
 	}
+}
+
+func TestRoksAddonDefaultConfiguration(t *testing.T) {
+	t.Parallel()
+
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:       t,
+		Prefix:        "ocp-def",
+		ResourceGroup: resourceGroup,
+		QuietMode:     false, // Suppress logs except on failure
+	})
+
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,
+		"deploy-arch-ibm-ocp-vpc",
+		"fully-configurable",
+		map[string]interface{}{
+			"prefix":                       options.Prefix,
+			"region":                       validRegions[rand.Intn(len(validRegions))],
+			"secrets_manager_service_plan": "standard",
+		},
+	)
+
+	err := options.RunAddonTest()
+	require.NoError(t, err)
+}
+
+// TestDependencyPermutations runs dependency permutations for OCP and all its dependencies
+func TestRoksDependencyPermutations(t *testing.T) {
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing: t,
+		Prefix:  "ocp-per",
+		AddonConfig: cloudinfo.AddonConfig{
+			OfferingName:   "deploy-arch-ibm-ocp-vpc",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"prefix":                       "ocp-per",
+				"region":                       validRegions[rand.Intn(len(validRegions))],
+				"secrets_manager_service_plan": "standard",
+			},
+		},
+	})
+
+	err := options.RunAddonPermutationTest()
+	assert.NoError(t, err, "Dependency permutation test should not fail")
 }
