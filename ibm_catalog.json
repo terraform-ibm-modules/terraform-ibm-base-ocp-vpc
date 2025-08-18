@@ -23,7 +23,7 @@
         "OCP"
       ],
       "short_description": "Creates Red Hat OpenShift workload clusters on IBM Cloud within a secure VPC network, with optional integration of security and logging services",
-      "long_description": "The Red Hat OpenShift Container Platform on VPC landing zone provides the tools to deploy a Red Hat OpenShift Container Platform cluster within an IBM Cloud Virtual Private Cloud (VPC), enabling a scalable and flexible cloud environment for containerized applications with seamless integration to security and observability services. The VPC is implemented as a multi-zone, multi-subnet architecture, ensuring that your environment remains secure and highly available.",
+      "long_description": "This Deployable Architecture deploys a Red Hat OpenShift Container Platform cluster on Virtual Private Cloud (VPC), enabling a scalable and flexible cloud environment for containerized applications with seamless integration to security and observability services. The VPC is implemented as a multi-zone, multi-subnet architecture, ensuring that your environment remains secure and highly available.",
       "offering_docs_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-overview#overview-ocp",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone/main/.docs/images/deploy-arch-slz-ocp-lt.svg",
       "provider_name": "IBM",
@@ -33,11 +33,11 @@
           "description": "Creates a [Red Hat OpenShift Cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud that helps businesses manage their containerized applications at scale with added enterprise features such as security, scalability, and automation."
         },
         {
-          "description": "Configures worker pools in cluster through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) of similar configurations, such as compute resources and availability zones.\n",
+          "description": "Configures worker pools in cluster through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) of similar configurations, such as compute resources and availability zones.",
           "title": "Worker pools"
         },
         {
-          "description": "Configures the [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets&interface=ui#vpc_basics_subnets) for the cluster, and specifies the subnets to deploy the worker nodes in.\n",
+          "description": "Configures the [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets&interface=ui#vpc_basics_subnets) for the cluster, and specifies the subnets to deploy the worker nodes in.",
           "title": "Subnets"
         },
         {
@@ -176,16 +176,8 @@
           "architecture": {
             "features": [
               {
-                "description": " ",
-                "title": "One VPC with three zone subnets as a default"
-              },
-              {
-                "description": " ",
-                "title": "Configures OpenShift cluster with a single worker pool distributed across all three zones, with two worker nodes per zone"
-              },
-              {
-                "description": " ",
-                "title": "Follow IBM secure-by-default standards, but can be customised to fit your use case"
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
               }
             ],
             "diagrams": [
@@ -1071,16 +1063,8 @@
           "architecture": {
             "features": [
               {
-                "description": " ",
-                "title": "One VPC with two zone subnets as a default"
-              },
-              {
-                "description": " ",
-                "title": "Configures OpenShift cluster with a single worker pool distributed across zones on a predefined configuration."
-              },
-              {
-                "description": " ",
-                "title": "Provides predefined cluster size configuration."
+                "title": " ",
+                "description": "Configures QuickStart deployment of a Red Hat OpenShift cluster within an IBM Cloud VPC with limited options."
               }
             ],
             "diagrams": [
