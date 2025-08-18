@@ -967,7 +967,7 @@
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Configure Secrets Manager instance for centrally managing Ingress subdomain certificates and other secrets for the cluster. ",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.7.5",
+              "version": "v2.4.0",
               "flavors": [
                 "fully-configurable"
               ],
