@@ -851,7 +851,7 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Creates default resource groups and applies security and governance settings that influence cluster placement and access controls.",
+              "description": "Creates a set of resource groups and when \"with Account Settings\" variation is selected, it also applies baseline security and governance settings."
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
                 "resource-group-only",
