@@ -59,7 +59,7 @@ if [[ "$secrets_length" == 0 ]];then
 fi
 
 # delete the secrets inside the secret group
-# retrycount for deleting a particular secret incase curl command for delete command fails
+# retrycount for deleting a particular secret in case curl command for delete command fails
 
 retryCount=2;
 for ((i=0; i<secrets_length; i++)); do

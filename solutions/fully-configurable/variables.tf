@@ -584,7 +584,7 @@ variable "audit_namespace" {
 
 variable "audit_deployment_name" {
   type        = string
-  description = "The name of log collection deployement and service."
+  description = "The name of log collection deployment and service."
   default     = "ibmcloud-kube-audit"
 }
 
