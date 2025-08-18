@@ -4,7 +4,7 @@
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
   version                      = "1.3.0"
-  resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
+  resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group-yz" : null
   existing_resource_group_name = var.resource_group
 }
 
@@ -41,9 +41,9 @@ module "cos" {
   version                = "8.21.25"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
-  cos_instance_name      = "${var.prefix}-cos"
+  cos_instance_name      = "${var.prefix}-cos-yz"
   cos_tags               = var.resource_tags
-  bucket_name            = "${var.prefix}-bucket"
+  bucket_name            = "${var.prefix}-bucket-yz"
   retention_enabled      = false
   kms_encryption_enabled = false
 }
