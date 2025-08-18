@@ -808,7 +808,7 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
-              "description": "Configure the VPC instance and subnets where the OpenShift cluster will be deployed.",
+              "description": "Configure the VPC and subnets to deploy the OpenShift cluster.",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
               "version": "v7.24.0",
               "flavors": [
