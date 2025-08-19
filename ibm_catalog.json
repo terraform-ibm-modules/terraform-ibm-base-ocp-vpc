@@ -559,7 +559,7 @@
               "key": "additional_worker_pools",
               "type": "array",
               "custom_config": {
-                "type": "textarea",
+                "type": "code_editor",
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
@@ -568,7 +568,7 @@
               "key": "worker_pools_taints",
               "type": "array",
               "custom_config": {
-                "type": "textarea",
+                "type": "code_editor",
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
@@ -697,7 +697,7 @@
               "display_name": "openshift_cluster_cbr_rules",
               "type": "array",
               "custom_config": {
-                "type": "textarea",
+                "type": "code_editor",
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
@@ -752,7 +752,7 @@
               "required": false,
               "virtual": true,
               "custom_config": {
-                "type": "textarea",
+                "type": "code_editor",
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
@@ -1217,7 +1217,8 @@
             {
               "key": "disable_outbound_traffic_protection"
             }
-          ]
+          ],
+          "terraform_version": "1.10.5"
         }
       ]
     }
