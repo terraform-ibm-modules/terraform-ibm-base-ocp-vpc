@@ -196,7 +196,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "event-notifications",
-              "notes": "[Optional] Required if you are consuming the Secrets Manager deployable architecture."
+              "notes": "[Optional] Required if you are configuring an Event Notifications Instance."
             }
           ],
           "architecture": {
