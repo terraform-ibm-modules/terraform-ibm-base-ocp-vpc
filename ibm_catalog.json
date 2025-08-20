@@ -106,7 +106,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "iam-access-groups",
-              "notes": "[optional] Required for managing IAM access groups."
+              "notes": "[Optional] Required for managing IAM access groups."
             },
             {
               "service_name": "iam-identity",
