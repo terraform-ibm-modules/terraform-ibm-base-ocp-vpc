@@ -10,14 +10,14 @@
         "terraform",
         "solution",
         "containers",
-        "converged_infra",
-        "redhat"
+        "converged_infra"
       ],
       "keywords": [
         "terraform",
         "ocp",
         "cluster",
         "red_hat_openshift",
+        "redhat",
         "ROKS"
       ],
       "short_description": "Automates the deployment of Red Hat OpenShift container platform on IBM Cloud with optional integration of security and logging services.",
@@ -208,7 +208,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "event-notifications",
-              "notes": "[Optional] Required to create an instance of Event Notifications."
+              "notes": "[Optional] Required when enabling event notification integration."
             }
           ],
           "architecture": {
