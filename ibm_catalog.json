@@ -178,7 +178,11 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
+                "description": "Deploy Red Hat OpenShift Container Platform with fully configurable parameters and intelligently selected defaults. It can seamlessly integrate IBM Cloud services without requiring manual intervention."
+              },
+              {
+                "title": " ",
+                "description": "Offers full control over architecture parameters, with well-chosen defaults that enable a functional OpenShift cluster and integrated IBM Cloud services without requiring manual adjustments. Ideal for users who want flexibility with a reliable starting point."
               }
             ],
             "diagrams": [
@@ -1017,7 +1021,7 @@
         },
         {
           "label": "QuickStart",
-          "name": "quickstart-da",
+          "name": "ocp-quickstart",
           "index": 4,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
@@ -1065,7 +1069,11 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configures QuickStart deployment of a Red Hat OpenShift cluster within an IBM Cloud VPC with limited options."
+                "description": "Deploy Red Hat OpenShift Container Platform using a lightweight, experimental configuration that enables quick provisioning without the need to configure underlying infrastructure. This minimal setup is tailored for demonstration use cases."
+              },
+              {
+                "title": " ",
+                "description": "A lightweight, experimental configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Ideal for users new to IBM Cloud or OpenShift who want to get started without configuring underlying infrastructure. Not certified, not upgradeable, and not intended for production use."
               }
             ],
             "diagrams": [
