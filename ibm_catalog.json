@@ -199,7 +199,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "notes": "[Optional] Required if metrics routing to cloud monitoring instance is enabled."
+              "notes": "[Optional] Required to enable metrics routing to the Cloud Monitoring."
             },
             {
               "role_crns": [
