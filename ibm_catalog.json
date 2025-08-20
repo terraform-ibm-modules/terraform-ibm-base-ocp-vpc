@@ -207,7 +207,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "event-notifications",
-              "notes": "[Optional] Required if you are creating an Event Notifications Instance."
+              "notes": "[Optional] Required to create an instance of Event Notifications."
             }
           ],
           "architecture": {
