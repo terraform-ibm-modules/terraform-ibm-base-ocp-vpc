@@ -114,7 +114,7 @@
                 "crn:v1:bluemix:public:iam::::role:Operator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud and for managing and operating resources within the IBM Cloud environment."
+              "notes": "Required to create the containers-kubernetes-key for the OpenShift cluster and to manage resources within the IBM Cloud environment."
             },
             {
               "role_crns": [
@@ -177,7 +177,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "logs",
-              "notes": "[Optional] Required for consuming Observability DA, which sets up Cloud logs."
+              "notes": "[Optional] Required for consuming Observability deployable architecture, which sets up Cloud logs."
             },
             {
               "service_name": "logs-router",
@@ -207,7 +207,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "event-notifications",
-              "notes": "[Optional] Required if you are creating an Event Notifications Instance"
+              "notes": "[Optional] Required if you are creating an Event Notifications Instance."
             }
           ],
           "architecture": {
