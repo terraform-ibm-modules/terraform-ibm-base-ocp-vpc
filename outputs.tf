@@ -109,3 +109,7 @@ output "secrets_manager_integration_config" {
   description = "Information about the Secrets Manager instance that is used to store the Ingress certificates."
   value       = var.enable_secrets_manager_integration ? ibm_container_ingress_instance.instance[0] : null
 }
+
+output "data_source_external_ocp_version" {
+  value = tonumber(data.external.get_ocp_cluster_version.result.ocp_version)
+}

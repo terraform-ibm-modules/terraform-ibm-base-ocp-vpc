@@ -40,6 +40,12 @@ variable "vpc_subnets" {
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster is created."
 }
 
+variable "allow_kube_version_upgrade" {
+  type        = bool
+  description = "Set to true to allow the module to upgrade the kube version of the cluster. If you wish to make any change to the kube version, set this variable to true."
+  default     = false
+}
+
 variable "allow_default_worker_pool_replacement" {
   type        = bool
   description = "(Advanced users) Set to true to allow the module to recreate a default worker pool. If you wish to make any change to the default worker pool which requires the re-creation of the default pool follow these [steps](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#important-considerations-for-terraform-and-default-worker-pool)."

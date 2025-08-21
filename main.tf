@@ -96,6 +96,18 @@ data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
 }
 
+locals {
+  current_ocp_version = tonumber(data.external.get_ocp_cluster_version.result.ocp_version)
+}
+
+data "external" "get_ocp_cluster_version" {
+  program = ["bash", "${path.module}/scripts/get_ocp_cluster_version.sh"]
+
+  query = {
+    cluster_name = var.cluster_name
+  }
+}
+
 module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
@@ -153,7 +165,10 @@ resource "ibm_container_vpc_cluster" "cluster" {
   security_groups = local.cluster_security_groups
 
   lifecycle {
-    ignore_changes = [kube_version]
+    precondition {
+      condition     = local.current_ocp_version < 0 || local.ocp_version_num <= local.current_ocp_version || var.allow_kube_version_upgrade
+      error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -224,7 +239,11 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   security_groups = local.cluster_security_groups
 
   lifecycle {
-    ignore_changes = [worker_count, kube_version]
+    ignore_changes = [worker_count]
+    precondition {
+      condition     = local.current_ocp_version < 0 || local.ocp_version_num <= local.current_ocp_version || var.allow_kube_version_upgrade
+      error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
