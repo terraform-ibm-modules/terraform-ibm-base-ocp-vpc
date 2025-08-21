@@ -48,7 +48,7 @@
         },
         {
           "title": "KMS Encryption",
-          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) of the Kubernetes Secrets and Object Storage bucket using either a newly created key or an existing one."
+          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-setup&interface=ui) to encrypt the OpenShift cluster and its boot volumes. You can use either a newly created encryption key or an existing one."
         },
         {
           "title": "Secrets Manager",
@@ -895,7 +895,7 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Organize your IBM Cloud account with preconfigured resource groups. If not selected, the default group is used. Optionally, expand to apply recommended security settings via \"with Account Settings\".",
+              "description": "Organize your IBM Cloud account with preconfigured resource groups. If not selected, the default group is used via \"with Account Settings\" variation. Optionally, expand to apply recommended security controls.",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
                 "resource-group-only",
