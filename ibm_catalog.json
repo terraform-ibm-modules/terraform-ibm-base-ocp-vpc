@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-slz-ocp",
-      "label": "Landing zone for containerized applications with Red Hat Openshift",
+      "label": "Landing zone for containerized applications with Red Hat OpenShift",
       "product_kind": "solution",
       "tags": [
         "compute",
