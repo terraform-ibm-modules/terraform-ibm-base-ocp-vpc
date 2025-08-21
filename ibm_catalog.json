@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-slz-ocp",
-      "label": "Red Hat OpenShift Container Platform on VPC landing zone",
+      "label": "Landing zone for containerized applications with Red Hat Openshift",
       "product_kind": "solution",
       "tags": [
         "compute",
@@ -49,7 +49,7 @@
         },
         {
           "title": "Security and Compliance Alignment",
-          "description": "Advanced configurations include features such as [audit logging](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server) and encryption key management, and may align with [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about) for production use in regulated environments."  
+          "description": "Advanced configurations include features such as [audit logging](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server) and encryption key management, and may align with [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about) for production use in regulated environments."
         }
       ],
       "flavors": [
