@@ -498,7 +498,7 @@
               "options": [
                 {
                   "displayname": "true",
-                   "value": true
+                  "value": true
                 },
                 {
                   "displayname": "false",
@@ -803,8 +803,8 @@
                   "value": "public"
                 },
                 {
-                  "displayname": "public-and-private",
-                  "value": "Public-and-Private"
+                  "displayname": "Public-and-Private",
+                  "value": "public-and-private"
                 }
               ],
               "hidden": true
