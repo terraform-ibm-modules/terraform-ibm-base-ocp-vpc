@@ -93,7 +93,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "All Account Management services",
-              "notes": "[Optional] Required to create new resource groups when enabling the Account Configuration setting."
+              "notes": "[Optional] Required to create new resource groups when enabling the Account Configuration integration."
             },
             {
               "role_crns": [
