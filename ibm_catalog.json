@@ -208,7 +208,7 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "event-notifications",
-              "notes": "[Optional] Required when enabling event notification integration."
+              "notes": "[Optional] Required when enabling the Event Notifications integration."
             }
           ],
           "architecture": {
