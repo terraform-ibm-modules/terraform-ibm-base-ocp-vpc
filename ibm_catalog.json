@@ -106,7 +106,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "iam-access-groups",
+              "service_name": "iam-groups",
               "notes": "[Optional] Required for managing IAM access groups."
             },
             {
@@ -1262,7 +1262,8 @@
             {
               "key": "disable_outbound_traffic_protection"
             }
-          ]
+          ],
+          "terraform_version": "1.10.5"
         }
       ]
     }
