@@ -20,7 +20,7 @@ get_cloud_endpoint() {
 
 get_cloud_endpoint
 
-# This is a workaround function added to retrive a new token, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107) is fixed.
+# This is a workaround function added to retrieve a new token, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107) is fixed.
 fetch_token() {
     if [ "$IBMCLOUD_IAM_API_ENDPOINT" = "iam.cloud.ibm.com" ]; then
         if [ "$PRIVATE_ENV" = true ]; then
@@ -38,7 +38,7 @@ fetch_token() {
 
 fetch_token
 
-# This is a workaround function added to retrive the CA cert, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6068) is fixed.
+# This is a workaround function added to retrieve the CA cert, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6068) is fixed.
 get_ca_cert() {
     if [ "$IBMCLOUD_CS_API_ENDPOINT" = "containers.cloud.ibm.com" ]; then
         if [ "$PRIVATE_ENV" = true ]; then

@@ -80,7 +80,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_audit_deployment_name"></a> [audit\_deployment\_name](#input\_audit\_deployment\_name) | The name of log collection deployement and service. | `string` | `"ibmcloud-kube-audit"` | no |
+| <a name="input_audit_deployment_name"></a> [audit\_deployment\_name](#input\_audit\_deployment\_name) | The name of log collection deployment and service. | `string` | `"ibmcloud-kube-audit"` | no |
 | <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`. | `string` | `"default"` | no |
 | <a name="input_audit_namespace"></a> [audit\_namespace](#input\_audit\_namespace) | The name of the namespace where log collection service and a deployment will be created. | `string` | `"ibm-kube-audit"` | no |
 | <a name="input_audit_webhook_listener_image"></a> [audit\_webhook\_listener\_image](#input\_audit\_webhook\_listener\_image) | The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.The sub-module uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image. | `string` | `"icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"` | no |
