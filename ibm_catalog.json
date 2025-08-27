@@ -118,11 +118,11 @@
               "notes": "[Optional] Required for managing IAM access groups."
             },
             {
-              "service_name": "iam-identity",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Operator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
+              "service_name": "iam-identity",
               "notes": "Required to create the containers-kubernetes-key for the OpenShift cluster."
             },
             {
@@ -150,18 +150,18 @@
               "notes": "Required to manage Object storage bucket for the cluster internal registry."
             },
             {
-              "service_name": "containers-kubernetes",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
+              "service_name": "containers-kubernetes",
               "notes": "Required to create and manage the Openshift cluster."
             },
             {
-              "service_name": "is.vpc",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
+              "service_name": "is.vpc",
               "notes": "Required to create VPC."
             },
             {
@@ -177,6 +177,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
+              "service_name": "sysdig-monitor",
               "notes": "[Optional] Required to create an instance of Cloud Monitoring."
             },
             {
@@ -184,29 +185,30 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
+              "service_name": "logs",
               "notes": "[Optional] Required to create an instance of Cloud Logs."
             },
             {
-              "service_name": "logs-router",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
+              "service_name": "logs-router",
               "notes": "[Optional] Required for configuring cloud logs routing."
             },
             {
-              "service_name": "atracker",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Writer",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
+              "service_name": "atracker",
               "notes": "[Optional] Required to set up activity tracker event routing of auditing events."
             },
             {
-              "service_name": "sysdig-secure",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
+              "service_name": "sysdig-secure",
               "notes":"[Optional] Required for creating and managing SCC Workload Protection instance."
             },
             {
@@ -218,10 +220,10 @@
               "notes": "[Optional] Required for provisioning the App Configuration instance."
             },
             {
-              "service_name": "metrics-router",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
+              "service_name": "metrics-router",
               "notes": "[Optional] Required to enable metrics routing to the Cloud Monitoring."
             },
             {
