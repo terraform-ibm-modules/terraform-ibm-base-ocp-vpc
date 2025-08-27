@@ -68,6 +68,6 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = module.ocp_base.master_url
+  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
   description = "primary url"
 }
