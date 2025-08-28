@@ -68,6 +68,16 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
+  value       = module.ocp_base.ingress_hostname
   description = "primary url"
+}
+
+output "next_step_secondary_label" {
+  value       = "Openshift Cluster Overview"
+  description = "Secondary label"
+}
+
+output "next_step_secondary_url" {
+  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
+  description = "secondary url"
 }
