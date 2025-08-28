@@ -481,7 +481,14 @@
             },
             {
               "key": "existing_vpc_crn",
-              "required": true
+              "required": true,
+              "value_constraints": [
+                  {
+                      "type": "regex",
+                      "description": "The value provided for 'existing_vpc_crn' is not valid.",
+                      "value": "^__NULL__$|^crn:(.*:){3}is:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:vpc:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  }
+              ]
             },
             {
               "key": "region",
@@ -501,7 +508,14 @@
             },
             {
               "key": "existing_cos_instance_crn",
-              "required": true
+              "required": true,
+              "value_constraints": [
+                  {
+                      "type": "regex",
+                      "description": "The value provided for 'existing_cos_instance_crn' is not valid.",
+                      "value": "^__NULL__$|^crn:(.*:){3}cloud-object-storage:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  }
+              ]
             },
             {
               "key": "disable_public_endpoint",
@@ -565,6 +579,13 @@
             },
             {
               "key": "access_tags",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\", see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits for more details.",
+                  "value": "^(?=.{1,128}$)[\\w\\-_.]+:[\\w\\-_.]+$"
+                }
+              ],
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
@@ -779,7 +800,14 @@
               "key": "enable_secrets_manager_integration"
             },
             {
-              "key": "existing_secrets_manager_instance_crn"
+              "key": "existing_secrets_manager_instance_crn",
+              "value_constraints": [
+                  {
+                      "type": "regex",
+                      "description": "The value provided for 'existing_secrets_manager_instance_crn' is not valid.",
+                      "value": "^__NULL__$|^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  }
+              ]
             },
             {
               "key": "secrets_manager_secret_group_id"
