@@ -96,18 +96,6 @@ data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
 }
 
-locals {
-  current_ocp_version = tonumber(data.external.get_ocp_cluster_version.result.ocp_version)
-}
-
-data "external" "get_ocp_cluster_version" {
-  program = ["bash", "${path.module}/scripts/get_ocp_cluster_version.sh"]
-
-  query = {
-    cluster_name = var.cluster_name
-  }
-}
-
 module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
@@ -131,6 +119,16 @@ resource "ibm_resource_tag" "cos_access_tag" {
   resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
+}
+
+##############################################################################
+# OCP current version
+##############################################################################
+
+module "get_ocp_version" {
+  source           = "./modules/get-ocp-version"
+  cluster_name     = var.cluster_name
+  ibmcloud_api_key = var.ibmcloud_api_key
 }
 
 ##############################################################################
@@ -166,7 +164,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
   lifecycle {
     precondition {
-      condition     = local.current_ocp_version < 0 || local.ocp_version_num <= local.current_ocp_version || var.allow_kube_version_upgrade
+      condition     = module.get_ocp_version.ocp_version < 0 || local.ocp_version_num <= module.get_ocp_version.ocp_version || var.allow_kube_version_upgrade
       error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
     }
   }
@@ -241,7 +239,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   lifecycle {
     ignore_changes = [worker_count]
     precondition {
-      condition     = local.current_ocp_version < 0 || local.ocp_version_num <= local.current_ocp_version || var.allow_kube_version_upgrade
+      condition     = module.get_ocp_version.ocp_version < 0 || local.ocp_version_num <= module.get_ocp_version.ocp_version || var.allow_kube_version_upgrade
       error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
     }
   }
