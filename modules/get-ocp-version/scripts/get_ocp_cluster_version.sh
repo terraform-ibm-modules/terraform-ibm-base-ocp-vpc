@@ -40,7 +40,7 @@ handle_error() {
 
 ## Parse variables passed from Terraform "query"
 ## (reads stdin JSON and converts to shell vars)
-eval "$(jq -r '@sh "CLUSTER_NAME=\(.cluster_name) IBMCLOUD_API_KEY=\(.ibmcloud_api_key)"')"
+eval "$(jq -r '@sh "cluster_name=\(.cluster_name) IBMCLOUD_API_KEY=\(.ibmcloud_api_key)"')"
 export IBMCLOUD_API_KEY
 
 ## Trap all errors after parsing input
@@ -48,7 +48,7 @@ trap 'handle_error' ERR
 
 ## Login and retrieve version
 login
-ocp_version=$(get_ocp_version "$CLUSTER_NAME")
+ocp_version=$(get_ocp_version "$cluster_name")
 
 ## Return JSON to Terraform
 jq -n -r --arg ocp_version "$ocp_version" '{"ocp_version":$ocp_version}'
