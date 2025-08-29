@@ -2,6 +2,13 @@
 # Input Variables
 ##############################################################################
 
+variable "ibmcloud_api_key" {
+  description = "APIkey that's associated with the account to use, set via environment variable TF_VAR_ibmcloud_api_key"
+  type        = string
+  sensitive   = true
+  default     = null
+}
+
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string
@@ -38,6 +45,12 @@ variable "vpc_subnets" {
     cidr_block = string
   })))
   description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster is created."
+}
+
+variable "allow_kube_version_upgrade" {
+  type        = bool
+  description = "Set to true to allow the module to upgrade the kube version of the cluster. If you wish to make any change to the kube version, set this variable to true."
+  default     = false
 }
 
 variable "allow_default_worker_pool_replacement" {
