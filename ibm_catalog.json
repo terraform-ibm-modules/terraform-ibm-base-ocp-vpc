@@ -86,7 +86,7 @@
                 "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
               "service_name": "Resource group only",
-              "notes":"Viewer access is required in the resource group you want to provision in."
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
@@ -1084,19 +1084,19 @@
               "notes": "Required for creating Virtual Private Cloud (VPC)."
             },
             {
-                "service_name": "cloud-object-storage",
-                "role_crns": [
-                    "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                    "crn:v1:bluemix:public:iam::::role:Editor"
-                ],
-                "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
+              "service_name": "cloud-object-storage",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
             },
             {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
               "service_name": "Resource group only",
-              "notes":"Viewer access is required in the resource group you want to provision in."
+              "notes": "Viewer access is required in the resource group you want to provision in."
             }
           ],
           "architecture": {
@@ -1246,7 +1246,7 @@
             },
             {
               "key": "access_tags",
-              "hidden":true,
+              "hidden": true,
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
