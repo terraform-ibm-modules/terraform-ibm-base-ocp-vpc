@@ -580,13 +580,6 @@
             },
             {
               "key": "access_tags",
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\", see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits for more details.",
-                  "value": "^(?=.{1,128}$)[\\w\\-_.]+:[\\w\\-_.]+$"
-                }
-              ],
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
