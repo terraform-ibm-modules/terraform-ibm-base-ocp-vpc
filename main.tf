@@ -122,6 +122,16 @@ resource "ibm_resource_tag" "cos_access_tag" {
 }
 
 ##############################################################################
+# OCP current version
+##############################################################################
+
+module "get_ocp_version" {
+  source           = "./modules/get-ocp-version"
+  cluster_name     = var.cluster_name
+  ibmcloud_api_key = var.ibmcloud_api_key
+}
+
+##############################################################################
 # Create a OCP Cluster
 ##############################################################################
 
@@ -153,7 +163,10 @@ resource "ibm_container_vpc_cluster" "cluster" {
   security_groups = local.cluster_security_groups
 
   lifecycle {
-    ignore_changes = [kube_version]
+    precondition {
+      condition     = module.get_ocp_version.ocp_version < 0 || local.ocp_version_num <= module.get_ocp_version.ocp_version || var.allow_kube_version_upgrade
+      error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -224,7 +237,11 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   security_groups = local.cluster_security_groups
 
   lifecycle {
-    ignore_changes = [worker_count, kube_version]
+    ignore_changes = [worker_count]
+    precondition {
+      condition     = module.get_ocp_version.ocp_version < 0 || local.ocp_version_num <= module.get_ocp_version.ocp_version || var.allow_kube_version_upgrade
+      error_message = "Kube version changes are disabled unless allow_kube_upgrade is set to true."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
