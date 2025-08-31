@@ -486,7 +486,7 @@
                   {
                       "type": "regex",
                       "description": "The value provided for 'existing_vpc_crn' is not valid.",
-                      "value": "^__NULL__$|^crn:(.*:){3}is:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:vpc:r[0-9]{3}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                      "value": "^__NULL__$|^crn:(.*:){3}is:(.*:){2}[0-9a-fA-F]{32}::vpc:[0-9a-f]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
                   }
               ]
@@ -811,7 +811,15 @@
               ]
             },
             {
-              "key": "secrets_manager_secret_group_id"
+              "key": "secrets_manager_secret_group_id",
+              "value_constraints": [
+                  {
+                      "type": "regex",
+                      "description": "The value provided for 'secrets_manager_secret_group_id' is not valid.",
+                      "value": "^__NULL__$|[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}"
+
+                  }
+              ]
             },
             {
               "key": "secrets_manager_endpoint_type",
