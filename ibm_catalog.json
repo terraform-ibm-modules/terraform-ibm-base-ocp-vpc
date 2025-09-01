@@ -1066,7 +1066,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "notes": "Required to reset the cluster API key, create and edit the OpenShift cluster, and manage all related resources."
+              "notes": "Required to create and manage the Openshift cluster."
             },
             {
               "service_name": "iam-identity",
@@ -1074,14 +1074,14 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "notes": "Required to create the cluster API key needed by the OpenShift cluster on IBM Cloud and for managing and operating resources within the IBM Cloud environment."
+              "notes": "Required to create the containers-kubernetes-key for the OpenShift cluster."
             },
             {
               "service_name": "is.vpc",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating Virtual Private Cloud (VPC)."
+              "notes": "Required to create VPC."
             },
             {
                 "service_name": "cloud-object-storage",
@@ -1089,7 +1089,7 @@
                     "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                     "crn:v1:bluemix:public:iam::::role:Editor"
                 ],
-                "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
+                "notes": "Required to manage Object storage bucket for the cluster internal registry."
             },
             {
               "role_crns": [
