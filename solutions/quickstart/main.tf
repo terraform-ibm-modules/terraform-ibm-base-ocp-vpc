@@ -140,9 +140,9 @@ module "ocp_base" {
   vpc_id                              = module.vpc.vpc_id
   vpc_subnets                         = local.cluster_vpc_subnets
   worker_pools                        = local.worker_pools
-  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
+  disable_outbound_traffic_protection = var.allow_outbound_traffic
   access_tags                         = var.access_tags
-  disable_public_endpoint             = var.disable_public_endpoint
+  disable_public_endpoint             = !var.allow_public_access_to_cluster
   use_private_endpoint                = true
   cluster_config_endpoint_type        = "default"
 }
