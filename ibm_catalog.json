@@ -201,7 +201,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "atracker",
-              "notes": "[Optional] Required to set up activity tracker event routing of auditing events."
+              "notes": "[Optional] Required to set up Activity Tracker event routing of auditing events."
             },
             {
               "role_crns": [
@@ -249,7 +249,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> within a Virtual Private Cloud (VPC).<br><br>You can create a fully-configured <b>VPC</b> by selecting the [Cloud automation for VPC](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-vpc-2af61763-f8ef-4527-a815-b92166f29bc8-global) dependency or you can use an existing VPC if any. The VPC can be provisioned either in a single-zone or multi-zone configuration, depending on your availability requirements. By default, the VPC addon provisions a three-zone VPC, forming the foundation for your OpenShift cluster. This cluster includes a single worker pool distributed across all three zones, with two worker nodes per zone. If you need additional worker pools, you can easily configure them using the <b>additional_worker_pools</b> variable.<br><br>A <b>Cloud Object Storage (COS)</b> instance is required for this topology. Within this instance, an Object Storage bucket will be created, which serves as the internal registry storage for the OpenShift cluster. The [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) architecture supports the creation of COS instance. Additionally, <b>Key Management Services(KMS)</b> is used to encrypt the cluster and the boot volumes used by the cluster to enhance security.<br><br>For logging and monitoring needs, you can enable <b>Observability</b> for your cluster. [Cloud automation for Observability](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-observability-a3137d28-79e0-479d-8a24-758ebd5a0eab-global) provides advanced monitoring, logging, and operational insights into the performance and health of your deployment.<br><br><b>Secrets Manager</b> Integration can also be enabled using [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates, ensuring secure management of sensitive credentials.<br><br>This architecture provides a robust and secure foundation for deploying and managing your Red Hat OpenShift cluster, enabling seamless integration, enhanced security, and comprehensive monitoring for your cloud-native applications."
+                "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> within a Virtual Private Cloud (VPC).<br><br>You can create a fully-configured <b>VPC</b> by selecting the [Cloud automation for VPC](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-vpc-2af61763-f8ef-4527-a815-b92166f29bc8-global) dependency or you can use an existing VPC if any. The VPC can be provisioned either in a single-zone or multi-zone configuration, depending on your availability requirements. By default, the VPC addon provisions a three-zone VPC, forming the foundation for your OpenShift cluster. This cluster includes a single worker pool distributed across all three zones, with two worker nodes per zone. If you need additional worker pools, you can easily configure them using the <b>additional_worker_pools</b> variable.<br><br>A <b>Cloud Object Storage (COS)</b> instance is required for this topology. Within this instance, an Object Storage bucket will be created, which serves as the internal registry storage for the OpenShift cluster. The [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) architecture supports the creation of COS instance. Additionally, <b>Key Management Services(KMS)</b> is used to encrypt the cluster and the boot volumes used by the cluster to enhance security. In addition, you have an option to integrate with <b>Observability services</b> such as [Cloud automation for Cloud Monitoring](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-monitoring-73debdbf-894f-4c14-81c7-5ece3a70b67d-global) which provides robust monitoring capabilities and captures essential metrics such as CPU and memory utilization, helping you proactively monitor system performance and resource consumption, [Cloud automation for Activity Tracker Event Routing](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-activity-tracker-918453c3-4f97-4583-8c4a-83ef12fc7916-global) to monitor how users and applications interact with the cluster, supporting compliance and auditability, [Cloud automation for Cloud Logs](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-logs-63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global) can be enabled to collect, view, and analyze platform logs related to the cluster and logs generated by applications deployed on the cluster.<br><br><b>Secrets Manager</b> Integration can also be enabled using [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates, ensuring secure management of sensitive credentials.<br><br>This architecture provides a robust and secure foundation for deploying and managing your Red Hat OpenShift cluster, enabling seamless integration, enhanced security, and comprehensive monitoring for your cloud-native applications."
               }
             ]
           },
@@ -878,7 +878,7 @@
               "name": "deploy-arch-ibm-vpc",
               "description": "Configure the VPC and subnets to deploy the OpenShift cluster.",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
-              "version": "v7.24.0",
+              "version": "v8.1.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -989,7 +989,7 @@
             },
             {
               "name": "deploy-arch-ibm-cloud-logs",
-              "description": "Configure IBM Cloud Logs instance to analyse the platform logs.",
+              "description": "Configure an IBM Cloud Logs instance to analyse the platform logs.",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
                 "fully-configurable"
@@ -1023,7 +1023,7 @@
             },
             {
               "name": "deploy-arch-ibm-cloud-monitoring",
-              "description": "Configure IBM Cloud Monitoring to collect the platform metrics.",
+              "description": "Sets up a Cloud Monitoring instance to collect the platform metrics.",
               "id": "73debdbf-894f-4c14-81c7-5ece3a70b67d-global",
               "version": "v1.6.4",
               "flavors": [
@@ -1123,7 +1123,7 @@
             },
             {
               "name": "deploy-arch-ibm-scc-workload-protection",
-              "description": "Configure IBM Cloud SCC Workload Protection to collect security and compliance metrics.",
+              "description": "Configure an IBM Cloud Security and Compliance Center Workload Protection instance to help you manage security and compliance for your organization.",
               "id": "4322cf44-2289-49aa-a719-dd79e39b14dc-global",
               "version": "v1.11.1",
               "flavors": [
