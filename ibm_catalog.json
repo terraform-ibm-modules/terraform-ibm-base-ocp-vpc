@@ -209,7 +209,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "sysdig-secure",
-              "notes":"[Optional] Required for creating and managing SCC Workload Protection instance."
+              "notes": "[Optional] Required for creating and managing SCC Workload Protection instance."
             },
             {
               "role_crns": [
