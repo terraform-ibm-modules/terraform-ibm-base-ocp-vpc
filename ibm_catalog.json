@@ -86,7 +86,7 @@
                 "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
               "service_name": "Resource group only",
-              "notes":  "Viewer access is required in the resource group you want to provision in."
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
@@ -103,7 +103,6 @@
               "notes": "[Optional] Required to deploy Cloud automation for account configuration, which creates foundational IBM Cloud account resources, like IAM settings, trusted profiles, access groups, and resource groups."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
@@ -112,7 +111,6 @@
               "notes": "Required to create and edit OpenShift cluster and the related resources."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Operator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
@@ -121,7 +119,6 @@
               "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
@@ -130,7 +127,6 @@
               "notes": "Required for creating Virtual Private Cloud(VPC)."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -139,7 +135,6 @@
               "notes": "[Optional] Required to create Cloud Object Storage (COS) Instance."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -148,7 +143,6 @@
               "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Kubernetes Secrets and Object Storage bucket."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
@@ -157,7 +151,6 @@
               "notes": "Required to create and manage the Openshift cluster."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
@@ -166,7 +159,6 @@
               "notes": "[Optional] Required for consuming Observability deployable architecture which sets up Cloud Monitoring."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -175,7 +167,6 @@
               "notes": "[Optional] Required for consuming Observability deployable architecture which sets up Cloud Logs."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Writer",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -200,7 +191,6 @@
               "notes": "[Optional] Required for creating an Event Notifications instance."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -527,7 +517,7 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                    "type": "string"
+                  "type": "string"
                 }
               },
               "virtual": true
@@ -1090,7 +1080,6 @@
               "notes": "[Optional] Required to deploy Cloud automation for account configuration, which creates foundational IBM Cloud account resources, like IAM settings, trusted profiles, access groups, and resource groups."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
@@ -1099,7 +1088,6 @@
               "notes": "Required to create and edit OpenShift cluster and the related resources."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Operator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
@@ -1108,7 +1096,6 @@
               "notes": "Required to create the containers-kubernetes-key needed by the OpenShift cluster on IBM Cloud."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
@@ -1117,7 +1104,6 @@
               "notes": "Required for creating Virtual Private Cloud(VPC)."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -1126,7 +1112,6 @@
               "notes": "[Optional] Required to create Cloud Object Storage (COS) Instance."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -1135,7 +1120,6 @@
               "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Kubernetes Secrets and Object Storage bucket."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -1144,7 +1128,6 @@
               "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
@@ -1153,16 +1136,14 @@
               "notes": "Required to create and manage the Openshift cluster."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "sysdig-monitor",
-              "notes":  "[Optional] Required for consuming Observability deployable architecture which sets up Cloud Monitoring."
+              "notes": "[Optional] Required for consuming Observability deployable architecture which sets up Cloud Monitoring."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -1171,7 +1152,6 @@
               "notes": "[Optional] Required for consuming Observability deployable architecture which sets up Cloud Logs."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Writer",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -1196,7 +1176,6 @@
               "notes": "[Optional] Required for creating an Event Notifications instance."
             },
             {
-
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
