@@ -86,7 +86,7 @@
                 "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
               "service_name": "Resource group only",
-              "notes":"Viewer access is required in the resource group you want to provision in."
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
@@ -785,7 +785,7 @@
               "key": "subnets",
               "type": "object",
               "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
-              "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addressess. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
+              "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
               "required": false,
               "virtual": true
             },
@@ -1059,6 +1059,15 @@
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "CIS IBM Cloud Foundations Benchmark v1.1.0",
+                "profile_version": "1.1.0"
+              }
+            ]
+          },
           "iam_permissions": [
             {
               "service_name": "containers-kubernetes",
@@ -1084,19 +1093,19 @@
               "notes": "Required for creating Virtual Private Cloud (VPC)."
             },
             {
-                "service_name": "cloud-object-storage",
-                "role_crns": [
-                    "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                    "crn:v1:bluemix:public:iam::::role:Editor"
-                ],
-                "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
+              "service_name": "cloud-object-storage",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
             },
             {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
               "service_name": "Resource group only",
-              "notes":"Viewer access is required in the resource group you want to provision in."
+              "notes": "Viewer access is required in the resource group you want to provision in."
             }
           ],
           "architecture": {
@@ -1246,7 +1255,7 @@
             },
             {
               "key": "access_tags",
-              "hidden":true,
+              "hidden": true,
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
@@ -1263,6 +1272,7 @@
               "key": "disable_outbound_traffic_protection"
             }
           ],
+          "dependency_version_2": true,
           "terraform_version": "1.10.5"
         }
       ]
