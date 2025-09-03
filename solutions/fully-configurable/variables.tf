@@ -268,13 +268,13 @@ variable "use_private_endpoint" {
 
 variable "allow_public_access_to_cluster" {
   type        = bool
-  description = "Whether to allow public access to master node of the cluster by enabling public endpoint."
+  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
   default     = false
 }
 
 variable "allow_outbound_traffic" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers."
+  description = "Set to true to allow public outbound access from the cluster workers."
   default     = false
 }
 
