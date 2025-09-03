@@ -47,7 +47,7 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null

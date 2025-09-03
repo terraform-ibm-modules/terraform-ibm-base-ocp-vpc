@@ -135,7 +135,7 @@ module "ocp_base" {
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
-  ocp_version                         = var.ocp_version
+  ocp_version                         = var.openshift_version
   ocp_entitlement                     = var.ocp_entitlement
   vpc_id                              = module.vpc.vpc_id
   vpc_subnets                         = local.cluster_vpc_subnets
