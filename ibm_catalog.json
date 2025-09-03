@@ -166,7 +166,6 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
               "service_name": "sysdig-monitor",
@@ -174,7 +173,6 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "logs",
@@ -196,16 +194,9 @@
               "notes": "[Optional] Required when enabling the Activity Tracker Event Routing."
             },
             {
-              "service_name": "metrics-router",
-              "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
-              "notes": "[Optional] Required to enable metrics routing to the Cloud Monitoring."
-            },
-            {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "event-notifications",
               "notes": "[Optional] Required when enabling the Event Notifications integration."
