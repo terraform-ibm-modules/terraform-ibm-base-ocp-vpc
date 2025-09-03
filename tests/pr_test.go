@@ -4,7 +4,6 @@ package test
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"strings"
 	"testing"
@@ -41,21 +40,6 @@ var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
 	permanentResources map[string]interface{}
 )
-
-var validRegions = []string{
-	"au-syd",
-	"jp-osa",
-	"jp-tok",
-	"eu-de",
-	"eu-gb",
-	"eu-es",
-	"us-east",
-	"us-south",
-	"ca-tor",
-	"br-sao",
-	"eu-fr2",
-	"ca-mon",
-}
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
