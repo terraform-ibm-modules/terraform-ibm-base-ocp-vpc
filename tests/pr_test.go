@@ -262,8 +262,8 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 		"fully-configurable",
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
-			"region":                       "us-south",
-			"secrets_manager_service_plan": "standard",
+			"region":                       "eu-de",
+			"secrets_manager_service_plan": "trial",
 		},
 	)
 
@@ -285,8 +285,8 @@ func TestRoksDependencyPermutations(t *testing.T) {
 			OfferingFlavor: "fully-configurable",
 			Inputs: map[string]interface{}{
 				"prefix":                       "ocp-per",
-				"region":                       "us-south",
-				"secrets_manager_service_plan": "standard",
+				"region":                       "eu-de",
+				"secrets_manager_service_plan": "trial",
 				"existing_cos_instance_crn":    permanentResources["general_test_storage_cos_instance_crn"],
 			},
 		},
