@@ -120,7 +120,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "kms",
-              "notes": "[Optional] [Optional] Required if Key Protect is used for encryption."
+              "notes": "[Optional] Required if Key Protect is used for encryption."
             },
             {
               "role_crns": [
@@ -214,7 +214,7 @@
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift cluster topology - Fully configurable",
+                  "caption": "Red Hat OpenShift cluster topology - Standard (Integrated setup with configurable services)",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
@@ -1171,7 +1171,7 @@
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift cluster topology - QuickStart",
+                  "caption": "Red Hat OpenShift cluster topology - QuickStart (Basic and simple)",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
