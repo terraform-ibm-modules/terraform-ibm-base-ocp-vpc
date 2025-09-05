@@ -166,14 +166,16 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Editor"
+                "crn:v1:bluemix:public:iam::::role:Editor",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "sysdig-monitor",
               "notes": "[Optional] Required to create an instance of Cloud Monitoring."
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Editor"
+                "crn:v1:bluemix:public:iam::::role:Editor",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "logs",
               "notes": "[Optional] Required to create an instance of Cloud logs."
