@@ -67,7 +67,7 @@ variable "cluster_name" {
   default     = "openshift"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -266,10 +266,16 @@ variable "use_private_endpoint" {
   default     = true
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster" {
   type        = bool
-  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. Warning: Set this field to `false` if you want to retain public access to the cluster. Once the cluster is created, this cannot be changed."
-  default     = true
+  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  default     = false
+}
+
+variable "allow_outbound_traffic" {
+  type        = bool
+  description = "Set to true to allow public outbound access from the cluster workers."
+  default     = false
 }
 
 variable "cluster_config_endpoint_type" {
@@ -277,12 +283,6 @@ variable "cluster_config_endpoint_type" {
   type        = string
   default     = "default"
   nullable    = false
-}
-
-variable "disable_outbound_traffic_protection" {
-  type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
-  default     = false
 }
 
 variable "verify_worker_network_readiness" {

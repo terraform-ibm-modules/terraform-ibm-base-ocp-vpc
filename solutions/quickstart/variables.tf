@@ -47,7 +47,7 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -91,14 +91,14 @@ variable "size" {
   default     = "mini"
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster" {
   type        = bool
-  description = "Disables the public endpoint, which allows internet access to the cluster, during creation only."
-  default     = false
+  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  default     = true
 }
 
-variable "disable_outbound_traffic_protection" {
+variable "allow_outbound_traffic" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound)."
+  description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
