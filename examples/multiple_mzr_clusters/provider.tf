@@ -9,7 +9,7 @@ provider "ibm" {
 
 provider "helm" {
   alias = "helm_cluster_1"
-  kubernetes {
+  kubernetes = {
     host                   = data.ibm_container_cluster_config.cluster_config_c1.host
     token                  = data.ibm_container_cluster_config.cluster_config_c1.token
     cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config_c1.ca_certificate
@@ -18,7 +18,7 @@ provider "helm" {
 
 provider "helm" {
   alias = "helm_cluster_2"
-  kubernetes {
+  kubernetes = {
     host                   = data.ibm_container_cluster_config.cluster_config_c2.host
     token                  = data.ibm_container_cluster_config.cluster_config_c2.token
     cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config_c2.ca_certificate

@@ -48,28 +48,28 @@ resource "helm_release" "kube_audit" {
   recreate_pods = true
   force_update  = true
 
-  set {
-    name  = "metadata.name"
-    type  = "string"
-    value = var.audit_deployment_name
-  }
-
-  set {
-    name  = "metadata.namespace"
-    type  = "string"
-    value = var.audit_namespace
-  }
-  set {
-    name  = "image.name"
-    type  = "string"
-    value = var.audit_webhook_listener_image
-  }
-
-  set {
-    name  = "image.tag"
-    type  = "string"
-    value = var.audit_webhook_listener_image_tag_digest
-  }
+  set = [
+    {
+      name  = "metadata.name"
+      type  = "string"
+      value = var.audit_deployment_name
+    },
+    {
+      name  = "metadata.namespace"
+      type  = "string"
+      value = var.audit_namespace
+    },
+    {
+      name  = "image.name"
+      type  = "string"
+      value = var.audit_webhook_listener_image
+    },
+    {
+      name  = "image.tag"
+      type  = "string"
+      value = var.audit_webhook_listener_image_tag_digest
+    }
+  ]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace}"
