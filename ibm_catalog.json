@@ -934,7 +934,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": "Configure the VPC and subnets to deploy the OpenShift cluster.",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.2.0",
+              "version": "v8.2.1",
               "flavors": [
                 "fully-configurable"
               ],
