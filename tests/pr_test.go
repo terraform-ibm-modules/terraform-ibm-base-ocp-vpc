@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -246,6 +247,16 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 	}
 }
 
+/*
+Secrets manager is manually disabled in this test because it deploys Event notification
+and event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
+is not considered by projects as EN is not a direct dependency of OCP DA. So undeploy fails, because
+key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
+EN so SM is being disabled.
+
+Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
+Once that is fixed, we can remove the logic to disable SM
+*/
 func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
@@ -266,6 +277,14 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 			"secrets_manager_service_plan": "trial",
 		},
 	)
+
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingFlavor: "fully-configurable",
+			Enabled:        core.BoolPtr(false), // explicitly disabled
+		},
+	}
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
