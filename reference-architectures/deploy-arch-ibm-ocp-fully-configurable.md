@@ -23,9 +23,9 @@ production: true
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
 deployment-url: https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-vpc-1728a4fd-f561-4cf9-82ef-2b1eeb5da1a8-global
 
-docs: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architecture/deploy-arch-ibm-ocp-fully-configurable.md
+docs: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deploy-arch-ibm-ocp-fully-configurable.md
 
-image_source: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architecture/deployable-architecture-ocp-cluster.svg
+image_source: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deployable-architecture-ocp-cluster.svg
 
 related_links:
   - title: "Landing zone for containerized applications with OpenShift"
