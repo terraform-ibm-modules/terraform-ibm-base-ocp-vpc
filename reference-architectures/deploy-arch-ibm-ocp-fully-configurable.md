@@ -12,7 +12,7 @@ authors:
   - name: "Prateek Sharma"
 
 # The release that the reference architecture describes
-version: 3.55.6
+version: 3.57.0
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -23,7 +23,7 @@ production: true
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
 deployment-url: https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-vpc-1728a4fd-f561-4cf9-82ef-2b1eeb5da1a8-global
 
-docs: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deploy-arch-ibm-ocp-fully-configurable.md
+docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deployable-architecture-ocp-cluster.svg
 
@@ -48,7 +48,7 @@ content-type: reference-architecture
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-compliance="FedRAMP"}
-{: toc-version="1.1.0"}
+{: toc-version="3.57.0"}
 
 Landing zone for containerized applications with OpenShift provides a scalable, secure, and production-ready foundation for deploying containerized applications on IBM Cloud. It comes integrated by default with several IBM Cloud services to enhance security, observability, and compliance. Data encryption is enforced using Key Protect and Key Management Services (KMS), while Cloud Object Storage (COS) supports persistent storage and acts as the internal image registry. Secrets Manager is used to securely manage sensitive credentials and certificates, ensuring tighter control over access and authentication. Observability is delivered through Cloud Monitoring, Cloud Logs, and Activity Tracker, while regulatory compliance is supported via Security and Compliance Center and Workload Protection. These integrated capabilities work together to deliver a resilient and well-governed OpenShift environment.
 

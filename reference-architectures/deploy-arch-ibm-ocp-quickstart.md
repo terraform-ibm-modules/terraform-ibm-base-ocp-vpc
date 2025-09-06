@@ -12,7 +12,7 @@ authors:
   - name: "Prateek Sharma"
 
 # The release that the reference architecture describes
-version: 3.55.6
+version: 3.57.0
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -24,12 +24,12 @@ production: true
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
 deployment-url: https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-vpc-1728a4fd-f561-4cf9-82ef-2b1eeb5da1a8-global
 
-docs: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deploy-arch-ibm-ocp-quickstart.md
+docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deployable-architecture-ocp-cluster-qs.svg
 
 related_links:
-  - title: "Cloud automation for Red Hat OpenShift Container Platform on VPC"
+  - title: "Landing zone for containerized applications with OpenShift"
     url: "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-ocp-ra"
     description: "A deployable architecture solution that is based on the IBM Cloud for Financial Services reference architecture. This solution delivers a scalable and flexible Red Hat OpenShift environment on IBM Cloud Virtual Private Cloud (VPC), with seamless integration to security, observability, and other foundational services for containerized workloads."
 
@@ -42,24 +42,24 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Cloud automation for Red Hat OpenShift Container Platform on VPC - QuickStart variation
-{: #roks-ra-qs}
+# Landing zone for containerized applications with OpenShift - QuickStart variation
+{: #ocp-ra-qs}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
-{: toc-version="6.6.0"}
+{: toc-version="3.57.0"}
 
-The QuickStart variation of the Cloud automation for Red Hat OpenShift Container Platform on VPC deployable architecture creates a fully customizable Virtual Private Cloud (VPC) environment in a single region. The solution provides a single Red Hat OpenShift cluster in a secure VPC for your workloads. The QuickStart variation is designed to deploy quickly for demonstration and development.
+The QuickStart variation of the Landing zone for containerized applications with OpenShift deployable architecture creates a fully customizable Virtual Private Cloud (VPC) environment in a single region. The solution provides a single Red Hat OpenShift cluster in a secure VPC for your workloads. The QuickStart variation is designed to deploy quickly for demonstration and development.
 
 ## Architecture diagram
 {: #ra-ocp-qs-architecture-diagram}
 
-![Architecture diagram for the QuickStart variation of Cloud automation for Red Hat OpenShift Container Platform on VPC](deployable-architecture-ocp-cluster-qs.svg "Architecture diagram of QuickStart variation of Cloud automation for Red Hat OpenShift Container Platform on VPC deployable architecture"){: caption="Figure 1. QuickStart variation of Cloud automation for Red Hat OpenShift Container Platform on VPC" caption-side="bottom"}{: external download="deployable-architecture-ocp-cluster-qs.svg"}
+![Architecture diagram for the QuickStart variation of Landing zone for containerized applications with OpenShift](deployable-architecture-ocp-cluster-qs.svg "Architecture diagram of QuickStart variation of Landing zone for containerized applications with OpenShift deployable architecture"){: caption="Figure 1. QuickStart variation of Landing zone for containerized applications with OpenShift" caption-side="bottom"}{: external download="deployable-architecture-ocp-cluster-qs.svg"}
 
 ## Design concepts
 {: #ra-ocp-qs-design-concepts}
 
-![Design requirements for Cloud automation for Red Hat OpenShift Container Platform on VPC](heat-map-deploy-arch-ocp-quickstart.svg "Design concepts"){: caption="Figure 2. Scope of the design concepts" caption-side="bottom"}
+![Design requirements for Landing zone for containerized applications with OpenShift](heat-map-deploy-arch-ocp-quickstart.svg "Design concepts"){: caption="Figure 2. Scope of the design concepts" caption-side="bottom"}
 
 ## Requirements
 {: #ra-ocp-qs-requirements}
