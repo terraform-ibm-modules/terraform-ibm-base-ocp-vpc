@@ -28,9 +28,18 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/reference-architectures/deployable-architecture-ocp-cluster.svg
 
 related_links:
-  - title: "Landing zone for containerized applications with OpenShift"
+  - title: "Landing zone for containerized applications with OpenShift (Standard - Integrated setup with configurable services)"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-ocp-fully-configurable"
     description: "A deployable architecture that delivers a scalable and flexible Red Hat OpenShift environment on IBM Cloud Virtual Private Cloud (VPC), with seamless integration to security, observability, and other foundational services for containerized workloads."
+  - title: "Landing zone for containerized applications with OpenShift (QuickStart - Basic and simple)"
+    url: "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-ocp-ra-qs"
+    description: "A deployable architecture solution that is based on the IBM Cloud for Financial Services reference architecture. This solution delivers a scalable and flexible Red Hat OpenShift environment on IBM Cloud Virtual Private Cloud (VPC), with seamless integration to security, observability, and other foundational services for containerized workloads."
+  - title: "Landing zone for containerized applications with OpenShift (Standard - Financial Services edition)"
+    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-ocp-ra"
+    description: "A deployable architecture that creates a secure and compliant Red Hat OpenShift Container Platform workload clusters on a Virtual Private Cloud (VPC) network based on the IBM Cloud for Financial Services reference architecture."
+  - title: "Landing zone for containerized applications with OpenShift (QuickStart - Financial Services edition)"
+    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-roks-ra-qs"
+    description: "An introductory, non-certified deployment aligned with the Financial Services Cloud VPCs topology. Not suitable for production workloads or upgrade paths."
 
 use-case: Cybersecurity
 industry: Banking,FinancialSector
@@ -42,7 +51,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for containerized applications with OpenShift - Standard - Integrated setup with configurable services
+# Landing zone for containerized applications with OpenShift - Standard (Integrated setup with configurable services) variation
 {: #ocp-fully-configurable}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
