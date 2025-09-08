@@ -273,7 +273,7 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 		"fully-configurable",
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
-			"region":                       "us-south",
+			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
 		},
 	)
