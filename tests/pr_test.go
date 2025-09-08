@@ -248,17 +248,17 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 }
 
 /*
-Secrets manager is manually disabled in this test because it deploys Event notification
-and event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
-is not considered by projects as EN is not a direct dependency of OCP DA. So undeploy fails, because
-key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
-EN so SM is being disabled.
-
-Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
-Once that is fixed, we can remove the logic to disable SM
+Below test is skipped because of 2 issues.
+1. Config status changes to failed without any errors in projects and our pipeline fails.
+	Issue: https://github.ibm.com/epx/projects/issues/4757
+2. Undeploy order is not considered for nested dependencies such as Event notification and key protect
+   which causes undeploy of key protect to fail as keys created by EN are not yet deleted
+   Issue: https://github.ibm.com/epx/projects/issues/4750
 */
+
 func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
+	t.Skip("Skipping this test as there are known issues in projects")
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:       t,
@@ -277,6 +277,17 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 			"secrets_manager_service_plan": "trial",
 		},
 	)
+
+	/*
+		Secrets manager is manually disabled in this test because it deploys Event notification
+		and event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
+		is not considered by projects as EN is not a direct dependency of OCP DA. So undeploy fails, because
+		key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
+		EN so SM is being disabled.
+
+		Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
+		Once that is fixed, we can remove the logic to disable SM
+	*/
 
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
