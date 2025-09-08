@@ -56,3 +56,28 @@ output "master_status" {
   description = "The current status of the Kubernetes master node in the cluster."
   value       = module.ocp_base.master_status
 }
+
+output "next_steps_text" {
+  value       = "Now, you can use Openshift Cluster to build, deploy, and manage containerized applications."
+  description = "Next steps text"
+}
+
+output "next_step_primary_label" {
+  value       = "Go to Openshift Cluster dashboard"
+  description = "Primary label"
+}
+
+output "next_step_primary_url" {
+  value       = module.ocp_base.ingress_hostname
+  description = "primary url"
+}
+
+output "next_step_secondary_label" {
+  value       = "Openshift Cluster Overview"
+  description = "Secondary label"
+}
+
+output "next_step_secondary_url" {
+  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
+  description = "secondary url"
+}
