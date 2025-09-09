@@ -193,7 +193,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "logs-router",
-              "notes": "[Optional] Required for configuring cloud logs routing."
+              "notes": "[Optional] Required for configuring Cloud Logs routing."
             },
             {
               "role_crns": [
