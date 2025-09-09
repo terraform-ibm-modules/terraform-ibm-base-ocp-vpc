@@ -9,7 +9,6 @@
         "target_terraform",
         "terraform",
         "solution",
-        "converged_infra",
         "platform_engineering"
       ],
       "keywords": [
