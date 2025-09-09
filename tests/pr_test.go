@@ -247,10 +247,8 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 	}
 }
 
-
 func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
-	t.Skip("Skipping this test as there are known issues in projects")
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:       t,
@@ -269,7 +267,6 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 			"secrets_manager_service_plan": "trial",
 		},
 	)
-	
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
 			OfferingName:   "deploy-arch-ibm-secrets-manager",
