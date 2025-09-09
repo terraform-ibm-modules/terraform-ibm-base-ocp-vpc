@@ -41,8 +41,8 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the cluster."
-  default     = "Default"
+  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
+  default     = null
 }
 
 variable "cluster_resource_tags" {
@@ -70,7 +70,7 @@ variable "cluster_name" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
-  default     = "4.17"
+  default     = null
 }
 
 variable "ocp_entitlement" {
@@ -181,7 +181,7 @@ variable "default_worker_pool_workers_per_zone" {
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
-  default     = "RHEL_9_64"
+  default     = "RHCOS"
 }
 
 variable "default_worker_pool_labels" {
@@ -414,7 +414,7 @@ variable "kms_endpoint_type" {
   default     = "private"
   nullable    = false
   validation {
-    condition     = can(regex("public|private", var.kms_endpoint_type))
+    condition     = can(regex("^(public|private)$", var.kms_endpoint_type))
     error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
 }
@@ -586,7 +586,7 @@ variable "audit_namespace" {
 
 variable "audit_deployment_name" {
   type        = string
-  description = "The name of log collection deployement and service."
+  description = "The name of log collection deployment and service."
   default     = "ibmcloud-kube-audit"
 }
 
