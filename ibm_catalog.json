@@ -9,7 +9,7 @@
         "target_terraform",
         "terraform",
         "solution",
-        "containers"
+        "containers",
         "platform_engineering"
       ],
       "keywords": [
