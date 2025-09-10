@@ -1,18 +1,23 @@
 {
   "products": [
     {
-      "name": "deploy-arch-ibm-ocp-vpc",
-      "label": "Cloud automation for Red Hat OpenShift Container Platform on VPC",
+      "name": "deploy-arch-ibm-slz-ocp",
+      "label": "Landing zone for containerized applications with OpenShift",
       "product_kind": "solution",
       "tags": [
         "ibm_created",
         "target_terraform",
         "terraform",
         "solution",
-        "containers",
+        "compute",
+        "reference_architecture",
         "converged_infra"
       ],
       "keywords": [
+        "vpc",
+        "slz",
+        "IaC",
+        "infrastructure as code",
         "terraform",
         "ocp",
         "cluster",
@@ -20,65 +25,53 @@
         "redhat",
         "ROKS"
       ],
-      "short_description": "Automates the deployment of Red Hat OpenShift container platform on IBM Cloud with optional integration of security and logging services.",
-      "long_description": "The Cloud automation for Red Hat OpenShift Container Platform on VPC enables a scalable and flexible cloud environment for containerized applications with seamless integration to other security and observability services such as logging, monitoring and activity tracker event routing. This architecture can be deployed independently while also serving as a foundational deployable architecture for other architectures like [Cloud automation for Red Hat OpenShift AI](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-ocp-ai-ba708aed-bb8a-4ac0-83a7-53a066701db5-global) to deploy mission critical applications and AI-driven initiatives to market quickly and securely with a managed OpenShift service.\n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
-      "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md",
+      "short_description": "Deploys an OpenShift topology on VPC with flexible configurations, QuickStart options for simplified setup, and advanced features for security and compliance",
+      "long_description": "This solution enables the provisioning of Red Hat OpenShift clusters on IBM Cloud VPC using a range of configurations tailored to different needs — from sandbox experimentation to validated financial services deployments. Each variation offers a distinct balance of customization, integration with security and observability features, and readiness for production or evaluation use. Whether you're exploring OpenShift capabilities or deploying in regulated environments, these configurations help accelerate your cloud-native journey.",
+      "offering_docs_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-overview#overview-ocp",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
       "features": [
         {
-          "title": "Red Hat OpenShift Cluster",
-          "description": "Creates a [Red Hat OpenShift Cluster](https://cloud.ibm.com/docs/openshift) on IBM Cloud that helps businesses manage their containerized applications at scale with added enterprise features such as security, scalability, and automation."
+          "title": "Configurable OpenShift deployment options",
+          "description": "Provides multiple configuration paths for provisioning [Red Hat OpenShift clusters](https://cloud.ibm.com/docs/openshift) on IBM Cloud VPC. Supports use cases ranging from quick experimentation to production-grade deployments in regulated environments. Capabilities vary by variation, with some offering simplified onboarding and others enabling advanced integrations and compliance alignment."
         },
         {
-          "title": "Worker pools",
-          "description": "Configures worker pools in cluster through which you can group and manage [worker nodes](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) of similar configurations, such as compute resources and availability zones."
+          "title": "OpenShift Cluster with Scalable Access and Worker Management",
+          "description": "Deploys a Red Hat OpenShift cluster with Kubernetes-native orchestration and automated lifecycle management. All variations support [public and private access endpoints](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster) and [worker pool](https://cloud.ibm.com/docs/openshift?topic=openshift-add-workers-vpc) configurations, enabling secure connectivity and scalable workload deployment."
         },
         {
-          "title": "Access Endpoints",
-          "description": "Offers support for [private and public endpoints](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster) to connect to the cluster. If the cluster is accessed only by applications running on IBM Cloud, the private endpoint can be enabled for enhanced security."
+          "title": "Infrastructure Setup",
+          "description": "Automatically provisions multi-zone VPCs, [subnets](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-subnets&interface=ui#vpc_basics_subnets), and networking components. QuickStart variations abstract this setup to minimize required IBM Cloud knowledge, while other configurations expose full control for advanced users."
         },
         {
-          "title": "Ingress Controller",
-          "description": "Sets up the [ingress controller](https://cloud.ibm.com/docs/openshift?topic=openshift-ingress-configure) for the cluster, responsible for routing external traffic to the appropriate services within the cluster."
+          "title": "IBM Cloud Services Integrations",
+          "description": "Depending on the variation, clusters may include integrations with IBM Cloud services such as [Key Protect](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-setup&interface=ui), [Hyper Protect Crypto Services](https://cloud.ibm.com/catalog/services/hyper-protect-crypto-services), [Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global), [Object Storage](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand), and Observability services."
         },
         {
-          "title": "Object Storage",
-          "description": "Creates and configures an [Object Storage bucket](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand) which acts as OpenShift internal registry storage. You can provide an existing COS Instance or use the [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) for creating a new instance."
+          "title": "Security and Compliance Alignment",
+          "description": "Advanced configurations include features such as [audit logging](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server) and encryption key management, and may align with [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about) for production use in regulated environments."
         },
         {
-          "title": "KMS Encryption",
-          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-setup&interface=ui) to encrypt the OpenShift cluster and its boot volumes. You can use either a newly created encryption key or an existing one."
+          "title": "Sets up logging for the OpenShift cluster",
+          "description": "Optionally, you can deploy [Cloud automation for Cloud Logs](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-logs-63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global) to route, alert, and visualize platform logs that are generated by your OpenShift cluster."
         },
         {
-          "title": "Secrets Manager",
-          "description": "Optional integration with [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates."
+          "title": "Sets up monitoring operational metrics for the OpenShift cluster",
+          "description": "Optionally, you can deploy [Cloud automation for Cloud Monitoring](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-monitoring-73debdbf-894f-4c14-81c7-5ece3a70b67d-global) to measure how users and applications interact with your OpenShift cluster."
         },
         {
-          "title": "Kube Audit",
-          "description": "Deploys the Kube Audit solution to monitor and log Kubernetes API server activity. It captures events such as user actions, configuration changes, and access attempts, helping meet security and compliance requirements through centralized [audit logging](https://cloud.ibm.com/docs/containers?topic=containers-health-audit#audit-api-server)."
-        },
-        {
-          "title": "Sets up logging for the OCP instance.",
-          "description": "Optionally, you can deploy Cloud automation for Cloud Logs to route, alert, and visualize platform logs that are generated by your OCP instance [Learn more](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-logs-63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global)."
-        },
-        {
-          "title": "Sets up monitoring operational metrics for the OCP instance",
-          "description": "Optionally, you can deploy Cloud automation for Cloud Monitoring to measure how users and applications interact with your OCP instance [Learn more](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-monitoring-73debdbf-894f-4c14-81c7-5ece3a70b67d-global)."
-        },
-        {
-          "title": "Sets up activity tracking for the OCP instance",
-          "description": "Optionally, you can deploy Cloud automation for Activity Tracker Event Routing to route and securely store auditing events that are related to your OCP instance [Learn more](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-activity-tracker-918453c3-4f97-4583-8c4a-83ef12fc7916-global)."
+          "title": "Sets up activity tracking for the OpenShift cluster",
+          "description": "Optionally, you can deploy [Cloud automation for Activity Tracker Event Routing](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-activity-tracker-918453c3-4f97-4583-8c4a-83ef12fc7916-global) to route and securely store auditing events that are related to your OpenShift cluster."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues, please open an issue in the repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
-          "label": "Fully configurable",
-          "name": "fully-configurable",
+          "label": "Standard - Integrated setup with configurable services",
           "index": 2,
+          "name": "fully-configurable",
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
+          "release_notes_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-secure-infrastructure-vpc-relnotes",
           "compliance": {
             "authority": "scc-v3",
             "profiles": [
@@ -139,7 +132,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "kms",
-              "notes": "[Optional] [Optional] Required if Key Protect is used for encryption."
+              "notes": "[Optional] Required if Key Protect is used for encryption."
             },
             {
               "role_crns": [
@@ -232,14 +225,18 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
+                "description": "Ideal for users who want flexibility with a reliable starting point."
+              },
+              {
+                "title": " ",
+                "description": "Offers full control over architecture parameters, with well-chosen defaults that enable a functional OpenShift cluster and integrated IBM Cloud services without requiring manual adjustments."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift cluster topology",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster.svg",
+                  "caption": "Red Hat OpenShift cluster topology - Standard (Integrated setup with configurable services)",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports creation of <b>Red Hat OpenShift cluster</b> within a Virtual Private Cloud (VPC).<br><br>You can create a fully-configured <b>VPC</b> by selecting the [Cloud automation for VPC](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-vpc-2af61763-f8ef-4527-a815-b92166f29bc8-global) dependency or you can use an existing VPC if any. The VPC can be provisioned either in a single-zone or multi-zone configuration, depending on your availability requirements. By default, the VPC addon provisions a three-zone VPC, forming the foundation for your OpenShift cluster. This cluster includes a single worker pool distributed across all three zones, with two worker nodes per zone. If you need additional worker pools, you can easily configure them using the <b>additional_worker_pools</b> variable.<br><br>A <b>Cloud Object Storage (COS)</b> instance is required for this topology. Within this instance, an Object Storage bucket will be created, which serves as the internal registry storage for the OpenShift cluster. The [Cloud automation for Object Storage](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cos-68921490-2778-4930-ac6d-bae7be6cd958-global) architecture supports the creation of COS instance. Additionally, <b>Key Management Services(KMS)</b> is used to encrypt the cluster and the boot volumes used by the cluster to enhance security. In addition, you have an option to integrate with <b>Observability services</b> such as [Cloud automation for Cloud Monitoring](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-monitoring-73debdbf-894f-4c14-81c7-5ece3a70b67d-global) which provides robust monitoring capabilities and captures essential metrics such as CPU and memory utilization, helping you proactively monitor system performance and resource consumption, [Cloud automation for Activity Tracker Event Routing](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-activity-tracker-918453c3-4f97-4583-8c4a-83ef12fc7916-global) to monitor how users and applications interact with the cluster, supporting compliance and auditability, [Cloud automation for Cloud Logs](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-cloud-logs-63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global) can be enabled to collect, view, and analyze platform logs related to the cluster and logs generated by applications deployed on the cluster.<br><br><b>Secrets Manager</b> Integration can also be enabled using [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing Ingress subdomain certificates, ensuring secure management of sensitive credentials.<br><br>This architecture provides a robust and secure foundation for deploying and managing your Red Hat OpenShift cluster, enabling seamless integration, enhanced security, and comprehensive monitoring for your cloud-native applications."
@@ -1224,11 +1221,12 @@
           "terraform_version": "1.10.5"
         },
         {
-          "label": "QuickStart",
-          "name": "quickstart",
+          "label": "QuickStart - Basic and simple",
+          "name": "ocp-quickstart",
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
+          "release_notes_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-secure-infrastructure-vpc-relnotes",
           "compliance": {
             "authority": "scc-v3",
             "profiles": [
@@ -1282,14 +1280,18 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configures QuickStart deployment of a Red Hat OpenShift cluster within an IBM Cloud VPC with limited options."
+                "description": "Ideal for users new to IBM Cloud or OpenShift who want to get started without configuring underlying infrastructure."
+              },
+              {
+                "title": " ",
+                "description": "A lightweight, experimental configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Not certified, not upgradeable, and not intended for production use."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift cluster topology - Quickstart",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
+                  "caption": "Red Hat OpenShift cluster topology - QuickStart (Basic and simple)",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster. Thus, it helps ensure seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large.</b> The chosen size determines the <b>machine type</b> of the worker nodes, <b>the number of availability zones</b> the cluster spans, and <b>number of worker nodes</b> deployed in each zone. To get more information on this, refer [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).<br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with the infrastructure, integrated storage services, and right-sized compute resources of IBM Cloud."
