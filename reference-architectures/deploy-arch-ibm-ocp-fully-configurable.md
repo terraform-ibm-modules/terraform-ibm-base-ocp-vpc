@@ -12,7 +12,7 @@ authors:
   - name: "Prateek Sharma"
 
 # The release that the reference architecture describes
-version: 3.57.0
+version: 3.58.1
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -57,7 +57,7 @@ content-type: reference-architecture
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-compliance="FedRAMP"}
-{: toc-version="3.57.0"}
+{: toc-version="3.58.1 "}
 
 Landing zone for containerized applications with OpenShift provides a scalable, secure, and production-ready foundation for deploying containerized applications on IBM Cloud. It comes integrated by default with several IBM Cloud services to enhance security, observability, and compliance. Data encryption is enforced using Key Protect and Key Management Services (KMS), while Cloud Object Storage (COS) supports persistent storage and acts as the internal image registry. Secrets Manager is used to securely manage sensitive credentials and certificates, ensuring tighter control over access and authentication. Observability is delivered through Cloud Monitoring, Cloud Logs, and Activity Tracker, while regulatory compliance is supported via Security and Compliance Center and Workload Protection. These integrated capabilities work together to deliver a resilient and well-governed OpenShift environment.
 
@@ -68,12 +68,12 @@ While this architecture is designed to function independently, it also serves as
 ## Architecture diagram
 {: #ra-ocp-fully-configurable-architecture-diagram}
 
-![Architecture diagram for the Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift](deployable-architecture-ocp-cluster.svg "Architecture diagram of Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift deployable architecture"){: caption="Figure 1. Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift" caption-side="bottom"}{: external download="deployable-architecture-ocp-cluster.svg"}
+![Architecture diagram for the Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift](deployable-architecture-ocp-cluster.svg "Architecture diagram of Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift deployable architecture"){: caption="Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift" caption-side="bottom"}{: external download="deployable-architecture-ocp-cluster.svg"}
 
 ## Design concepts
 {: #ra-ocp-fully-configurable-design-concepts}
 
-![Design requirements for Landing zone for containerized applications with OpenShift](heat-map-deploy-arch-ocp-fully-configurable.svg "Design concepts"){: caption="Figure 2. Scope of the design concepts" caption-side="bottom"}
+![Design requirements for Landing zone for containerized applications with OpenShift](heat-map-deploy-arch-ocp-fully-configurable.svg "Design concepts"){: caption="Scope of the design concepts" caption-side="bottom"}
 
 ## Requirements
 {: #ra-ocp-fully-configurable-requirements}
@@ -87,7 +87,7 @@ The following table outlines the requirements that are addressed in this archite
 | Networking | * Multiple VPCs for network isolation. \n * All public inbound and outbound traffic allowed to VPCs. \n * Administration of cluster allowed from public endpoint and web console. \n * Load balancer for cluster workload services. \n * Outbound internet access from cluster. \n * Private network connection between VPCs. |
 | Security | * Encryption of all application data in transit and at rest to protect it from unauthorized disclosure. \n * Storage and management of all encryption keys. \n * Protect cluster administration access through IBM Cloud security protocols. |
 | Service Management | Automated deployment of infrastructure with IBM Cloud catalog |
-{: caption="Table 1. Requirements" caption-side="bottom"}
+{: caption="Requirements" caption-side="bottom"}
 
 ## Components
 {: #ra-ocp-fully-configurable-components}
@@ -100,7 +100,7 @@ The following table outlines the products or services used in the architecture f
 | Storage | IBM Cloud Object Storage | Registry backup for Red Hat OpenShift |
 | Networking | * VPC Load Balancer \n * Public Gateway \n * Transit Gateway | * Application load balancing for cluster workloads (automatically created by Red Hat OpenShift service for multi-zone cluster) \n * Cluster access to the internet \n * Private network connectivity between management and workload VPCs |
 | Security | * IAM \n * Key Protect | * IBM Cloud Identity and Access Management \n * Management of encryption keys used by Red Hat OpenShift Container Platform |
-{: caption="Table 2. Components" caption-side="bottom"}
+{: caption="Components" caption-side="bottom"}
 
 ### Cluster architecture decisions
 {: #ra-ocp-fully-configurable-components-cluster}
