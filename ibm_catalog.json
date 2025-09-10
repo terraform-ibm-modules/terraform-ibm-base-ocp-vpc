@@ -107,7 +107,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "iam-access-groups",
+              "service_name": "iam-groups",
               "notes": "[Optional] Required for managing IAM access groups."
             },
             {
@@ -140,7 +140,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "cloud-object-storage",
-              "notes": "Required to manage Object storage bucket for the cluster internal registry."
+              "notes": "Required to manage Object storage for the cluster internal registry."
             },
             {
               "role_crns": [
@@ -159,7 +159,7 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator",
+                "crn:v1:bluemix:public:iam::::role:Editor",
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "secrets-manager",
@@ -167,16 +167,16 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Editor",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "sysdig-monitor",
               "notes": "[Optional] Required to create an instance of Cloud Monitoring."
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Editor"
+                "crn:v1:bluemix:public:iam::::role:Editor",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "logs",
               "notes": "[Optional] Required to create an instance of Cloud Logs."
@@ -186,7 +186,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "logs-router",
-              "notes": "[Optional] Required for configuring cloud logs routing."
+              "notes": "[Optional] Required for configuring Cloud Logs routing."
             },
             {
               "role_crns": [
@@ -214,15 +214,8 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
-              "service_name": "metrics-router",
-              "notes": "[Optional] Required to enable metrics routing to the Cloud Monitoring."
-            },
-            {
-              "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "event-notifications",
               "notes": "[Optional] Required when enabling the Event Notifications integration."
@@ -270,7 +263,7 @@
               "required": true
             },
             {
-              "key": "ocp_version",
+              "key": "openshift_version",
               "required": true,
               "default_value": "4.18",
               "options": [
@@ -539,6 +532,10 @@
               ]
             },
             {
+              "key": "allow_public_access_to_cluster",
+              "required": true
+            },
+            {
               "key": "enable_platform_metrics",
               "type": "boolean",
               "default_value": false,
@@ -708,7 +705,7 @@
               ]
             },
             {
-              "key": "disable_outbound_traffic_protection"
+              "key": "allow_outbound_traffic"
             },
             {
               "key": "verify_worker_network_readiness"
@@ -1249,7 +1246,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "notes": "Required to reset the cluster API key, create and edit the OpenShift cluster, and manage all related resources."
+              "notes": "Required to create and manage the Openshift cluster."
             },
             {
               "service_name": "iam-identity",
@@ -1257,14 +1254,14 @@
                 "crn:v1:bluemix:public:iam::::role:Administrator",
                 "crn:v1:bluemix:public:iam-identity::::serviceRole:UserApiKeyCreator"
               ],
-              "notes": "Required to create the cluster API key needed by the OpenShift cluster on IBM Cloud and for managing and operating resources within the IBM Cloud environment."
+              "notes": "Required to create the containers-kubernetes-key for the OpenShift cluster."
             },
             {
               "service_name": "is.vpc",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating Virtual Private Cloud (VPC)."
+              "notes": "Required to create VPC."
             },
             {
               "service_name": "cloud-object-storage",
@@ -1272,7 +1269,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating the OpenShift cluster's internal registry storage bucket."
+              "notes": "Required to manage Object storage for the cluster internal registry."
             },
             {
               "role_crns": [
@@ -1300,7 +1297,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster-qs.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster. Thus, it helps ensure seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large.</b> Each size determines the number of availability zones, worker nodes per zone, and the <b>machine type</b> (worker node flavor). [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).<br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with the infrastructure, integrated storage services, and right-sized compute resources of IBM Cloud."
+                "description": "This deployable architecture enables deployment of a <b>Red Hat OpenShift cluster</b> within an IBM Cloud Virtual Private Cloud (VPC). It provisions the OpenShift cluster and its foundational VPC infrastructure with a limited set of essential options for rapid and streamlined setup. Additionally, the deployment creates an <b>Object Storage bucket</b> that serves as the internal container image registry for the OpenShift cluster. Thus, it helps ensure seamless storage integration.<br><br>Users can select from predefined cluster sizes — <b>mini (default), small, medium, and large.</b> The chosen size determines the <b>machine type</b> of the worker nodes, <b>the number of availability zones</b> the cluster spans, and <b>number of worker nodes</b> deployed in each zone. To get more information on this, refer [here](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/quickstart/DA_docs.md).<br><br>By default, the architecture provisions a <b>two-zone VPC</b>, forming the foundation for the OpenShift cluster. The cluster comprises a single worker pool distributed across these zones, with <b>two worker nodes per zone</b> in the mini configuration.<br><br>This streamlined architecture balances ease of use with flexibility, enabling rapid OpenShift cluster deployments with the infrastructure, integrated storage services, and right-sized compute resources of IBM Cloud."
               }
             ]
           },
@@ -1388,7 +1385,7 @@
               "key": "cluster_name"
             },
             {
-              "key": "ocp_version",
+              "key": "openshift_version",
               "default_value": "4.18",
               "required": true,
               "options": [
@@ -1451,10 +1448,10 @@
               }
             },
             {
-              "key": "disable_public_endpoint"
+              "key": "allow_public_access_to_cluster"
             },
             {
-              "key": "disable_outbound_traffic_protection"
+              "key": "allow_outbound_traffic"
             }
           ],
           "dependency_version_2": true,
