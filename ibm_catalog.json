@@ -5,13 +5,13 @@
       "label": "Landing zone for containerized applications with OpenShift",
       "product_kind": "solution",
       "tags": [
-        "compute",
         "ibm_created",
         "target_terraform",
         "terraform",
-        "reference_architecture",
         "solution",
-        "redhat"
+        "compute",
+        "reference_architecture",
+        "converged_infra"
       ],
       "keywords": [
         "vpc",
