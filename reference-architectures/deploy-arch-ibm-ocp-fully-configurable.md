@@ -12,7 +12,7 @@ authors:
   - name: "Prateek Sharma"
 
 # The release that the reference architecture describes
-version: 3.58.1
+version: 3.58.2
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -57,7 +57,7 @@ content-type: reference-architecture
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-compliance="FedRAMP"}
-{: toc-version="3.58.1 "}
+{: toc-version="3.58.2 "}
 
 Landing zone for containerized applications with OpenShift provides a scalable, secure, and production-ready foundation for deploying containerized applications on IBM Cloud. It comes integrated by default with several IBM Cloud services to enhance security, observability, and compliance. Data encryption is enforced using Key Protect and Key Management Services (KMS), while Cloud Object Storage (COS) supports persistent storage and acts as the internal image registry. Secrets Manager is used to securely manage sensitive credentials and certificates, ensuring tighter control over access and authentication. Observability is delivered through Cloud Monitoring, Cloud Logs, and Activity Tracker, while regulatory compliance is supported via Security and Compliance Center and Workload Protection. These integrated capabilities work together to deliver a resilient and well-governed OpenShift environment.
 
