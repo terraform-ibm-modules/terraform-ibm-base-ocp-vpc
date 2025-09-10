@@ -75,13 +75,13 @@ The QuickStart variation of the Landing zone for containerized applications with
 
 The following table outlines the requirements that are addressed in this architecture.
 
-| Aspect | Requirements |
-|---|---|
-| Compute | Kubernetes cluster with minimal machine size and nodes, suitable for low-cost demonstration and development |
-| Storage | Kubernetes cluster registry backup (required) |
-| Networking | * Multiple VPCs for network isolation. \n * All public inbound and outbound traffic allowed to VPCs. \n * Administration of cluster allowed from public endpoint and web console. \n * Load balancer for cluster workload services. \n * Outbound internet access from cluster. \n * Private network connection between VPCs. |
-| Security | * Encryption of all application data in transit and at rest to protect it from unauthorized disclosure. \n * Storage and management of all encryption keys. \n * Protect cluster administration access through IBM Cloud security protocols. |
-| Service Management | Automated deployment of infrastructure with IBM Cloud catalog |
+| Requirement | Component | Reasons for choice | Alternative choice |
+|-------------|-----------|--------------------|--------------------|
+| * Provide low-cost compute for demonstration and development workloads | Kubernetes cluster with minimal machine size and nodes | Keeps cost low while still supporting containerized workloads | Use a larger production-grade cluster configuration |
+| * Ensure registry backup is available for the cluster | Kubernetes cluster registry backup | Provides backup of images and configurations required by Red Hat OpenShift | Use external object storage for registry backup |
+| * Support network isolation with multiple VPCs  <br> * Allow inbound and outbound traffic  <br> * Enable cluster administration from public endpoints  <br> * Provide load balancing for workloads  <br> * Enable outbound internet access  <br> * Allow private connectivity between VPCs | Multiple VPCs, Public Gateway, Load Balancer, VPC peering | Delivers connectivity, isolation, and access for cluster workloads and administration | Use a single VPC with simplified connectivity and no private interconnect |
+| * Encrypt application data in transit and at rest  <br> * Manage encryption keys securely  <br> * Protect cluster administration access | IBM Cloud IAM, Key Protect | Ensures security of data, keys, and cluster access through IBM Cloud protocols | Use Secrets Manager or OS-level access controls |
+| * Automate infrastructure provisioning | IBM Cloud Catalog | Provides automated deployment of infrastructure services | Manual configuration of infrastructure components |
 {: caption="Requirements" caption-side="bottom"}
 
 ## Components

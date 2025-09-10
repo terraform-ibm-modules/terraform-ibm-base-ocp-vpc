@@ -52,6 +52,7 @@ content-type: reference-architecture
 {{site.data.keyword.attribute-definition-list}}
 
 # Landing zone for containerized applications with OpenShift - Standard (Integrated setup with configurable services) variation
+
 {: #ocp-fully-configurable}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
@@ -66,16 +67,19 @@ The solution provisions a Red Hat OpenShift cluster within an IBM Cloud VPC, usi
 While this architecture is designed to function independently, it also serves as a flexible foundation for more advanced use cases. It supports seamless integration with Cloud Automation for Red Hat OpenShift AI, enabling organizations to deploy AI-driven workloads and accelerate innovation. With its secure, extensible design and managed cloud services, the solution helps enterprises reduce operational complexity and deliver critical applications faster within a governed Red Hat OpenShift ecosystem.
 
 ## Architecture diagram
+
 {: #ra-ocp-fully-configurable-architecture-diagram}
 
 ![Architecture diagram for the Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift](deployable-architecture-ocp-cluster.svg "Architecture diagram of Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift deployable architecture"){: caption="Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift" caption-side="bottom"}{: external download="deployable-architecture-ocp-cluster.svg"}
 
 ## Design concepts
+
 {: #ra-ocp-fully-configurable-design-concepts}
 
 ![Design requirements for Landing zone for containerized applications with OpenShift](heat-map-deploy-arch-ocp-fully-configurable.svg "Design concepts"){: caption="Scope of the design concepts" caption-side="bottom"}
 
 ## Requirements
+
 {: #ra-ocp-fully-configurable-requirements}
 
 The following table outlines the requirements that are addressed in this architecture.
@@ -84,69 +88,75 @@ The following table outlines the requirements that are addressed in this archite
 |---|---|
 | Compute | Openshift cluster with minimal machine size and nodes, suitable for low-cost demonstration and development |
 | Storage | Openshift cluster registry backup (required) |
-| Networking | * Multiple VPCs for network isolation. \n * All public inbound and outbound traffic allowed to VPCs. \n * Administration of cluster allowed from public endpoint and web console. \n * Load balancer for cluster workload services. \n * Outbound internet access from cluster. \n * Private network connection between VPCs. |
-| Security | * Encryption of all application data in transit and at rest to protect it from unauthorized disclosure. \n * Storage and management of all encryption keys. \n * Protect cluster administration access through IBM Cloud security protocols. |
+| Networking | *Multiple VPCs for network isolation. \n* All public inbound and outbound traffic allowed to VPCs. \n *Administration of cluster allowed from public endpoint and web console. \n* Load balancer for cluster workload services. \n *Outbound internet access from cluster. \n* Private network connection between VPCs. |
+| Security | *Encryption of all application data in transit and at rest to protect it from unauthorized disclosure. \n* Storage and management of all encryption keys. \n * Protect cluster administration access through IBM Cloud security protocols. |
 | Service Management | Automated deployment of infrastructure with IBM Cloud catalog |
 {: caption="Requirements" caption-side="bottom"}
 
 ## Components
+
 {: #ra-ocp-fully-configurable-components}
 
-The following table outlines the products or services used in the architecture for each aspect.
+### OpenShift Container Platform (OCP) architecture decisions
 
-| Aspects | Architecture components | How the component is used |
-|---|---|---|
-| Compute | Red Hat OpenShift Container Platform | Container execution |
-| Storage | IBM Cloud Object Storage | Registry backup for Red Hat OpenShift |
-| Networking | * VPC Load Balancer \n * Public Gateway \n * Transit Gateway | * Application load balancing for cluster workloads (automatically created by Red Hat OpenShift service for multi-zone cluster) \n * Cluster access to the internet \n * Private network connectivity between management and workload VPCs |
-| Security | * IAM \n * Key Protect | * IBM Cloud Identity and Access Management \n * Management of encryption keys used by Red Hat OpenShift Container Platform |
+| Requirement | Component | Reasons for choice | Alternative choice |
+|-------------|-----------|--------------------|--------------------|
+| * Provide compute platform for running containers | Red Hat OpenShift Container Platform | Used for container execution and orchestration | Use unmanaged Kubernetes (IKS or self-managed) |
+| * Enable persistent and reliable storage for OpenShift needs | IBM Cloud Object Storage | Used for registry backup for Red Hat OpenShift | Use File Storage or Block Storage depending on workload requirements |
+| * Support application connectivity and routing  <br>* Provide internet access  <br> * Enable private connectivity across VPCs | VPC Load Balancer, Public Gateway, Transit Gateway | *Application load balancing for cluster workloads (automatically created by Red Hat OpenShift service for multi-zone cluster) <br>* Cluster access to the internet <br> * Private network connectivity between management and workload VPCs | Use classic load balancer or VPN-based connectivity |
+| * Secure access and key management for OpenShift | IBM Cloud IAM, Key Protect | *IBM Cloud Identity and Access Management <br>* Management of encryption keys used by Red Hat OpenShift Container Platform | Use Secrets Manager or OS-level access controls |
 {: caption="Components" caption-side="bottom"}
 
 ### Cluster architecture decisions
+
 {: #ra-ocp-fully-configurable-components-cluster}
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
-| * High availability across zones \n * Fault tolerance for workloads | Multi-zone Red Hat OpenShift cluster | Provides built-in resiliency by distributing worker nodes across three zones | Deploy single-zone clusters with lower availability |
-| * Scalable worker infrastructure \n * Cost optimization | Worker pools with configurable node counts | Flexibility to scale nodes horizontally and vertically | Fixed-size clusters with no scaling options |
+| *High availability across zones \n* Fault tolerance for workloads | Multi-zone Red Hat OpenShift cluster | Provides built-in resiliency by distributing worker nodes across three zones | Deploy single-zone clusters with lower availability |
+| *Scalable worker infrastructure \n* Cost optimization | Worker pools with configurable node counts | Flexibility to scale nodes horizontally and vertically | Fixed-size clusters with no scaling options |
 | * Persistent storage for internal registry | Cloud Object Storage | Highly durable, encrypted, and cost-efficient storage | File or block storage solutions with higher cost |
 
 {: caption="Cluster architecture decisions" caption-side="bottom"}
 
 ### Networking architecture decisions
+
 {: #ra-ocp-fully-configurable-components-networking}
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
-| * Enable application traffic distribution \n * Support external workloads | VPC Load Balancer | Provides managed ingress and load balancing | Third-party ingress controllers |
+| *Enable application traffic distribution \n* Support external workloads | VPC Load Balancer | Provides managed ingress and load balancing | Third-party ingress controllers |
 | * Secure connectivity to the internet | Public gateways | Allow outbound connectivity for cluster nodes | Private-only clusters with no internet access |
-| * Multi-VPC communication \n * Hub-and-spoke models | Transit Gateway | Provides secure, private connectivity across VPCs | Use VPN gateways or Direct Link |
+| *Multi-VPC communication \n* Hub-and-spoke models | Transit Gateway | Provides secure, private connectivity across VPCs | Use VPN gateways or Direct Link |
 
 {: caption="Networking architecture decisions" caption-side="bottom"}
 
 ### Security and compliance architecture decisions
+
 {: #ra-ocp-fully-configurable-components-security}
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
-| * Encryption of data at rest \n * Key lifecycle management | Key Protect | Centralized management of encryption keys | Bring Your Own Key (BYOK) solutions |
+| *Encryption of data at rest \n* Key lifecycle management | Key Protect | Centralized management of encryption keys | Bring Your Own Key (BYOK) solutions |
 | * Secure secrets and credentials management | Secrets Manager | Centralized storage and rotation of sensitive credentials | Store secrets directly in OpenShift etcd |
 | * Strong authentication and authorization | IAM | Fine-grained access control across users and services | Local OpenShift RBAC only |
 
 {: caption="Security and compliance architecture decisions" caption-side="bottom"}
 
 ### Flexibility and customization architecture decisions
+
 {: #ra-ocp-fully-configurable-components-flexibility}
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
-| * Support scaling workloads \n * Enable hybrid deployments | Configurable worker pools | Scale worker nodes to match workload demand | Static cluster sizes |
-| * Meet diverse compliance requirements \n * Enable observability integration | Cloud Monitoring, Cloud Logs, Activity Tracker | Provides enterprise-grade visibility and compliance reporting | Third-party monitoring tools |
+| *Support scaling workloads \n* Enable hybrid deployments | Configurable worker pools | Scale worker nodes to match workload demand | Static cluster sizes |
+| *Meet diverse compliance requirements \n* Enable observability integration | Cloud Monitoring, Cloud Logs, Activity Tracker | Provides enterprise-grade visibility and compliance reporting | Third-party monitoring tools |
 | * Enable AI-ready workloads | Integration with Cloud Automation for Red Hat OpenShift AI | Prepares foundation for AI/ML use cases | Manual setup of AI services |
 
 {: caption="Flexibility and customization architecture decisions" caption-side="bottom"}
 
 ## Key features
+
 {: #ra-ocp-fully-configurable-features}
 
 The Standard - Integrated setup with configurable services variation of Landing zone for containerized applications with OpenShift provides comprehensive capabilities across:
