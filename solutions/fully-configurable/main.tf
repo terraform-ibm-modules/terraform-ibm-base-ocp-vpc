@@ -195,7 +195,7 @@ locals {
   # Managing the ODF version accordingly, as it changes with each OCP version.
   addons = lookup(var.addons, "openshift-data-foundation", null) != null ? lookup(var.addons["openshift-data-foundation"], "version", null) == null ? { for key, value in var.addons :
     key => value != null ? {
-      version         = lookup(value, "version", null) == null && key == "openshift-data-foundation" ? "${var.ocp_version}.0" : lookup(value, "version", null)
+      version         = lookup(value, "version", null) == null && key == "openshift-data-foundation" ? "${var.openshift_version}.0" : lookup(value, "version", null)
       parameters_json = lookup(value, "parameters_json", null)
   } : null } : var.addons : var.addons
 }
@@ -211,7 +211,7 @@ module "ocp_base" {
   existing_cos_id                          = var.existing_cos_instance_crn
   vpc_id                                   = local.existing_vpc_id
   vpc_subnets                              = local.vpc_subnets
-  ocp_version                              = var.ocp_version
+  ocp_version                              = var.openshift_version
   worker_pools                             = local.worker_pools
   access_tags                              = var.access_tags
   ocp_entitlement                          = var.ocp_entitlement
@@ -224,8 +224,8 @@ module "ocp_base" {
   cbr_rules                                = var.cbr_rules
   cluster_ready_when                       = var.cluster_ready_when
   custom_security_group_ids                = var.custom_security_group_ids
-  disable_outbound_traffic_protection      = var.disable_outbound_traffic_protection
-  disable_public_endpoint                  = var.disable_public_endpoint
+  disable_outbound_traffic_protection      = var.allow_outbound_traffic
+  disable_public_endpoint                  = !var.allow_public_access_to_cluster
   enable_ocp_console                       = var.enable_ocp_console
   ignore_worker_pool_size_changes          = var.ignore_worker_pool_size_changes
   kms_config                               = local.kms_config
