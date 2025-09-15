@@ -68,7 +68,7 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = module.ocp_base.ingress_hostname
+  value       = "https://console-openshift-console.${module.ocp_base.ingress_hostname}/dashboards"
   description = "primary url"
 }
 
