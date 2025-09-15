@@ -14,7 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
-  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0405-ocp. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 
   validation {
     # - null and empty string is allowed
@@ -67,7 +67,7 @@ variable "cluster_name" {
   default     = "openshift"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -266,10 +266,16 @@ variable "use_private_endpoint" {
   default     = true
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster" {
   type        = bool
-  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. Warning: Set this field to `false` if you want to retain public access to the cluster. Once the cluster is created, this cannot be changed."
-  default     = true
+  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  default     = false
+}
+
+variable "allow_outbound_traffic" {
+  type        = bool
+  description = "Set to true to allow public outbound access from the cluster workers."
+  default     = false
 }
 
 variable "cluster_config_endpoint_type" {
@@ -277,12 +283,6 @@ variable "cluster_config_endpoint_type" {
   type        = string
   default     = "default"
   nullable    = false
-}
-
-variable "disable_outbound_traffic_protection" {
-  type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
-  default     = false
 }
 
 variable "verify_worker_network_readiness" {
@@ -414,7 +414,7 @@ variable "kms_endpoint_type" {
   default     = "private"
   nullable    = false
   validation {
-    condition     = can(regex("public|private", var.kms_endpoint_type))
+    condition     = can(regex("^(public|private)$", var.kms_endpoint_type))
     error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
 }
@@ -586,7 +586,7 @@ variable "audit_namespace" {
 
 variable "audit_deployment_name" {
   type        = string
-  description = "The name of log collection deployement and service."
+  description = "The name of log collection deployment and service."
   default     = "ibmcloud-kube-audit"
 }
 
