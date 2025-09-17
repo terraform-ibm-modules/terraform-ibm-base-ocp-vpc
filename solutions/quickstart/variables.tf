@@ -24,7 +24,7 @@ variable "provider_visibility" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). Example: `prod-0205-ocpqs`. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
   nullable    = true
   validation {
     condition = (var.prefix == null || var.prefix == "" ? true :
@@ -47,7 +47,7 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -91,14 +91,14 @@ variable "size" {
   default     = "mini"
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster" {
   type        = bool
-  description = "Disables the public endpoint, which allows internet access to the cluster, during creation only."
-  default     = false
+  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  default     = true
 }
 
-variable "disable_outbound_traffic_protection" {
+variable "allow_outbound_traffic" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound)."
+  description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
