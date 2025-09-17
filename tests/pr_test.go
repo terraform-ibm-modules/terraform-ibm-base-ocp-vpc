@@ -261,7 +261,7 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
-		"deploy-arch-ibm-ocp-vpc",
+		"deploy-arch-ibm-slz-ocp",
 		"fully-configurable",
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
@@ -301,7 +301,7 @@ func TestRoksDependencyPermutations(t *testing.T) {
 		Testing: t,
 		Prefix:  "ocp-per",
 		AddonConfig: cloudinfo.AddonConfig{
-			OfferingName:   "deploy-arch-ibm-ocp-vpc",
+			OfferingName:   "deploy-arch-ibm-slz-ocp",
 			OfferingFlavor: "fully-configurable",
 			Inputs: map[string]interface{}{
 				"prefix":                       "ocp-per",
