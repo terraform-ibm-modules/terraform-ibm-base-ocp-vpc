@@ -58,12 +58,12 @@ output "master_status" {
 }
 
 output "next_steps_text" {
-  value       = "Now, you can use Openshift Cluster to build, deploy, and manage containerized applications."
+  value       = "Now, you can use Red Hat OpenShift cluster to build, deploy, and manage containerized applications."
   description = "Next steps text"
 }
 
 output "next_step_primary_label" {
-  value       = "Go to Openshift Cluster dashboard"
+  value       = "OpenShift cluster web console"
   description = "Primary label"
 }
 
@@ -73,7 +73,7 @@ output "next_step_primary_url" {
 }
 
 output "next_step_secondary_label" {
-  value       = "Openshift Cluster Overview"
+  value       = "Red Hat OpenShift cluster overview page"
   description = "Secondary label"
 }
 
