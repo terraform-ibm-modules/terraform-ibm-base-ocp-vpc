@@ -247,7 +247,6 @@ module "ocp_fscloud" {
   access_tags                      = var.access_tags
   ocp_version                      = var.ocp_version
   additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
-  use_private_endpoint             = true
   ocp_entitlement                  = var.ocp_entitlement
   enable_ocp_console               = false
   kms_config = {

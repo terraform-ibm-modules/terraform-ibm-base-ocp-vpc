@@ -233,7 +233,6 @@ module "ocp_base" {
   number_of_lbs                            = var.number_of_lbs
   pod_subnet_cidr                          = var.pod_subnet_cidr
   service_subnet_cidr                      = var.service_subnet_cidr
-  use_private_endpoint                     = var.use_private_endpoint
   verify_worker_network_readiness          = var.verify_worker_network_readiness
   worker_pools_taints                      = var.worker_pools_taints
   enable_secrets_manager_integration       = var.enable_secrets_manager_integration
