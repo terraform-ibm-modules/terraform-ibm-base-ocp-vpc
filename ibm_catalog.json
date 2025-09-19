@@ -653,7 +653,6 @@
             },
             {
               "key": "worker_pools_taints",
-              "type": "array",
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
@@ -873,7 +872,7 @@
               "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
               "required": false,
               "virtual": true,
-               "custom_config": {
+              "custom_config": {
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "type": "code_editor"
