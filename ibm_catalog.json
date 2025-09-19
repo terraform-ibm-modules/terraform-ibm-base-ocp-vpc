@@ -607,6 +607,7 @@
             },
             {
               "key": "cluster_ready_when",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "Normal",
@@ -630,10 +631,16 @@
               "key": "enable_ocp_console"
             },
             {
-              "key": "addons"
+              "key": "addons",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
-              "key": "manage_all_addons"
+              "key": "manage_all_addons",
+              "hidden": true
             },
             {
               "key": "additional_worker_pools",
@@ -654,16 +661,19 @@
               }
             },
             {
-              "key": "ignore_worker_pool_size_changes"
+              "key": "ignore_worker_pool_size_changes",
+              "hidden": true
             },
             {
-              "key": "allow_default_worker_pool_replacement"
+              "key": "allow_default_worker_pool_replacement",
+              "hidden": true
             },
             {
               "key": "default_worker_pool_labels"
             },
             {
-              "key": "enable_autoscaling_for_default_pool"
+              "key": "enable_autoscaling_for_default_pool",
+              "hidden": true
             },
             {
               "key": "default_pool_minimum_number_of_nodes"
@@ -682,6 +692,7 @@
             },
             {
               "key": "cluster_config_endpoint_type",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "default",
@@ -705,7 +716,8 @@
               "key": "allow_outbound_traffic"
             },
             {
-              "key": "verify_worker_network_readiness"
+              "key": "verify_worker_network_readiness",
+              "hidden": true
             },
             {
               "key": "pod_subnet_cidr"
@@ -717,13 +729,15 @@
               "key": "custom_security_group_ids"
             },
             {
-              "key": "attach_ibm_managed_security_group"
+              "key": "attach_ibm_managed_security_group",
+              "hidden": true
             },
             {
               "key": "additional_lb_security_group_ids"
             },
             {
-              "key": "number_of_lbs"
+              "key": "number_of_lbs",
+              "hidden": true
             },
             {
               "key": "additional_vpe_security_group_ids"
@@ -788,10 +802,12 @@
               ]
             },
             {
-              "key": "boot_volume_kms_key_name"
+              "key": "boot_volume_kms_key_name",
+              "hidden": true
             },
             {
-              "key": "boot_volume_kms_key_ring_name"
+              "key": "boot_volume_kms_key_ring_name",
+              "hidden": true
             },
             {
               "key": "cbr_rules",
@@ -853,11 +869,15 @@
             },
             {
               "key": "subnets",
-              "type": "object",
               "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
               "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
               "required": false,
-              "virtual": true
+              "virtual": true,
+               "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "code_editor"
+              }
             },
             {
               "key": "network_acls",
@@ -894,10 +914,12 @@
               "key": "enable_kube_audit"
             },
             {
-              "key": "audit_deployment_name"
+              "key": "audit_deployment_name",
+              "hidden": true
             },
             {
               "key": "audit_log_policy",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "Default",
@@ -910,13 +932,16 @@
               ]
             },
             {
-              "key": "audit_namespace"
+              "key": "audit_namespace",
+              "hidden": true
             },
             {
-              "key": "audit_webhook_listener_image"
+              "key": "audit_webhook_listener_image",
+              "hidden": true
             },
             {
-              "key": "audit_webhook_listener_image_tag_digest"
+              "key": "audit_webhook_listener_image_tag_digest",
+              "hidden": true
             }
           ],
           "dependencies": [
