@@ -653,6 +653,7 @@
             },
             {
               "key": "worker_pools_taints",
+              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
