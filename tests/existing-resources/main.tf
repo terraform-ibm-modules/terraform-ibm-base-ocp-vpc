@@ -14,7 +14,7 @@ module "resource_group" {
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.25.13"
+  version           = "8.3.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "vpc"
@@ -28,6 +28,22 @@ module "vpc" {
         public_gateway = true
         acl_name       = "vpc-acl"
       }
+    ],
+    zone-2 = [
+      {
+        name           = "subnet-b"
+        cidr           = "10.20.10.0/24"
+        public_gateway = false
+        acl_name       = "vpc-acl"
+      }
+    ],
+    zone-3 = [
+      {
+        name           = "subnet-c"
+        cidr           = "10.30.10.0/24"
+        public_gateway = false
+        acl_name       = "vpc-acl"
+      }
     ]
   }
 }
@@ -38,7 +54,7 @@ module "vpc" {
 
 module "cos" {
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.25"
+  version                = "10.2.20"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
   cos_instance_name      = "${var.prefix}-cos"
