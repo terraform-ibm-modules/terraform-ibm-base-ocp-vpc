@@ -143,6 +143,5 @@ module "ocp_base" {
   disable_outbound_traffic_protection = var.allow_outbound_traffic
   access_tags                         = var.access_tags
   disable_public_endpoint             = !var.allow_public_access_to_cluster
-  use_private_endpoint                = true
   cluster_config_endpoint_type        = "default"
 }
