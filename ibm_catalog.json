@@ -653,7 +653,7 @@
             },
             {
               "key": "worker_pools_taints",
-              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
+              "hidden": true,
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
@@ -685,7 +685,8 @@
               "key": "additional_security_group_ids"
             },
             {
-              "key": "existing_subnet_ids"
+              "key": "existing_subnet_ids",
+              "hidden": true
             },
             {
               "key": "use_private_endpoint"
@@ -720,10 +721,12 @@
               "hidden": true
             },
             {
-              "key": "pod_subnet_cidr"
+              "key": "pod_subnet_cidr",
+              "hidden": true
             },
             {
-              "key": "service_subnet_cidr"
+              "key": "service_subnet_cidr",
+              "hidden": true
             },
             {
               "key": "custom_security_group_ids"
@@ -811,6 +814,7 @@
             },
             {
               "key": "cbr_rules",
+              "hidden": true,
               "display_name": "openshift_cluster_cbr_rules",
               "type": "array",
               "custom_config": {

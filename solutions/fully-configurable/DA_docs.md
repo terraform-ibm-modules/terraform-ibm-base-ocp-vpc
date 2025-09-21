@@ -129,7 +129,7 @@ This variable defines the worker node pools for your OCP cluster, with each pool
       {
         id = "<REPLACE ME>"
         zone = "us-south-1"
-        cidr_block = " "10.10.10.0/24"
+        cidr_block = "10.10.10.0/24"
       },
       {
         id = "<REPLACE ME>"
