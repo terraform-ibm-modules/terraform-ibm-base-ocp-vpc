@@ -628,7 +628,21 @@
               ]
             },
             {
-              "key": "enable_ocp_console"
+              "key": "enable_ocp_console",
+              "options": [
+                {
+                  "displayname": "null",
+                  "value": "__NULL__"
+                },
+                {
+                  "displayname": "true",
+                  "value": "true"
+                },
+                {
+                  "displayname": "false",
+                  "value": "false"
+                }
+              ]
             },
             {
               "key": "addons",
