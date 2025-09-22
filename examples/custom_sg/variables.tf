@@ -40,6 +40,12 @@ variable "ocp_version" {
   default     = "4.14"
 }
 
+variable "enable_openshift_version_upgrade" {
+  type        = bool
+  description = "When set to true, allows Terraform to manage major OpenShift version upgrades by removing the ignore_changes setting on the kube_version field. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates."
+  default     = false
+}
+
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module."
