@@ -532,7 +532,7 @@
               ]
             },
             {
-              "key": "allow_public_access_to_cluster",
+              "key": "allow_public_access_to_cluster_management",
               "required": true
             },
             {
@@ -571,6 +571,7 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "default_value": "Default",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -630,7 +631,12 @@
               "key": "enable_ocp_console"
             },
             {
-              "key": "addons"
+              "key": "addons",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "manage_all_addons"
@@ -1436,7 +1442,7 @@
               }
             },
             {
-              "key": "allow_public_access_to_cluster"
+              "key": "allow_public_access_to_cluster_management"
             },
             {
               "key": "allow_outbound_traffic"
