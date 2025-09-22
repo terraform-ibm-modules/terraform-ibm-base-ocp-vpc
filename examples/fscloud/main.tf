@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "10.2.20"
+  version                       = "10.2.21"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -30,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.2.20"
+  version = "10.2.21"
 
   bucket_configs = [
     {
@@ -247,7 +247,6 @@ module "ocp_fscloud" {
   access_tags                      = var.access_tags
   ocp_version                      = var.ocp_version
   additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]
-  use_private_endpoint             = true
   ocp_entitlement                  = var.ocp_entitlement
   enable_ocp_console               = false
   kms_config = {
