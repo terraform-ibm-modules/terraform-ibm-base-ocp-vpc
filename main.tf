@@ -198,7 +198,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which allows major openshift version upgrade
 resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 0 : 1) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -337,7 +337,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
 # copy of the cluster resource above which allows major openshift version upgrade
 resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 1 : 0) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
