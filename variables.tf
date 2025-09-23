@@ -13,12 +13,6 @@ variable "region" {
   description = "The IBM Cloud region where the cluster is provisioned."
 }
 
-variable "use_private_endpoint" {
-  type        = bool
-  description = "Set this to true to force all API calls to use the IBM Cloud private endpoints."
-  default     = false
-}
-
 # Cluster Variables
 variable "tags" {
   type        = list(string)
