@@ -630,6 +630,7 @@
             },
             {
               "key": "enable_ocp_console",
+              "type": "string",
               "options": [
                 {
                   "displayname": "null",
