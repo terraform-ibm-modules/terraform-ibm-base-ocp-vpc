@@ -58,7 +58,7 @@ output "master_status" {
 }
 
 output "next_steps_text" {
-  value       = "Now, you can use the Red Hat OpenShift cluster to build, deploy, and manage containerized applications."
+  value       = "Your Red Hat OpenShift cluster is ready. You can now build, deploy, and manage containerized applications."
   description = "Next steps text"
 }
 
