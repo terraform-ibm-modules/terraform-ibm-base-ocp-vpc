@@ -1,8 +1,9 @@
 {
   "ibmcloud_api_key": $VALIDATION_APIKEY,
-  "cluster_resource_tags": $TAGS,
-  "kms_encryption_enabled_cluster": true,
   "existing_kms_instance_crn": $HPCS_US_SOUTH_CRN,
+  "kms_encryption_enabled_buckets": true,
+  "region": "us-south",
+  "prefix": $PREFIX,
   "existing_cos_instance_crn": $COS_INSTANCE_CRN,
-  "prefix": $PREFIX
+  "existing_resource_group_name": "geretain-test-resources"
 }
