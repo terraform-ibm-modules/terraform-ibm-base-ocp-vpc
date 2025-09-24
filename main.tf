@@ -24,7 +24,13 @@ locals {
   create_timeout = "3h"
   update_timeout = "3h"
 
-  cluster_id  = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id)
+  # tflint-ignore: terraform_unused_declarations
+  cluster_with_upgrade_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id
+  # tflint-ignore: terraform_unused_declarations
+  cluster_without_upgrade_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+
+  cluster_id = var.enable_openshift_version_upgrade ? local.cluster_with_upgrade_id : local.cluster_without_upgrade_id
+
   cluster_crn = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn : ibm_container_vpc_cluster.cluster_with_upgrade[0].crn) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn)
 
   # security group attached to worker pool
@@ -224,6 +230,8 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
 
   security_groups = local.cluster_security_groups
 
+  # This resource intentionally omits ignore_changes for kube_version to allow major version upgrades
+
   # default workers are mapped to the subnets that are "private"
   dynamic "zones" {
     for_each = local.default_pool.subnet_prefix != null ? var.vpc_subnets[local.default_pool.subnet_prefix] : local.default_pool.vpc_subnets
@@ -362,6 +370,8 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
+
+  # This resource intentionally omits ignore_changes for kube_version to allow major version upgrades
 
   lifecycle {
     ignore_changes = [worker_count]
