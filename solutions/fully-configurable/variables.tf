@@ -186,7 +186,7 @@ variable "default_worker_pool_operating_system" {
 
 variable "default_worker_pool_labels" {
   type        = map(string)
-  description = "A set of key-value labels assigned to the worker pool for identification. For Example: { env = \"prod\", team = \"devops\" }"
+  description = "A set of key-value labels assigned to the worker pool for identification. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#default-worker-pool-labels)"
   default     = {}
 }
 

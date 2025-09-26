@@ -498,17 +498,6 @@
               ]
             },
             {
-              "key": "existing_vpc_crn",
-              "required": true,
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "The value provided for 'existing_vpc_crn' is not valid.",
-                  "value": "^crn:(.*:){3}is:(.*:){2}:vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-                }
-              ]
-            },
-            {
               "key": "region",
               "required": true,
               "type": "string",
@@ -523,17 +512,6 @@
               "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
               "virtual": true,
               "default_value": "us-south"
-            },
-            {
-              "key": "existing_cos_instance_crn",
-              "required": true,
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "The value provided for 'existing_cos_instance_crn' is not valid.",
-                  "value": "^crn:(.*:){3}cloud-object-storage:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
-                }
-              ]
             },
             {
               "key": "allow_public_access_to_cluster",
@@ -613,6 +591,7 @@
             },
             {
               "key": "cluster_ready_when",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "Normal",
@@ -636,10 +615,16 @@
               "key": "enable_ocp_console"
             },
             {
-              "key": "addons"
+              "key": "addons",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
-              "key": "manage_all_addons"
+              "key": "manage_all_addons",
+              "hidden": true
             },
             {
               "key": "additional_worker_pools",
@@ -652,7 +637,7 @@
             },
             {
               "key": "worker_pools_taints",
-              "type": "array",
+              "hidden": true,
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
@@ -660,16 +645,19 @@
               }
             },
             {
-              "key": "ignore_worker_pool_size_changes"
+              "key": "ignore_worker_pool_size_changes",
+              "hidden": true
             },
             {
-              "key": "allow_default_worker_pool_replacement"
+              "key": "allow_default_worker_pool_replacement",
+              "hidden": true
             },
             {
               "key": "default_worker_pool_labels"
             },
             {
-              "key": "enable_autoscaling_for_default_pool"
+              "key": "enable_autoscaling_for_default_pool",
+              "hidden": true
             },
             {
               "key": "default_pool_minimum_number_of_nodes"
@@ -681,13 +669,15 @@
               "key": "additional_security_group_ids"
             },
             {
-              "key": "existing_subnet_ids"
+              "key": "existing_subnet_ids",
+              "hidden": true
             },
             {
               "key": "use_private_endpoint"
             },
             {
               "key": "cluster_config_endpoint_type",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "default",
@@ -711,25 +701,30 @@
               "key": "allow_outbound_traffic"
             },
             {
-              "key": "verify_worker_network_readiness"
+              "key": "verify_worker_network_readiness",
+              "hidden": true
             },
             {
-              "key": "pod_subnet_cidr"
+              "key": "pod_subnet_cidr",
+              "hidden": true
             },
             {
-              "key": "service_subnet_cidr"
+              "key": "service_subnet_cidr",
+              "hidden": true
             },
             {
               "key": "custom_security_group_ids"
             },
             {
-              "key": "attach_ibm_managed_security_group"
+              "key": "attach_ibm_managed_security_group",
+              "hidden": true
             },
             {
               "key": "additional_lb_security_group_ids"
             },
             {
-              "key": "number_of_lbs"
+              "key": "number_of_lbs",
+              "hidden": true
             },
             {
               "key": "additional_vpe_security_group_ids"
@@ -794,13 +789,16 @@
               ]
             },
             {
-              "key": "boot_volume_kms_key_name"
+              "key": "boot_volume_kms_key_name",
+              "hidden": true
             },
             {
-              "key": "boot_volume_kms_key_ring_name"
+              "key": "boot_volume_kms_key_ring_name",
+              "hidden": true
             },
             {
               "key": "cbr_rules",
+              "hidden": true,
               "display_name": "openshift_cluster_cbr_rules",
               "type": "array",
               "custom_config": {
@@ -851,19 +849,43 @@
                   "value": "trial"
                 }
               ],
-              "default_value": "__NOT_SET__",
+              "default_value": "standard",
               "description": "The pricing plan to use when provisioning a Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+            },
+            {
+              "key": "existing_vpc_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_vpc_crn' is not valid.",
+                  "value": "^crn:(.*:){3}is:(.*:){2}:vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              ]
+            },
+            {
+              "key": "existing_cos_instance_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_cos_instance_crn' is not valid.",
+                  "value": "^crn:(.*:){3}cloud-object-storage:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
             },
             {
               "key": "skip_ocp_secrets_manager_iam_auth_policy"
             },
             {
               "key": "subnets",
-              "type": "object",
-              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = false\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
+              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
               "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
               "required": false,
-              "virtual": true
+              "virtual": true,
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "code_editor"
+              }
             },
             {
               "key": "network_acls",
@@ -900,10 +922,12 @@
               "key": "enable_kube_audit"
             },
             {
-              "key": "audit_deployment_name"
+              "key": "audit_deployment_name",
+              "hidden": true
             },
             {
               "key": "audit_log_policy",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "Default",
@@ -916,13 +940,16 @@
               ]
             },
             {
-              "key": "audit_namespace"
+              "key": "audit_namespace",
+              "hidden": true
             },
             {
-              "key": "audit_webhook_listener_image"
+              "key": "audit_webhook_listener_image",
+              "hidden": true
             },
             {
-              "key": "audit_webhook_listener_image_tag_digest"
+              "key": "audit_webhook_listener_image_tag_digest",
+              "hidden": true
             }
           ],
           "dependencies": [
