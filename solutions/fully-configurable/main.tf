@@ -225,7 +225,7 @@ module "ocp_base" {
   cluster_ready_when                       = var.cluster_ready_when
   custom_security_group_ids                = var.custom_security_group_ids
   disable_outbound_traffic_protection      = var.allow_outbound_traffic
-  disable_public_endpoint                  = !var.allow_public_access_to_cluster
+  disable_public_endpoint                  = !var.allow_public_access_to_cluster_management
   enable_ocp_console                       = var.enable_ocp_console
   ignore_worker_pool_size_changes          = var.ignore_worker_pool_size_changes
   kms_config                               = local.kms_config

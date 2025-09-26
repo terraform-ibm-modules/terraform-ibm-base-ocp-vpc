@@ -510,7 +510,7 @@
               "default_value": "us-south"
             },
             {
-              "key": "allow_public_access_to_cluster",
+              "key": "allow_public_access_to_cluster_management",
               "required": true
             },
             {
@@ -1467,7 +1467,7 @@
               }
             },
             {
-              "key": "allow_public_access_to_cluster"
+              "key": "allow_public_access_to_cluster_management"
             },
             {
               "key": "allow_outbound_traffic"
