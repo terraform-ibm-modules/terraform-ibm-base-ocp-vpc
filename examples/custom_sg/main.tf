@@ -104,6 +104,7 @@ module "ocp_base" {
   vpc_id                            = ibm_is_vpc.vpc.id
   vpc_subnets                       = local.cluster_vpc_subnets
   ocp_version                       = var.ocp_version
+  enable_openshift_version_upgrade  = var.enable_openshift_version_upgrade
   worker_pools                      = local.worker_pools
   access_tags                       = var.access_tags
   attach_ibm_managed_security_group = true # true is the default
