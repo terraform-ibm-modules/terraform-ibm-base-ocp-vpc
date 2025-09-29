@@ -11,7 +11,7 @@
         "solution",
         "compute",
         "reference_architecture",
-        "converged_infra"
+        "platform_engineering"
       ],
       "keywords": [
         "vpc",
@@ -571,6 +571,8 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "default_value": "Default",
+              "description": "The name of an existing resource group to provision the resources.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -1296,6 +1298,8 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "default_value": "Default",
+              "description": "The name of an existing resource group to provision the resources.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
