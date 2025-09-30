@@ -8,11 +8,10 @@ Usage: ${PRG} [OPTIONS] [DIRECTORY]
 Description:
   Automates Terraform state moves for Red Hat OpenShift VPC cluster resources on IBM Cloud.
   It identifies existing cluster resources in your Terraform state, renames them, and optionally
-  generates a revert plan to undo changes.
+  reverts previous moves based on revert.txt.
 
 Options:
   -d DIR          Path to Terraform project directory (default: current directory)
-  --dry-run       Preview planned state moves without making any changes
   --revert        Revert previously moved resources using 'revert.txt'
   -h, --help      Show this help message and exit
 
@@ -22,9 +21,6 @@ Examples:
 
   ${PRG} -d /path/to/project
       Runs the script on a specific Terraform project directory.
-
-  ${PRG} --dry-run /path/to/project
-      Shows what state moves would be made, without applying them.
 
   ${PRG} --revert /path/to/project
       Reverts previously moved resources based on 'revert.txt'.
@@ -39,7 +35,6 @@ Notes:
 
 # ---- Global variables ----
 TF_DIR="."
-DRY_RUN=false
 REVERT=false
 REVERT_FILE="revert.txt"
 MOVED_FILE="moved.txt"
@@ -60,7 +55,6 @@ parse_args() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -d)
-                # Handle optional value after -d
                 if [[ -n "${2:-}" && ! "${2:-}" =~ ^- ]]; then
                     TF_DIR="$2"
                     shift 2
@@ -68,10 +62,6 @@ parse_args() {
                     TF_DIR="."
                     shift 1
                 fi
-                ;;
-            --dry-run)
-                DRY_RUN=true
-                shift
                 ;;
             --revert)
                 REVERT=true
@@ -121,7 +111,6 @@ terraform_init() {
 detect_cluster_resources() {
     echo "Searching for cluster resources in Terraform state..."
 
-    # List all relevant resources (exclude data sources)
     ALL_RESOURCES=$(terraform state list | grep -E '(^|\.)(ibm_container_vpc_cluster\.[a-zA-Z0-9_]*cluster(\[[0-9]+\])?$)' | grep -v '\.data\.')
 
     if [ -z "$ALL_RESOURCES" ]; then
@@ -129,9 +118,8 @@ detect_cluster_resources() {
         exit 1
     fi
 
-    # If --module-path was provided, do partial/suffix matching
     if [ -n "${MODULE_PATH:-}" ]; then
-        echo "🔎 Filtering resources by module path (partial/suffix match): $MODULE_PATH"
+        echo "Filtering resources by module path (partial/suffix match): $MODULE_PATH"
         FILTERED_RESOURCES=$(echo "$ALL_RESOURCES" | grep "$MODULE_PATH" || true)
         if [ -z "$FILTERED_RESOURCES" ]; then
             echo "No resources found matching module path: $MODULE_PATH"
@@ -147,8 +135,6 @@ detect_cluster_resources() {
     echo
 }
 
-
-
 ####################################################################################################################
 # Initialize revert/move files
 ####################################################################################################################
@@ -158,28 +144,22 @@ prepare_txt_files() {
 }
 
 ####################################################################################################################
-# Generate and (optionally) apply state moves
+# Generate and apply state moves
 ####################################################################################################################
 process_state_moves() {
     while IFS= read -r SRC; do
         [ -z "$SRC" ] && continue
 
-        # Generate destination by inserting _with_upgrade only after the final ".<name>cluster"
         DEST=$(echo "$SRC" | sed -E 's/(^.*ibm_container_vpc_cluster\.[^.]*)(cluster)(\[[0-9]+\])?$/\1cluster_with_upgrade\3/')
 
-        echo "Planned move:"
+        echo "Moving state:"
         echo "FROM: $SRC"
         echo "TO:   $DEST"
 
         echo "terraform state mv \"$DEST\" \"$SRC\"" >> "$REVERT_FILE"
         echo "terraform state mv \"$SRC\" \"$DEST\"" >> "$MOVED_FILE"
 
-        if [ "$DRY_RUN" = true ]; then
-            echo "Dry-run mode: Skipping actual move."
-        else
-            terraform state mv "$SRC" "$DEST"
-        fi
-
+        terraform state mv "$SRC" "$DEST"
         echo
     done <<< "$SRC_RESOURCE"
 }
@@ -197,19 +177,12 @@ perform_revert() {
     while IFS= read -r CMD; do
         [ -z "$CMD" ] && continue
         echo "$CMD"
-        if [ "$DRY_RUN" = true ]; then
-            echo "Dry-run: not executing."
-        else
-            eval "$CMD"
-        fi
+        eval "$CMD"
     done < "$REVERT_FILE"
 
-    echo
-    if [ "$DRY_RUN" = true ]; then
-        echo "Dry-run revert complete. No changes were made."
-    else
-        echo "Revert complete."
-    fi
+    echo "Running terraform refresh after revert..."
+    terraform refresh -input=false
+    echo "Revert complete."
 }
 
 ####################################################################################################################
@@ -227,12 +200,11 @@ main() {
         prepare_txt_files
         process_state_moves
 
-        if [ "$DRY_RUN" = true ]; then
-            echo "Dry-run complete. No changes were made."
-        else
-            echo "State move complete."
-            echo "Revert commands saved to: $REVERT_FILE"
-        fi
+        echo "State move complete."
+        echo "Revert commands saved to: $REVERT_FILE"
+
+        echo "Running terraform refresh..."
+        terraform refresh -input=false
     fi
 }
 

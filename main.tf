@@ -25,13 +25,18 @@ locals {
   update_timeout = "3h"
 
   # tflint-ignore: terraform_unused_declarations
-  cluster_with_upgrade_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id : ibm_container_vpc_cluster.cluster_with_upgrade[0].id
+  cluster_with_upgrade_id = var.ignore_worker_pool_size_changes ? try(ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id, null) : try(ibm_container_vpc_cluster.cluster_with_upgrade[0].id, null)
   # tflint-ignore: terraform_unused_declarations
-  cluster_without_upgrade_id = var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].id : ibm_container_vpc_cluster.cluster[0].id
+  cluster_without_upgrade_id = var.ignore_worker_pool_size_changes ? try(ibm_container_vpc_cluster.autoscaling_cluster[0].id, null) : try(ibm_container_vpc_cluster.cluster[0].id, null)
 
   cluster_id = var.enable_openshift_version_upgrade ? local.cluster_with_upgrade_id : local.cluster_without_upgrade_id
 
-  cluster_crn = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn : ibm_container_vpc_cluster.cluster_with_upgrade[0].crn) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].crn : ibm_container_vpc_cluster.cluster[0].crn)
+  # tflint-ignore: terraform_unused_declarations
+  cluster_with_upgrade_crn = var.ignore_worker_pool_size_changes ? try(ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].crn, null) : try(ibm_container_vpc_cluster.cluster_with_upgrade[0].crn, null)
+  # tflint-ignore: terraform_unused_declarations
+  cluster_without_upgrade_crn = var.ignore_worker_pool_size_changes ? try(ibm_container_vpc_cluster.autoscaling_cluster[0].crn, null) : try(ibm_container_vpc_cluster.cluster[0].crn, null)
+
+  cluster_crn = var.enable_openshift_version_upgrade ? local.cluster_with_upgrade_crn : local.cluster_without_upgrade_crn
 
   # security group attached to worker pool
   # the terraform provider / iks api take a security group id hardcoded to "cluster", so this pseudo-value is injected into the array based on attach_default_cluster_security_group
