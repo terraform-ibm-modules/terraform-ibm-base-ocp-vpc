@@ -108,3 +108,11 @@ module.ocp_base.ibm_container_vpc_cluster.cluster_with_upgrade[0]
 ```
 
 ---
+
+## Reverting Changes
+
+- Use the `--revert` option to undo previously renamed Terraform state resources.
+- The script relies on the `revert.txt` file (generated during the forward move) to run the reverse `terraform state mv` commands.
+- After reverting, the script automatically runs `terraform refresh -input=false` to synchronize the state.
+- **Before reverting, ensure that `enable_openshift_version_upgrade` is set to `false` in your Terraform configuration** to avoid unexpected behavior.
+- The `revert.txt` file must be present, and the renamed resources must still exist in the state for the revert to work correctly.
