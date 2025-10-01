@@ -23,21 +23,19 @@ Optionally, the module supports advanced security group management for the worke
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
-
-- [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
-
-- [Submodules](./modules)
-  - [fscloud](./modules/fscloud)
-  - [kube-audit](./modules/kube-audit)
-- [Examples](./examples)
-  - [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
-  - [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
-  - [Attaching custom security groups](./examples/custom_sg)
-  - [Basic single zone cluster with allowed outbound traffic](./examples/basic)
-  - [Cluster security group rules example](./examples/add_rules_to_sg)
-  - [Cross account KMS encryption example](./examples/cross_kms_support)
-  - [Financial Services compliant example](./examples/fscloud)
-- [Contributing](#contributing)
+* [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
+* [Submodules](./modules)
+    * [fscloud](./modules/fscloud)
+    * [kube-audit](./modules/kube-audit)
+* [Examples](./examples)
+    * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
+    * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
+    * [Attaching custom security groups](./examples/custom_sg)
+    * [Basic single zone cluster with allowed outbound traffic](./examples/basic)
+    * [Cluster security group rules example](./examples/add_rules_to_sg)
+    * [Cross account KMS encryption example](./examples/cross_kms_support)
+    * [Financial Services compliant example](./examples/fscloud)
+* [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
 <!-- This heading should always match the name of the root level module (aka the repo name) -->
@@ -211,7 +209,7 @@ This avoids the destroy/recreate planned by Terraform.
 
 You can use the script in the `update` directory to automate the process:
 
-`tf_state_migration.sh`  
+`tf_state_migration.sh`
 <https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/update/tf_state_migration.sh>
 
 The script:
@@ -350,10 +348,10 @@ Optionally, you need the following permissions to attach Access Management tags 
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_access_tags"></a> [access\_tags](#input\_access\_tags) | A list of access tags to apply to the resources created by the module, see <https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial> for more details | `list(string)` | `[]` | no |
+| <a name="input_access_tags"></a> [access\_tags](#input\_access\_tags) | A list of access tags to apply to the resources created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details | `list(string)` | `[]` | no |
 | <a name="input_additional_lb_security_group_ids"></a> [additional\_lb\_security\_group\_ids](#input\_additional\_lb\_security\_group\_ids) | Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group. | `list(string)` | `[]` | no |
 | <a name="input_additional_vpe_security_group_ids"></a> [additional\_vpe\_security\_group\_ids](#input\_additional\_vpe\_security\_group\_ids) | Additional security groups to add to all existing load balancers. This comes in addition to the IBM maintained security group. | <pre>object({<br/>    master   = optional(list(string), [])<br/>    registry = optional(list(string), [])<br/>    api      = optional(list(string), [])<br/>  })</pre> | `{}` | no |
-| <a name="input_addons"></a> [addons](#input\_addons) | Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see <https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions> | <pre>object({<br/>    debug-tool = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    image-key-synchronizer = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-data-foundation = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-file-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    static-route = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    cluster-autoscaler = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-block-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    ibm-storage-operator = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-ai = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>  })</pre> | `{}` | no |
+| <a name="input_addons"></a> [addons](#input\_addons) | Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions | <pre>object({<br/>    debug-tool = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    image-key-synchronizer = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-data-foundation = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-file-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    static-route = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    cluster-autoscaler = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-block-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    ibm-storage-operator = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-ai = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>  })</pre> | `{}` | no |
 | <a name="input_allow_default_worker_pool_replacement"></a> [allow\_default\_worker\_pool\_replacement](#input\_allow\_default\_worker\_pool\_replacement) | (Advanced users) Set to true to allow the module to recreate a default worker pool. If you wish to make any change to the default worker pool which requires the re-creation of the default pool follow these [steps](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#important-considerations-for-terraform-and-default-worker-pool). | `bool` | `false` | no |
 | <a name="input_attach_ibm_managed_security_group"></a> [attach\_ibm\_managed\_security\_group](#input\_attach\_ibm\_managed\_security\_group) | Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if `custom_security_group_ids` is set. | `bool` | `true` | no |
 | <a name="input_cbr_rules"></a> [cbr\_rules](#input\_cbr\_rules) | The list of context-based restriction rules to create. | <pre>list(object({<br/>    description = string<br/>    account_id  = string<br/>    rule_contexts = list(object({<br/>      attributes = optional(list(object({<br/>        name  = string<br/>        value = string<br/>    }))) }))<br/>    enforcement_mode = string<br/>    tags = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    operations = optional(list(object({<br/>      api_types = list(object({<br/>        api_type_id = string<br/>      }))<br/>    })))<br/>  }))</pre> | `[]` | no |
@@ -365,7 +363,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_disable_outbound_traffic_protection"></a> [disable\_outbound\_traffic\_protection](#input\_disable\_outbound\_traffic\_protection) | Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. | `bool` | `false` | no |
 | <a name="input_disable_public_endpoint"></a> [disable\_public\_endpoint](#input\_disable\_public\_endpoint) | Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. | `bool` | `false` | no |
 | <a name="input_enable_ocp_console"></a> [enable\_ocp\_console](#input\_enable\_ocp\_console) | Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module does not modify the current setting on the cluster. Keep in mind that when this input is set to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint. | `bool` | `null` | no |
-| <a name="input_enable_openshift_version_upgrade"></a> [enable\_openshift\_version\_upgrade](#input\_enable\_openshift\_version\_upgrade) | When set to true, allows Terraform to manage major OpenShift version upgrades. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates. NOTE: Enabling this on existing clusters requires a one-time terraform state migration. See README for details. | `bool` | `false` | no |
+| <a name="input_enable_openshift_version_upgrade"></a> [enable\_openshift\_version\_upgrade](#input\_enable\_openshift\_version\_upgrade) | When set to true, allows Terraform to manage major OpenShift version upgrades. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates. NOTE: Enabling this on existing clusters requires a one-time terraform state migration. See [README](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md#openshift-version-upgrade) for details. | `bool` | `false` | no |
 | <a name="input_enable_registry_storage"></a> [enable\_registry\_storage](#input\_enable\_registry\_storage) | Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature. | `bool` | `true` | no |
 | <a name="input_enable_secrets_manager_integration"></a> [enable\_secrets\_manager\_integration](#input\_enable\_secrets\_manager\_integration) | Integrate with IBM Cloud Secrets Manager so you can centrally manage Ingress subdomain certificates and other secrets. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-secrets-mgr) | `bool` | `false` | no |
 | <a name="input_existing_cos_id"></a> [existing\_cos\_id](#input\_existing\_cos\_id) | The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable\_registry\_storage' and 'use\_existing\_cos' are true. | `string` | `null` | no |
@@ -395,7 +393,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 
 | Name | Description |
 |------|-------------|
-| <a name="output_api_vpe"></a> [api\_vpe](#output\_api\_vpe) | Info about the api VPE, if it exists. For more info about schema, see <https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway> |
+| <a name="output_api_vpe"></a> [api\_vpe](#output\_api\_vpe) | Info about the api VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway |
 | <a name="output_cluster_crn"></a> [cluster\_crn](#output\_cluster\_crn) | CRN of the cluster |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of the cluster |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the cluster |
@@ -404,13 +402,13 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_kms_config"></a> [kms\_config](#output\_kms\_config) | KMS configuration details |
 | <a name="output_master_status"></a> [master\_status](#output\_master\_status) | The status of the Kubernetes master. |
 | <a name="output_master_url"></a> [master\_url](#output\_master\_url) | The URL of the Kubernetes master. |
-| <a name="output_master_vpe"></a> [master\_vpe](#output\_master\_vpe) | Info about the master, or default, VPE. For more info about schema, see <https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway> |
+| <a name="output_master_vpe"></a> [master\_vpe](#output\_master\_vpe) | Info about the master, or default, VPE. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway |
 | <a name="output_ocp_version"></a> [ocp\_version](#output\_ocp\_version) | Openshift Version of the cluster |
 | <a name="output_operating_system"></a> [operating\_system](#output\_operating\_system) | The operating system of the workers in the default worker pool. |
 | <a name="output_private_service_endpoint_url"></a> [private\_service\_endpoint\_url](#output\_private\_service\_endpoint\_url) | Private service endpoint URL |
 | <a name="output_public_service_endpoint_url"></a> [public\_service\_endpoint\_url](#output\_public\_service\_endpoint\_url) | Public service endpoint URL |
 | <a name="output_region"></a> [region](#output\_region) | Region that the cluster is deployed to |
-| <a name="output_registry_vpe"></a> [registry\_vpe](#output\_registry\_vpe) | Info about the registry VPE, if it exists. For more info about schema, see <https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway> |
+| <a name="output_registry_vpe"></a> [registry\_vpe](#output\_registry\_vpe) | Info about the registry VPE, if it exists. For more info about schema, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway |
 | <a name="output_resource_group_id"></a> [resource\_group\_id](#output\_resource\_group\_id) | Resource group ID the cluster is deployed in |
 | <a name="output_secrets_manager_integration_config"></a> [secrets\_manager\_integration\_config](#output\_secrets\_manager\_integration\_config) | Information about the Secrets Manager instance that is used to store the Ingress certificates. |
 | <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | ID of the clusters VPC |
