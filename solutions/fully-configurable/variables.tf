@@ -165,7 +165,7 @@ variable "allow_default_worker_pool_replacement" {
 variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
-  default     = "bx2.8x32"
+  default     = "bx2.4x16"
   validation {
     condition     = length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", var.default_worker_pool_machine_type)) > 0
     error_message = "Invalid value provided for the machine type."
@@ -175,7 +175,7 @@ variable "default_worker_pool_machine_type" {
 variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
-  default     = 2
+  default     = 1
 }
 
 variable "default_worker_pool_operating_system" {
@@ -266,7 +266,7 @@ variable "use_private_endpoint" {
   default     = true
 }
 
-variable "allow_public_access_to_cluster" {
+variable "allow_public_access_to_cluster_management" {
   type        = bool
   description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
   default     = false
