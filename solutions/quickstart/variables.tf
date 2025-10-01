@@ -91,7 +91,7 @@ variable "size" {
   default     = "mini"
 }
 
-variable "allow_public_access_to_cluster" {
+variable "allow_public_access_to_cluster_management" {
   type        = bool
   description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
   default     = true
