@@ -730,7 +730,7 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
 ##############################################################################
 
 data "ibm_is_lbs" "all_lbs" {
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   count      = length(var.additional_lb_security_group_ids) > 0 ? 1 : 0
 }
 
@@ -766,19 +766,19 @@ locals {
 
 data "ibm_is_virtual_endpoint_gateway" "master_vpe" {
   count      = length(var.additional_vpe_security_group_ids["master"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["master"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "api_vpe" {
   count      = length(var.additional_vpe_security_group_ids["api"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["api"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "registry_vpe" {
   count      = length(var.additional_vpe_security_group_ids["registry"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool, null_resource.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["registry"]
 }
 
@@ -870,7 +870,7 @@ module "existing_secrets_manager_instance_parser" {
 
 resource "ibm_iam_authorization_policy" "ocp_secrets_manager_iam_auth_policy" {
   count                       = var.enable_secrets_manager_integration && !var.skip_ocp_secrets_manager_iam_auth_policy ? 1 : 0
-  depends_on                  = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
+  depends_on                  = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, ibm_container_vpc_worker_pool.pool, ibm_container_vpc_worker_pool.autoscaling_pool]
   source_service_name         = "containers-kubernetes"
   source_resource_instance_id = local.cluster_id
   target_service_name         = "secrets-manager"

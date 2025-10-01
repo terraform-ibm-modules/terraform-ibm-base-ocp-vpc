@@ -1,0 +1,2 @@
+
+terraform state mv "module.ocp_base.ibm_container_vpc_cluster.cluster[0]" "module.ocp_base.ibm_container_vpc_cluster.cluster_with_upgrade[0]"
