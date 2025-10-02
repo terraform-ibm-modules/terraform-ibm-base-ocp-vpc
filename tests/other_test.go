@@ -32,6 +32,7 @@ func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion s
 			"access_tags":     permanentResources["accessTags"],
 			"ocp_entitlement": "cloud_pak",
 		},
+		CheckApplyResultForUpgrade: true,
 	})
 
 	return options
@@ -167,6 +168,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		Tags:                   []string{"test-schematic"},
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
+		TerraformVersion:       terraformVersion,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
