@@ -742,7 +742,8 @@
               "hidden": true
             },
             {
-              "key": "additional_lb_security_group_ids"
+              "key": "additional_lb_security_group_ids",
+              "description": "A list of additional security group IDs to be attached to the load balancers associated with the cluster. These groups are applied in addition to the default IBM-managed security group."
             },
             {
               "key": "number_of_lbs",
