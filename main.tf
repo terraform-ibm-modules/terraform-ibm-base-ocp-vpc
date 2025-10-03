@@ -100,7 +100,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.21.25"
+  version                = "10.2.21"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -126,7 +126,7 @@ resource "ibm_resource_tag" "cos_access_tag" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.ignore_worker_pool_size_changes ? 0 : 1
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -197,7 +197,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
-  depends_on                          = [null_resource.reset_api_key]
+  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.ignore_worker_pool_size_changes ? 1 : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -284,28 +284,16 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # when the IAM API key is initially created and when it is fully replicated across Cloudant instances where the API key
 # does not work because it is not fully replicated, so commands that require the API key may fail with 404.
 #
-# WORKAROUND:
-# Run a script that checks if an IAM API key already exists for the given region and resource group, and if it does not,
-# run the ibmcloud ks api-key reset command to create one. The script will then pause for some time to allow any IAM
-# Cloudant replication to occur. By doing this, it means the cluster provisioning process will not attempt to create a
-# new key, and simply use the key created by this script. So hence should not face 404s anymore.
-# The IKS team are tracking internally https://github.ibm.com/alchemy-containers/armada-ironsides/issues/5023
+# Enhancement Request: Add support to skip API key reset if a valid key already exists (https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6468).
 
-data "ibm_iam_auth_token" "reset_api_key_tokendata" {
+resource "ibm_container_api_key_reset" "reset_api_key" {
+  region            = var.region
+  resource_group_id = var.resource_group_id
 }
 
-data "ibm_iam_account_settings" "iam_account_settings" {
-}
-
-resource "null_resource" "reset_api_key" {
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/reset_iks_api_key.sh ${var.region} ${var.resource_group_id} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IAM_TOKEN  = data.ibm_iam_auth_token.reset_api_key_tokendata.iam_access_token
-      ACCOUNT_ID = data.ibm_iam_account_settings.iam_account_settings.account_id
-    }
-  }
+resource "time_sleep" "wait_for_reset_api_key" {
+  depends_on      = [ibm_container_api_key_reset.reset_api_key]
+  create_duration = "10s"
 }
 
 ##############################################################################
@@ -688,7 +676,7 @@ locals {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.32.6"
+  version          = "1.33.2"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts

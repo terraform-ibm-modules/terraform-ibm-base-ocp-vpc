@@ -2,12 +2,13 @@
 
 Several optional input variables in the Red Hat Openshift Cluster [Deployable Architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You can specify these inputs when you configure your Deployable Architectures (DA).
 
-- [Add-ons](#options-with-addons) (`addons`)
+- [Add-ons](#options-with-add-ons) (`addons`)
 - [Manage All Add-ons](#manage-all-add-ons) (`manage_all_addons`)
-- [Additional Worker Pools](#options-with-additional-worker-pools) (`additional_worker_pools`)
-- [Worker Pool Taints](#options-with-worker-pools-taints) (`worker_pools_taints`)
-- [Additional VPE Security IDs](#options-with-additional-vpe-security-group-ids) (`additional_vpe_security_group_ids`)
-- [Context Based Restrictions](#options-with-cbr) (`cbr_rules`)
+- [Additional Worker Pools](#additional-worker-pools) (`additional_worker_pools`)
+- [Worker Pool Taints](#options-with-worker_pool_taints) (`worker_pools_taints`)
+- [Additional VPE Security IDs](#options-with-additional_vpe_security_group_ids) (`additional_vpe_security_group_ids`)
+- [Context Based Restrictions](#options-with-cbr_rules) (`cbr_rules`)
+- [Default Worker Pool Labels](#default-worker-pool-labels) (`default_worker_pool_labels`)
 
 ## Options with Add-ons <a name="options-with-addons"></a>
 
@@ -88,7 +89,7 @@ The variable `manage_all_addons` determines whether Terraform manages all add-on
 
 - If set to `false`, Terraform will only manage the add-ons listed in the addons map, leaving any others unchanged.
 
-## Options with additional_worker_pools <a name="options-with-additional-worker-pools"></a>
+## Additional Worker Pools <a name="options-with-additional-worker-pools"></a>
 
 This variable defines the worker node pools for your OCP cluster, with each pool having its own configuration settings.
 
@@ -129,7 +130,7 @@ This variable defines the worker node pools for your OCP cluster, with each pool
       {
         id = "<REPLACE ME>"
         zone = "us-south-1"
-        cidr_block = " "10.10.10.0/24"
+        cidr_block = "10.10.10.0/24"
       },
       {
         id = "<REPLACE ME>"
@@ -255,4 +256,18 @@ This variable allows you to provide a rule for the target service to enforce acc
     }]
   }
 ]
+```
+
+## Default Worker Pool Labels <a name="default-worker-pool-labels"></a>
+
+This variable is used to assign a set of key-value labels to the default worker pool for identification. Labels are helpful for organizing and filtering your resources.
+
+- Variable name: `default_worker_pool_labels`
+- Type: map(string)
+- Default value: An empty map (`{}`).
+
+### Example for default_worker_pool_labels
+
+```hcl
+{env = "prod", team = "devops"}
 ```

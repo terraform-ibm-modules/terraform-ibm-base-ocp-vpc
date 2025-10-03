@@ -51,7 +51,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for containerized applications with OpenShift - Standard (Integrated setup with configurable services) variation
+# Landing zone for containerized applications with OpenShift - Standard (Integrated setup with configurable services)
 
 {: #ocp-fully-configurable}
 {: toc-content-type="reference-architecture"}

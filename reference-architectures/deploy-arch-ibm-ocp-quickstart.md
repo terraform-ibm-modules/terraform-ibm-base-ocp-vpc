@@ -51,7 +51,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for containerized applications with OpenShift - QuickStart (Basic and simple) variation
+# Landing zone for containerized applications with OpenShift - QuickStart (Basic and simple)
 {: #ocp-ra-qs}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
