@@ -654,7 +654,6 @@
             },
             {
               "key": "default_worker_pool_labels",
-              "hidden": true,
               "type": "array",
               "custom_config": {
                 "type": "code_editor",
@@ -751,7 +750,6 @@
             },
             {
               "key": "additional_vpe_security_group_ids",
-              "hidden": true,
               "type": "array",
               "custom_config": {
                 "type": "code_editor",
