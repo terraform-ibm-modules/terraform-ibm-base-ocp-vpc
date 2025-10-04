@@ -653,7 +653,12 @@
               "hidden": true
             },
             {
-              "key": "default_worker_pool_labels"
+              "key": "default_worker_pool_labels",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "enable_autoscaling_for_default_pool",
@@ -666,7 +671,15 @@
               "key": "default_pool_maximum_number_of_nodes"
             },
             {
-              "key": "additional_security_group_ids"
+              "key": "additional_security_group_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "existing_subnet_ids",
@@ -713,21 +726,35 @@
               "hidden": true
             },
             {
-              "key": "custom_security_group_ids"
+              "key": "custom_security_group_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "attach_ibm_managed_security_group",
               "hidden": true
             },
             {
-              "key": "additional_lb_security_group_ids"
+              "key": "additional_lb_security_group_ids",
+              "description": "A list of additional security group IDs to be attached to the load balancers associated with the cluster. These groups are applied in addition to the default IBM-managed security group."
             },
             {
               "key": "number_of_lbs",
               "hidden": true
             },
             {
-              "key": "additional_vpe_security_group_ids"
+              "key": "additional_vpe_security_group_ids",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "ibmcloud_kms_api_key"
