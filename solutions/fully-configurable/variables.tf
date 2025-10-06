@@ -316,14 +316,14 @@ variable "attach_ibm_managed_security_group" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "List of additional security group IDs to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` variable is set to the number of Load Balancers associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
+  description = "The total number of Load Balancers in the cluster that should be associated with the security groups defined in `additional_lb_security_group_ids` variable."
   type        = number
   default     = 1
   nullable    = false
