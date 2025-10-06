@@ -881,6 +881,7 @@
             },
             {
               "key": "existing_vpc_crn",
+              "hidden" : true,
               "value_constraints": [
                 {
                   "type": "regex",
@@ -891,6 +892,7 @@
             },
             {
               "key": "existing_cos_instance_crn",
+              "hidden" : true,
               "value_constraints": [
                 {
                   "type": "regex",
