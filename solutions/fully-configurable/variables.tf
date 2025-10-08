@@ -252,6 +252,7 @@ variable "existing_cos_instance_crn" {
 variable "existing_vpc_crn" {
   type        = string
   description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the default worker pool is provisioned across all the subnets in the VPC."
+  default = null
 }
 
 variable "existing_subnet_ids" {

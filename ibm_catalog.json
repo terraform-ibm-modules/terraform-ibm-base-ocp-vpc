@@ -881,7 +881,6 @@
             },
             {
               "key": "existing_vpc_crn",
-              "default_value": "__NULL__",
               "value_constraints": [
                 {
                   "type": "regex",
