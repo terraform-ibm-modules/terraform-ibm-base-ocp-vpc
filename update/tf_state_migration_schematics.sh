@@ -87,6 +87,7 @@ function verify_required_env_var() {
 ##################################################
 # IBM Cloud Login
 ##################################################
+
 # Log in to IBM Cloud using IBMCLOUD_API_KEY env var value
 function ibmcloud_login() {
     printf "\n#### IBM CLOUD LOGIN ####\n\n"
@@ -135,20 +136,38 @@ function move_state_resources() {
       new_path="ibm_container_vpc_cluster.${name}_with_upgrade[0]"
     fi
 
-    if [[ "$REVERT" == false ]]; then
-      echo "Moving resource: $old_path -> $new_path"
-      ibmcloud schematics workspace state mv \
-        --id "$WORKSPACE_ID" \
-        --source "$old_path" \
-        --destination "$new_path"
+    echo "Moving resource: $old_path -> $new_path"
+    ibmcloud schematics workspace state mv \
+      --id "$WORKSPACE_ID" \
+      --source "$old_path" \
+      --destination "$new_path"
+
+  done
+}
+
+function revert_state_resources() {
+  echo "Running ibmcloud schematics workspace state mv commands (revert migration)..."
+
+  echo "$STATE" | jq -c '.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")' | while read -r resource; do
+    name=$(echo "$resource" | jq -r '.name')
+    module=$(echo "$resource" | jq -r '.module // empty')
+
+    # Strip the _with_upgrade suffix if present
+    base_name=$(echo "$name" | sed 's/_with_upgrade$//')
+
+    if [[ -n "$module" ]]; then
+      old_path="${module}.ibm_container_vpc_cluster.${name}[0]"
+      new_path="${module}.ibm_container_vpc_cluster.${base_name}[0]"
     else
-      echo "Reverting resource: $new_path -> $old_path"
-      ibmcloud schematics workspace state mv \
-        --id "$WORKSPACE_ID" \
-        --source "$new_path" \
-        --destination "$old_path"
+      old_path="ibm_container_vpc_cluster.${name}[0]"
+      new_path="ibm_container_vpc_cluster.${base_name}[0]"
     fi
 
+    echo "Reverting resource: $old_path -> $new_path"
+    ibmcloud schematics workspace state mv \
+      --id "$WORKSPACE_ID" \
+      --source "$old_path" \
+      --destination "$new_path"
   done
 }
 
@@ -161,7 +180,12 @@ function main() {
     verify_required_env_var
     ibmcloud_login
     get_workspace_details
-    move_state_resources
+
+    if [ "$REVERT" = true ]; then
+        revert_state_resources
+    else
+        move_state_resources
+    fi
 }
 
 main
