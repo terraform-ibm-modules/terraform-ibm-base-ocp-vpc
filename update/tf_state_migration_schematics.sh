@@ -163,8 +163,8 @@ function revert_state_resources() {
   echo "$STATE" | jq -c '.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")' | while read -r resource; do
     name=$(echo "$resource" | jq -r '.name')
     module=$(echo "$resource" | jq -r '.module // empty')
-    
-    base_name=$(echo "$name" | sed 's/_with_upgrade$//')
+
+    base_name=${name%_with_upgrade}
 
     if [[ -n "$module" ]]; then
       old_path="${module}.ibm_container_vpc_cluster.${name}[0]"
