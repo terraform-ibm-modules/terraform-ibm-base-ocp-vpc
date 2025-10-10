@@ -1,4 +1,115 @@
-# Migration Guide(Openshift version upgrades)
+# Migrating Terraform State for OpenShift Upgrades
+
+This guide explains how to migrate Terraform state resources during an OpenShift version upgrade on IBM Cloud.  
+The migration process ensures that existing `ibm_container_vpc_cluster` resources are correctly tracked under new resource addresses without re-creating clusters.  
+
+Choose the procedure based on how you deployed your infrastructure.
+
+## Select a procedure
+
+Select the procedure that matches where you deployed the code.
+
+- [Deployed with Schematics](#deployed-with-schematics)
+- [Local Terraform](#local-terraform)
+
+## Deployed with Schematics
+
+## Before you begin
+
+Make sure you have recent versions of these command-line prerequisites.
+
+- [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
+- [IBM Cloud CLI plug-ins](https://cloud.ibm.com/docs/cli?topic=cli-plug-ins):
+  - For IBM Schematics deployments: `sch` plug-in (schematics)
+- JSON processor `jq` (<https://jqlang.github.io/jq/>)
+- [Curl](). To test whether curl is installed on your system, run the following command:
+
+    ```sh
+    curl -V
+    ```
+
+    If you need to install curl, see <https://everything.curl.dev/install/index.html>.
+
+## Deployed with Schematics
+
+If you deployed your IBM Cloud infrastructure by using Schematics, the `tf_state_migration_schematics.sh` script creates a Schematics job. [View the script](tf_state_migration_schematics.sh).
+
+### Schematics process
+
+1. Set the environment variables:
+
+    1. Set the IBM Cloud API key that has access to your IBM Cloud project or Schematics workspace. Run the following command:
+
+        ```sh
+        export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
+        ```
+
+        Replace `<API-KEY>` with the value of your API key.
+
+    1. Find your Schematics workspace ID:
+        - If you are using IBM Cloud Projects:
+            1. Go to [Projects](https://cloud.ibm.com/projects)
+            1. Select the project that is associated with your Openshift Cluster deployment.
+            1. Click the **Configurations** tab.
+            1. Click the configuration name that is associated with your Openshift Cluster deployment.
+            1. Under **Workspace** copy the ID.
+
+        - If you are not using IBM Cloud Projects:
+            1. Go to [Schematics Workspaces](https://cloud.ibm.com/schematics/workspaces)
+            1. Select the location that the workspace is in.
+            1. Select the workspace associated with your Openshift Cluster deployment.
+            1. Click **Settings**.
+            1. Copy the **Workspace ID**.
+
+    1. Run the following command to set the workspace ID as an environment variable:
+
+        ```sh
+        export WORKSPACE_ID="<workspace-id>"
+        ```
+
+1. Download the script by running this Curl command:
+
+    ```sh
+    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/update/tf_state_migration_schematics.sh > tf_state_migration_schematics.sh
+    ```
+
+1. Run the script:
+
+    ```sh
+    bash tf_state_migration_schematics.sh
+    ```
+
+    The script creates a job in the Schematics workspace.
+
+1. Monitor the status of the job by selecting the workspace from your [Schematics workspaces dashboard](https://cloud.ibm.com/schematics/workspaces).
+    - When the job completes successfully, go to the next step.
+    - If the job fails, see [Reverting changes](#reverting-changes).
+
+### Apply the changes in Schematics
+
+**⚠️ Warning:** Before you click **Generate plan**, make sure to set `enable_openshift_version_upgrade` to `true`. Failing to do so may cause your migration to fail or result in unexpected state changes.
+
+1. Click **Generate plan** and make sure none of the Clusters will be re-created.
+
+    You should see in-place updates to names. No resources should be set to be destroyed or re-created.
+1. Click **Apply plan**.
+
+    If the job is successful, follow the steps in [Clean up](#clean-up). If the job fails, see [Reverting changes](#revert-schematics-changes).
+
+### Revert Schematics Changes
+
+If the script fails, run the script again with the `-z` option to undo the changes. The script uses the `revert.json` file that was created when you ran the script without the `-z` option.
+
+```sh
+bash tf_state_migration_schematics.sh -z
+```
+
+- If you ran the job in Schematics, a new workspace job reverts the state to what existed before you ran the script initially.
+- If your code and state file are on your computer, the script reverts changes to the local Terraform state file.
+
+:exclamation: **Important:** After you revert the changes, don't run any other steps in this process. Create an IBM Cloud support case and include information about the script and errors. For more information, see [Creating support cases](https://cloud.ibm.com/docs/get-support?topic=get-support-open-case&interface=ui).
+
+## Local Terraform
 
 Using `tf_state_migration.sh` to perform Terraform state moves allows Terraform to map an existing cluster to a new resource variant.
 
@@ -31,9 +142,9 @@ Terraform automatically backs up the state file during every `terraform state mv
 
 Before running the script:
 
-* Terraform CLI must be installed
-* Terraform state initialized (or script will auto-init)
-* Run the script **from a directory containing a Terraform configuration** or pass a directory explicitly
+- Terraform CLI must be installed
+- Terraform state initialized (or script will auto-init)
+- Run the script **from a directory containing a Terraform configuration** or pass a directory explicitly
 
 ---
 
