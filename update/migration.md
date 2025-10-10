@@ -84,7 +84,6 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `tf_state
 1. Monitor the status of the job by selecting the workspace from your [Schematics workspaces dashboard](https://cloud.ibm.com/schematics/workspaces).
     - When the job completes successfully, go to the next step.
     - If the job fails, [create a support cases](https://cloud.ibm.com/docs/get-support?topic=get-support-open-case&interface=ui).
-    - If you want to revert the changes done as
 
 ### Apply the changes in Schematics
 
@@ -104,7 +103,7 @@ bash tf_state_migration_schematics.sh -z
 ```
 
 - If you ran the job in Schematics, a new workspace job reverts the state to what existed before you ran the script initially.
-- If your code and state file are on your computer, the script reverts changes to the local Terraform state file.
+- Make sure to set `enable_openshift_version_upgrade` to `false` before running **Generate plan** so that it doesn't result in any unexpected change.
 
 :exclamation: **Important:** After you revert the changes, don't run any other steps in this process. Create an IBM Cloud support case and include information about the script and errors. For more information, see [Creating support cases](https://cloud.ibm.com/docs/get-support?topic=get-support-open-case&interface=ui).
 
