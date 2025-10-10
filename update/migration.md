@@ -83,7 +83,8 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `tf_state
 
 1. Monitor the status of the job by selecting the workspace from your [Schematics workspaces dashboard](https://cloud.ibm.com/schematics/workspaces).
     - When the job completes successfully, go to the next step.
-    - If the job fails, see [Reverting changes](#reverting-changes).
+    - If the job fails, [create a support cases](https://cloud.ibm.com/docs/get-support?topic=get-support-open-case&interface=ui).
+    - If you want to revert the changes done as
 
 ### Apply the changes in Schematics
 
@@ -94,11 +95,9 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `tf_state
     You should see in-place updates to names. No resources should be set to be destroyed or re-created.
 1. Click **Apply plan**.
 
-    If the job is successful, follow the steps in [Clean up](#clean-up). If the job fails, see [Reverting changes](#revert-schematics-changes).
-
 ### Revert Schematics Changes
 
-If the script fails, run the script again with the `-z` option to undo the changes. The script uses the `revert.json` file that was created when you ran the script without the `-z` option.
+Once the resources have been successfully moved, you can undo the changes by running the script again with the `-z` option.
 
 ```sh
 bash tf_state_migration_schematics.sh -z

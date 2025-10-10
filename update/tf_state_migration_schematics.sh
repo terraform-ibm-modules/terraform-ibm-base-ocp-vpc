@@ -20,28 +20,25 @@ helpFunction() {
     echo ""
     echo "Usage: $0 [-z]"
     echo -e "\t-z [Optional] Flag to revert the changes done to the state file."
-    exit 1 # Exit script after printing help
+    exit 1
 }
 
-# Parse options
 while getopts ":z" opt; do
     case "$opt" in
         z) REVERT=true ;;
-        \?|*) helpFunction ;;  # Any invalid option triggers help
+        \?|*) helpFunction ;;
     esac
 done
 
-# Shift parsed options away
 shift $((OPTIND -1))
 
-# If anything extra remains, it's an error
 if [ $# -gt 0 ]; then
     echo "Error: Unknown argument(s): $*"
     helpFunction
 fi
 
 ##################################################
-# Check Dependencies
+# Dependency Check
 ##################################################
 
 function dependency_check() {
@@ -63,10 +60,9 @@ function dependency_check() {
 }
 
 ##################################################
-# Check Environment Variables
+# Environment Variables Check
 ##################################################
 
-# Check that env contains required vars
 function verify_required_env_var() {
     printf "\n#### VERIFYING ENV ####\n\n"
     all_env_vars_exist=true
@@ -88,7 +84,6 @@ function verify_required_env_var() {
 # IBM Cloud Login
 ##################################################
 
-# Log in to IBM Cloud using IBMCLOUD_API_KEY env var value
 function ibmcloud_login() {
     printf "\n#### IBM CLOUD LOGIN ####\n\n"
     WORKSPACE_REGION=$(echo "$WORKSPACE_ID" | cut -d "." -f 1)
@@ -102,7 +97,7 @@ function ibmcloud_login() {
 }
 
 ##################################################
-# Get Workspace Details
+# Workspace Details
 ##################################################
 
 function get_workspace_details() {
@@ -117,12 +112,18 @@ function get_workspace_details() {
 }
 
 ##################################################
-# Computing move resources
+# Move State Resources
 ##################################################
-
 
 function move_state_resources() {
   echo "Running ibmcloud schematics workspace state mv commands..."
+
+  matches=$(echo "$STATE" | jq '[.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")] | length')
+
+  if [ "$matches" -eq 0 ]; then
+    echo "No ibm_container_vpc_cluster resources found in the state file. Nothing to move."
+    exit 0
+  fi
 
   echo "$STATE" | jq -c '.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")' | while read -r resource; do
     name=$(echo "$resource" | jq -r '.name')
@@ -145,14 +146,24 @@ function move_state_resources() {
   done
 }
 
+##################################################
+# Revert State Resources
+##################################################
+
 function revert_state_resources() {
   echo "Running ibmcloud schematics workspace state mv commands (revert migration)..."
+
+  matches=$(echo "$STATE" | jq '[.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")] | length')
+
+  if [ "$matches" -eq 0 ]; then
+    echo "No ibm_container_vpc_cluster resources found in the state file. Nothing to revert."
+    exit 0
+  fi
 
   echo "$STATE" | jq -c '.resources[] | select(.mode=="managed" and .type=="ibm_container_vpc_cluster")' | while read -r resource; do
     name=$(echo "$resource" | jq -r '.name')
     module=$(echo "$resource" | jq -r '.module // empty')
-
-    # Strip the _with_upgrade suffix if present
+    
     base_name=$(echo "$name" | sed 's/_with_upgrade$//')
 
     if [[ -n "$module" ]]; then
@@ -172,7 +183,7 @@ function revert_state_resources() {
 }
 
 ##################################################
-# Main Function
+# Main
 ##################################################
 
 function main() {
