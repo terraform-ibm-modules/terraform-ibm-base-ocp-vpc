@@ -90,8 +90,7 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `tf_state
 **⚠️ Warning:** Before you click **Generate plan**, make sure to set `enable_openshift_version_upgrade` to `true`. Failing to do so may cause your migration to fail or result in unexpected state changes.
 
 1. Click **Generate plan** and make sure none of the Clusters will be re-created.
-
-    You should see in-place updates to names. No resources should be set to be destroyed or re-created.
+    No resources should be set to be destroyed or re-created.
 1. Click **Apply plan**.
 
 ### Revert Schematics Changes
