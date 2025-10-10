@@ -1,4 +1,4 @@
-# Migrating Terraform State for OpenShift Upgrades
+# Migrating Terraform State for OpenShift Version Upgrades
 
 This guide explains how to migrate Terraform state resources during an OpenShift version upgrade on IBM Cloud.
 The migration process ensures that existing `ibm_container_vpc_cluster` resources are correctly tracked under new resource addresses without re-creating clusters.
