@@ -5,6 +5,7 @@ go 1.24.0
 toolchain go1.25.2
 
 require (
+	github.com/IBM/go-sdk-core v1.1.0
 	github.com/gruntwork-io/terratest v0.51.0
 	github.com/stretchr/testify v1.11.1
 	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.60.12
@@ -29,6 +30,7 @@ require (
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
@@ -98,6 +100,7 @@ require (
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/text v0.30.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
+	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
