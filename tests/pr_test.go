@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/IBM/go-sdk-core/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -32,10 +31,11 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.18" // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.17" // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.16" // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.15" // used by TestRunAddRulesToSGExample and TestRunBasicExample
+const ocpVersion1 = "4.18"                 // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.17"                 // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.16"                 // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.15"                 // used by TestRunAddRulesToSGExample and TestRunBasicExample
+const terraformVersion = "terraform_v1.10" // This should match the version in the ibm_catalog.json
 
 var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
@@ -100,10 +100,12 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 			"*.tf",
 			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
 		},
-		TemplateFolder:         quickStartTerraformDir,
-		Tags:                   []string{"test-schematic"},
-		DeleteWorkspaceOnFail:  false,
-		WaitJobCompleteMinutes: 360,
+		TemplateFolder:             quickStartTerraformDir,
+		Tags:                       []string{"test-schematic"},
+		DeleteWorkspaceOnFail:      false,
+		WaitJobCompleteMinutes:     360,
+		TerraformVersion:           terraformVersion,
+		CheckApplyResultForUpgrade: true,
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -141,6 +143,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
+		TerraformVersion:      terraformVersion,
 	})
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -171,12 +174,14 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:               t,
-		Prefix:                "fc-upg",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
-		TemplateFolder:        fullyConfigurableTerraformDir,
-		Tags:                  []string{"test-schematic"},
-		DeleteWorkspaceOnFail: false,
+		Testing:                    t,
+		Prefix:                     "fc-upg",
+		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
+		TemplateFolder:             fullyConfigurableTerraformDir,
+		Tags:                       []string{"test-schematic"},
+		DeleteWorkspaceOnFail:      false,
+		TerraformVersion:           terraformVersion,
+		CheckApplyResultForUpgrade: true,
 	})
 
 	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
@@ -265,54 +270,40 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-slz-ocp",
 		"fully-configurable",
 		map[string]interface{}{
-			"prefix":                       options.Prefix,
-			"region":                       "eu-de",
-			"secrets_manager_service_plan": "trial",
+			"prefix": options.Prefix,
+			"region": "eu-de",
 		},
 	)
 
-	/*
-		Secrets manager is manually disabled in this test because it deploys Event notification
-		and event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
-		is not considered by projects as EN is not a direct dependency of OCP DA. So undeploy fails, because
-		key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
-		EN so SM is being disabled.
-		Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
-		Once that is fixed, we can remove the logic to disable SM
-	*/
+	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
 			OfferingName:   "deploy-arch-ibm-secrets-manager",
 			OfferingFlavor: "fully-configurable",
-			Enabled:        core.BoolPtr(false), // explicitly disabled
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// // Disable target / route creation to help prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
 		},
 	}
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
-}
-
-// TestDependencyPermutations runs dependency permutations for OCP and all its dependencies
-func TestRoksDependencyPermutations(t *testing.T) {
-
-	t.Skip("Skipping dependency permutations until the test is fixed")
-	t.Parallel()
-
-	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing: t,
-		Prefix:  "ocp-per",
-		AddonConfig: cloudinfo.AddonConfig{
-			OfferingName:   "deploy-arch-ibm-slz-ocp",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"prefix":                       "ocp-per",
-				"region":                       "eu-de",
-				"secrets_manager_service_plan": "trial",
-				"existing_cos_instance_crn":    permanentResources["general_test_storage_cos_instance_crn"],
-			},
-		},
-	})
-
-	err := options.RunAddonPermutationTest()
-	assert.NoError(t, err, "Dependency permutation test should not fail")
 }
