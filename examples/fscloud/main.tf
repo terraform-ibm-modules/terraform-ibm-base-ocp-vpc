@@ -112,7 +112,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_vpc_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.33.3"
+  version          = "1.33.4"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -124,7 +124,7 @@ module "cbr_vpc_zone" {
 
 module "cbr_zone_schematics" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.33.3"
+  version          = "1.33.4"
   name             = "${var.prefix}-schematics-zone"
   zone_description = "CBR Network zone containing Schematics"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -139,7 +139,7 @@ module "cbr_zone_schematics" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.33.3"
+  version          = "1.33.4"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
