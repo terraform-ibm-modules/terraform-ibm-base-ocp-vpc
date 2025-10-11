@@ -201,6 +201,12 @@ variable "ocp_version" {
   }
 }
 
+variable "enable_openshift_version_upgrade" {
+  type        = bool
+  description = "When set to true, allows Terraform to manage major OpenShift version upgrades. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates. NOTE: Enabling this on existing clusters requires a one-time terraform state migration. See [README](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md#openshift-version-upgrade) for details."
+  default     = false
+}
+
 variable "cluster_ready_when" {
   type        = string
   description = "The cluster is ready based on one of the following:: MasterNodeReady (not recommended), OneWorkerNodeReady, Normal, IngressReady"

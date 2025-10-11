@@ -155,19 +155,20 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../.."
-  cluster_name         = var.prefix
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = local.worker_pools
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  access_tags          = var.access_tags
-  worker_pools_taints  = local.worker_pools_taints
-  ocp_entitlement      = var.ocp_entitlement
+  source                           = "../.."
+  cluster_name                     = var.prefix
+  resource_group_id                = module.resource_group.resource_group_id
+  region                           = var.region
+  force_delete_storage             = true
+  vpc_id                           = ibm_is_vpc.vpc.id
+  vpc_subnets                      = local.cluster_vpc_subnets
+  worker_pools                     = local.worker_pools
+  ocp_version                      = var.ocp_version
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  worker_pools_taints              = local.worker_pools_taints
+  ocp_entitlement                  = var.ocp_entitlement
+  enable_openshift_version_upgrade = var.enable_openshift_version_upgrade
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
