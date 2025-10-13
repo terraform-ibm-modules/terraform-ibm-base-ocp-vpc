@@ -187,60 +187,43 @@ In all cases, note that:
 
 ### OpenShift Version Upgrade
 
-Consumers who want to deploy an OpenShift cluster through this module and later manage version upgrades via Terraform must set the variable `enable_openshift_version_upgrade` to `true` and deploy the code.
+Consumers who want to deploy an OpenShift cluster through this module and later manage **master** version upgrades via Terraform must set the variable `enable_openshift_version_upgrade` to `true`. Master upgrade typically require manual checks, and potential updates to the workload, therefore this option is set to `false` by default. This is an advanced capability that we recommend to set to `true` only if you have a robust process to handle master upgrades before updating the version via Terraform.
 
-Existing users with a running cluster can also enable this variable to manage version upgrades through Terraform. However, when `enable_openshift_version_upgrade` is set to `true`, Terraform may plan to destroy and re-create the cluster because the resource type in the module changes. To prevent this:
+Existing users: this capability was introduced in v3.64 of the module. Existing users with a cluster created on previous version of the module can also enable this variable to manage version upgrades through Terraform. However, when `enable_openshift_version_upgrade` is set to `true`, Terraform may plan to destroy and re-create the cluster because the resource type in the module changes. To prevent this, you **must** migrate the existing state to the new resource address before applying any changes - `ibm_container_vpc_cluster.cluster` to `ibm_container_vpc_cluster.cluster_with_upgrade` or, when using auto-scaling, `ibm_container_vpc_cluster.autoscaling_cluster` to `ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade`. This is a one time migration of the state.
 
-You **must** migrate the existing state to the new resource address before applying any changes.
+There are several options to do this:
 
-There are two options to do this:
+#### Use terraform moved blocks (recommended)
 
-#### Manual State Migration (One-Time)
+The recommended approach is to use Terraform's native `moved` block feature:
 
-Run `terraform state mv` to map the existing cluster to the new resource variant, followed by `terraform refresh`:
-
-1. Identify the current resource address in the state.
-2. Move it to the new resource address using `terraform state mv`.
-3. Run `terraform refresh` to sync the state with the actual cluster.
-
-This avoids the destroy/recreate planned by Terraform.
-
-#### Use the Provided Script (Recommended)
-
-You can use the script in the `update` directory to automate the process:
-
-`tf_state_migration.sh`
-<https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/update/tf_state_migration.sh>
-
-The script:
-
-- Locates the existing cluster resource in the state
-- Updates it to the new resource address
-- Runs `terraform refresh` after migration
-- Supports module-based targeting
-- Creates a `revert.txt` file to undo the change if needed
-
-> **Important:** Ensure `enable_openshift_version_upgrade` is set correctly before running the script for migration or reverting.
-
-Use this process when:
-
-- You are upgrading the OpenShift version of an existing cluster via Terraform
-- You have recently set `enable_openshift_version_upgrade = true`
-- `terraform plan` shows the cluster being destroyed and recreated
-
-Without migrating the state, Terraform will assume the resource is new and attempt to re-create the cluster.
-
-#### Post-Migration Check
-
-After performing the migration (manual or script), always run:
-
-```bash
-terraform plan
+```hcl
+# Example assuming your OCP module is called "ocp"
+moved {
+  from = module.ocp.ibm_container_vpc_cluster.cluster[0]
+  to   = module.ocp.ibm_container_vpc_cluster.cluster_with_upgrade[0]
+}
 ```
 
-The plan must not show the cluster being destroyed and recreated.
+For auto-scaling clusters:
+```hcl
+moved {
+  from = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster[0]
+  to   = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0]
+}
+```
 
-If it does, do not proceed with terraform apply. Double-check your migration step, module path, and enable_openshift_version_upgrade setting.
+Add this block to your Terraform configuration, run `terraform plan` to verify the state migration, then `terraform apply` to apply the changes. This approach works for both local Terraform and Schematics deployments.
+
+After a successful migration and once all team members have applied the changes, you can safely remove the moved blocks from your configuration.
+
+#### Alternative: manual state migration
+
+If you prefer not to use moved blocks, you can manually use the terraform state mv command to migrate resources:
+
+- For local Terraform deployments, see the [terraform state mv documentation](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
+- For Schematics deployments, see the [ibmcloud schematics workspace state mv documentation](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-wks_statemv)
+
 
 ### Troubleshooting
 
