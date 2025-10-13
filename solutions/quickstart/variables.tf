@@ -93,7 +93,7 @@ variable "size" {
 
 variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
   default     = true
 }
 
