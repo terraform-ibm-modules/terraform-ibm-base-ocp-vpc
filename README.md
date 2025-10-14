@@ -118,11 +118,12 @@ module "ocp_base" {
 }
 ```
 
-### Customizing default cloud service endpoints.
+### Customizing default cloud service endpoints
 
 The user must export the endpoint as an environment variable in order to use custom cloud service endpoints with this module. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#getting-started-with-custom-service-endpoints).
 
 **Important** The only supported method for customizing cloud service endpoints is to export the environment variables endpoint; be sure to export the value for `IBMCLOUD_IAM_API_ENDPOINT`, `IBMCLOUD_CS_API_ENDPOINT` and `IBMCLOUD_IS_NG_API_ENDPOINT`. For example,
+
 ```
 export IBMCLOUD_IAM_API_ENDPOINT="<endpoint_url>"
 export IBMCLOUD_CS_API_ENDPOINT="<endpoint_url>"
@@ -140,6 +141,7 @@ There is a provision to toggle outbound traffic by using the modules' `disable_o
 **Changes Requiring Re-creation of Default Worker Pool**
 
 If you need to make changes to the default worker pool that require its re-creation (e.g., changing the worker node `operating_system`), you need to follow 3 steps:
+
 1. you must set the `allow_default_worker_pool_replacement` variable to `true`, perform the apply.
 2. Once the first apply is successful, then make the required change to the default worker pool object, perform the apply.
 3. After successful apply of the default worker pool change set `allow_default_worker_pool_replacement` back to `false` in the code before the subsequent apply.
@@ -182,6 +184,46 @@ In all cases, note that:
 - You can attach additional security groups using the `additional_lb_security_group_ids` variable. This set of security groups is attached to all loadbalancers managed by the cluster.
 - **Important**: If additional load balancers are added after creating the cluster, for example, by exposing a Kubernetes service of type LoadBalancer, update the `number_of_lbs` variable and re-run this module to attach the extra security groups to the newly created load balancer.
 - The default IBM-managed security group is attached to the LBs in all cases.
+
+### OpenShift Version Upgrade
+
+Consumers who want to deploy an OpenShift cluster through this module and later manage **master** version upgrades via Terraform must set the variable `enable_openshift_version_upgrade` to `true`. Master upgrade typically require manual checks, and potential updates to the workload, therefore this option is set to `false` by default. This is an advanced capability that we recommend to set to `true` only if you have a robust process to handle master upgrades before updating the version via Terraform.
+
+Existing users: this capability was introduced in v3.64 of the module. Existing users with a cluster created on previous version of the module can also enable this variable to manage version upgrades through Terraform. However, when `enable_openshift_version_upgrade` is set to `true`, Terraform may plan to destroy and re-create the cluster because the resource type in the module changes. To prevent this, you **must** migrate the existing state to the new resource address before applying any changes - `ibm_container_vpc_cluster.cluster[0]` to `ibm_container_vpc_cluster.cluster_with_upgrade[0]` or, when using auto-scaling, `ibm_container_vpc_cluster.autoscaling_cluster[0]` to `ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0]`. This is a one time migration of the state.
+
+There are several options to do this:
+
+#### Use terraform moved blocks (recommended)
+
+The recommended approach is to use Terraform's native `moved` block feature:
+
+```hcl
+# Example assuming your OCP module is called "ocp"
+moved {
+  from = module.ocp.ibm_container_vpc_cluster.cluster[0]
+  to   = module.ocp.ibm_container_vpc_cluster.cluster_with_upgrade[0]
+}
+```
+
+For auto-scaling clusters:
+```hcl
+moved {
+  from = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster[0]
+  to   = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0]
+}
+```
+
+Add this block to your Terraform configuration, run `terraform plan` to verify the state migration, then `terraform apply` to apply the changes. This approach works for both local Terraform and Schematics deployments.
+
+After a successful migration and once all team members have applied the changes, you can safely remove the moved blocks from your configuration.
+
+#### Alternative: manual state migration
+
+If you prefer not to use moved blocks, you can manually use the terraform state mv command to migrate resources:
+
+- For local Terraform deployments, see the [terraform state mv documentation](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
+- For Schematics deployments, see the [ibmcloud schematics workspace state mv documentation](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-wks_statemv)
+
 
 ### Troubleshooting
 
@@ -262,7 +304,9 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [ibm_container_api_key_reset.reset_api_key](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_api_key_reset) | resource |
 | [ibm_container_ingress_instance.instance](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_ingress_instance) | resource |
 | [ibm_container_vpc_cluster.autoscaling_cluster](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
+| [ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
 | [ibm_container_vpc_cluster.cluster](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
+| [ibm_container_vpc_cluster.cluster_with_upgrade](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
 | [ibm_container_vpc_worker_pool.autoscaling_pool](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_worker_pool) | resource |
 | [ibm_container_vpc_worker_pool.pool](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_worker_pool) | resource |
 | [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
@@ -302,6 +346,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_disable_outbound_traffic_protection"></a> [disable\_outbound\_traffic\_protection](#input\_disable\_outbound\_traffic\_protection) | Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. | `bool` | `false` | no |
 | <a name="input_disable_public_endpoint"></a> [disable\_public\_endpoint](#input\_disable\_public\_endpoint) | Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. | `bool` | `false` | no |
 | <a name="input_enable_ocp_console"></a> [enable\_ocp\_console](#input\_enable\_ocp\_console) | Flag to specify whether to enable or disable the OpenShift console. If set to `null` the module does not modify the current setting on the cluster. Keep in mind that when this input is set to `true` or `false` on a cluster with private only endpoint enabled, the runtime must be able to access the private endpoint. | `bool` | `null` | no |
+| <a name="input_enable_openshift_version_upgrade"></a> [enable\_openshift\_version\_upgrade](#input\_enable\_openshift\_version\_upgrade) | When set to true, allows Terraform to manage major OpenShift version upgrades. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates. NOTE: Enabling this on existing clusters requires a one-time terraform state migration. See [README](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md#openshift-version-upgrade) for details. | `bool` | `false` | no |
 | <a name="input_enable_registry_storage"></a> [enable\_registry\_storage](#input\_enable\_registry\_storage) | Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature. | `bool` | `true` | no |
 | <a name="input_enable_secrets_manager_integration"></a> [enable\_secrets\_manager\_integration](#input\_enable\_secrets\_manager\_integration) | Integrate with IBM Cloud Secrets Manager so you can centrally manage Ingress subdomain certificates and other secrets. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-secrets-mgr) | `bool` | `false` | no |
 | <a name="input_existing_cos_id"></a> [existing\_cos\_id](#input\_existing\_cos\_id) | The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable\_registry\_storage' and 'use\_existing\_cos' are true. | `string` | `null` | no |
