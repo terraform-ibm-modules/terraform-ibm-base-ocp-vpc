@@ -106,3 +106,28 @@ output "secrets_manager_integration_config" {
   description = "Information about the Secrets Manager instance that is used to store the Ingress certificates."
   value       = module.ocp_base.secrets_manager_integration_config
 }
+
+output "next_steps_text" {
+  value       = "Your Red Hat OpenShift cluster is ready. You can now build, deploy, and manage containerized applications."
+  description = "Next steps text"
+}
+
+output "next_step_primary_label" {
+  value       = "OpenShift cluster web console"
+  description = "Primary label"
+}
+
+output "next_step_primary_url" {
+  value       = "https://console-openshift-console.${module.ocp_base.ingress_hostname}/dashboards"
+  description = "primary url"
+}
+
+output "next_step_secondary_label" {
+  value       = "Red Hat OpenShift cluster overview page"
+  description = "Secondary label"
+}
+
+output "next_step_secondary_url" {
+  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
+  description = "secondary url"
+}

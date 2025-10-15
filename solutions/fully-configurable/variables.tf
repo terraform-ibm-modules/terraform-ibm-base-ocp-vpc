@@ -165,7 +165,7 @@ variable "allow_default_worker_pool_replacement" {
 variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
-  default     = "bx2.8x32"
+  default     = "bx2.4x16"
   validation {
     condition     = length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", var.default_worker_pool_machine_type)) > 0
     error_message = "Invalid value provided for the machine type."
@@ -175,7 +175,7 @@ variable "default_worker_pool_machine_type" {
 variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
-  default     = 2
+  default     = 1
 }
 
 variable "default_worker_pool_operating_system" {
@@ -186,7 +186,7 @@ variable "default_worker_pool_operating_system" {
 
 variable "default_worker_pool_labels" {
   type        = map(string)
-  description = "A set of key-value labels assigned to the worker pool for identification. For Example: { env = \"prod\", team = \"devops\" }"
+  description = "A set of key-value labels assigned to the worker pool for identification. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#default-worker-pool-labels)"
   default     = {}
 }
 
@@ -266,9 +266,9 @@ variable "use_private_endpoint" {
   default     = true
 }
 
-variable "allow_public_access_to_cluster" {
+variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
   default     = false
 }
 
@@ -316,14 +316,14 @@ variable "attach_ibm_managed_security_group" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "List of additional security group IDs to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` variable is set to the number of Load Balancers associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
+  description = "The total number of Load Balancers in the cluster that should be associated with the security groups defined in `additional_lb_security_group_ids` variable."
   type        = number
   default     = 1
   nullable    = false

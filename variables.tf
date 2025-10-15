@@ -13,12 +13,6 @@ variable "region" {
   description = "The IBM Cloud region where the cluster is provisioned."
 }
 
-variable "use_private_endpoint" {
-  type        = bool
-  description = "Set this to true to force all API calls to use the IBM Cloud private endpoints."
-  default     = false
-}
-
 # Cluster Variables
 variable "tags" {
   type        = list(string)
@@ -205,6 +199,12 @@ variable "ocp_version" {
     ])
     error_message = "The specified ocp_version is not of the valid versions."
   }
+}
+
+variable "enable_openshift_version_upgrade" {
+  type        = bool
+  description = "When set to true, allows Terraform to manage major OpenShift version upgrades. This is intended for advanced users who manually control major version upgrades. Defaults to false to avoid unintended drift from IBM-managed patch updates. NOTE: Enabling this on existing clusters requires a one-time terraform state migration. See [README](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/README.md#openshift-version-upgrade) for details."
+  default     = false
 }
 
 variable "cluster_ready_when" {

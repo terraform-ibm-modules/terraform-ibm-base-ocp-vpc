@@ -67,7 +67,7 @@ locals {
 
 module "vpc" {
   source              = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version             = "8.3.0"
+  version             = "8.5.0"
   resource_group_id   = module.resource_group.resource_group_id
   region              = var.region
   name                = "vpc"
@@ -142,7 +142,6 @@ module "ocp_base" {
   worker_pools                        = local.worker_pools
   disable_outbound_traffic_protection = var.allow_outbound_traffic
   access_tags                         = var.access_tags
-  disable_public_endpoint             = !var.allow_public_access_to_cluster
-  use_private_endpoint                = true
+  disable_public_endpoint             = !var.allow_public_access_to_cluster_management
   cluster_config_endpoint_type        = "default"
 }

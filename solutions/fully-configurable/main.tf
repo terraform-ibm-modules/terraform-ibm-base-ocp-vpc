@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.1.26"
+  version                     = "5.3.4"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -225,7 +225,7 @@ module "ocp_base" {
   cluster_ready_when                       = var.cluster_ready_when
   custom_security_group_ids                = var.custom_security_group_ids
   disable_outbound_traffic_protection      = var.allow_outbound_traffic
-  disable_public_endpoint                  = !var.allow_public_access_to_cluster
+  disable_public_endpoint                  = !var.allow_public_access_to_cluster_management
   enable_ocp_console                       = var.enable_ocp_console
   ignore_worker_pool_size_changes          = var.ignore_worker_pool_size_changes
   kms_config                               = local.kms_config
@@ -233,7 +233,6 @@ module "ocp_base" {
   number_of_lbs                            = var.number_of_lbs
   pod_subnet_cidr                          = var.pod_subnet_cidr
   service_subnet_cidr                      = var.service_subnet_cidr
-  use_private_endpoint                     = var.use_private_endpoint
   verify_worker_network_readiness          = var.verify_worker_network_readiness
   worker_pools_taints                      = var.worker_pools_taints
   enable_secrets_manager_integration       = var.enable_secrets_manager_integration

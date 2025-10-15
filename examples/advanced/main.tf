@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.26"
+  version                   = "5.3.4"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -155,19 +155,20 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../.."
-  cluster_name         = var.prefix
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = local.worker_pools
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  access_tags          = var.access_tags
-  worker_pools_taints  = local.worker_pools_taints
-  ocp_entitlement      = var.ocp_entitlement
+  source                           = "../.."
+  cluster_name                     = var.prefix
+  resource_group_id                = module.resource_group.resource_group_id
+  region                           = var.region
+  force_delete_storage             = true
+  vpc_id                           = ibm_is_vpc.vpc.id
+  vpc_subnets                      = local.cluster_vpc_subnets
+  worker_pools                     = local.worker_pools
+  ocp_version                      = var.ocp_version
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  worker_pools_taints              = local.worker_pools_taints
+  ocp_entitlement                  = var.ocp_entitlement
+  enable_openshift_version_upgrade = var.enable_openshift_version_upgrade
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
@@ -211,7 +212,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.27"
+  version           = "1.8.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -247,7 +248,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.7.2"
+  version                       = "1.9.1"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
