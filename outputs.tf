@@ -22,7 +22,7 @@ output "cluster_crn" {
 
 output "workerpools" {
   description = "Worker pools created"
-  value       = data.ibm_container_vpc_worker_pool.all_pools
+  value       = module.worker_pools.workerpools
 }
 
 output "ocp_version" {
