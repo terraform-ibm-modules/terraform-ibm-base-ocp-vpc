@@ -63,7 +63,7 @@ variable "allow_default_worker_pool_replacement" {
 
 variable "cluster_id" {
   type        = string
-  description = "value"
+  description = "ID of the existing openshift cluster."
 }
 
 variable "resource_group_id" {
@@ -72,5 +72,6 @@ variable "resource_group_id" {
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
+  description = "ID of the VPC instance where this cluster is provisioned."
 }
