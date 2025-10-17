@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.3.0"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.3.4"
+  version                   = "5.4.0"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -212,7 +212,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.8.6"
+  version           = "1.9.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -248,7 +248,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.9.1"
+  version                       = "1.9.2"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
