@@ -97,15 +97,8 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "service_name": "All Account Management services",
-              "notes": "[Optional] Required to create new resource groups when enabling the Account Configuration integration."
-            },
-            {
-              "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
               "service_name": "All Identity and Access enabled services",
-              "notes": "[Optional] Required to create new resource groups with account settings when enabling the Account Configuration integration."
+              "notes": "[Optional] Required to to create trusted profile for App Configuration aggregator which is used for compliance scanning."
             },
             {
               "role_crns": [
@@ -557,8 +550,6 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "default_value": "Default",
-              "description": "The name of an existing resource group to provision the resources.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -1004,6 +995,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "region",
                   "version_input": "region",
                   "reference_version": true
@@ -1023,31 +1019,6 @@
                   "reference_version": true
                 }
               ]
-            },
-            {
-              "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Organize your IBM Cloud account using preconfigured groups and access policies to manage resource group usage. Optionally, extend security controls with IAM Account Settings validation.",
-              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-              "flavors": [
-                "resource-group-only",
-                "resource-groups-with-account-settings"
-              ],
-              "default_flavor": "resource-group-only",
-              "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
-              "input_mapping": [
-                {
-                  "dependency_output": "workload_resource_group_name",
-                  "version_input": "existing_resource_group_name"
-                },
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                }
-              ],
-              "optional": true,
-              "on_by_default": false,
-              "version": "v3.0.23"
             },
             {
               "name": "deploy-arch-ibm-kms",
@@ -1072,6 +1043,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -1101,6 +1077,11 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
                 }
               ]
             },
@@ -1119,6 +1100,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -1161,18 +1147,13 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "region",
                   "version_input": "region",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "existing_cos_instance_crn",
-                  "version_input": "existing_cos_instance_crn",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "existing_kms_instance_crn",
-                  "version_input": "existing_kms_instance_crn",
                   "reference_version": true
                 },
                 {
@@ -1205,6 +1186,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "existing_cos_instance_crn",
                   "version_input": "existing_cos_instance_crn",
                   "reference_version": true
@@ -1231,6 +1217,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -1273,6 +1264,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -1362,8 +1358,6 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "default_value": "Default",
-              "description": "The name of an existing resource group to provision the resources.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -1376,6 +1370,10 @@
             {
               "key": "prefix",
               "required": true,
+              "default_value": "dev",
+              "random_string": {
+                "length": 4
+              },
               "value_constraints": [
                 {
                   "type": "regex",
