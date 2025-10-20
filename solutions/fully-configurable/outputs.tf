@@ -47,6 +47,11 @@ output "resource_group_id" {
   value       = module.ocp_base.resource_group_id
 }
 
+output "resource_group_name" {
+  description = "The name of the resource group where the cluster is deployed."
+  value       = module.resource_group.resource_group_name
+}
+
 output "ingress_hostname" {
   description = "The hostname assigned to the Cluster's Ingress subdomain for external access."
   value       = module.ocp_base.ingress_hostname
