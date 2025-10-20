@@ -246,6 +246,9 @@
             },
             {
               "key": "prefix",
+              "random_string": {
+                "length": 4
+              },
               "required": true,
               "value_constraints": [
                 {
