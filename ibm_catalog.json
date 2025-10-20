@@ -981,7 +981,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": "Configure the VPC and subnets required to deploy your OpenShift cluster.",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.5.0",
+              "version": "v8.7.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1024,7 +1024,7 @@
               "name": "deploy-arch-ibm-kms",
               "description": "Integrate IBM Key Protect to manage encryption keys for your cluster, securing persistent volumes and supporting compliance. If unselected, encryption is still applied using IBM-managed keys.",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.1.27",
+              "version": "v5.4.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1061,7 +1061,7 @@
               "name": "deploy-arch-ibm-cos",
               "description": "Set up a Cloud Object Storage (COS) instance and bucket to serve as internal registry storage for your OpenShift cluster.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "v10.2.21",
+              "version": "v10.5.0",
               "flavors": [
                 "instance"
               ],
@@ -1093,7 +1093,7 @@
                 "fully-configurable"
               ],
               "id": "63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global",
-              "version": "v1.6.28",
+              "version": "v1.9.0",
               "optional": true,
               "on_by_default": true,
               "input_mapping": [
@@ -1133,7 +1133,7 @@
               "name": "deploy-arch-ibm-cloud-monitoring",
               "description": "Set up a Cloud Monitoring instance to collect platform metrics.",
               "id": "73debdbf-894f-4c14-81c7-5ece3a70b67d-global",
-              "version": "v1.7.2",
+              "version": "v1.9.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1167,7 +1167,7 @@
               "name": "deploy-arch-ibm-activity-tracker",
               "description": "Configure Activity Tracker Event Routing to direct auditing events appropriately.",
               "id": "918453c3-4f97-4583-8c4a-83ef12fc7916-global",
-              "version": "v1.2.34",
+              "version": "v1.4.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1206,7 +1206,7 @@
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Provision a Secrets Manager instance to securely store and manage sensitive credentials—such as certificates—used by services integrated with your cluster.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.10.0",
+              "version": "v2.11.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1253,7 +1253,7 @@
               "name": "deploy-arch-ibm-scc-workload-protection",
               "description": "Integrate with Workload Protection to monitor and manage your cluster’s security posture, helping detect misconfigurations and enforce compliance.",
               "id": "4322cf44-2289-49aa-a719-dd79e39b14dc-global",
-              "version": "v1.12.3",
+              "version": "v1.14.0",
               "flavors": [
                 "fully-configurable"
               ],
