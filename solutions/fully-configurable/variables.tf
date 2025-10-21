@@ -41,8 +41,8 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "cluster_resource_tags" {
@@ -269,13 +269,13 @@ variable "use_private_endpoint" {
 variable "allow_public_access_to_cluster_management" {
   type        = bool
   description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
-  default     = false
+  default     = true
 }
 
 variable "allow_outbound_traffic" {
   type        = bool
   description = "Set to true to allow public outbound access from the cluster workers."
-  default     = false
+  default     = true
 }
 
 variable "cluster_config_endpoint_type" {
