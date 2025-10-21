@@ -10,7 +10,7 @@ module "worker_pools" {
     version             = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
     vpc_id              = "79cxxxx-xxxx-xxxx-xxxx-xxxxxXX8667"
     resource_group_id   = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
-    cluster_id          = local.cluster_id
+    cluster_id          = "xxXXxXXXxXxXXXXXxxxx"
     vpc_subnets         = {
             zone-1    = [
                 {
