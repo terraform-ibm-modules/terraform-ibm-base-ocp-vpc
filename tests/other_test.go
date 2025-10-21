@@ -206,7 +206,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
 					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-account-infra-base",
@@ -221,7 +221,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-cos",
 					OfferingFlavor: "instance",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-cloud-logs",
@@ -308,7 +308,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
 					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-account-infra-base",
@@ -323,7 +323,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-cos",
 					OfferingFlavor: "instance",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-cloud-logs",
@@ -364,7 +364,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
 					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-account-infra-base",
@@ -379,7 +379,7 @@ func TestAddonPermutations(t *testing.T) {
 				{
 					OfferingName:   "deploy-arch-ibm-cos",
 					OfferingFlavor: "instance",
-					Enabled:        core.BoolPtr(false),
+					Enabled:        core.BoolPtr(true), // required addon
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-cloud-logs",
