@@ -53,8 +53,8 @@ module "trusted_profile" {
 }
 
 module "logs_agent" {
-  source                       = "terraform-ibm-modules/logs-agent/ibm"
-  version                      = "1.9.2" # replace with actual version of module to consume
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-logs-agent.git?ref=waypoint-test"
+  # version                      = "1.9.2" # replace with actual version of module to consume
   cluster_id                   = var.cluster_id
   cluster_resource_group_id    = var.cluster_resource_group_id
   cluster_config_endpoint_type = local.cluster_config_endpoint_type
