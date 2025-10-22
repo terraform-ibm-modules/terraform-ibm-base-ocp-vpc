@@ -7,8 +7,8 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "provider_visibility" {
@@ -93,7 +93,7 @@ variable "size" {
 
 variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
   default     = true
 }
 

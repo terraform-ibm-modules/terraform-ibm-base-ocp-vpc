@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.3.0"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -85,7 +85,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-cluster-sg", "custom-worker-pool-sg", "custom-lb-sg", "custom-master-vpe-sg", "custom-registry-vpe-sg", "custom-kube-api-vpe-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.7.0"
+  version                      = "2.8.0"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
@@ -104,6 +104,7 @@ module "ocp_base" {
   vpc_id                            = ibm_is_vpc.vpc.id
   vpc_subnets                       = local.cluster_vpc_subnets
   ocp_version                       = var.ocp_version
+  enable_openshift_version_upgrade  = var.enable_openshift_version_upgrade
   worker_pools                      = local.worker_pools
   access_tags                       = var.access_tags
   attach_ibm_managed_security_group = true # true is the default

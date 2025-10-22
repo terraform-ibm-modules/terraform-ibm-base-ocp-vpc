@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.3.0"
+  version                      = "1.4.0"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.2.0"
+  version                     = "5.4.3"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn

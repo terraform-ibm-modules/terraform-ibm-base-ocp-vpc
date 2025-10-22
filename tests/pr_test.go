@@ -227,9 +227,10 @@ func TestRunCustomsgExample(t *testing.T) {
 		},
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
-			"ocp_version":     ocpVersion2,
-			"access_tags":     permanentResources["accessTags"],
-			"ocp_entitlement": "cloud_pak",
+			"ocp_version":                      ocpVersion2,
+			"access_tags":                      permanentResources["accessTags"],
+			"ocp_entitlement":                  "cloud_pak",
+			"enable_openshift_version_upgrade": true,
 		},
 	})
 
@@ -276,7 +277,6 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-slz-ocp",
 		"fully-configurable",
 		map[string]interface{}{
-			"prefix": options.Prefix,
 			"region": "eu-de",
 		},
 	)

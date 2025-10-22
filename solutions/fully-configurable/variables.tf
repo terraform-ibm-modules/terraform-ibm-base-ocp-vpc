@@ -41,8 +41,8 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "cluster_resource_tags" {
@@ -268,14 +268,14 @@ variable "use_private_endpoint" {
 
 variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Set to true to allow public access to master node of the cluster by enabling public endpoint."
-  default     = false
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
+  default     = true
 }
 
 variable "allow_outbound_traffic" {
   type        = bool
   description = "Set to true to allow public outbound access from the cluster workers."
-  default     = false
+  default     = true
 }
 
 variable "cluster_config_endpoint_type" {
@@ -316,14 +316,14 @@ variable "attach_ibm_managed_security_group" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "List of additional security group IDs to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` variable is set to the number of Load Balancers associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
+  description = "The total number of Load Balancers in the cluster that should be associated with the security groups defined in `additional_lb_security_group_ids` variable."
   type        = number
   default     = 1
   nullable    = false
