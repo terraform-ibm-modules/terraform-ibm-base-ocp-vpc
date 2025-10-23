@@ -466,3 +466,9 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
   default     = false
 }
+
+variable "skip_api_key_reset" {
+  type        = bool
+  description = "To skip resetting the `containers-kubernetes-key` for the given region and resource group."
+  default     = false
+}

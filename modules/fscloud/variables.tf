@@ -287,3 +287,9 @@ variable "enable_ocp_console" {
   type        = bool
   default     = true
 }
+
+variable "skip_api_key_reset" {
+  type        = bool
+  description = "To skip resetting the `containers-kubernetes-key` for the given region and resource group."
+  default     = false
+}

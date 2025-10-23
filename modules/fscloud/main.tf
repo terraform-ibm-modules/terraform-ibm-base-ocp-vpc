@@ -34,4 +34,5 @@ module "fscloud" {
   additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
   cbr_rules                             = var.cbr_rules
   enable_ocp_console                    = var.enable_ocp_console
+  skip_api_key_reset                    = var.skip_api_key_reset
 }

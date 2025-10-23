@@ -442,6 +442,7 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # Enhancement Request: Add support to skip API key reset if a valid key already exists (https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6468).
 
 resource "ibm_container_api_key_reset" "reset_api_key" {
+  count             = var.skip_api_key_reset ? 0 : 1
   region            = var.region
   resource_group_id = var.resource_group_id
 }

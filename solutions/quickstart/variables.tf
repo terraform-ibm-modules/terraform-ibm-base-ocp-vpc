@@ -102,3 +102,9 @@ variable "allow_outbound_traffic" {
   description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
+
+variable "skip_api_key_reset" {
+  type        = bool
+  description = "To skip resetting the `containers-kubernetes-key` for the given region and resource group."
+  default     = false
+}
