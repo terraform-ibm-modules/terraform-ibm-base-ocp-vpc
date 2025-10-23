@@ -928,8 +928,7 @@
               "hidden": true
             },
             {
-              "key": "skip_api_key_reset",
-              "hidden": true
+              "key": "skip_cluster_apikey_creation"
             },
             {
               "key": "subnets",
@@ -1522,8 +1521,7 @@
               "hidden": true
             },
             {
-              "key": "skip_api_key_reset",
-              "hidden": true
+              "key": "skip_cluster_apikey_creation"
             },
             {
               "key": "ocp_entitlement"

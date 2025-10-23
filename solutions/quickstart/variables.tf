@@ -103,8 +103,8 @@ variable "allow_outbound_traffic" {
   default     = true
 }
 
-variable "skip_api_key_reset" {
+variable "skip_cluster_apikey_creation" {
   type        = bool
-  description = "To skip resetting the `containers-kubernetes-key` for the given region and resource group."
+  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
   default     = false
 }
