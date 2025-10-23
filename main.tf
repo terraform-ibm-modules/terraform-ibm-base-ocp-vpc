@@ -448,6 +448,7 @@ resource "ibm_container_api_key_reset" "reset_api_key" {
 }
 
 resource "time_sleep" "wait_for_reset_api_key" {
+  count           = var.skip_api_key_reset ? 0 : 1
   depends_on      = [ibm_container_api_key_reset.reset_api_key]
   create_duration = "10s"
 }
