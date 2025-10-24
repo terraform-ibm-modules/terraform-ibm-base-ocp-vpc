@@ -24,7 +24,6 @@ import (
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
-const workerpoolExampleDir = "examples/worker_pool"
 const quickStartTerraformDir = "solutions/quickstart"
 const resourceGroup = "geretain-test-base-ocp-vpc"
 

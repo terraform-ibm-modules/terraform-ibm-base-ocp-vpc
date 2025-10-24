@@ -117,3 +117,17 @@ module "ocp_base" {
     "registry" = [module.custom_sg["custom-registry-vpe-sg"].security_group_id]
   }
 }
+
+
+########################################################################################################################
+# Worker Pool 
+########################################################################################################################
+
+module "worker_pool" {
+  source            = "../../modules/worker-pool"
+  resource_group_id = module.resource_group.resource_group_id
+  vpc_id            = ibm_is_vpc.vpc.id
+  cluster_id        = module.ocp_base.cluster_id
+  vpc_subnets       = local.cluster_vpc_subnets
+  worker_pools      = var.worker_pools
+}
