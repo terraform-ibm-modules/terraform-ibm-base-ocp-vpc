@@ -1,10 +1,10 @@
 ########################################################################################################################
-# Input Variables
+# Input variables
 ########################################################################################################################
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api key"
+  description = "The IBM Cloud api token"
   sensitive   = true
 }
 
@@ -28,9 +28,28 @@ variable "resource_group" {
   default     = null
 }
 
-variable "cluster_id" {
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to created resources"
+  default     = []
+}
+
+variable "ocp_version" {
   type        = string
-  description = "The ID of the cluster"
+  description = "Version of the OCP cluster to provision"
+  default     = null
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the resources created by the module."
+  default     = []
+}
+
+variable "ocp_entitlement" {
+  type        = string
+  description = "Value that is applied to the entitlements for OCP cluster provisioning"
+  default     = null
 }
 
 variable "worker_pools" {
@@ -59,19 +78,11 @@ variable "worker_pools" {
     additional_security_group_ids = optional(list(string))
   }))
   description = "List of worker pools"
+  default = [{
+    subnet_prefix    = "default"
+    pool_name        = "myworkerpool"
+    machine_type     = "bx2.4x16"
+    operating_system = "REDHAT_8_64"
+    workers_per_zone = 2 # minimum of 2 is allowed when using single zone
+  }]
 }
-
-variable "vpc_subnets" {
-  type = map(list(object({
-    id         = string
-    zone       = string
-    cidr_block = string
-  })))
-  description = "Metadata that describes the VPC's subnets. Obtain this information from the VPC where this cluster is created."
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "ID of the VPC instance where this cluster is provisioned."
-}
-
