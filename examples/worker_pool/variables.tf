@@ -82,7 +82,7 @@ variable "worker_pools" {
     subnet_prefix    = "default"
     pool_name        = "myworkerpool"
     machine_type     = "bx2.4x16"
-    operating_system = "REDHAT_8_64"
+    operating_system = "RHEL_9_64"
     workers_per_zone = 2 # minimum of 2 is allowed when using single zone
   }]
 }
