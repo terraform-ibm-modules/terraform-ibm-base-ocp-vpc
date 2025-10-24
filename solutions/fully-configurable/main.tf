@@ -253,11 +253,14 @@ resource "terraform_data" "delete_secrets" {
   count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   input = {
     secret_id                   = module.secret_group[0].secret_group_id
-    api_key                     = var.ibmcloud_api_key
     provider_visibility         = var.provider_visibility
     secrets_manager_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
     secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
     secrets_manager_endpoint    = var.secrets_manager_endpoint_type
+  }
+  # api key in triggers_replace to avoid it to be printed out in clear text in terraform_data output
+  triggers_replace = {
+    api_key = var.ibmcloud_api_key
   }
   provisioner "local-exec" {
     when        = destroy
@@ -265,7 +268,7 @@ resource "terraform_data" "delete_secrets" {
     interpreter = ["/bin/bash", "-c"]
 
     environment = {
-      API_KEY = self.input.api_key
+      API_KEY = self.triggers_replace.api_key
     }
   }
 }
