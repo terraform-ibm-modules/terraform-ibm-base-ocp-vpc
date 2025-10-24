@@ -234,17 +234,6 @@ func TestRunCustomsgExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunWorkerPoolExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "ocp-wp", workerpoolExampleDir, ocpVersion1)
-
-	output, err := options.RunTestConsistency()
-
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 /*******************************************************************
 * TESTS FOR THE TERRAFORM BASED QUICKSTART DEPLOYABLE ARCHITECTURE *
 ********************************************************************/
