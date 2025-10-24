@@ -24,6 +24,7 @@ import (
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
+const workerpoolExampleDir = "examples/worker_pool"
 const quickStartTerraformDir = "solutions/quickstart"
 const resourceGroup = "geretain-test-base-ocp-vpc"
 
@@ -226,6 +227,17 @@ func TestRunCustomsgExample(t *testing.T) {
 			"enable_openshift_version_upgrade": true,
 		},
 	})
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunWorkerPoolExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "ocp-wp", workerpoolExampleDir, ocpVersion1)
 
 	output, err := options.RunTestConsistency()
 
