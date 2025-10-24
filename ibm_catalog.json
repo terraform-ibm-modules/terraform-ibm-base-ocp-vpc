@@ -246,6 +246,7 @@
             },
             {
               "key": "prefix",
+              "default_value": "dev",
               "random_string": {
                 "length": 4
               },
@@ -928,6 +929,9 @@
               "hidden": true
             },
             {
+              "key": "skip_cluster_apikey_creation"
+            },
+            {
               "key": "subnets",
               "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
               "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
@@ -1515,6 +1519,10 @@
             },
             {
               "key": "address_prefix",
+              "hidden": true
+            },
+            {
+              "key": "skip_cluster_apikey_creation",
               "hidden": true
             },
             {
