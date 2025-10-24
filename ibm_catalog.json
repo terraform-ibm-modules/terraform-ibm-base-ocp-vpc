@@ -1521,7 +1521,8 @@
               "hidden": true
             },
             {
-              "key": "skip_cluster_apikey_creation"
+              "key": "skip_cluster_apikey_creation",
+              "hidden": true
             },
             {
               "key": "ocp_entitlement"
