@@ -246,6 +246,7 @@
             },
             {
               "key": "prefix",
+              "default_value": "dev",
               "random_string": {
                 "length": 4
               },
