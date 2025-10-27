@@ -1433,21 +1433,27 @@
             {
               "key": "size",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
-                  "displayname": "mini",
+                  "description": "Size mini",
+                  "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "displayname": "small",
+                  "description": "Size small",
+                  "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "displayname": "medium",
+                  "description": "Size medium",
+                  "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "displayname": "large",
+                  "description": "Size large",
+                  "displayname": "Large",
                   "value": "large"
                 }
               ]
