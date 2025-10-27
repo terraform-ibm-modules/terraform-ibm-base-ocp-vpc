@@ -1437,22 +1437,22 @@
               "type_metadata": "string",
               "options": [
                 {
-                  "description": "Size mini",
+                  "description": "Smallest possible, basic HA across 2 zones",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "description": "Size small",
+                  "description": "Entry-level production HA",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "description": "Size medium",
+                  "description": "Moderate workloads, better HA",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "description": "Size large",
+                  "description": "Large-scale, robust HA",
                   "displayname": "Large",
                   "value": "large"
                 }
