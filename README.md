@@ -36,6 +36,7 @@ Optionally, the module supports advanced security group management for the worke
     * [Cluster security group rules example](./examples/add_rules_to_sg)
     * [Cross account KMS encryption example](./examples/cross_kms_support)
     * [Financial Services compliant example](./examples/fscloud)
+    * [GPU Worker Pool Example](./examples/gpu)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
