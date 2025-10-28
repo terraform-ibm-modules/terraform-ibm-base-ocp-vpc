@@ -8,7 +8,6 @@ The following resources are provisioned by this example:
 - A basic VPC and subnet with public gateway enabled.
 - A single zone OCP VPC cluster configured with KMS encryption for cluster data and worker block storage using a KMS encryption key from another account.
 - Will allow all traffic ingress/egress by default.
-- An additional worker pool named `workerpool` is created and attached to the cluster using the `worker-pool` submodule.
 
 ## Note
 
