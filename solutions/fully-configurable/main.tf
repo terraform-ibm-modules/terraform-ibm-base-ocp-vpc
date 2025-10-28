@@ -242,6 +242,15 @@ module "ocp_base" {
   skip_cluster_apikey_creation             = var.skip_cluster_apikey_creation
 }
 
+locals {
+  base_endpoint = var.enable_secrets_manager_integration == false ? null : (var.secrets_manager_endpoint_type == "private" ? "${module.existing_secrets_manager_instance_parser[0].service_instance}.private" : module.existing_secrets_manager_instance_parser[0].service_instance)
+
+  secrets_manager_region = var.enable_secrets_manager_integration ? module.existing_secrets_manager_instance_parser[0].region : local.vpc_region
+
+  secret_id = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? jsondecode(data.restapi_object.secrets["0"].api_response).id : null
+}
+
+
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
@@ -249,29 +258,34 @@ module "existing_secrets_manager_instance_parser" {
   crn     = var.existing_secrets_manager_instance_crn
 }
 
-resource "terraform_data" "delete_secrets" {
+data "ibm_iam_auth_token" "restapi" {
 
-  count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
-  input = {
-    secret_id                   = module.secret_group[0].secret_group_id
-    provider_visibility         = var.provider_visibility
-    secrets_manager_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
-    secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
-    secrets_manager_endpoint    = var.secrets_manager_endpoint_type
-  }
-  # api key in triggers_replace to avoid it to be printed out in clear text in terraform_data output
-  triggers_replace = {
-    api_key = var.ibmcloud_api_key
-  }
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.provider_visibility} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
-    interpreter = ["/bin/bash", "-c"]
+}
 
-    environment = {
-      API_KEY = self.triggers_replace.api_key
-    }
-  }
+data "restapi_object" "secrets" {
+  for_each = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? {
+    "0" = module.secret_group[0].secret_group_id
+  } : {}
+
+  path         = "/api/v2/secrets"
+  results_key  = "secrets"
+  search_key   = "secret_group_id"
+  search_value = each.value
+}
+
+resource "restapi_object" "delete_secret" {
+
+  count          = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  id_attribute   = "id"
+  path           = "/api/v2/secrets/{id}"
+  read_path      = "/api/v2/secrets/{id}"
+  read_method    = "GET"
+  create_method  = "PATCH"
+  create_path    = "/api/v2/secrets/${local.secret_id}/metadata"
+  destroy_method = "DELETE"
+  destroy_path   = "/api/v2/secrets/{id}"
+  data           = jsonencode({})
+
 }
 
 module "secret_group" {

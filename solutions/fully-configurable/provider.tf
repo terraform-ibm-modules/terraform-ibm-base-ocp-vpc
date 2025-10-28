@@ -38,3 +38,13 @@ provider "kubernetes" {
   token                  = data.ibm_container_cluster_config.cluster_config[0].token
   cluster_ca_certificate = data.ibm_container_cluster_config.cluster_config[0].ca_certificate
 }
+
+provider "restapi" {
+  uri                  = "https://${local.base_endpoint}.${local.secrets_manager_region}.secrets-manager.appdomain.cloud"
+  write_returns_object = true
+  debug                = true
+  headers = {
+    Authorization = data.ibm_iam_auth_token.restapi.iam_access_token
+    Content-Type  = "application/merge-patch+json"
+  }
+}
