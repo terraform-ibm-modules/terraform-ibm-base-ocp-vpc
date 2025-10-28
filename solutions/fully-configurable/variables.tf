@@ -569,12 +569,12 @@ variable "enable_kube_audit" {
 
 variable "audit_log_policy" {
   type        = string
-  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
-  default     = "default"
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `Default` and `WriteRequestBodies`."
+  default     = "Default"
 
   validation {
-    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
-    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+    error_message = "Invalid Audit log policy Type. Valid values are 'Default' or 'WriteRequestBodies'"
+    condition     = contains(["Default", "WriteRequestBodies"], var.audit_log_policy)
   }
 }
 

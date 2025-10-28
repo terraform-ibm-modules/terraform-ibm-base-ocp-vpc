@@ -6,7 +6,7 @@ AUDIT_POLICY="$1"
 
 STORAGE_PROFILE="oc patch apiserver cluster --type='merge' -p '{\"spec\":{\"audit\":{\"profile\":\"$AUDIT_POLICY\"}}}'"
 MAX_ATTEMPTS=10
-RETRY_WAIT=5
+RETRY_WAIT=10
 
 function check_oc_cli() {
     if ! command -v oc &>/dev/null; then
@@ -18,17 +18,18 @@ function check_oc_cli() {
 function apply_oc_patch() {
 
     local attempt=0
+    CURRENT_WAIT=${RETRY_WAIT}
     while [ $attempt -lt $MAX_ATTEMPTS ]; do
-        echo "Attempt $((attempt + 1)) of $MAX_ATTEMPTS: Applying OpenShift Console patch..."
+        echo "Attempt $((attempt + 1)) of $MAX_ATTEMPTS: Applying OpenShift apiserver patch..."
 
         if eval "$STORAGE_PROFILE"; then
             echo "Patch applied successfully."
             return 0
         else
-            echo "Failed to apply patch. Retrying in ${RETRY_WAIT}s..."
-            sleep $RETRY_WAIT
+            echo "Failed to apply patch. Retrying in ${CURRENT_WAIT}s..."
+            sleep $CURRENT_WAIT
             attempt=$((attempt+1))
-            RETRY_WAIT=$((RETRY_WAIT * 2))
+            CURRENT_WAIT=$((CURRENT_WAIT + RETRY_WAIT))
         fi
     done
 

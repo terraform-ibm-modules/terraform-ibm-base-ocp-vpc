@@ -289,7 +289,6 @@ module "secret_group" {
 }
 
 data "ibm_container_cluster_config" "cluster_config" {
-  count             = var.enable_kube_audit ? 1 : 0
   cluster_name_id   = module.ocp_base.cluster_id
   config_dir        = "${path.module}/kubeconfig"
   admin             = true
