@@ -78,6 +78,18 @@ module "worker_pools" {
 }
 ```
 
+You need the following permissions to run this module.
+
+- Account Management
+  - **All Identity and Access Enabled** service
+    - `Viewer` platform access
+  - **All Resource Groups** service
+    - `Viewer` platform access
+- IAM Services
+  - **Kubernetes** service
+    - `Administrator` platform access
+    - `Manager` service access
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
 
