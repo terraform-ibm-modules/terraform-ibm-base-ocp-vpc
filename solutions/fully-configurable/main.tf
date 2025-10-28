@@ -260,14 +260,20 @@ module "existing_secrets_manager_instance_parser" {
 
 data "ibm_iam_auth_token" "restapi" {
 
+  depends_on = [module.ocp_base]
+
 }
 
 data "restapi_object" "secrets" {
+
+
+  depends_on = [module.ocp_base]
   for_each = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? {
     "0" = module.secret_group[0].secret_group_id
   } : {}
 
   path         = "/api/v2/secrets"
+  query_string = "limit=1000"
   results_key  = "secrets"
   search_key   = "secret_group_id"
   search_value = each.value
