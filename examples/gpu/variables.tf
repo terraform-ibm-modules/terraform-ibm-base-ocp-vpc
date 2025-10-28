@@ -51,3 +51,15 @@ variable "ocp_entitlement" {
   description = "Value that is applied to the entitlements for OCP cluster provisioning"
   default     = null
 }
+
+variable "default_worker_pool_machine_type" {
+  type        = string
+  description = "The machine type for the default worker pool"
+  default     = "bx2.4x16"
+}
+
+variable "gpu_worker_pool_machine_type" {
+  type        = string
+  description = "The machine type for the GPU worker pool"
+  default     = "gx3.16x80.l4"
+}

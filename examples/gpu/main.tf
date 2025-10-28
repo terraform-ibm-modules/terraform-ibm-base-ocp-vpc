@@ -118,14 +118,14 @@ locals {
     {
       subnet_prefix    = "default"
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default"
-      machine_type     = "bx2.4x16"
+      machine_type     = var.default_worker_pool_machine_type
       workers_per_zone = 1
       operating_system = "RHCOS"
     },
     {
       subnet_prefix    = "gpu"
       pool_name        = "gpu"
-      machine_type     = "gx3.16x80.l4"
+      machine_type     = var.gpu_worker_pool_machine_type
       workers_per_zone = 1
       operating_system = "RHCOS"
     }
