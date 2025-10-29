@@ -152,6 +152,15 @@ locals {
       effect = "NoExecute"
     }]
   }
+  worker_pool = [
+    {
+      subnet_prefix    = "zone-1"
+      pool_name        = "workerpool"
+      machine_type     = "bx2.4x16"
+      operating_system = "REDHAT_8_64"
+      workers_per_zone = 2
+    }
+  ]
 }
 
 module "ocp_base" {
@@ -196,7 +205,7 @@ module "worker_pool" {
   vpc_id            = ibm_is_vpc.vpc.id
   cluster_id        = module.ocp_base.cluster_id
   vpc_subnets       = local.cluster_vpc_subnets
-  worker_pools      = var.worker_pools
+  worker_pools      = local.worker_pool
 }
 
 ########################################################################################################################
