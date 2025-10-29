@@ -152,6 +152,15 @@ locals {
       effect = "NoExecute"
     }]
   }
+  worker_pool = [
+    {
+      subnet_prefix    = "zone-1"
+      pool_name        = "workerpool"
+      machine_type     = "bx2.4x16"
+      operating_system = "REDHAT_8_64"
+      workers_per_zone = 2
+    }
+  ]
 }
 
 module "ocp_base" {
@@ -184,6 +193,19 @@ data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = module.ocp_base.cluster_id
   resource_group_id = module.ocp_base.resource_group_id
   config_dir        = "${path.module}/../../kubeconfig"
+}
+
+########################################################################################################################
+# Worker Pool
+########################################################################################################################
+
+module "worker_pool" {
+  source            = "../../modules/worker-pool"
+  resource_group_id = module.resource_group.resource_group_id
+  vpc_id            = ibm_is_vpc.vpc.id
+  cluster_id        = module.ocp_base.cluster_id
+  vpc_subnets       = local.cluster_vpc_subnets
+  worker_pools      = local.worker_pool
 }
 
 ########################################################################################################################

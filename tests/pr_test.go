@@ -31,10 +31,10 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.18"                 // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.17"                 // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.16"                 // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.15"                 // used by TestRunAddRulesToSGExample and TestRunBasicExample
+const ocpVersion1 = "4.19"                 // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.18"                 // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.17"                 // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.16"                 // used by TestRunAddRulesToSGExample and TestRunBasicExample
 const terraformVersion = "terraform_v1.10" // This should match the version in the ibm_catalog.json
 
 var (
@@ -99,6 +99,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		TarIncludePatterns: []string{
 			"*.tf",
 			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
+			"modules/worker-pool/*.tf",
 		},
 		TemplateFolder:             quickStartTerraformDir,
 		Tags:                       []string{"test-schematic"},
@@ -139,7 +140,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "ocp-fc",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/worker-pool/*.tf", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
@@ -176,7 +177,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                    t,
 		Prefix:                     "fc-upg",
-		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
+		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
 		TemplateFolder:             fullyConfigurableTerraformDir,
 		Tags:                       []string{"test-schematic"},
 		DeleteWorkspaceOnFail:      false,
@@ -216,7 +217,6 @@ func TestRunCustomsgExample(t *testing.T) {
 		CloudInfoService: sharedInfoSvc,
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
 		},
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
