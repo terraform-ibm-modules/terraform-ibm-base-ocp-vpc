@@ -112,7 +112,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.5.0"
+  version                = "10.5.1"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -442,11 +442,13 @@ resource "ibm_resource_tag" "cluster_access_tag" {
 # Enhancement Request: Add support to skip API key reset if a valid key already exists (https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6468).
 
 resource "ibm_container_api_key_reset" "reset_api_key" {
+  count             = var.skip_cluster_apikey_creation ? 0 : 1
   region            = var.region
   resource_group_id = var.resource_group_id
 }
 
 resource "time_sleep" "wait_for_reset_api_key" {
+  count           = var.skip_cluster_apikey_creation ? 0 : 1
   depends_on      = [ibm_container_api_key_reset.reset_api_key]
   create_duration = "10s"
 }
@@ -831,7 +833,7 @@ locals {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.33.6"
+  version          = "1.33.7"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
