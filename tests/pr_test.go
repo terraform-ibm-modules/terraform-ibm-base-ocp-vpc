@@ -31,10 +31,10 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.18"                 // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.17"                 // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.16"                 // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.15"                 // used by TestRunAddRulesToSGExample and TestRunBasicExample
+const ocpVersion1 = "4.19"                 // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+const ocpVersion2 = "4.18"                 // used by TestCustomSGExample and TestRunCustomsgExample
+const ocpVersion3 = "4.17"                 // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+const ocpVersion4 = "4.16"                 // used by TestRunAddRulesToSGExample and TestRunBasicExample
 const terraformVersion = "terraform_v1.10" // This should match the version in the ibm_catalog.json
 
 var (

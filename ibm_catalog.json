@@ -257,8 +257,12 @@
             {
               "key": "openshift_version",
               "required": true,
-              "default_value": "4.18",
+              "default_value": "4.19",
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
@@ -1467,9 +1471,13 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.18",
+              "default_value": "4.19",
               "required": true,
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
