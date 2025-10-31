@@ -71,7 +71,22 @@ module "vpc" {
       name                         = "vpc-acl"
       add_ibm_cloud_internal_rules = true
       add_vpc_connectivity_rules   = true
-      rules                        = []
+      rules = [ # Opening up in this example. Adjust as needed for your scenario.
+        {
+          name        = "allow-all-inbound"
+          action      = "allow"
+          direction   = "inbound"
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name        = "allow-all-outbound"
+          action      = "allow"
+          direction   = "outbound"
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        }
+      ]
     }
   ]
 }
