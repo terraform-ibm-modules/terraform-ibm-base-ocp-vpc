@@ -14,6 +14,7 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
+const gpuExampleDir = "examples/gpu"
 
 func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -191,4 +192,31 @@ func TestFSCloudInSchematic(t *testing.T) {
 
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestRunGpuExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  gpuExampleDir,
+		Prefix:        "gpu-test",
+		ResourceGroup: resourceGroup,
+		ImplicitDestroy: []string{
+			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.null_resource.reset_api_key",
+		},
+		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
+		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version":                      ocpVersion4,
+			"default_worker_pool_machine_type": "bx2.4x16",
+			"gpu_worker_pool_machine_type":     "bx2.4x16", // Use bx2.4x16 instead of gx3.16x80.l4 to reduce cost
+			"access_tags":                      permanentResources["accessTags"],
+			"ocp_entitlement":                  "cloud_pak",
+		},
+	})
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
