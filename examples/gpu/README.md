@@ -6,6 +6,8 @@ This example illustrates how to create an OpenShift cluster on IBM Cloud VPC wit
 
 This configuration is useful for workloads that require both general-purpose compute nodes and specialized GPU nodes for AI/ML workloads.
 
+As with all examples in the Terraform IBM Modules repositories, this code is provided to demonstrate working functionality. You can use it as-is to explore the module's capabilities, or adapt it as a starting point for your own infrastructure configuration.
+
 ## Architecture
 
 This example creates:
