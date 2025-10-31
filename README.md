@@ -229,6 +229,14 @@ If you prefer not to use moved blocks, you can manually use the terraform state 
 
 ### Troubleshooting
 
+#### The specified API key could not be found
+
+During cluster provisioning a containers apikey is created if one does not already exist for the given resource group and region ([learn more](https://cloud.ibm.com/docs/containers?topic=containers-access-creds)). Occasionally replication of the newly created apikey can be delayed causing the cluster creation to fail with an error like this:
+
+`Error: Request failed with status code: 404, ServerErrorResponse: {"incidentID":"c5caf83e-5f08-48c9-9778-6f3eb0ce1d16,c5caf83e-5f08-48c9-9778-6f3eb0ce1d16","code":"E06f9","description":"The specified API key could not be found.","type":""}`
+
+To workaround the issue simply attempt a re-apply of the terraform and it should pass on second attempt. If you still face issues, an IBM Cloud support case should be created with the `Kubernetes service` and include the `incidentID` from the error.
+
 #### New kube_version message
 
 - When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
