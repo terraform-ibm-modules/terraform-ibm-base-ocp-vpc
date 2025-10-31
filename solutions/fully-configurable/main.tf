@@ -239,7 +239,6 @@ module "ocp_base" {
   existing_secrets_manager_instance_crn    = var.existing_secrets_manager_instance_crn
   secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
   skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
-  skip_cluster_apikey_creation             = var.skip_cluster_apikey_creation
 }
 
 module "existing_secrets_manager_instance_parser" {

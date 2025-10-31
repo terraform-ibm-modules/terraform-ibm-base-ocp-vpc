@@ -135,7 +135,6 @@ resource "ibm_resource_tag" "cos_access_tag" {
 ##############################################################################
 
 resource "ibm_container_vpc_cluster" "cluster" {
-  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 0 : 1)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -206,7 +205,6 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
 # copy of the cluster resource above which allows major openshift version upgrade
 resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
-  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 0 : 1) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -276,7 +274,6 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
 
 # copy of the cluster resource above which ignores changes to the worker pool for use in autoscaling scenarios
 resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
-  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 1 : 0)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -347,7 +344,6 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
 # copy of the cluster resource above which allows major openshift version upgrade
 resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
-  depends_on                          = [time_sleep.wait_for_reset_api_key]
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 1 : 0) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
@@ -427,27 +423,6 @@ resource "ibm_resource_tag" "cluster_access_tag" {
   resource_id = local.cluster_crn
   tags        = var.access_tags
   tag_type    = "access"
-}
-
-# Cluster provisioning will automatically create an IAM API key called "containers-kubernetes-key" if one does not exist
-# for the given region and resource group. The API key is used to access several services, such as the IBM Cloud classic
-# infrastructure portfolio, and is required to manage the cluster. Immediately after the IAM API key is created and
-# added to the new resource group, it is replicated across IAM Cloudant instances. There is a small period of time from
-# when the IAM API key is initially created and when it is fully replicated across Cloudant instances where the API key
-# does not work because it is not fully replicated, so commands that require the API key may fail with 404.
-#
-# Enhancement Request: Add support to skip API key reset if a valid key already exists (https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6468).
-
-resource "ibm_container_api_key_reset" "reset_api_key" {
-  count             = var.skip_cluster_apikey_creation ? 0 : 1
-  region            = var.region
-  resource_group_id = var.resource_group_id
-}
-
-resource "time_sleep" "wait_for_reset_api_key" {
-  count           = var.skip_cluster_apikey_creation ? 0 : 1
-  depends_on      = [ibm_container_api_key_reset.reset_api_key]
-  create_duration = "10s"
 }
 
 ##############################################################################
