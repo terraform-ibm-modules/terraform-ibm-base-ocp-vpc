@@ -294,7 +294,7 @@
               "key": "default_worker_pool_machine_type",
               "type": "string",
               "default_value": "",
-              "description": "a worker node flavor",
+              "description": "A worker node flavor that defines the architecture, virtual CPU, memory, and disk space in the default worker pool.",
               "required": true,
               "custom_config": {
                 "type": "worker_node_flavors",
