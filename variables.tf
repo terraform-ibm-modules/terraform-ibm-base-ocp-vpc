@@ -107,9 +107,10 @@ variable "worker_pools" {
       (local.ocp_version_num == "4.14" && wp.operating_system == local.os_rhel) ||
       (local.ocp_version_num == "4.15" && contains([local.os_rhel, local.os_rhcos], wp.operating_system)) ||
       (contains(["4.16", "4.17"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhel, local.os_rhcos], wp.operating_system)) ||
-      (local.ocp_version_num == "4.18" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system))
+      (local.ocp_version_num == "4.18" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
+      (local.ocp_version_num == "4.19" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system))
     ])
-    error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); v4.18: (RHCOS, RHEL_9_64)"
+    error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); v4.18: (RHCOS, RHEL_9_64); v4.19: (RHEL_9_64, RHCOS)"
   }
 
   validation {
@@ -196,6 +197,7 @@ variable "ocp_version" {
       var.ocp_version == "4.16",
       var.ocp_version == "4.17",
       var.ocp_version == "4.18",
+      var.ocp_version == "4.19",
     ])
     error_message = "The specified ocp_version is not of the valid versions."
   }
@@ -430,8 +432,12 @@ variable "cbr_rules" {
       }))
     })))
   }))
-  description = "The list of context-based restriction rules to create."
+  description = "The context-based restrictions rule to create. Only one rule is allowed."
   default     = []
+  validation {
+    condition     = length(var.cbr_rules) <= 1
+    error_message = "Only one CBR rule is allowed."
+  }
 }
 
 ##############################################################
@@ -464,11 +470,5 @@ variable "secrets_manager_secret_group_id" {
 variable "skip_ocp_secrets_manager_iam_auth_policy" {
   type        = bool
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
-  default     = false
-}
-
-variable "skip_cluster_apikey_creation" {
-  type        = bool
-  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
   default     = false
 }

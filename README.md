@@ -18,8 +18,8 @@ Optionally, the module supports advanced security group management for the worke
 - Ensure that you have an up-to-date version of the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started).
 - Ensure that you have an up-to-date version of the [IBM Cloud Kubernetes service CLI](https://cloud.ibm.com/docs/containers?topic=containers-kubernetes-service-cli).
 - Ensure that you have an up-to-date version of the [IBM Cloud VPC Infrastructure service CLI](https://cloud.ibm.com/docs/vpc?topic=vpc-vpc-reference). Only required if providing additional security groups with the `var.additional_lb_security_group_ids`.
-- Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq)
-- Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
+- Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -28,6 +28,7 @@ Optionally, the module supports advanced security group management for the worke
 * [Submodules](./modules)
     * [fscloud](./modules/fscloud)
     * [kube-audit](./modules/kube-audit)
+    * [worker-pool](./modules/worker-pool)
 * [Examples](./examples)
     * [2 MZR clusters in same VPC example](./examples/multiple_mzr_clusters)
     * [Advanced example (mzr, auto-scale, kms, taints)](./examples/advanced)
@@ -228,6 +229,14 @@ If you prefer not to use moved blocks, you can manually use the terraform state 
 
 ### Troubleshooting
 
+#### The specified API key could not be found
+
+During cluster provisioning a containers apikey is created if one does not already exist for the given resource group and region ([learn more](https://cloud.ibm.com/docs/containers?topic=containers-access-creds)). Occasionally replication of the newly created apikey can be delayed causing the cluster creation to fail with an error like this:
+
+`Error: Request failed with status code: 404, ServerErrorResponse: {"incidentID":"c5caf83e-5f08-48c9-9778-6f3eb0ce1d16,c5caf83e-5f08-48c9-9778-6f3eb0ce1d16","code":"E06f9","description":"The specified API key could not be found.","type":""}`
+
+To workaround the issue simply attempt a re-apply of the terraform and it should pass on second attempt. If you still face issues, an IBM Cloud support case should be created with the `Kubernetes service` and include the `incidentID` from the error.
+
 #### New kube_version message
 
 - When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
@@ -296,20 +305,18 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.33.7 |
 | <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 10.5.1 |
 | <a name="module_existing_secrets_manager_instance_parser"></a> [existing\_secrets\_manager\_instance\_parser](#module\_existing\_secrets\_manager\_instance\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_worker_pools"></a> [worker\_pools](#module\_worker\_pools) | ./modules/worker-pool | n/a |
 
 ### Resources
 
 | Name | Type |
 |------|------|
 | [ibm_container_addons.addons](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_addons) | resource |
-| [ibm_container_api_key_reset.reset_api_key](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_api_key_reset) | resource |
 | [ibm_container_ingress_instance.instance](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_ingress_instance) | resource |
 | [ibm_container_vpc_cluster.autoscaling_cluster](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
 | [ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
 | [ibm_container_vpc_cluster.cluster](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
 | [ibm_container_vpc_cluster.cluster_with_upgrade](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_cluster) | resource |
-| [ibm_container_vpc_worker_pool.autoscaling_pool](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_worker_pool) | resource |
-| [ibm_container_vpc_worker_pool.pool](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/container_vpc_worker_pool) | resource |
 | [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
 | [ibm_resource_tag.cluster_access_tag](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/resource_tag) | resource |
 | [ibm_resource_tag.cos_access_tag](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/resource_tag) | resource |
@@ -318,11 +325,9 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [null_resource.confirm_network_healthy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ocp_console_management](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [time_sleep.wait_for_auth_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
-| [time_sleep.wait_for_reset_api_key](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [ibm_container_addons.existing_addons](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_addons) | data source |
 | [ibm_container_cluster_config.cluster_config](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_config) | data source |
 | [ibm_container_cluster_versions.cluster_versions](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_versions) | data source |
-| [ibm_container_vpc_worker_pool.all_pools](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_vpc_worker_pool) | data source |
 | [ibm_is_lbs.all_lbs](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_lbs) | data source |
 | [ibm_is_virtual_endpoint_gateway.api_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
 | [ibm_is_virtual_endpoint_gateway.master_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
@@ -338,7 +343,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_addons"></a> [addons](#input\_addons) | Map of OCP cluster add-on versions to install (NOTE: The 'vpc-block-csi-driver' add-on is installed by default for VPC clusters and 'ibm-storage-operator' is installed by default in OCP 4.15 and later, however you can explicitly specify it here if you wish to choose a later version than the default one). For full list of all supported add-ons and versions, see https://cloud.ibm.com/docs/containers?topic=containers-supported-cluster-addon-versions | <pre>object({<br/>    debug-tool = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    image-key-synchronizer = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-data-foundation = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-file-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    static-route = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    cluster-autoscaler = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    vpc-block-csi-driver = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    ibm-storage-operator = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>    openshift-ai = optional(object({<br/>      version         = optional(string)<br/>      parameters_json = optional(string)<br/>    }))<br/>  })</pre> | `{}` | no |
 | <a name="input_allow_default_worker_pool_replacement"></a> [allow\_default\_worker\_pool\_replacement](#input\_allow\_default\_worker\_pool\_replacement) | (Advanced users) Set to true to allow the module to recreate a default worker pool. If you wish to make any change to the default worker pool which requires the re-creation of the default pool follow these [steps](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#important-considerations-for-terraform-and-default-worker-pool). | `bool` | `false` | no |
 | <a name="input_attach_ibm_managed_security_group"></a> [attach\_ibm\_managed\_security\_group](#input\_attach\_ibm\_managed\_security\_group) | Specify whether to attach the IBM-defined default security group (whose name is kube-<clusterid>) to all worker nodes. Only applicable if `custom_security_group_ids` is set. | `bool` | `true` | no |
-| <a name="input_cbr_rules"></a> [cbr\_rules](#input\_cbr\_rules) | The list of context-based restriction rules to create. | <pre>list(object({<br/>    description = string<br/>    account_id  = string<br/>    rule_contexts = list(object({<br/>      attributes = optional(list(object({<br/>        name  = string<br/>        value = string<br/>    }))) }))<br/>    enforcement_mode = string<br/>    tags = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    operations = optional(list(object({<br/>      api_types = list(object({<br/>        api_type_id = string<br/>      }))<br/>    })))<br/>  }))</pre> | `[]` | no |
+| <a name="input_cbr_rules"></a> [cbr\_rules](#input\_cbr\_rules) | The context-based restrictions rule to create. Only one rule is allowed. | <pre>list(object({<br/>    description = string<br/>    account_id  = string<br/>    rule_contexts = list(object({<br/>      attributes = optional(list(object({<br/>        name  = string<br/>        value = string<br/>    }))) }))<br/>    enforcement_mode = string<br/>    tags = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })), [])<br/>    operations = optional(list(object({<br/>      api_types = list(object({<br/>        api_type_id = string<br/>      }))<br/>    })))<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_config_endpoint_type"></a> [cluster\_config\_endpoint\_type](#input\_cluster\_config\_endpoint\_type) | Specify which type of endpoint to use for cluster config access: 'default', 'private', 'vpe', 'link'. A 'default' value uses the default endpoint of the cluster. | `string` | `"default"` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name that is assigned to the provisioned cluster. | `string` | n/a | yes |
 | <a name="input_cluster_ready_when"></a> [cluster\_ready\_when](#input\_cluster\_ready\_when) | The cluster is ready based on one of the following:: MasterNodeReady (not recommended), OneWorkerNodeReady, Normal, IngressReady | `string` | `"IngressReady"` | no |
@@ -364,7 +369,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The ID of an existing IBM Cloud resource group where the cluster is grouped. | `string` | n/a | yes |
 | <a name="input_secrets_manager_secret_group_id"></a> [secrets\_manager\_secret\_group\_id](#input\_secrets\_manager\_secret\_group\_id) | Secret group ID where Ingress secrets are stored in the Secrets Manager instance. | `string` | `null` | no |
 | <a name="input_service_subnet_cidr"></a> [service\_subnet\_cidr](#input\_service\_subnet\_cidr) | Specify a custom subnet CIDR to provide private IP addresses for services. The subnet must be at least `/24` or larger. Default value is `172.21.0.0/16` when the variable is set to `null`. | `string` | `null` | no |
-| <a name="input_skip_cluster_apikey_creation"></a> [skip\_cluster\_apikey\_creation](#input\_skip\_cluster\_apikey\_creation) | Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful. | `bool` | `false` | no |
 | <a name="input_skip_ocp_secrets_manager_iam_auth_policy"></a> [skip\_ocp\_secrets\_manager\_iam\_auth\_policy](#input\_skip\_ocp\_secrets\_manager\_iam\_auth\_policy) | To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Metadata labels describing this cluster deployment, i.e. test | `list(string)` | `[]` | no |
 | <a name="input_use_existing_cos"></a> [use\_existing\_cos](#input\_use\_existing\_cos) | Flag indicating whether or not to use an existing COS instance for OpenShift internal registry storage. Only applicable if 'enable\_registry\_storage' is true | `bool` | `false` | no |

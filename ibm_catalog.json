@@ -76,15 +76,6 @@
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "release_notes_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-secure-infrastructure-vpc-relnotes",
-          "compliance": {
-            "authority": "scc-v3",
-            "profiles": [
-              {
-                "profile_name": "IBM Cloud Framework for Financial Services",
-                "profile_version": "1.7.0"
-              }
-            ]
-          },
           "iam_permissions": [
             {
               "role_crns": [
@@ -266,8 +257,12 @@
             {
               "key": "openshift_version",
               "required": true,
-              "default_value": "4.18",
+              "default_value": "4.19",
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
@@ -929,9 +924,6 @@
               "hidden": true
             },
             {
-              "key": "skip_cluster_apikey_creation"
-            },
-            {
               "key": "subnets",
               "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
               "description": "List of subnets for the vpc. For each item in each array, a subnet will be created. Items can be either CIDR blocks or total ipv4 addresses. Public gateways will be enabled only in zones where a gateway has been created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#subnets-).",
@@ -1315,7 +1307,8 @@
             }
           ],
           "dependency_version_2": true,
-          "terraform_version": "1.10.5"
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
         },
         {
           "label": "QuickStart - Basic and simple",
@@ -1481,9 +1474,13 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.18",
+              "default_value": "4.19",
               "required": true,
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
@@ -1528,10 +1525,6 @@
               "hidden": true
             },
             {
-              "key": "skip_cluster_apikey_creation",
-              "hidden": true
-            },
-            {
               "key": "ocp_entitlement"
             },
             {
@@ -1554,7 +1547,8 @@
             }
           ],
           "dependency_version_2": true,
-          "terraform_version": "1.10.5"
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
         }
       ]
     }
