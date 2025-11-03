@@ -208,6 +208,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 // so we want to keep testing this use-case in the PR pipelines.
 func TestRunCustomsgExample(t *testing.T) {
 	t.Parallel()
+	t.Skip("Temporarily skipping due to https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/852")
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:          t,

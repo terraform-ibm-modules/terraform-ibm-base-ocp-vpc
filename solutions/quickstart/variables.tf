@@ -102,9 +102,3 @@ variable "allow_outbound_traffic" {
   description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
-
-variable "skip_cluster_apikey_creation" {
-  type        = bool
-  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
-  default     = false
-}
