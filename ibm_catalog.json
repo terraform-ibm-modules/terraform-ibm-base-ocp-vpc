@@ -487,17 +487,17 @@
               "type": "string",
               "options": [
                 {
-                  "description": "RHEL with security features",
+                  "description": "RHEL with security features.",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
-                  "description": "Container-optimized for Red Hat OpenShift Container Platform (OCP) clusters",
+                  "description": "Container-optimized for Red Hat OpenShift Container Platform (OCP) clusters.",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
-                  "description": "Stable RHEL, widely compatible",
+                  "description": "Stable RHEL, widely compatible.",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
@@ -892,12 +892,12 @@
               "default_value": "standard",
               "options": [
                 {
-                  "description": "Centrally manage secrets in a dedicated instance",
+                  "description": "Centrally manage secrets in a dedicated instance.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
-                  "description": "30-day free trial, only one trial instance provisioned in your account at any time",
+                  "description": "30-day free trial, only one trial instance provisioned in your account at any time.",
                   "displayname": "Trial",
                   "value": "trial"
                 }
@@ -1436,22 +1436,22 @@
               "type": "string",
               "options": [
                 {
-                  "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones",
+                  "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones.",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 3 nodes across 3 zones",
+                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 3 nodes across 3 zones.",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 6 nodes across 3 zones",
+                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 6 nodes across 3 zones.",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "description": "bx2.16x64 with 16 vCPU and 64 GB memory, 9 nodes across 3 zones",
+                  "description": "bx2.16x64 with 16 vCPU and 64 GB memory, 9 nodes across 3 zones.",
                   "displayname": "Large",
                   "value": "large"
                 }
