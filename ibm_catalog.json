@@ -257,29 +257,37 @@
             {
               "key": "openshift_version",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "default_value": "4.19",
               "options": [
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.18",
                   "value": "4.18"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.17",
                   "value": "4.17"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.16",
                   "value": "4.16"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.15",
                   "value": "4.15"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.14",
                   "value": "4.14"
                 }
@@ -288,188 +296,11 @@
             {
               "key": "default_worker_pool_machine_type",
               "required": true,
-              "options": [
-                {
-                  "displayname": "bx2.4x16",
-                  "value": "bx2.4x16"
-                },
-                {
-                  "displayname": "bx2.16x64",
-                  "value": "bx2.16x64"
-                },
-                {
-                  "displayname": "bx2.32x128",
-                  "value": "bx2.32x128"
-                },
-                {
-                  "displayname": "bx2.48x192",
-                  "value": "bx2.48x192"
-                },
-                {
-                  "displayname": "bx2.8x32",
-                  "value": "bx2.8x32"
-                },
-                {
-                  "displayname": "bx3d.128x640",
-                  "value": "bx3d.128x640"
-                },
-                {
-                  "displayname": "bx3d.16x80",
-                  "value": "bx3d.16x80"
-                },
-                {
-                  "displayname": "bx3d.24x120",
-                  "value": "bx3d.24x120"
-                },
-                {
-                  "displayname": "bx3d.32x160",
-                  "value": "bx3d.32x160"
-                },
-                {
-                  "displayname": "bx3d.48x240",
-                  "value": "bx3d.48x240"
-                },
-                {
-                  "displayname": "bx3d.64x320",
-                  "value": "bx3d.64x320"
-                },
-                {
-                  "displayname": "bx3d.8x40",
-                  "value": "bx3d.8x40"
-                },
-                {
-                  "displayname": "bx3d.96x480",
-                  "value": "bx3d.96x480"
-                },
-                {
-                  "displayname": "cx2.16x32",
-                  "value": "cx2.16x32"
-                },
-                {
-                  "displayname": "cx2.32x64",
-                  "value": "cx2.32x64"
-                },
-                {
-                  "displayname": "cx2.48x96",
-                  "value": "cx2.48x96"
-                },
-                {
-                  "displayname": "cx3d.128x320",
-                  "value": "cx3d.128x320"
-                },
-                {
-                  "displayname": "cx3d.16x40",
-                  "value": "cx3d.16x40"
-                },
-                {
-                  "displayname": "cx3d.24x60",
-                  "value": "cx3d.24x60"
-                },
-                {
-                  "displayname": "cx3d.32x80",
-                  "value": "cx3d.32x80"
-                },
-                {
-                  "displayname": "cx3d.48x120",
-                  "value": "cx3d.48x120"
-                },
-                {
-                  "displayname": "cx3d.64x160",
-                  "value": "cx3d.64x160"
-                },
-                {
-                  "displayname": "cx3d.96x240",
-                  "value": "cx3d.96x240"
-                },
-                {
-                  "displayname": "mx2.128x1024",
-                  "value": "mx2.128x1024"
-                },
-                {
-                  "displayname": "mx2.16x128",
-                  "value": "mx2.16x128"
-                },
-                {
-                  "displayname": "mx2.32x256",
-                  "value": "mx2.32x256"
-                },
-                {
-                  "displayname": "mx2.48x384",
-                  "value": "mx2.48x384"
-                },
-                {
-                  "displayname": "mx2.64x512",
-                  "value": "mx2.64x512"
-                },
-                {
-                  "displayname": "mx2.8x64",
-                  "value": "mx2.8x64"
-                },
-                {
-                  "displayname": "mx3d.128x1280",
-                  "value": "mx3d.128x1280"
-                },
-                {
-                  "displayname": "mx3d.24x240",
-                  "value": "mx3d.24x240"
-                },
-                {
-                  "displayname": "mx3d.32x320",
-                  "value": "mx3d.32x320"
-                },
-                {
-                  "displayname": "mx3d.48x480",
-                  "value": "mx3d.48x480"
-                },
-                {
-                  "displayname": "mx3d.64x640",
-                  "value": "mx3d.64x640"
-                },
-                {
-                  "displayname": "mx3d.96x960",
-                  "value": "mx3d.96x960"
-                },
-                {
-                  "displayname": "bx2d.metal.96x384 (Only available in Toronto (ca-tor))",
-                  "value": "bx2d.metal.96x384"
-                },
-                {
-                  "displayname": "cx2d.metal.96x192 (Only available in Toronto (ca-tor)) ",
-                  "value": "cx2d.metal.96x192"
-                },
-                {
-                  "displayname": "mx2d.metal.96x768 (Only available in Toronto (ca-tor))) ",
-                  "value": "mx2d.metal.96x768"
-                },
-                {
-                  "displayname": "mx2.16x128.2000gb (Not available in Sao Paulo (br-sao), Montreal (ca-mon), Madrid (eu-es), Osaka (jp-osa))",
-                  "value": "mx2.16x128.2000gb"
-                },
-                {
-                  "displayname": "ox2.128x1024 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.128x1024"
-                },
-                {
-                  "displayname": "ox2.16x128 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.16x128"
-                },
-                {
-                  "displayname": "ox2.32x256 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.32x256"
-                },
-                {
-                  "displayname": "ox2.64x512 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.64x512"
-                },
-                {
-                  "displayname": "ox2.8x64 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.8x64"
-                },
-                {
-                  "displayname": "ox2.96x768 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.96x768"
-                }
-              ]
+              "custom_config": {
+                "type": "worker_node_flavors",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "default_worker_pool_workers_per_zone",
@@ -478,16 +309,21 @@
             {
               "key": "default_worker_pool_operating_system",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized for Red Hat OpenShift Container Platform (OCP) clusters",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
@@ -588,21 +424,27 @@
             {
               "key": "cluster_ready_when",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Standard readiness, cluster control plane is ready",
                   "displayname": "Normal",
                   "value": "Normal"
                 },
                 {
-                  "displayname": "IngressReady",
+                  "description": "Wait for ingress controller to be operational",
+                  "displayname": "Ingress Ready",
                   "value": "IngressReady"
                 },
                 {
-                  "displayname": "OneWorkerNodeReady",
+                  "description": "At least one worker node is fully ready",
+                  "displayname": "One Worker Ready",
                   "value": "OneWorkerNodeReady"
                 },
                 {
-                  "displayname": "MasterNodeReady",
+                  "description": "Master node components are operational",
+                  "displayname": "Master Ready",
                   "value": "MasterNodeReady"
                 }
               ]
@@ -695,21 +537,27 @@
             {
               "key": "cluster_config_endpoint_type",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
-                  "displayname": "default",
+                  "description": "Standard endpoint configuration",
+                  "displayname": "Default",
                   "value": "default"
                 },
                 {
-                  "displayname": "private",
+                  "description": "Private network access only",
+                  "displayname": "Private",
                   "value": "private"
                 },
                 {
-                  "displayname": "vpe",
+                  "description": "Virtual Private Endpoint for secure access",
+                  "displayname": "VPE",
                   "value": "vpe"
                 },
                 {
-                  "displayname": "link",
+                  "description": "Direct link connection",
+                  "displayname": "Link",
                   "value": "link"
                 }
               ]
@@ -979,12 +827,16 @@
             {
               "key": "audit_log_policy",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Standard audit logging.",
                   "displayname": "Default",
                   "value": "default"
                 },
                 {
+                  "description": "Detailed verbose logging.",
                   "displayname": "Write Request Bodies",
                   "value": "WriteRequestBodies"
                 }
@@ -1008,7 +860,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": "Configure the VPC and subnets required to deploy your OpenShift cluster.",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.7.0",
+              "version": "v8.8.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1051,7 +903,7 @@
               "name": "deploy-arch-ibm-kms",
               "description": "Integrate IBM Key Protect to manage encryption keys for your cluster, securing persistent volumes and supporting compliance. If unselected, encryption is still applied using IBM-managed keys.",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.4.0",
+              "version": "v5.4.8",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1088,7 +940,7 @@
               "name": "deploy-arch-ibm-cos",
               "description": "Set up a Cloud Object Storage (COS) instance and bucket to serve as internal registry storage for your OpenShift cluster.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "v10.5.0",
+              "version": "v10.5.5",
               "flavors": [
                 "instance"
               ],
@@ -1120,7 +972,7 @@
                 "fully-configurable"
               ],
               "id": "63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global",
-              "version": "v1.9.0",
+              "version": "v1.9.10",
               "optional": true,
               "on_by_default": true,
               "input_mapping": [
@@ -1160,7 +1012,7 @@
               "name": "deploy-arch-ibm-cloud-monitoring",
               "description": "Set up a Cloud Monitoring instance to collect platform metrics.",
               "id": "73debdbf-894f-4c14-81c7-5ece3a70b67d-global",
-              "version": "v1.9.0",
+              "version": "v1.10.6",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1194,7 +1046,7 @@
               "name": "deploy-arch-ibm-activity-tracker",
               "description": "Configure Activity Tracker Event Routing to direct auditing events appropriately.",
               "id": "918453c3-4f97-4583-8c4a-83ef12fc7916-global",
-              "version": "v1.4.3",
+              "version": "v1.4.11",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1233,7 +1085,7 @@
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Provision a Secrets Manager instance to securely store and manage sensitive credentials—such as certificates—used by services integrated with your cluster.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.11.0",
+              "version": "v2.11.6",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1280,7 +1132,7 @@
               "name": "deploy-arch-ibm-scc-workload-protection",
               "description": "Integrate with Workload Protection to monitor and manage your cluster’s security posture, helping detect misconfigurations and enforce compliance.",
               "id": "4322cf44-2289-49aa-a719-dd79e39b14dc-global",
-              "version": "v1.14.0",
+              "version": "v1.15.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1426,21 +1278,27 @@
             {
               "key": "size",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
-                  "displayname": "mini",
+                  "description": "Smallest possible, basic HA across 2 zones",
+                  "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "displayname": "small",
+                  "description": "Entry-level production HA",
+                  "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "displayname": "medium",
+                  "description": "Moderate workloads, better HA",
+                  "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "displayname": "large",
+                  "description": "Large-scale, robust HA",
+                  "displayname": "Large",
                   "value": "large"
                 }
               ]
@@ -1468,30 +1326,38 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.19",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
+              "default_value": "4.19",
               "options": [
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.18",
                   "value": "4.18"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.17",
                   "value": "4.17"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.16",
                   "value": "4.16"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.15",
                   "value": "4.15"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.14",
                   "value": "4.14"
                 }
@@ -1499,16 +1365,22 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized and immutable OS for Red Hat OpenShift Container Platform (OCP) clusters",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
