@@ -257,29 +257,37 @@
             {
               "key": "openshift_version",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "default_value": "4.19",
               "options": [
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.18",
                   "value": "4.18"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.17",
                   "value": "4.17"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.16",
                   "value": "4.16"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.15",
                   "value": "4.15"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.14",
                   "value": "4.14"
                 }
@@ -301,16 +309,21 @@
             {
               "key": "default_worker_pool_operating_system",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized for Red Hat OpenShift Container Platform (OCP) clusters",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
@@ -411,21 +424,27 @@
             {
               "key": "cluster_ready_when",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Standard readiness, cluster control plane is ready",
                   "displayname": "Normal",
                   "value": "Normal"
                 },
                 {
-                  "displayname": "IngressReady",
+                  "description": "Wait for ingress controller to be operational",
+                  "displayname": "Ingress Ready",
                   "value": "IngressReady"
                 },
                 {
-                  "displayname": "OneWorkerNodeReady",
+                  "description": "At least one worker node is fully ready",
+                  "displayname": "One Worker Ready",
                   "value": "OneWorkerNodeReady"
                 },
                 {
-                  "displayname": "MasterNodeReady",
+                  "description": "Master node components are operational",
+                  "displayname": "Master Ready",
                   "value": "MasterNodeReady"
                 }
               ]
@@ -518,21 +537,27 @@
             {
               "key": "cluster_config_endpoint_type",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
-                  "displayname": "default",
+                  "description": "Standard endpoint configuration",
+                  "displayname": "Default",
                   "value": "default"
                 },
                 {
-                  "displayname": "private",
+                  "description": "Private network access only",
+                  "displayname": "Private",
                   "value": "private"
                 },
                 {
-                  "displayname": "vpe",
+                  "description": "Virtual Private Endpoint for secure access",
+                  "displayname": "VPE",
                   "value": "vpe"
                 },
                 {
-                  "displayname": "link",
+                  "description": "Direct link connection",
+                  "displayname": "Link",
                   "value": "link"
                 }
               ]
@@ -802,12 +827,16 @@
             {
               "key": "audit_log_policy",
               "hidden": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Standard audit logging.",
                   "displayname": "Default",
                   "value": "default"
                 },
                 {
+                  "description": "Detailed verbose logging.",
                   "displayname": "Write Request Bodies",
                   "value": "WriteRequestBodies"
                 }
@@ -1249,21 +1278,27 @@
             {
               "key": "size",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
-                  "displayname": "mini",
+                  "description": "Smallest possible, basic HA across 2 zones",
+                  "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "displayname": "small",
+                  "description": "Entry-level production HA",
+                  "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "displayname": "medium",
+                  "description": "Moderate workloads, better HA",
+                  "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "displayname": "large",
+                  "description": "Large-scale, robust HA",
+                  "displayname": "Large",
                   "value": "large"
                 }
               ]
@@ -1291,30 +1326,38 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.19",
               "required": true,
+              "type": "string",
+              "type_metadata": "string",
+              "default_value": "4.19",
               "options": [
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.18",
                   "value": "4.18"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.17",
                   "value": "4.17"
                 },
                 {
+                  "description": "Supported until 26 August 2026",
                   "displayname": "4.16",
                   "value": "4.16"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.15",
                   "value": "4.15"
                 },
                 {
+                  "description": "Support ends 14 December 2025",
                   "displayname": "4.14",
                   "value": "4.14"
                 }
@@ -1322,16 +1365,22 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "required": true,
+              "type": "string",
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized and immutable OS for Red Hat OpenShift Container Platform (OCP) clusters",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
