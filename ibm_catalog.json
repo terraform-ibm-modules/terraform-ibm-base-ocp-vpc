@@ -893,12 +893,12 @@
               "default_value": "standard",
               "options": [
                 {
-                  "description": "Centrally manage secrets in a dedicated instance.\nUnlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
+                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
-                  "description": "Try Secrets Manager at no cost for 30 days.\nUnlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
+                  "description": "Try Secrets Manager at no cost for 30 days. Unlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
                   "displayname": "Trial",
                   "value": "trial"
                 }
