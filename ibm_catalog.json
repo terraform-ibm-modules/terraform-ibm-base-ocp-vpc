@@ -1516,17 +1516,17 @@
               "hidden": true,
               "options": [
                 {
-                  "description": "RHEL with security features",
+                  "description": "RHEL with security features.",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
-                  "description": "Container-optimized and immutable OS for Red Hat OpenShift Container Platform (OCP) clusters",
+                  "description": "Container-optimized and immutable OS for Red Hat OpenShift Container Platform (OCP) clusters.",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
-                  "description": "Stable RHEL, widely compatible",
+                  "description": "Stable RHEL, widely compatible.",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
