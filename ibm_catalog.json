@@ -70,7 +70,7 @@
       ],
       "flavors": [
         {
-          "label": "[Experimental] Standard - Integrated setup with configurable services",
+          "label": "Standard - Integrated setup with configurable services",
           "index": 2,
           "name": "fully-configurable",
           "install_type": "fullstack",
@@ -286,12 +286,36 @@
               ]
             },
             {
+              "key": "region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              },
+              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
+              "virtual": true,
+              "default_value": "us-south"
+            },
+            {
               "key": "default_worker_pool_machine_type",
               "required": true,
               "custom_config": {
                 "type": "worker_node_flavors",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "associations": {
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "optionsRefresh": true
+                    }
+                  ]
+                }
               }
             },
             {
@@ -300,9 +324,9 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "type_metadata": "string",
               "required": true,
               "type": "string",
-              "type_metadata": "string",
               "options": [
                 {
                   "description": "RHEL with security features",
@@ -320,22 +344,6 @@
                   "value": "REDHAT_8_64"
                 }
               ]
-            },
-            {
-              "key": "region",
-              "required": true,
-              "type": "string",
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              },
-              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
-              "virtual": true,
-              "default_value": "us-south"
             },
             {
               "key": "allow_public_access_to_cluster_management",
@@ -417,7 +425,6 @@
               "key": "cluster_ready_when",
               "hidden": true,
               "type": "string",
-              "type_metadata": "string",
               "options": [
                 {
                   "description": "Standard readiness, cluster control plane is ready",
@@ -530,7 +537,6 @@
               "key": "cluster_config_endpoint_type",
               "hidden": true,
               "type": "string",
-              "type_metadata": "string",
               "options": [
                 {
                   "description": "Standard endpoint configuration",
@@ -721,21 +727,23 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "required": true,
+              "type_metadata": "string",
               "virtual": true,
+              "required": true,
               "type": "string",
+              "default_value": "standard",
               "options": [
                 {
+                  "description": "Centrally manage secrets in a dedicated instance",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
+                  "description": "30-day free trial, only one trial instance provisioned in your account at any time",
                   "displayname": "Trial",
                   "value": "trial"
                 }
-              ],
-              "default_value": "standard",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+              ]
             },
             {
               "key": "existing_vpc_crn",
@@ -820,7 +828,6 @@
               "key": "audit_log_policy",
               "hidden": true,
               "type": "string",
-              "type_metadata": "string",
               "options": [
                 {
                   "description": "Standard audit logging.",
@@ -1209,7 +1216,7 @@
               },
               {
                 "title": " ",
-                "description": "A lightweight, experimental configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Not certified and not intended for production use."
+                "description": "A lightweight configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Not certified and not intended for production use."
               }
             ],
             "diagrams": [
@@ -1269,9 +1276,9 @@
             },
             {
               "key": "size",
+              "type_metadata": "string",
               "required": true,
               "type": "string",
-              "type_metadata": "string",
               "options": [
                 {
                   "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones",
@@ -1351,7 +1358,6 @@
               "key": "default_worker_pool_operating_system",
               "required": true,
               "type": "string",
-              "type_metadata": "string",
               "hidden": true,
               "options": [
                 {
