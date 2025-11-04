@@ -482,7 +482,7 @@
             },
             {
               "key": "default_worker_pool_operating_system",
-              "type_metadata": "string",
+              "hidden": true,
               "required": true,
               "type": "string",
               "options": [
