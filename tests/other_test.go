@@ -197,7 +197,6 @@ func TestFSCloudInSchematic(t *testing.T) {
 }
 
 func TestAddonPermutations(t *testing.T) {
-
 	testCases := []testaddons.AddonTestCase{
 		{
 			Name:   "no-addons",
@@ -207,11 +206,6 @@ func TestAddonPermutations(t *testing.T) {
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
 					OfferingFlavor: "fully-configurable",
 					Enabled:        core.BoolPtr(true), // required addon
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-account-infra-base",
-					OfferingFlavor: "resource-group-only",
-					Enabled:        core.BoolPtr(false),
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-kms",
@@ -260,11 +254,6 @@ func TestAddonPermutations(t *testing.T) {
 					Enabled:        core.BoolPtr(true),
 				},
 				{
-					OfferingName:   "deploy-arch-ibm-account-infra-base",
-					OfferingFlavor: "resource-group-only",
-					Enabled:        core.BoolPtr(true),
-				},
-				{
 					OfferingName:   "deploy-arch-ibm-kms",
 					OfferingFlavor: "fully-configurable",
 					Enabled:        core.BoolPtr(true),
@@ -298,62 +287,6 @@ func TestAddonPermutations(t *testing.T) {
 					OfferingName:   "deploy-arch-ibm-scc-workload-protection",
 					OfferingFlavor: "fully-configurable",
 					Enabled:        core.BoolPtr(true),
-				},
-			},
-		},
-		{
-			Name:   "scc-with-appconfig-disabled",
-			Prefix: "scc-no-app",
-			Dependencies: []cloudinfo.AddonConfig{
-				{
-					OfferingName:   "deploy-arch-ibm-slz-vpc",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(true), // required addon
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-account-infra-base",
-					OfferingFlavor: "resource-group-only",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-kms",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-cos",
-					OfferingFlavor: "instance",
-					Enabled:        core.BoolPtr(true), // required addon
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-cloud-logs",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-cloud-monitoring",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-activity-tracker",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-secrets-manager",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-scc-workload-protection",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(true),
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-apprapp",
-					OfferingFlavor: "fully-configurable",
-					Enabled:        core.BoolPtr(false),
 				},
 			},
 		},
@@ -365,11 +298,6 @@ func TestAddonPermutations(t *testing.T) {
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
 					OfferingFlavor: "fully-configurable",
 					Enabled:        core.BoolPtr(true), // required addon
-				},
-				{
-					OfferingName:   "deploy-arch-ibm-account-infra-base",
-					OfferingFlavor: "resource-group-only",
-					Enabled:        core.BoolPtr(false),
 				},
 				{
 					OfferingName:   "deploy-arch-ibm-kms",
