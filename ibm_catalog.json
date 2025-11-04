@@ -262,8 +262,8 @@
               "default_value": "4.19",
               "options": [
                 {
-                  "description": "Supported until 26 May 2027",
-                  "displayname": "4.19 (Latest)",
+                  "description": "https://cloud.ibm.com/docs/openshift?topic=openshift-cs_versions_419",
+                  "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
@@ -490,7 +490,7 @@
               "type_metadata": "string",
               "options": [
                 {
-                  "description": "Latest RHEL with security features",
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
@@ -600,6 +600,7 @@
             },
             {
               "key": "cluster_ready_when",
+              "hidden": true,
               "type": "string",
               "type_metadata": "string",
               "options": [
@@ -712,6 +713,7 @@
             },
             {
               "key": "cluster_config_endpoint_type",
+              "hidden": true,
               "type": "string",
               "type_metadata": "string",
               "options": [
@@ -1001,6 +1003,7 @@
             },
             {
               "key": "audit_log_policy",
+              "hidden": true,
               "type": "string",
               "type_metadata": "string",
               "options": [
@@ -1507,7 +1510,7 @@
               "options": [
                 {
                   "description": "Supported until 26 May 2027",
-                  "displayname": "4.19 (Latest)",
+                  "displayname": "4.19",
                   "value": "4.19"
                 },
                 {
@@ -1544,7 +1547,7 @@
               "type_metadata": "string",
               "options": [
                 {
-                  "description": "Latest RHEL with security features",
+                  "description": "RHEL with security features",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
