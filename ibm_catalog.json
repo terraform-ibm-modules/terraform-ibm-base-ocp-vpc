@@ -262,7 +262,7 @@
               "default_value": "4.19",
               "options": [
                 {
-                  "description": "https://cloud.ibm.com/docs/openshift?topic=openshift-cs_versions_419",
+                  "description": "Supported until 26 May 2027",
                   "displayname": "4.19",
                   "value": "4.19"
                 },
