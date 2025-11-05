@@ -885,6 +885,7 @@
             },
             {
               "key": "secrets_manager_service_plan",
+              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
               "type_metadata": "string",
               "virtual": true,
               "required": true,
@@ -892,12 +893,12 @@
               "default_value": "standard",
               "options": [
                 {
-                  "description": "Centrally manage secrets in a dedicated instance.",
+                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
-                  "description": "30-day free trial, only one trial instance provisioned in your account at any time.",
+                  "description": "Try Secrets Manager at no cost for 30 days. Unlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
                   "displayname": "Trial",
                   "value": "trial"
                 }
