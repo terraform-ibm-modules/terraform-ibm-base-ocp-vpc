@@ -345,7 +345,6 @@ func TestAddonPermutations(t *testing.T) {
 
 	baseOptions := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:              t,
-		Prefix:               "adv-matrix",
 		ResourceGroup:        resourceGroup,
 		QuietMode:            true,
 		DeployTimeoutMinutes: 240,
@@ -367,10 +366,7 @@ func TestAddonPermutations(t *testing.T) {
 				options.Prefix,
 				"deploy-arch-ibm-slz-ocp",
 				"fully-configurable",
-				map[string]interface{}{
-					"prefix": options.Prefix,
-					"region": "us-south",
-				},
+				map[string]interface{}{},
 			)
 		},
 	}
