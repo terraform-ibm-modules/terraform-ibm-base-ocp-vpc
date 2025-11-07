@@ -173,15 +173,16 @@ variable "default_worker_pool_machine_type" {
 }
 
 variable "default_worker_pool_workers_per_zone" {
-  type        = number
+  type        = string
   description = "Number of worker nodes in each zone of the cluster."
-  default     = 1
+  default     = "1"
 
   validation {
-    condition     = var.default_worker_pool_workers_per_zone > 0
+    condition     = tonumber(var.default_worker_pool_workers_per_zone) > 0
     error_message = "Worker count per zone must be greater than 0."
   }
 }
+
 
 
 variable "default_worker_pool_operating_system" {
