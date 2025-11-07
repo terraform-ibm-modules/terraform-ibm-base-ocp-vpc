@@ -569,16 +569,26 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "type": "string",
               "default_value": "Default",
+              "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "identifier": "rg_name"
+                  "identifier": "rg_name",
+                  "pattern": "^(?!\\s*$).+",
+                  "validation_message": "Resource group name cannot be empty."
                 }
               },
-              "description": "Select the resource group to use. The default is 'Default'. This field cannot be empty."
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Resource group name cannot be empty.",
+                  "value": "^(?!\\s*$).+"
+                }
+              ]
             },
             {
               "key": "cluster_resource_tags",
@@ -1434,16 +1444,26 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "type": "string",
               "default_value": "Default",
+              "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "identifier": "rg_name"
+                  "identifier": "rg_name",
+                  "pattern": "^(?!\\s*$).+",
+                  "validation_message": "Resource group name cannot be empty."
                 }
               },
-              "description": "Select the resource group to use. The default is 'Default'. This field cannot be empty."
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Resource group name cannot be empty.",
+                  "value": "^(?!\\s*$).+"
+                }
+              ]
             },
             {
               "key": "prefix",
