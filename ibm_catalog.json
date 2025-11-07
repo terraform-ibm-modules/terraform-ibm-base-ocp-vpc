@@ -571,7 +571,15 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              }
+              },
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Resource group name cannot be empty.",
+                  "value": "^(?!\\s*$).+"
+                }
+              ]
             },
             {
               "key": "cluster_resource_tags",
@@ -1432,7 +1440,15 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              }
+              },
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Resource group name cannot be empty.",
+                  "value": "^(?!\\s*$).+"
+                }
+              ]
             },
             {
               "key": "prefix",
