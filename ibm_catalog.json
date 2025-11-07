@@ -567,6 +567,7 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "default_value": "Default",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -575,13 +576,7 @@
                   "identifier": "rg_name"
                 }
               },
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Resource group name cannot be empty.",
-                  "value": "^(?!\\s*$).+"
-                }
-              ]
+              "description": "Select the resource group to use. The default is 'Default'. This field cannot be empty."
             },
             {
               "key": "cluster_resource_tags",
@@ -1432,10 +1427,10 @@
             {
               "key": "ibmcloud_api_key"
             },
-            
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
+              "default_value": "Default",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -1444,13 +1439,7 @@
                   "identifier": "rg_name"
                 }
               },
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Resource group name cannot be empty.",
-                  "value": "^(?!\\s*$).+"
-                }
-              ]
+              "description": "Select the resource group to use. The default is 'Default'. This field cannot be empty."
             },
             {
               "key": "prefix",

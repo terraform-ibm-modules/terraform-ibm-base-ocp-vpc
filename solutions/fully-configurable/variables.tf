@@ -41,9 +41,15 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  description = "The name of an existing resource group to provision the resources. Cannot be empty. Defaults to 'Default'."
   default     = "Default"
+
+  validation {
+    condition     = length(trimspace(var.existing_resource_group_name)) > 0
+    error_message = "Resource group name cannot be empty or whitespace."
+  }
 }
+
 
 variable "cluster_resource_tags" {
   type        = list(string)
