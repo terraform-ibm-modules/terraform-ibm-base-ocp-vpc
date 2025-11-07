@@ -309,7 +309,7 @@
                   "parameters": [
                     {
                       "name": "region",
-                      "optionsRefresh": true
+                      "optionsRefresh": false
                     }
                   ]
                 }
