@@ -479,10 +479,14 @@
             {
               "key": "default_worker_pool_workers_per_zone",
               "required": true,
-              "config_constraints": {
-                "type": "string",
-                "pattern": "^[1-9][0-9]*$",
-                "validation_message": "Worker count per zone must be a positive integer greater than 0."
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*$",
+                  "validation_message": "Worker count per zone must be a positive integer greater than 0."
+                }
               }
             },
             {
