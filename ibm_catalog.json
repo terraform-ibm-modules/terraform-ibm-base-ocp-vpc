@@ -483,11 +483,11 @@
               "default_value": "1",
               "description": "Number of worker nodes per zone. Must be a positive integer greater than 0.",
               "value_constraints": [
-                  {
-                      "type": "regex",
-                      "description": "Worker count per zone must be greater than 0.",
-                      "value": "^[1-9][0-9]*$"
-                  }
+                {
+                  "type": "regex",
+                  "description": "Worker count per zone must be greater than 0.",
+                  "value": "^[1-9][0-9]*$"
+                }
               ]
             },
             {
