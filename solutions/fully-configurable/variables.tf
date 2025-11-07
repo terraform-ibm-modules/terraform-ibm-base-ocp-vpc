@@ -41,14 +41,15 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. Cannot be empty. Defaults to 'Default'."
+  description = "The name of an existing resource group. Defaults to 'Default'. Cannot be empty or null."
   default     = "Default"
 
   validation {
-    condition     = length(trimspace(var.existing_resource_group_name)) > 0
-    error_message = "Resource group name cannot be empty or whitespace."
+    condition     = var.existing_resource_group_name != null && length(trimspace(var.existing_resource_group_name)) > 0
+    error_message = "Resource group name cannot be empty, null, or whitespace."
   }
 }
+
 
 
 variable "cluster_resource_tags" {
