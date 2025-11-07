@@ -478,14 +478,19 @@
             },
             {
               "key": "default_worker_pool_workers_per_zone",
+              "type": "string",
               "required": true,
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Worker count per zone must be a positive integer greater than 0.",
-                  "value": "^[1-9][0-9]*$"
+              "default_value": "1",
+              "description": "Number of worker nodes per zone. Must be a positive integer greater than 0.",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*$",
+                  "validation_message": "Worker count per zone must be a positive integer greater than 0."
                 }
-              ]
+              }
             },
             {
               "key": "default_worker_pool_operating_system",
