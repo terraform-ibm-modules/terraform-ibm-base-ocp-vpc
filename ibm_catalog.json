@@ -478,7 +478,7 @@
             },
             {
               "key": "default_worker_pool_workers_per_zone",
-              "type": "string",
+              "type": "number",
               "required": true,
               "default_value": "1",
               "description": "Number of worker nodes per zone. Must be a positive integer greater than 0.",
@@ -486,7 +486,7 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "type": "string",
+                  "type": "number",
                   "pattern": "^[1-9][0-9]*$",
                   "validation_message": "Worker count per zone must be a positive integer greater than 0."
                 }
