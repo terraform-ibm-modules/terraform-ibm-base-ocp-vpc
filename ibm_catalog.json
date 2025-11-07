@@ -515,16 +515,21 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
+              "type_metadata": "boolean",
               "type": "boolean",
+              "default_value": "true",
+              "virtual": true,
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
-                  "displayname": "Public access allowed (true)",
+                  "description": "Public access allowed (true)",
+                  "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "displayname": "Private access only (false)",
+                  "description": "Private access only (false)",
+                  "displayname": "false",
                   "value": "false"
                 }
               ]
@@ -744,16 +749,21 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
+              "type_metadata": "boolean",
               "required": true,
+              "type": "boolean",
+              "virtual": true,
+              "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
-                  "displayname": "Allow outbound network access (true)",
+                  "description": "Allow outbound network access",
+                  "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "displayname": "Restrict outbound network access (false)",
+                  "description": "Restrict outbound network access",
+                  "displayname": "false",
                   "value": "false"
                 }
               ]
@@ -1593,32 +1603,42 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
+              "type_metadata": "boolean",
               "type": "boolean",
+              "default_value": "true",
+              "virtual": true,
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
-                  "displayname": "Public access allowed (true)",
+                  "description": "Public access allowed (true)",
+                  "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "displayname": "Private access only (false)",
+                  "description": "Private access only (false)",
+                  "displayname": "false",
                   "value": "false"
                 }
               ]
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
+              "type_metadata": "boolean",
               "required": true,
+              "type": "boolean",
+              "virtual": true,
+              "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
-                  "displayname": "Allow outbound network access (true)",
+                  "description": "Allow outbound network access",
+                  "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "displayname": "Restrict outbound network access (false)",
+                  "description": "Restrict outbound network access",
+                  "displayname": "false",
                   "value": "false"
                 }
               ]
