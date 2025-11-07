@@ -516,7 +516,6 @@
             {
               "key": "allow_public_access_to_cluster_management",
               "type": "boolean",
-              "default_value": "true",
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
@@ -749,7 +748,6 @@
               "key": "allow_outbound_traffic",
               "required": true,
               "type": "boolean",
-              "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
@@ -1600,7 +1598,6 @@
             {
               "key": "allow_public_access_to_cluster_management",
               "type": "boolean",
-              "default_value": "true",
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
@@ -1620,7 +1617,6 @@
               "key": "allow_outbound_traffic",
               "required": true,
               "type": "boolean",
-              "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
