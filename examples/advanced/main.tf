@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.3.0"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.16"
+  version                   = "5.4.5"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -152,22 +152,32 @@ locals {
       effect = "NoExecute"
     }]
   }
+  worker_pool = [
+    {
+      subnet_prefix    = "zone-1"
+      pool_name        = "workerpool"
+      machine_type     = "bx2.4x16"
+      operating_system = "REDHAT_8_64"
+      workers_per_zone = 2
+    }
+  ]
 }
 
 module "ocp_base" {
-  source               = "../.."
-  cluster_name         = var.prefix
-  resource_group_id    = module.resource_group.resource_group_id
-  region               = var.region
-  force_delete_storage = true
-  vpc_id               = ibm_is_vpc.vpc.id
-  vpc_subnets          = local.cluster_vpc_subnets
-  worker_pools         = local.worker_pools
-  ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
-  access_tags          = var.access_tags
-  worker_pools_taints  = local.worker_pools_taints
-  ocp_entitlement      = var.ocp_entitlement
+  source                           = "../.."
+  cluster_name                     = var.prefix
+  resource_group_id                = module.resource_group.resource_group_id
+  region                           = var.region
+  force_delete_storage             = true
+  vpc_id                           = ibm_is_vpc.vpc.id
+  vpc_subnets                      = local.cluster_vpc_subnets
+  worker_pools                     = local.worker_pools
+  ocp_version                      = var.ocp_version
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  worker_pools_taints              = local.worker_pools_taints
+  ocp_entitlement                  = var.ocp_entitlement
+  enable_openshift_version_upgrade = var.enable_openshift_version_upgrade
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
@@ -183,6 +193,19 @@ data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = module.ocp_base.cluster_id
   resource_group_id = module.ocp_base.resource_group_id
   config_dir        = "${path.module}/../../kubeconfig"
+}
+
+########################################################################################################################
+# Worker Pool
+########################################################################################################################
+
+module "worker_pool" {
+  source            = "../../modules/worker-pool"
+  resource_group_id = module.resource_group.resource_group_id
+  vpc_id            = ibm_is_vpc.vpc.id
+  cluster_id        = module.ocp_base.cluster_id
+  vpc_subnets       = local.cluster_vpc_subnets
+  worker_pools      = local.worker_pool
 }
 
 ########################################################################################################################
@@ -211,7 +234,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.4"
+  version           = "1.9.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -220,19 +243,21 @@ module "cloud_logs" {
 
 module "trusted_profile" {
   source                      = "terraform-ibm-modules/trusted-profile/ibm"
-  version                     = "2.3.1"
+  version                     = "3.1.1"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
   # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agents and routers sending logs.
   trusted_profile_policies = [{
-    roles = ["Sender"]
+    roles             = ["Sender"]
+    unique_identifier = "${var.prefix}-profile-0"
     resources = [{
       service = "logs"
     }]
   }]
   # Set up fine-grained authorization for `logs-agent` running in ROKS cluster in `ibm-observe` namespace.
   trusted_profile_links = [{
-    cr_type = "ROKS_SA"
+    cr_type           = "ROKS_SA"
+    unique_identifier = "${var.prefix}-profile"
     links = [{
       crn       = module.ocp_base.cluster_crn
       namespace = local.logs_agent_namespace
@@ -245,7 +270,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.2.2"
+  version                       = "1.10.0"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id

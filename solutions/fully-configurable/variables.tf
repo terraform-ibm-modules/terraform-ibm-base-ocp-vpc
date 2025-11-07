@@ -14,7 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
-  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0405-ocp. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 
   validation {
     # - null and empty string is allowed
@@ -41,8 +41,8 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "cluster_resource_tags" {
@@ -67,7 +67,7 @@ variable "cluster_name" {
   default     = "openshift"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -165,7 +165,7 @@ variable "allow_default_worker_pool_replacement" {
 variable "default_worker_pool_machine_type" {
   type        = string
   description = "The machine type for worker nodes.[Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"
-  default     = "bx2.8x32"
+  default     = "bx2.4x16"
   validation {
     condition     = length(regexall("^[a-z0-9]+(?:\\.[a-z0-9]+)*\\.\\d+x\\d+(?:\\.[a-z0-9]+)?$", var.default_worker_pool_machine_type)) > 0
     error_message = "Invalid value provided for the machine type."
@@ -175,7 +175,7 @@ variable "default_worker_pool_machine_type" {
 variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
-  default     = 2
+  default     = 1
 }
 
 variable "default_worker_pool_operating_system" {
@@ -186,7 +186,7 @@ variable "default_worker_pool_operating_system" {
 
 variable "default_worker_pool_labels" {
   type        = map(string)
-  description = "A set of key-value labels assigned to the worker pool for identification. For Example: { env = \"prod\", team = \"devops\" }"
+  description = "A set of key-value labels assigned to the worker pool for identification. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/blob/main/solutions/fully-configurable/DA_docs.md#default-worker-pool-labels)"
   default     = {}
 }
 
@@ -266,9 +266,15 @@ variable "use_private_endpoint" {
   default     = true
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Whether access to the public service endpoint is disabled when the cluster is created. Does not affect existing clusters. You can't disable a public endpoint on an existing cluster, so you can't convert a public cluster to a private cluster. To change a public endpoint to private, create another cluster with this input set to `true`. Warning: Set this field to `false` if you want to retain public access to the cluster. Once the cluster is created, this cannot be changed."
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
+  default     = true
+}
+
+variable "allow_outbound_traffic" {
+  type        = bool
+  description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
 
@@ -277,12 +283,6 @@ variable "cluster_config_endpoint_type" {
   type        = string
   default     = "default"
   nullable    = false
-}
-
-variable "disable_outbound_traffic_protection" {
-  type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later."
-  default     = false
 }
 
 variable "verify_worker_network_readiness" {
@@ -316,14 +316,14 @@ variable "attach_ibm_managed_security_group" {
 }
 
 variable "additional_lb_security_group_ids" {
-  description = "Additional security groups to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` is set to the number of LBs associated with the cluster. This comes in addition to the IBM maintained security group."
+  description = "List of additional security group IDs to add to the load balancers associated with the cluster. Ensure that the `number_of_lbs` variable is set to the number of Load Balancers associated with the cluster. This comes in addition to the IBM maintained security group."
   type        = list(string)
   default     = []
   nullable    = false
 }
 
 variable "number_of_lbs" {
-  description = "The number of LBs to associated the `additional_lb_security_group_names` security group with."
+  description = "The total number of Load Balancers in the cluster that should be associated with the security groups defined in `additional_lb_security_group_ids` variable."
   type        = number
   default     = 1
   nullable    = false
@@ -414,7 +414,7 @@ variable "kms_endpoint_type" {
   default     = "private"
   nullable    = false
   validation {
-    condition     = can(regex("public|private", var.kms_endpoint_type))
+    condition     = can(regex("^(public|private)$", var.kms_endpoint_type))
     error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
 }

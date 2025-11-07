@@ -7,8 +7,8 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "provider_visibility" {
@@ -24,7 +24,7 @@ variable "provider_visibility" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). Example: `prod-0205-ocpqs`. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
   nullable    = true
   validation {
     condition = (var.prefix == null || var.prefix == "" ? true :
@@ -47,7 +47,7 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "ocp_version" {
+variable "openshift_version" {
   type        = string
   description = "Version of the OpenShift cluster to provision."
   default     = null
@@ -76,7 +76,7 @@ variable "ocp_entitlement" {
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)."
-  default     = "RHEL_9_64"
+  default     = "RHCOS"
 }
 
 variable "access_tags" {
@@ -91,14 +91,14 @@ variable "size" {
   default     = "mini"
 }
 
-variable "disable_public_endpoint" {
+variable "allow_public_access_to_cluster_management" {
   type        = bool
-  description = "Disables the public endpoint, which allows internet access to the cluster, during creation only."
-  default     = false
+  description = "Set to true to access the cluster through a public cloud service endpoint. [Learn More](https://cloud.ibm.com/docs/openshift?topic=openshift-access_cluster)."
+  default     = true
 }
 
-variable "disable_outbound_traffic_protection" {
+variable "allow_outbound_traffic" {
   type        = bool
-  description = "Whether to allow public outbound access from the cluster workers. This is only applicable for OCP 4.15 and later. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound)."
+  description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
 }
