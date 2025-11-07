@@ -173,9 +173,9 @@ variable "default_worker_pool_machine_type" {
 }
 
 variable "default_worker_pool_workers_per_zone" {
-  type        = string
+  type        = number
   description = "Number of worker nodes in each zone of the cluster."
-  default     = "1"
+  default     = 1
 }
 
 
