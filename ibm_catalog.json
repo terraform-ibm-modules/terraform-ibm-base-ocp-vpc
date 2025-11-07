@@ -569,14 +569,13 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "type": "string",
-              "default_value": "Default",
               "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
-                "type": "string_input",
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
                 "config_constraints": {
-                  "pattern": "^(?!\\s*$).+",
-                  "validation_message": "Resource group name cannot be empty."
+                  "identifier": "rg_name"
                 }
               },
               "value_constraints": [
@@ -753,7 +752,6 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "required": true,
               "type": "boolean",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
@@ -1441,14 +1439,13 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "type": "string",
-              "default_value": "Default",
               "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
-                "type": "string_input",
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
                 "config_constraints": {
-                  "pattern": "^(?!\\s*$).+",
-                  "validation_message": "Resource group name cannot be empty."
+                  "identifier": "rg_name"
                 }
               },
               "value_constraints": [
@@ -1612,7 +1609,6 @@
             {
               "key": "allow_public_access_to_cluster_management",
               "type": "boolean",
-              "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
@@ -1629,7 +1625,6 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "required": true,
               "type": "boolean",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
