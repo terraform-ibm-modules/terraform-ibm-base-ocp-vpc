@@ -483,8 +483,9 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "type": "string",
-                  "pattern": "^[1-9][0-9]*$",
+                  "type": "number",
+                  "minimum": 1,
+                  "exclusiveMinimum": false,
                   "validation_message": "Worker count per zone must be a positive integer greater than 0."
                 }
               }
