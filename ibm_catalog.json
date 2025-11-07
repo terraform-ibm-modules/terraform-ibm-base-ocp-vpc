@@ -749,10 +749,8 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type_metadata": "boolean",
               "required": true,
               "type": "boolean",
-              "virtual": true,
               "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
@@ -1624,10 +1622,8 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type_metadata": "boolean",
               "required": true,
               "type": "boolean",
-              "virtual": true,
               "default_value": "true",
               "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
