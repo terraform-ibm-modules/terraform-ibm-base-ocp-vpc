@@ -515,20 +515,18 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type_metadata": "boolean",
               "type": "boolean",
               "default_value": "true",
-              "virtual": true,
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
-                  "description": "Public access allowed (true)",
+                  "description": "Public access allowed",
                   "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "description": "Private access only (false)",
+                  "description": "Private access only",
                   "displayname": "false",
                   "value": "false"
                 }
@@ -1601,20 +1599,18 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type_metadata": "boolean",
               "type": "boolean",
               "default_value": "true",
-              "virtual": true,
               "required": true,
               "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
-                  "description": "Public access allowed (true)",
+                  "description": "Public access allowed",
                   "displayname": "true",
                   "value": "true"
                 },
                 {
-                  "description": "Private access only (false)",
+                  "description": "Private access only",
                   "displayname": "false",
                   "value": "false"
                 }
