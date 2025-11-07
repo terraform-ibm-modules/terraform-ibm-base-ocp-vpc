@@ -572,6 +572,13 @@
               "type": "string",
               "default_value": "Default",
               "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
+              "custom_config": {
+                "type": "string_input",
+                "config_constraints": {
+                  "pattern": "^(?!\\s*$).+",
+                  "validation_message": "Resource group name cannot be empty."
+                }
+              },
               "value_constraints": [
                 {
                   "type": "regex",
@@ -1437,6 +1444,13 @@
               "type": "string",
               "default_value": "Default",
               "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
+              "custom_config": {
+                "type": "string_input",
+                "config_constraints": {
+                  "pattern": "^(?!\\s*$).+",
+                  "validation_message": "Resource group name cannot be empty."
+                }
+              },
               "value_constraints": [
                 {
                   "type": "regex",
