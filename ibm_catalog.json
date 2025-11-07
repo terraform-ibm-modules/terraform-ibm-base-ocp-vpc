@@ -1430,7 +1430,7 @@
             {
               "key": "prefix",
               "required": true,
-              "default_value": "dev",
+              "default_value": "openshift",
               "random_string": {
                 "length": 4
               },
