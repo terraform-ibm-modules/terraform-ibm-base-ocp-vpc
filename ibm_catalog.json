@@ -930,8 +930,8 @@
                   "value": "standard"
                 },
                 {
-                  "description": "Try Secrets Manager at no cost for 30 days. Unlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
-                  "displayname": "Trial",
+                  "description": "Choose this only if your account does not already have a Trial instance. You can have only one Trial instance per account at a time. After your trial expires, you must upgrade to the Standard plan to continue using Secrets Manager.",
+                  "displayname": "Trial (30 days)",
                   "value": "trial"
                 }
               ]
