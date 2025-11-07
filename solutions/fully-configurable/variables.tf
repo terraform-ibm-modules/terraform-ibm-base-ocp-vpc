@@ -178,7 +178,6 @@ variable "default_worker_pool_workers_per_zone" {
   default     = 1
 }
 
-
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)"

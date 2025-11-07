@@ -482,15 +482,13 @@
               "required": true,
               "default_value": "1",
               "description": "Number of worker nodes per zone. Must be a positive integer greater than 0.",
-              "custom_config": {
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string",
-                  "pattern": "^[1-9][0-9]*$",
-                  "validation_message": "Worker count per zone must be greater than 0."
-                }
-              }
+              "value_constraints": [
+                  {
+                      "type": "regex",
+                      "description": "Worker count per zone must be greater than 0.",
+                      "value": "^[1-9][0-9]*$"
+                  }
+              ]
             },
             {
               "key": "default_worker_pool_operating_system",
@@ -577,7 +575,6 @@
                   "identifier": "rg_name"
                 }
               },
-              "required": true,
               "value_constraints": [
                 {
                   "type": "regex",
@@ -1435,6 +1432,7 @@
             {
               "key": "ibmcloud_api_key"
             },
+            
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
@@ -1446,7 +1444,6 @@
                   "identifier": "rg_name"
                 }
               },
-              "required": true,
               "value_constraints": [
                 {
                   "type": "regex",
