@@ -17,7 +17,6 @@ resource "null_resource" "install_tools" {
 # Resource Group
 #######################################################################################################################
 module "resource_group" {
-  depends_on                   = [null_resource.install_tools]
   source                       = "terraform-ibm-modules/resource-group/ibm"
   version                      = "1.4.0"
   existing_resource_group_name = var.existing_resource_group_name
@@ -147,6 +146,7 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
+  depends_on                          = [null_resource.install_tools]
   source                              = "terraform-ibm-modules/base-ocp-vpc/ibm"
   version                             = "3.71.3"
   cluster_name                        = local.cluster_name
