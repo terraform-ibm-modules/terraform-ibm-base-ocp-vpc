@@ -479,6 +479,7 @@
             {
               "key": "default_worker_pool_workers_per_zone",
               "type": "string",
+              "default_value": "1",
               "required": true,
               "value_constraints": [
                 {
