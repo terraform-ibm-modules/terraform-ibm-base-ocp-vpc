@@ -234,7 +234,7 @@
             },
             {
               "key": "prefix",
-              "default_value": "openshift",
+              "default_value": "dev",
               "random_string": {
                 "length": 4
               },
@@ -480,7 +480,6 @@
               "key": "default_worker_pool_workers_per_zone",
               "type": "string",
               "required": true,
-              "default_value": "1",
               "description": "Number of worker nodes per zone. Must be a positive integer greater than 0.",
               "value_constraints": [
                 {
@@ -515,9 +514,7 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type": "boolean",
               "required": true,
-              "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
                   "description": "Public access allowed",
@@ -569,7 +566,6 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -577,14 +573,7 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              },
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Resource group name cannot be empty.",
-                  "value": "^(?!\\s*$).+"
-                }
-              ]
+              }
             },
             {
               "key": "cluster_resource_tags",
@@ -752,8 +741,6 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
-              "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
                   "description": "Allow outbound network access",
@@ -1439,7 +1426,6 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "description": "Select or provide an existing IBM Cloud resource group. This value cannot be empty.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -1447,19 +1433,12 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              },
-              "value_constraints": [
-                {
-                  "type": "regex",
-                  "description": "Resource group name cannot be empty.",
-                  "value": "^(?!\\s*$).+"
-                }
-              ]
+              }
             },
             {
               "key": "prefix",
               "required": true,
-              "default_value": "openshift",
+              "default_value": "dev",
               "random_string": {
                 "length": 4
               },
@@ -1608,8 +1587,6 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type": "boolean",
-              "description": "Set to true to access the cluster through a public cloud service endpoint.",
               "options": [
                 {
                   "description": "Public access allowed",
@@ -1625,8 +1602,6 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
-              "description": "Set to true to allow public outbound access from the cluster workers.",
               "options": [
                 {
                   "description": "Allow outbound network access",
