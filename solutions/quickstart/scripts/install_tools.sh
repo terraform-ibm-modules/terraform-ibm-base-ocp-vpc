@@ -2,43 +2,55 @@
 
 set -euo pipefail
 
-echo "🔍 Checking and installing required CLI tools..."
+echo "🔍 Checking and installing required CLI tools (user-level, no sudo)..."
+
+# --- Setup local bin directory ---
+LOCAL_BIN="$HOME/bin"
+mkdir -p "$LOCAL_BIN"
+export PATH="$LOCAL_BIN:$PATH"
+
+# --- Helper to add PATH persistently ---
+if ! grep -q "$LOCAL_BIN" "$HOME/.bashrc"; then
+    echo "export PATH=\"$LOCAL_BIN:\$PATH\"" >> "$HOME/.bashrc"
+    echo "✅ Added $LOCAL_BIN to PATH in ~/.bashrc"
+fi
 
 # --- Function to install jq ---
 install_jq() {
-    echo "Installing jq..."
-    if command -v apt-get >/dev/null 2>&1; then
-        apt-get update -y
-        apt-get install -y jq
-    elif command -v yum >/dev/null 2>&1; then
-        yum install -y jq
-    elif command -v dnf >/dev/null 2>&1; then
-        dnf install -y jq
-    elif command -v brew >/dev/null 2>&1; then
-        brew install jq
-    else
-        echo "Error: No supported package manager found. Please install jq manually."
-        exit 1
-    fi
-    echo "✅ jq installed successfully."
+    echo "Installing jq (locally)..."
+    JQ_VERSION="1.7"
+    ARCH=$(uname -m)
+    OS=$(uname | tr '[:upper:]' '[:lower:]')
+
+    case "$ARCH" in
+        x86_64) JQ_ARCH="jq-linux64" ;;
+        aarch64) JQ_ARCH="jq-linux64" ;; # same binary works for ARM64 in most cases
+        *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
+    esac
+
+    curl -L -o "$LOCAL_BIN/jq" "https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/${JQ_ARCH}"
+    chmod +x "$LOCAL_BIN/jq"
+    echo "✅ jq installed locally at $LOCAL_BIN/jq"
 }
 
 # --- Check and install kubectl ---
 if ! command -v kubectl >/dev/null 2>&1; then
-    echo "kubectl not found. Installing latest stable version..."
-    curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/$(uname | tr '[:upper:]' '[:lower:]')/amd64/kubectl"
+    echo "kubectl not found. Installing latest stable version locally..."
+    OS=$(uname | tr '[:upper:]' '[:lower:]')
+    KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+    curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${OS}/amd64/kubectl"
     chmod +x ./kubectl
-    mv ./kubectl /usr/local/bin/kubectl
-    echo "✅ kubectl installed successfully."
+    mv ./kubectl "$LOCAL_BIN/kubectl"
+    echo "✅ kubectl installed locally at $LOCAL_BIN/kubectl"
 else
     echo "✅ kubectl is already installed. Skipping installation."
 fi
 
 # --- Check and install IBM Cloud CLI ---
 if ! command -v ibmcloud >/dev/null 2>&1; then
-    echo "IBM Cloud CLI not found. Installing..."
-    curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-    echo "✅ IBM Cloud CLI installed successfully."
+    echo "IBM Cloud CLI not found. Installing locally..."
+    curl -fsSL https://clis.cloud.ibm.com/install/linux | sh -s -- --install-location "$LOCAL_BIN"
+    echo "✅ IBM Cloud CLI installed locally at $LOCAL_BIN/ibmcloud"
 else
     echo "✅ IBM Cloud CLI is already installed. Skipping installation."
 fi
@@ -69,9 +81,10 @@ else
 fi
 
 echo ""
-echo "🎉 All required CLI tools are installed:"
+echo "🎉 All required CLI tools are installed locally:"
 echo "   - IBM Cloud CLI"
 echo "   - IBM Cloud Kubernetes Service CLI plugin"
 echo "   - IBM Cloud VPC Infrastructure Service CLI plugin"
 echo "   - kubectl"
 echo "   - jq"
+echo ""

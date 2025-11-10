@@ -1,6 +1,6 @@
 resource "null_resource" "install_tools" {
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install_tools.sh"
+    command     = "${path.module}/scripts/install_tools.sh && source ~/.bashrc"
     interpreter = ["/bin/bash", "-c"]
   }
 
