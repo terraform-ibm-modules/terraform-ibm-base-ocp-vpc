@@ -4,7 +4,7 @@ resource "null_resource" "install_tools" {
   #   interpreter = ["/bin/bash", "-c"]
   # }
   # download kubectl
-  depends_on = [module.ocp_base]
+  # depends_on = [module.ocp_base]
   provisioner "local-exec" {
     command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
   }
