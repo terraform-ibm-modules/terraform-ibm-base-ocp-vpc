@@ -234,7 +234,7 @@
             },
             {
               "key": "prefix",
-              "default_value": "dev",
+              "default_value": "ocp",
               "random_string": {
                 "length": 4
               },
@@ -1438,7 +1438,7 @@
             {
               "key": "prefix",
               "required": true,
-              "default_value": "dev",
+              "default_value": "ocp",
               "random_string": {
                 "length": 4
               },
