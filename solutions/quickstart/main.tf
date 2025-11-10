@@ -1,7 +1,11 @@
 resource "null_resource" "install_tools" {
+  # provisioner "local-exec" {
+  #   command     = "${path.module}/scripts/install_tools.sh && source ~/.bashrc"
+  #   interpreter = ["/bin/bash", "-c"]
+  # }
+  # download kubectl
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install_tools.sh && source ~/.bashrc"
-    interpreter = ["/bin/bash", "-c"]
+    command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
   }
 
   triggers = {
