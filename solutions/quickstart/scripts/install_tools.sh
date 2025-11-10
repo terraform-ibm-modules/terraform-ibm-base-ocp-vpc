@@ -15,6 +15,110 @@ if ! grep -q "$LOCAL_BIN" "$HOME/.bashrc"; then
     echo "✅ Added $LOCAL_BIN to PATH in ~/.bashrc"
 fi
 
+install_ibm_cli() {
+# Simplified installer for IBM Cloud CLI (Linux x86_64 only, no sudo)
+
+host="download.clis.cloud.ibm.com"
+metadata_host="$host/ibm-cloud-cli-metadata"
+binary_download_host="$host/ibm-cloud-cli"
+
+os_name=$(uname -s | tr '[:upper:]' '[:lower:]')
+arch=$(uname -m | tr '[:upper:]' '[:lower:]')
+
+if [ "$os_name" = "linux" ] && echo "$arch" | grep -q 'x86_64'; then
+    platform="linux64"
+else
+    echo "This installer only supports Linux x86_64 (linux64). Quit installation."
+    exit 1
+fi
+
+# fetch version metadata of CLI
+info_endpoint="https://$metadata_host/info.json"
+info=$(curl -f -L -s "$info_endpoint")
+status="$?"
+
+if [ $status -ne 0 ]; then
+    echo "Download latest CLI metadata failed. Please check your network connection. Quit installation."
+    exit 1
+fi
+
+# parse latest version from metadata
+latest_version=$(echo "$info" | grep -Eo '"latestVersion"[^,]*' | grep -Eo '[^:]*$' | tr -d '"' | tr -d '[:space:]')
+if [ -z "$latest_version" ]; then
+    echo "Unable to parse latest version number. Quit installation."
+    exit 1
+fi
+
+# fetch all versions metadata of CLI
+all_versions_endpoint="https://$metadata_host/all_versions.json"
+all_versions=$(curl -f -L -s "$all_versions_endpoint")
+status="$?"
+if [ $status -ne 0 ]; then
+    echo "Download latest CLI versions metadata failed. Please check your network connection. Quit installation."
+    exit 1
+fi
+
+# extract section of metadata for the desired version
+metadata_section=$(echo "$all_versions" | sed -ne '/'\""$latest_version"\"'/,/'"archives"'/p')
+if [ -z "$metadata_section" ]; then
+    echo "Unable to parse metadata for CLI version $latest_version. Quit installation."
+    exit 1
+fi
+
+# get platform-specific binary info
+platform_binaries=$(echo "$metadata_section" | sed -ne '/'"$platform"'/,/'"checksum"'/p')
+
+# extract installer URL and checksum
+installer_url=$(echo "$platform_binaries" | grep -Eo '"url"[^,]*' | cut -d ":" -f2- | tr -d '"' | tr -d '[:space:]')
+sh1sum=$(echo "$platform_binaries" | grep -Eo '"checksum"[^,]*' | cut -d ":" -f2- | tr -d '"' | tr -d '[:space:]')
+
+if [ -z "$installer_url" ] || [ -z "$sh1sum" ]; then
+    echo "Unable to parse installer URL or checksum. Quit installation."
+    exit 1
+fi
+
+file_name="IBM_Cloud_CLI.tar.gz"
+tmp_dir="/tmp/ibmcloud_install"
+
+mkdir -p "$tmp_dir"
+echo "Current platform is ${platform}. Downloading IBM Cloud CLI..."
+
+if curl -L "$installer_url" -o "${tmp_dir}/${file_name}"; then
+    echo "Download complete. Verifying integrity..."
+else
+    echo "Download failed. Please check your network connection. Quit installation."
+    exit 1
+fi
+
+calculated_sha1sum=$(sha1sum "${tmp_dir}/${file_name}" | awk '{print $1}')
+if [ "$sh1sum" != "$calculated_sha1sum" ]; then
+    echo "Downloaded file is corrupted (checksum mismatch). Quit installation."
+    rm -rf "$tmp_dir"
+    exit 1
+fi
+
+echo "Extracting package..."
+tar -xvf "${tmp_dir}/${file_name}" -C "$tmp_dir" >/dev/null 2>&1
+
+if [ ! -x "${tmp_dir}/Bluemix_CLI/install" ]; then
+    chmod 755 "${tmp_dir}/Bluemix_CLI/install"
+fi
+
+echo "Running installer (no sudo)..."
+"${tmp_dir}/Bluemix_CLI/install" -q
+install_result=$?
+
+rm -rf "${tmp_dir}"
+
+if [ $install_result -eq 0 ]; then
+    echo "IBM Cloud CLI installation completed successfully."
+else
+    echo "IBM Cloud CLI installation failed."
+    exit 1
+fi
+
+}
+
 # --- Function to install jq ---
 install_jq() {
     echo "Installing jq (locally)..."
@@ -49,7 +153,7 @@ fi
 # --- Check and install IBM Cloud CLI ---
 if ! command -v ibmcloud >/dev/null 2>&1; then
     echo "IBM Cloud CLI not found. Installing locally..."
-    curl -fsSL https://clis.cloud.ibm.com/install/linux | sh -s -- --install-location "$LOCAL_BIN"
+    install_ibm_cli
     echo "✅ IBM Cloud CLI installed locally at $LOCAL_BIN/ibmcloud"
 else
     echo "✅ IBM Cloud CLI is already installed. Skipping installation."
