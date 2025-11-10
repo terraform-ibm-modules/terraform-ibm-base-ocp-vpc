@@ -1,21 +1,18 @@
-resource "null_resource" "install_tools" {
-  # provisioner "local-exec" {
-  #   command     = "${path.module}/scripts/install_tools.sh && source ~/.bashrc"
-  #   interpreter = ["/bin/bash", "-c"]
-  # }
+resource "null_resource" "custom" {
+  # change trigger to run every time
+  triggers = {
+    build_number = "${timestamp()}"
+  }
+
   # download kubectl
-  # depends_on = [module.ocp_base]
   provisioner "local-exec" {
     command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
   }
 
-  provisioner "local-exec" {
-    command = "kubectl create namespace meta && kubectl create secret generic minio -n meta --from-literal=rootUser=ck_infra_admin --from-literal=rootPassword=f23ff2#DcejC:d"
-  }
-
-  triggers = {
-    always_run = timestamp()
-  }
+  # # run kubectl
+  # provisioner "local-exec" {
+  #   command = "./kubectl apply -f deployment.yaml"
+  # }
 }
 
 #######################################################################################################################
@@ -151,7 +148,7 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
-  # depends_on                          = [null_resource.install_tools]
+  depends_on                          = [null_resource.custom]
   source                              = "terraform-ibm-modules/base-ocp-vpc/ibm"
   version                             = "3.71.3"
   cluster_name                        = local.cluster_name
@@ -166,5 +163,5 @@ module "ocp_base" {
   access_tags                         = var.access_tags
   disable_public_endpoint             = !var.allow_public_access_to_cluster_management
   cluster_config_endpoint_type        = "default"
-  verify_worker_network_readiness     = false
+  verify_worker_network_readiness     = true
 }
