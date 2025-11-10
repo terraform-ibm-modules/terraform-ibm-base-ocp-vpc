@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.4.3"
+  version                   = "5.4.5"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -152,6 +152,15 @@ locals {
       effect = "NoExecute"
     }]
   }
+  worker_pool = [
+    {
+      subnet_prefix    = "zone-1"
+      pool_name        = "workerpool"
+      machine_type     = "bx2.4x16"
+      operating_system = "REDHAT_8_64"
+      workers_per_zone = 2
+    }
+  ]
 }
 
 module "ocp_base" {
@@ -187,6 +196,19 @@ data "ibm_container_cluster_config" "cluster_config" {
 }
 
 ########################################################################################################################
+# Worker Pool
+########################################################################################################################
+
+module "worker_pool" {
+  source            = "../../modules/worker-pool"
+  resource_group_id = module.resource_group.resource_group_id
+  vpc_id            = ibm_is_vpc.vpc.id
+  cluster_id        = module.ocp_base.cluster_id
+  vpc_subnets       = local.cluster_vpc_subnets
+  worker_pools      = local.worker_pool
+}
+
+########################################################################################################################
 # Kube Audit
 ########################################################################################################################
 
@@ -212,7 +234,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.9.2"
+  version           = "1.9.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -248,7 +270,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.9.2"
+  version                       = "1.10.0"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id

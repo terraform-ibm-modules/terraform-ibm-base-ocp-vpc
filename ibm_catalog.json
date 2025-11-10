@@ -70,21 +70,13 @@
       ],
       "flavors": [
         {
-          "label": "[Experimental] Standard - Integrated setup with configurable services",
+          "label": "Standard - Integrated setup with configurable services",
           "index": 2,
           "name": "fully-configurable",
+          "short_description": "Ideal for users who want flexibility with a reliable starting point.",
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "release_notes_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-secure-infrastructure-vpc-relnotes",
-          "compliance": {
-            "authority": "scc-v3",
-            "profiles": [
-              {
-                "profile_name": "IBM Cloud Framework for Financial Services",
-                "profile_version": "1.7.0"
-              }
-            ]
-          },
           "iam_permissions": [
             {
               "role_crns": [
@@ -222,10 +214,6 @@
             "features": [
               {
                 "title": " ",
-                "description": "Ideal for users who want flexibility with a reliable starting point."
-              },
-              {
-                "title": " ",
                 "description": "Offers full control over architecture parameters, with well-chosen defaults that enable a functional OpenShift cluster and integrated IBM Cloud services without requiring manual adjustments."
               }
             ],
@@ -246,6 +234,7 @@
             },
             {
               "key": "prefix",
+              "default_value": "dev",
               "random_string": {
                 "length": 4
               },
@@ -264,9 +253,13 @@
             },
             {
               "key": "openshift_version",
+              "default_value": "4.19",
               "required": true,
-              "default_value": "4.18",
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
@@ -288,6 +281,22 @@
                   "value": "4.14"
                 }
               ]
+            },
+            {
+              "key": "region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              },
+              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
+              "virtual": true,
+              "default_value": "us-south"
             },
             {
               "key": "default_worker_pool_machine_type",
@@ -464,14 +473,6 @@
                 {
                   "displayname": "ox2.64x512 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
                   "value": "ox2.64x512"
-                },
-                {
-                  "displayname": "ox2.8x64 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.8x64"
-                },
-                {
-                  "displayname": "ox2.96x768 (Not available in Sao Paulo (br-sao), Montreal (ca-mon))",
-                  "value": "ox2.96x768"
                 }
               ]
             },
@@ -481,37 +482,26 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "hidden": true,
               "required": true,
+              "type": "string",
               "options": [
                 {
+                  "description": "RHEL with security features.",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized for Red Hat OpenShift Container Platform (OCP) clusters.",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible.",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
               ]
-            },
-            {
-              "key": "region",
-              "required": true,
-              "type": "string",
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              },
-              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
-              "virtual": true,
-              "default_value": "us-south"
             },
             {
               "key": "allow_public_access_to_cluster_management",
@@ -592,21 +582,26 @@
             {
               "key": "cluster_ready_when",
               "hidden": true,
+              "type": "string",
               "options": [
                 {
+                  "description": "Standard readiness, cluster control plane is ready",
                   "displayname": "Normal",
                   "value": "Normal"
                 },
                 {
-                  "displayname": "IngressReady",
+                  "description": "Wait for ingress controller to be operational",
+                  "displayname": "Ingress Ready",
                   "value": "IngressReady"
                 },
                 {
-                  "displayname": "OneWorkerNodeReady",
+                  "description": "At least one worker node is fully ready",
+                  "displayname": "One Worker Ready",
                   "value": "OneWorkerNodeReady"
                 },
                 {
-                  "displayname": "MasterNodeReady",
+                  "description": "Master node components are operational",
+                  "displayname": "Master Ready",
                   "value": "MasterNodeReady"
                 }
               ]
@@ -699,21 +694,26 @@
             {
               "key": "cluster_config_endpoint_type",
               "hidden": true,
+              "type": "string",
               "options": [
                 {
-                  "displayname": "default",
+                  "description": "Standard endpoint configuration",
+                  "displayname": "Default",
                   "value": "default"
                 },
                 {
-                  "displayname": "private",
+                  "description": "Private network access only",
+                  "displayname": "Private",
                   "value": "private"
                 },
                 {
-                  "displayname": "vpe",
+                  "description": "Virtual Private Endpoint for secure access",
+                  "displayname": "VPE",
                   "value": "vpe"
                 },
                 {
-                  "displayname": "link",
+                  "description": "Direct link connection",
+                  "displayname": "Link",
                   "value": "link"
                 }
               ]
@@ -885,21 +885,24 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "required": true,
+              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
+              "type_metadata": "string",
               "virtual": true,
+              "required": true,
               "type": "string",
+              "default_value": "standard",
               "options": [
                 {
+                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
+                  "description": "Try Secrets Manager at no cost for 30 days. Unlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
                   "displayname": "Trial",
                   "value": "trial"
                 }
-              ],
-              "default_value": "standard",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+              ]
             },
             {
               "key": "existing_vpc_crn",
@@ -943,7 +946,7 @@
             {
               "key": "network_acls",
               "type": "list(object)",
-              "default_value": "[\n  {\n    name                         = \"vpc-acl\"\n    add_ibm_cloud_internal_rules = true\n    add_vpc_connectivity_rules   = true\n    prepend_ibm_rules            = true\n    rules = [\n      {\n        name      = \"allow-all-443-inbound\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          port_min = 443\n          port_max = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-80-inbound\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          port_min        = 80\n          port_max        = 80\n          source_port_min = 80\n          source_port_max = 80\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-ingress-inbound\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          source_port_min = 30000\n          source_port_max = 32767\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-443-outbound\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          source_port_min = 443\n          source_port_max = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-80-outbound\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          source_port_min = 80\n          source_port_max = 80\n          port_min        = 80\n          port_max        = 80\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-ingress-outbound\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          port_min = 30000\n          port_max = 32767\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      }\n    ]\n  }\n]",
+              "default_value": "[\n  { name                         = \"vpc-acl\"\n    add_ibm_cloud_internal_rules = true\n    add_vpc_connectivity_rules   = true\n    prepend_ibm_rules            = true\n    rules = [\n      {\n        name      = \"allow-443-inbound-source\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          source_port_min = 443\n          source_port_max = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-443-inbound-dest\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          port_max = 443\n          port_min = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-80-inbound\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          source_port_min = 80\n          source_port_max = 80\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-ingress-inbound\"\n        action    = \"allow\"\n        direction = \"inbound\"\n        tcp = {\n          source_port_min = 30000\n          source_port_max = 32767\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-443-outbound-source\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          source_port_min = 443\n          source_port_max = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-443-outbound-dest\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          port_min = 443\n          port_max = 443\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-80-outbound\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          port_min = 80\n          port_max = 80\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      },\n      {\n        name      = \"allow-all-ingress-outbound\"\n        action    = \"allow\"\n        direction = \"outbound\"\n        tcp = {\n          port_min = 30000\n          port_max = 32767\n        }\n        destination = \"0.0.0.0/0\"\n        source      = \"0.0.0.0/0\"\n      }\n    ]\n  }\n]",
               "description": "The list of ACLs to create. Provide at least one rule for each ACL. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc/blob/main/solutions/fully-configurable/DA-types.md#network-acls-).",
               "required": false,
               "virtual": true,
@@ -983,12 +986,15 @@
             {
               "key": "audit_log_policy",
               "hidden": true,
+              "type": "string",
               "options": [
                 {
+                  "description": "Standard audit logging.",
                   "displayname": "Default",
                   "value": "default"
                 },
                 {
+                  "description": "Detailed verbose logging.",
                   "displayname": "Write Request Bodies",
                   "value": "WriteRequestBodies"
                 }
@@ -1012,7 +1018,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": "Configure the VPC and subnets required to deploy your OpenShift cluster.",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.7.0",
+              "version": "v8.8.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1055,7 +1061,7 @@
               "name": "deploy-arch-ibm-kms",
               "description": "Integrate IBM Key Protect to manage encryption keys for your cluster, securing persistent volumes and supporting compliance. If unselected, encryption is still applied using IBM-managed keys.",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.4.0",
+              "version": "v5.4.8",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1092,7 +1098,7 @@
               "name": "deploy-arch-ibm-cos",
               "description": "Set up a Cloud Object Storage (COS) instance and bucket to serve as internal registry storage for your OpenShift cluster.",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "v10.5.0",
+              "version": "v10.5.5",
               "flavors": [
                 "instance"
               ],
@@ -1124,7 +1130,7 @@
                 "fully-configurable"
               ],
               "id": "63d8ae58-fbf3-41ce-b844-0fb5b85882ab-global",
-              "version": "v1.9.0",
+              "version": "v1.9.10",
               "optional": true,
               "on_by_default": true,
               "input_mapping": [
@@ -1164,7 +1170,7 @@
               "name": "deploy-arch-ibm-cloud-monitoring",
               "description": "Set up a Cloud Monitoring instance to collect platform metrics.",
               "id": "73debdbf-894f-4c14-81c7-5ece3a70b67d-global",
-              "version": "v1.9.0",
+              "version": "v1.10.6",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1198,7 +1204,7 @@
               "name": "deploy-arch-ibm-activity-tracker",
               "description": "Configure Activity Tracker Event Routing to direct auditing events appropriately.",
               "id": "918453c3-4f97-4583-8c4a-83ef12fc7916-global",
-              "version": "v1.4.3",
+              "version": "v1.4.11",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1237,7 +1243,7 @@
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Provision a Secrets Manager instance to securely store and manage sensitive credentials—such as certificates—used by services integrated with your cluster.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.11.0",
+              "version": "v2.11.6",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1284,7 +1290,7 @@
               "name": "deploy-arch-ibm-scc-workload-protection",
               "description": "Integrate with Workload Protection to monitor and manage your cluster’s security posture, helping detect misconfigurations and enforce compliance.",
               "id": "4322cf44-2289-49aa-a719-dd79e39b14dc-global",
-              "version": "v1.14.0",
+              "version": "v1.15.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1311,11 +1317,13 @@
             }
           ],
           "dependency_version_2": true,
-          "terraform_version": "1.10.5"
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
         },
         {
           "label": "QuickStart - Basic and simple",
           "name": "ocp-quickstart",
+          "short_description": "Ideal for users new to IBM Cloud or OpenShift who want to get started without configuring underlying infrastructure.",
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
@@ -1364,11 +1372,7 @@
             "features": [
               {
                 "title": " ",
-                "description": "Ideal for users new to IBM Cloud or OpenShift who want to get started without configuring underlying infrastructure."
-              },
-              {
-                "title": " ",
-                "description": "A lightweight, experimental configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Not certified and not intended for production use."
+                "description": "A lightweight configuration for quickly provisioning an OpenShift cluster on IBM Cloud VPC. Not certified and not intended for production use."
               }
             ],
             "diagrams": [
@@ -1428,22 +1432,28 @@
             },
             {
               "key": "size",
+              "type_metadata": "string",
               "required": true,
+              "type": "string",
               "options": [
                 {
-                  "displayname": "mini",
+                  "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones.",
+                  "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "displayname": "small",
+                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 3 nodes across 3 zones.",
+                  "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "displayname": "medium",
+                  "description": "bx2.8x32 with 8 vCPU and 32 GB memory, 6 nodes across 3 zones.",
+                  "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "displayname": "large",
+                  "description": "bx2.16x64 with 16 vCPU and 64 GB memory, 9 nodes across 3 zones.",
+                  "displayname": "Large",
                   "value": "large"
                 }
               ]
@@ -1471,9 +1481,13 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.18",
+              "default_value": "4.19",
               "required": true,
               "options": [
+                {
+                  "displayname": "4.19",
+                  "value": "4.19"
+                },
                 {
                   "displayname": "4.18",
                   "value": "4.18"
@@ -1498,16 +1512,22 @@
             },
             {
               "key": "default_worker_pool_operating_system",
+              "required": true,
+              "type": "string",
+              "hidden": true,
               "options": [
                 {
+                  "description": "RHEL with security features.",
                   "displayname": "RHEL 9",
                   "value": "RHEL_9_64"
                 },
                 {
+                  "description": "Container-optimized and immutable OS for Red Hat OpenShift Container Platform (OCP) clusters.",
                   "displayname": "Red Hat CoreOS",
                   "value": "RHCOS"
                 },
                 {
+                  "description": "Stable RHEL, widely compatible.",
                   "displayname": "RHEL 8",
                   "value": "REDHAT_8_64"
                 }
@@ -1540,7 +1560,8 @@
             }
           ],
           "dependency_version_2": true,
-          "terraform_version": "1.10.5"
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
         }
       ]
     }
