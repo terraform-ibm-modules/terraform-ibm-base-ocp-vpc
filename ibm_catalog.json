@@ -517,13 +517,13 @@
               "required": true,
               "options": [
                 {
-                  "description": "Public access allowed",
-                  "displayname": "true",
+                  "description": "Allow public access to the cluster management endpoint.",
+                  "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Private access only",
-                  "displayname": "false",
+                  "description": "Restrict access to private network only.",
+                  "displayname": "False",
                   "value": "false"
                 }
               ]
@@ -743,13 +743,13 @@
               "key": "allow_outbound_traffic",
               "options": [
                 {
-                  "description": "Allow outbound network access",
-                  "displayname": "true",
+                  "description": "worker nodes can send outbound traffic to the internet.",
+                  "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Restrict outbound network access",
-                  "displayname": "false",
+                  "description": "Restrict outbound traffic to private or VPC-local networks.",
+                  "displayname": "False",
                   "value": "false"
                 }
               ]
@@ -1589,13 +1589,13 @@
               "key": "allow_public_access_to_cluster_management",
               "options": [
                 {
-                  "description": "Public access allowed",
-                  "displayname": "true",
+                  "description": "Allow public access to the cluster management endpoint.",
+                  "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Private access only",
-                  "displayname": "false",
+                  "description": "Restrict access to private network only.",
+                  "displayname": "False",
                   "value": "false"
                 }
               ]
@@ -1604,13 +1604,13 @@
               "key": "allow_outbound_traffic",
               "options": [
                 {
-                  "description": "Allow outbound network access",
-                  "displayname": "true",
+                  "description": "worker nodes can send outbound traffic to the internet.",
+                  "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Restrict outbound network access",
-                  "displayname": "false",
+                  "description": "Restrict outbound traffic to private or VPC-local networks.",
+                  "displayname": "False",
                   "value": "false"
                 }
               ]
