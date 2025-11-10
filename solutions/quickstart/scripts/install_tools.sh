@@ -8,12 +8,12 @@ echo "🔍 Checking and installing required CLI tools..."
 install_jq() {
     echo "Installing jq..."
     if command -v apt-get >/dev/null 2>&1; then
-        sudo apt-get update -y
-        sudo apt-get install -y jq
+        apt-get update -y
+        apt-get install -y jq
     elif command -v yum >/dev/null 2>&1; then
-        sudo yum install -y jq
+        yum install -y jq
     elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf install -y jq
+        dnf install -y jq
     elif command -v brew >/dev/null 2>&1; then
         brew install jq
     else
@@ -28,7 +28,7 @@ if ! command -v kubectl >/dev/null 2>&1; then
     echo "kubectl not found. Installing latest stable version..."
     curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/$(uname | tr '[:upper:]' '[:lower:]')/amd64/kubectl"
     chmod +x ./kubectl
-    sudo mv ./kubectl /usr/local/bin/kubectl
+    mv ./kubectl /usr/local/bin/kubectl
     echo "✅ kubectl installed successfully."
 else
     echo "✅ kubectl is already installed. Skipping installation."
