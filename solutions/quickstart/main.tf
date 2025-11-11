@@ -1,19 +1,19 @@
-resource "null_resource" "custom" {
-  # change trigger to run every time
-  triggers = {
-    build_number = "${timestamp()}"
-  }
+# resource "null_resource" "custom" {
+#   # change trigger to run every time
+#   triggers = {
+#     build_number = "${timestamp()}"
+#   }
 
-  # download kubectl
-  provisioner "local-exec" {
-    command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
-  }
+#   # download kubectl
+#   provisioner "local-exec" {
+#     command = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl"
+#   }
 
-  # # run kubectl
-  # provisioner "local-exec" {
-  #   command = "./kubectl apply -f deployment.yaml"
-  # }
-}
+#   # # run kubectl
+#   # provisioner "local-exec" {
+#   #   command = "./kubectl apply -f deployment.yaml"
+#   # }
+# }
 
 #######################################################################################################################
 # Resource Group
@@ -149,8 +149,8 @@ locals {
 ########################################################################################################################
 module "ocp_base" {
   depends_on                          = [null_resource.custom]
-  source                              = "terraform-ibm-modules/base-ocp-vpc/ibm"
-  version                             = "3.71.3"
+  source                              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=scr"
+  # version                             = "3.71.3"
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
