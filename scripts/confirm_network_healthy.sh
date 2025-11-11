@@ -3,9 +3,9 @@
 set -e
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-chmod +x kubectl
+chmod 0755 kubectl
 
-alias kubectl2="${PWD}/kubectl"
+# alias kubectl="${PWD}/kubectl"
 
 function run_checks() {
 
@@ -17,7 +17,7 @@ function run_checks() {
   PODS=()
   while [ $attempt -lt $MAX_ATTEMPTS ]; do
     # Get list of calico-node pods (There will be 1 pod per worker node)
-    if while IFS='' read -r line; do PODS+=("$line"); done < <(kubectl2 get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' '); then
+    if while IFS='' read -r line; do PODS+=("$line"); done < <(./kubectl get pods -n "${namespace}" | grep calico-node | cut -f1 -d ' '); then
       if [ ${#PODS[@]} -eq 0 ]; then
         echo "No calico-node pods found. Retrying in 10s. (Attempt $((attempt+1)) / $MAX_ATTEMPTS)"
         sleep 10
@@ -41,10 +41,10 @@ function run_checks() {
   # Iterate through pods to check health
   healthy=true
   for pod in "${PODS[@]}"; do
-    command="kubectl2 logs ${pod} -n ${namespace} --tail=0"
+    command="./kubectl logs ${pod} -n ${namespace} --tail=0"
     # If it is the last attempt then print the output
     if [ "${last_attempt}" == true ]; then
-      node=$(kubectl2 get pod "$pod" -n "${namespace}" -o=jsonpath='{.spec.nodeName}')
+      node=$(./kubectl get pod "$pod" -n "${namespace}" -o=jsonpath='{.spec.nodeName}')
       echo "Checking node: $node"
       if ! ${command}; then
         healthy=false
