@@ -11,9 +11,8 @@ locals {
   default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
 
-  cos_name     = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
-  cos_location = "global"
-  cos_plan     = "standard"
+  cos_name = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
+  cos_plan = "standard"
   # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
   cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
@@ -113,7 +112,6 @@ module "cos_instance" {
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
-  cos_location           = local.cos_location
   kms_encryption_enabled = false
   create_cos_bucket      = false
 }
