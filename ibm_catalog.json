@@ -517,7 +517,7 @@
               "required": true,
               "options": [
                 {
-                  "description": "Allow public access to the cluster management endpoint.",
+                  "description": "Allow access to the cluster management through a public endpoint.",
                   "displayname": "True",
                   "value": "true"
                 },
@@ -743,12 +743,12 @@
               "key": "allow_outbound_traffic",
               "options": [
                 {
-                  "description": "worker nodes can send outbound traffic to the internet.",
+                  "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
                   "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Restrict outbound traffic to private or VPC-local networks.",
+                  "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
                   "displayname": "False",
                   "value": "false"
                 }
@@ -931,7 +931,7 @@
                   "value": "standard"
                 },
                 {
-                  "description": "Choose this only if your account does not already have a Trial instance. You can have only one Trial instance per account at a time. After your trial expires, you must upgrade to the Standard plan to continue using Secrets Manager.",
+                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
                   "displayname": "Trial (30 days)",
                   "value": "trial"
                 }
@@ -1589,7 +1589,7 @@
               "key": "allow_public_access_to_cluster_management",
               "options": [
                 {
-                  "description": "Allow public access to the cluster management endpoint.",
+                  "description": "Allow access to the cluster management through a public endpoint.",
                   "displayname": "True",
                   "value": "true"
                 },
@@ -1604,12 +1604,12 @@
               "key": "allow_outbound_traffic",
               "options": [
                 {
-                  "description": "worker nodes can send outbound traffic to the internet.",
+                  "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
                   "displayname": "True",
                   "value": "true"
                 },
                 {
-                  "description": "Restrict outbound traffic to private or VPC-local networks.",
+                  "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
                   "displayname": "False",
                   "value": "false"
                 }
