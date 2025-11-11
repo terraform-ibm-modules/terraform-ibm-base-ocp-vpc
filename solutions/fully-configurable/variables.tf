@@ -66,7 +66,7 @@ variable "access_tags" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "openshift"
+  default     = "cluster"
 }
 
 variable "openshift_version" {
