@@ -931,7 +931,7 @@
                   "value": "standard"
                 },
                 {
-                  "description": "Choose this only if your account does not already have a Trial instance. You can have only one Trial instance per account at a time. After your trial expires, you must upgrade to the Standard plan to continue using Secrets Manager.",
+                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
                   "displayname": "Trial (30 days)",
                   "value": "trial"
                 }
