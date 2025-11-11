@@ -5,7 +5,7 @@ set -e
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod 0755 kubectl
 
-alias kubectl="${PATH}/kubectl"
+alias kubectl="${PWD}/kubectl"
 
 function run_checks() {
 
