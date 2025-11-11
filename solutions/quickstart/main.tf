@@ -148,7 +148,7 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
-  depends_on                          = [null_resource.custom]
+  # depends_on                          = [null_resource.custom]
   source                              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=scr"
   # version                             = "3.71.3"
   cluster_name                        = local.cluster_name
