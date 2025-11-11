@@ -481,7 +481,7 @@ resource "null_resource" "confirm_network_healthy" {
   depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
 
   provisioner "local-exec" {
-    command     = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod 0755 kubectl && bash ${path.module}/scripts/confirm_network_healthy.sh"
+    command     = "curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod 0755 kubectl && kubectl -h && bash ${path.module}/scripts/confirm_network_healthy.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
