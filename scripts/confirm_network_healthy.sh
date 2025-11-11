@@ -5,6 +5,10 @@ set -e
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod 0755 kubectl
 
+printenv
+
+pwd
+
 function run_checks() {
 
   last_attempt=$1
