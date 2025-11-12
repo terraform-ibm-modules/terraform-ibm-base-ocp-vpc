@@ -745,7 +745,7 @@
               "type": "boolean",
               "options": [
                 {
-                  "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
+                  "description": "Allows all outbound traffic from the cluster with no restrictions applied.",
                   "displayname": "True",
                   "value": "true"
                 },
@@ -1608,7 +1608,7 @@
               "type": "boolean",
               "options": [
                 {
-                  "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
+                  "description": "Allows all outbound traffic from the cluster with no restrictions applied.",
                   "displayname": "True",
                   "value": "true"
                 },
