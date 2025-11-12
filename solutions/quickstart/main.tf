@@ -9,8 +9,11 @@ resource "null_resource" "custom" {
     command = "bash ${path.module}/scripts/install_tools.sh"
   }
 
+  # provisioner "local-exec" {
+  #   command = "export PATH=$PATH:$PWD && kubectl"
+  # }
   provisioner "local-exec" {
-    command = "export PATH=$PATH:$PWD && kubectl"
+    command = "kubectl"
   }
 }
 
