@@ -4,16 +4,16 @@ set -euo pipefail
 
 echo "🔍 Checking and installing required CLI tools (user-level, no sudo)..."
 
-# --- Setup local bin directory ---
-LOCAL_BIN="$HOME/bin"
-mkdir -p "$LOCAL_BIN"
-export PATH="$LOCAL_BIN:$PATH"
+# # --- Setup local bin directory ---
+# LOCAL_BIN="$HOME/bin"
+# mkdir -p "$LOCAL_BIN"
+# export PATH="$LOCAL_BIN:$PATH"
 
-# --- Helper to add PATH persistently ---
-if ! grep -q "$LOCAL_BIN" "$HOME/.bashrc"; then
-	echo "export PATH=\"$LOCAL_BIN:\$PATH\"" >>"$HOME/.bashrc"
-	echo "✅ Added $LOCAL_BIN to PATH in ~/.bashrc"
-fi
+# # --- Helper to add PATH persistently ---
+# if ! grep -q "$LOCAL_BIN" "$HOME/.bashrc"; then
+# 	echo "export PATH=\"$LOCAL_BIN:\$PATH\"" >>"$HOME/.bashrc"
+# 	echo "✅ Added $LOCAL_BIN to PATH in ~/.bashrc"
+# fi
 
 # install_ibm_cli() {
 # 	# Simplified installer for IBM Cloud CLI (Linux x86_64 only, no sudo)
@@ -135,9 +135,9 @@ install_jq() {
 		;;
 	esac
 
-	curl -L -o "$LOCAL_BIN/jq" "https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/${JQ_ARCH}"
-	chmod +x "$LOCAL_BIN/jq"
-	echo "✅ jq installed locally at $LOCAL_BIN/jq"
+	curl -L -o "jq" "https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/${JQ_ARCH}"
+	chmod +x "jq"
+	echo "✅ jq installed locally at jq"
 }
 
 # --- Check and install kubectl ---
@@ -147,8 +147,8 @@ if ! command -v kubectl >/dev/null 2>&1; then
 	KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 	curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${OS}/amd64/kubectl"
 	chmod +x ./kubectl
-	mv ./kubectl "$LOCAL_BIN/kubectl"
-	echo "✅ kubectl installed locally at $LOCAL_BIN/kubectl"
+	# mv ./kubectl "kubectl"
+	echo "✅ kubectl installed locally at kubectl"
 else
 	echo "✅ kubectl is already installed. Skipping installation."
 fi
