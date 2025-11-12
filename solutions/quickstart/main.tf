@@ -6,11 +6,11 @@ resource "null_resource" "custom" {
 
   # download kubectl
   provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/install_tools.sh && export PATH=$PATH:$PWD"
+    command = "bash ${path.module}/scripts/install_tools.sh"
   }
 
   provisioner "local-exec" {
-    command = "kubectl"
+    command = "export PATH=$PATH:$PWD && kubectl"
   }
 }
 
