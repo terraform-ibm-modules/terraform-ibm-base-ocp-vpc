@@ -514,18 +514,17 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type": "boolean",
               "required": true,
               "options": [
                 {
                   "description": "Allow access to the cluster management through a public endpoint.",
                   "displayname": "True",
-                  "value": "true"
+                  "value": true
                 },
                 {
                   "description": "Restrict access to private network only.",
                   "displayname": "False",
-                  "value": "false"
+                  "value": false
                 }
               ]
             },
@@ -742,17 +741,16 @@
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
               "options": [
                 {
                   "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
                   "displayname": "True",
-                  "value": "true"
+                  "value": true
                 },
                 {
                   "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
                   "displayname": "False",
-                  "value": "false"
+                  "value": false
                 }
               ]
             },
@@ -1589,33 +1587,31 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "type": "boolean",
               "options": [
                 {
                   "description": "Allow access to the cluster management through a public endpoint.",
                   "displayname": "True",
-                  "value": "true"
+                  "value": true
                 },
                 {
                   "description": "Restrict access to private network only.",
                   "displayname": "False",
-                  "value": "false"
+                  "value": false
                 }
               ]
             },
             {
               "key": "allow_outbound_traffic",
-              "type": "boolean",
               "options": [
                 {
                   "description": "All outbound traffic from the cluster is permitted with no restrictions applied.",
                   "displayname": "True",
-                  "value": "true"
+                  "value": true
                 },
                 {
                   "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
                   "displayname": "False",
-                  "value": "false"
+                  "value": false
                 }
               ]
             }
