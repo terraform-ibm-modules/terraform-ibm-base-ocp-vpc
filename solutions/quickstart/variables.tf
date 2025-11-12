@@ -59,7 +59,6 @@ variable "cluster_name" {
   default     = "cluster"
 }
 
-
 variable "address_prefix" {
   description = "The IP range that defines a certain location for the VPC. Use only with manual address prefixes."
   type        = string
@@ -71,7 +70,6 @@ variable "ocp_entitlement" {
   description = "Value that is applied to the entitlements for OCP cluster provisioning."
   default     = null
 }
-
 
 variable "default_worker_pool_operating_system" {
   type        = string
