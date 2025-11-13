@@ -234,7 +234,7 @@
             },
             {
               "key": "prefix",
-              "default_value": "dev",
+              "default_value": "ocp",
               "random_string": {
                 "length": 4
               },
@@ -478,7 +478,16 @@
             },
             {
               "key": "default_worker_pool_workers_per_zone",
-              "required": true
+              "type": "string",
+              "default_value": "1",
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Worker count per zone must be greater than 0.",
+                  "value": "^[1-9][0-9]*$"
+                }
+              ]
             },
             {
               "key": "default_worker_pool_operating_system",
@@ -505,7 +514,19 @@
             },
             {
               "key": "allow_public_access_to_cluster_management",
-              "required": true
+              "required": true,
+              "options": [
+                {
+                  "description": "Allow access to the cluster management through a public endpoint.",
+                  "displayname": "True",
+                  "value": true
+                },
+                {
+                  "description": "Restrict access to private network only.",
+                  "displayname": "False",
+                  "value": false
+                }
+              ]
             },
             {
               "key": "enable_platform_metrics",
@@ -719,7 +740,19 @@
               ]
             },
             {
-              "key": "allow_outbound_traffic"
+              "key": "allow_outbound_traffic",
+              "options": [
+                {
+                  "description": "Allows all outbound traffic from the cluster with no restrictions applied.",
+                  "displayname": "True",
+                  "value": true
+                },
+                {
+                  "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
+                  "displayname": "False",
+                  "value": false
+                }
+              ]
             },
             {
               "key": "verify_worker_network_readiness",
@@ -898,8 +931,8 @@
                   "value": "standard"
                 },
                 {
-                  "description": "Try Secrets Manager at no cost for 30 days. Unlimited access to all service capabilities for a limited time. You can have one Trial instance provisioned in your account at any time. After your trial expires, functionality is removed.",
-                  "displayname": "Trial",
+                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
+                  "displayname": "Trial (30 days)",
                   "value": "trial"
                 }
               ]
@@ -1405,7 +1438,7 @@
             {
               "key": "prefix",
               "required": true,
-              "default_value": "dev",
+              "default_value": "ocp",
               "random_string": {
                 "length": 4
               },
@@ -1553,10 +1586,34 @@
               }
             },
             {
-              "key": "allow_public_access_to_cluster_management"
+              "key": "allow_public_access_to_cluster_management",
+              "options": [
+                {
+                  "description": "Allow access to the cluster management through a public endpoint.",
+                  "displayname": "True",
+                  "value": true
+                },
+                {
+                  "description": "Restrict access to private network only.",
+                  "displayname": "False",
+                  "value": false
+                }
+              ]
             },
             {
-              "key": "allow_outbound_traffic"
+              "key": "allow_outbound_traffic",
+              "options": [
+                {
+                  "description": "Allows all outbound traffic from the cluster with no restrictions applied.",
+                  "displayname": "True",
+                  "value": true
+                },
+                {
+                  "description": "Allows only essential outbound traffic for cluster functionality; blocks all other access.",
+                  "displayname": "False",
+                  "value": false
+                }
+              ]
             }
           ],
           "dependency_version_2": true,
