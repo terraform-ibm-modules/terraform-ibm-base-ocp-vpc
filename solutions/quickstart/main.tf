@@ -6,7 +6,7 @@ resource "null_resource" "custom" {
 
   # download kubectl
   provisioner "local-exec" {
-    command = "ls /tmp"
+    command = "${path.module}/scripts/install_tools.sh"
   }
 }
 
@@ -143,8 +143,8 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
-  # depends_on = [null_resource.custom]
-  source     = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=scr"
+  depends_on = [null_resource.custom]
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=scr"
   # version                             = "3.71.3"
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id

@@ -137,6 +137,7 @@ install_jq() {
 
 	curl -L -o "jq" "https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/${JQ_ARCH}"
 	chmod +x "jq"
+	mv ./jq "/tmp/jq"
 	echo "✅ jq installed locally at jq"
 }
 
@@ -147,7 +148,7 @@ if ! command -v kubectl >/dev/null 2>&1; then
 	KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
 	curl -LO "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/${OS}/amd64/kubectl"
 	chmod +x ./kubectl
-	# mv ./kubectl "kubectl"
+	mv ./kubectl "/tmp/kubectl"
 	echo "✅ kubectl installed locally at kubectl"
 else
 	echo "✅ kubectl is already installed. Skipping installation."
@@ -195,42 +196,3 @@ echo "🎉 All required CLI tools are installed locally:"
 echo "   - kubectl"
 echo "   - jq"
 echo ""
-
-
-#!/usr/bin/env bash
-set -euo pipefail
-
-TARGET_DIR="$PWD"
-
-if [[ ! -d "$TARGET_DIR" ]]; then
-  echo "❌ Error: '$TARGET_DIR' is not a directory."
-  exit 1
-fi
-
-# --- Detect shell config file ---
-if [[ -n "${ZSH_VERSION-}" ]]; then
-  SHELL_RC="$HOME/.zshrc"
-elif [[ -n "${BASH_VERSION-}" ]]; then
-  SHELL_RC="$HOME/.bashrc"
-else
-  # Fallback for unknown shells
-  SHELL_RC="$HOME/.bashrc"
-fi
-
-# --- Check if already added ---
-EXPORT_LINE="export PATH=\$PATH:$TARGET_DIR"
-
-if grep -Fxq "$EXPORT_LINE" "$SHELL_RC"; then
-  echo "✅ PATH already includes $TARGET_DIR in $SHELL_RC"
-else
-  echo "" >> "$SHELL_RC"
-  echo "# Added by add-to-path.sh on $(date)" >> "$SHELL_RC"
-  echo "$EXPORT_LINE" >> "$SHELL_RC"
-  echo "✅ Added $TARGET_DIR to PATH in $SHELL_RC"
-fi
-
-# --- Apply change immediately ---
-# shellcheck disable=SC1090
-source "$SHELL_RC"
-echo "🔁 Applied changes. Current PATH:"
-echo "$PATH"
