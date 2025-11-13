@@ -1,14 +1,14 @@
-# resource "null_resource" "custom" {
-#   # change trigger to run every time
-#   triggers = {
-#     build_number = "${timestamp()}"
-#   }
+resource "null_resource" "custom" {
+  # change trigger to run every time
+  triggers = {
+    build_number = "${timestamp()}"
+  }
 
-#   # download kubectl
-#   provisioner "local-exec" {
-#     command = "bash ${path.module}/scripts/install_tools.sh"
-#   }
-# }
+  # download kubectl
+  provisioner "local-exec" {
+    command = "ls /tmp"
+  }
+}
 
 #######################################################################################################################
 # Resource Group
