@@ -2,10 +2,10 @@
 
 set -e
 
-curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-chmod 0755 kubectl
+# curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+# chmod 0755 kubectl
 
-export PATH=$PATH:$PWD
+export PATH=$PATH:"/tmp"
 
 function run_checks() {
 
