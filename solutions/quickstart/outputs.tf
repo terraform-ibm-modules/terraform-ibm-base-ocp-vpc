@@ -63,21 +63,21 @@ output "next_steps_text" {
 }
 
 output "next_step_primary_label" {
-  value       = "Steps to deploy application on Cluster"
-  description = "Primary label"
+  value       = "Red Hat OpenShift cluster overview page"
+  description = "primary label"
 }
 
 output "next_step_primary_url" {
-  value       = "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-tutorialDeployAppOpenShift"
+  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
   description = "primary url"
 }
 
 output "next_step_secondary_label" {
-  value       = "Red Hat OpenShift cluster overview page"
+  value       = "Steps to deploy application on Cluster"
   description = "Secondary label"
 }
 
 output "next_step_secondary_url" {
-  value       = "https://cloud.ibm.com/containers/cluster-management/clusters/${module.ocp_base.cluster_id}/overview"
+  value       = "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-tutorialDeployAppOpenShift"
   description = "secondary url"
 }
