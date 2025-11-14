@@ -1,3 +1,13 @@
+resource "null_resource" "install_dependencies" {
+  # change trigger to run every time
+  triggers = {
+    build_number = timestamp()
+  }
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/install-deps.sh"
+  }
+}
+
 data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = var.cluster_id
   config_dir        = "${path.module}/kubeconfig"
@@ -19,6 +29,7 @@ locals {
 }
 
 resource "null_resource" "set_audit_log_policy" {
+  depends_on = [null_resource.install_dependencies]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
@@ -40,7 +51,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
+  depends_on    = [null_resource.install_dependencies, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
@@ -96,7 +107,7 @@ locals {
 # }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [time_sleep.wait_for_kube_audit]
+  depends_on = [time_sleep.wait_for_kube_audit, null_resource.install_dependencies]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }

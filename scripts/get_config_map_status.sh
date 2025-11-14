@@ -2,6 +2,8 @@
 
 set -e
 
+export PATH=$PATH:"/tmp"
+
 CONFIGMAP_NAME="iks-ca-configmap"
 NAMESPACE="kube-system"
 COUNTER=0

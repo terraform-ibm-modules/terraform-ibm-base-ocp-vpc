@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+export PATH=$PATH:"/tmp"
 
 PATCH_APPLY="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Managed\"}}' --type=merge"
 PATCH_REMOVE="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Removed\"}}' --type=merge"
