@@ -63,7 +63,7 @@ output "next_steps_text" {
 }
 
 output "next_step_primary_label" {
-  value       = "Deploy application on Cluster"
+  value       = "Steps to deploy application on Cluster"
   description = "Primary label"
 }
 
