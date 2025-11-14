@@ -2,6 +2,8 @@
 
 set -e
 
+export PATH=$PATH:"/tmp"
+
 deployment=$1
 namespace=$2
 

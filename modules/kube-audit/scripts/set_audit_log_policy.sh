@@ -4,6 +4,8 @@ set -euo pipefail
 
 AUDIT_POLICY="$1"
 
+export PATH=$PATH:"/tmp"
+
 STORAGE_PROFILE="oc patch apiserver cluster --type='merge' -p '{\"spec\":{\"audit\":{\"profile\":\"$AUDIT_POLICY\"}}}'"
 MAX_ATTEMPTS=10
 RETRY_WAIT=5
