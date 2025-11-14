@@ -63,12 +63,12 @@ output "next_steps_text" {
 }
 
 output "next_step_primary_label" {
-  value       = "OpenShift cluster web console"
+  value       = "Deploy application on Cluster"
   description = "Primary label"
 }
 
 output "next_step_primary_url" {
-  value       = "https://console-openshift-console.${module.ocp_base.ingress_hostname}/dashboards"
+  value       = "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-tutorialDeployAppOpenShift"
   description = "primary url"
 }
 
