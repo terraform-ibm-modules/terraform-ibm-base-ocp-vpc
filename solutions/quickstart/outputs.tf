@@ -64,7 +64,7 @@ output "next_steps_text" {
 
 output "next_step_primary_label" {
   value       = "Red Hat OpenShift cluster overview page"
-  description = "primary label"
+  description = "Primary label"
 }
 
 output "next_step_primary_url" {
