@@ -10,12 +10,13 @@ DIRECTORY="/tmp"
 # Feature flags
 #######################################
 
-# If true → do not download anything
-DISABLE_DOWNLOADS="${DISABLE_DOWNLOADS:-false}"
+# If true → do not download anything (unless custom URL is used)
+DISABLE_EXTERNAL_DOWNLOADS="${DISABLE_EXTERNAL_DOWNLOADS:-false}"
 
 # Optional custom URL prefix for all binaries
 CUSTOM_KUBECTL_URL="${CUSTOM_KUBECTL_URL:-}"
 CUSTOM_JQ_URL="${CUSTOM_JQ_URL:-}"
+CUSTOM_OC_URL="${CUSTOM_OC_URL:-}"
 
 #######################################
 # OS / ARCH Detection
@@ -48,8 +49,8 @@ function download {
 	local tmp_dir=$6
 	local custom_url=$7
 
-	if [[ "$DISABLE_DOWNLOADS" == "true" ]]; then
-		echo "Downloads disabled (DISABLE_DOWNLOADS=true). Skipping $binary."
+	if [[ "$DISABLE_EXTERNAL_DOWNLOADS" == "true" && "$custom_url" != "true" ]]; then
+		echo "Downloads disabled (DISABLE_EXTERNAL_DOWNLOADS=true). Skipping $binary."
 		return
 	fi
 
@@ -66,7 +67,6 @@ function download {
 			echo "No checksum file passed, skipping verification."
 		fi
 	fi
-
 }
 
 function verify {
@@ -180,18 +180,19 @@ if ! command -v kubectl >/dev/null 2>&1; then
 		download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
 	fi
 
-	if [[ "$DISABLE_DOWNLOADS" != "true" ]]; then
+	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_KUBECTL_URL") ]]; then
 		verify_alternative "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
 		copy_replace_binary "$BINARY" "$TMP_DIR"
 		clean "$TMP_DIR"
 	fi
 else
-	echo "${BINARY} ${KUBECTL_VERSION} already installed - skipping"
+	echo "${BINARY} ${KUBECTL_VERSION} already installed - skipping install"
 fi
 
 #######################################
 # Install: jq
 #######################################
+
 JQ_OS=${OS}
 if [[ $OSTYPE == 'darwin'* ]]; then
 	JQ_OS="macos"
@@ -219,13 +220,13 @@ if ! command -v jq >/dev/null 2>&1; then
 		download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
 	fi
 
-	if [[ "$DISABLE_DOWNLOADS" != "true" ]]; then
+	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_JQ_URL") ]]; then
 		mv "${TMP_DIR}/${FILE_NAME}" "${TMP_DIR}/${BINARY}"
 		copy_replace_binary "$BINARY" "$TMP_DIR"
 		clean "$TMP_DIR"
 	fi
 else
-	echo "${BINARY} ${JQ_VERSION} already installed - skipping"
+	echo "${BINARY} ${JQ_VERSION} already installed - skipping install"
 fi
 
 #######################################
@@ -240,6 +241,7 @@ fi
 # OC cli version must be maintained manually, as there is no supported renovate datasource to find newer versions.
 OC_VERSION=4.11.9
 BINARY=oc
+
 if ! command -v oc >/dev/null 2>&1; then
 	FILE_NAME="openshift-client-${OC_OS}-${OC_VERSION}.tar.gz"
 	BASE_URL="${CUSTOM_OC_URL:-https://mirror.openshift.com/pub/openshift-v4/${ARCH}/clients/ocp/${OC_VERSION}}"
@@ -254,7 +256,8 @@ if ! command -v oc >/dev/null 2>&1; then
 	else
 		download "$BINARY" "$OC_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
 	fi
-	if [[ "$DISABLE_DOWNLOADS" != "true" ]]; then
+
+	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_OC_URL") ]]; then
 		verify ${FILE_NAME} ${SUMFILE} "${TMP_DIR}"
 		tar -xzf "${TMP_DIR}/${FILE_NAME}" -C "${TMP_DIR}"
 		copy_replace_binary ${BINARY} "${TMP_DIR}"

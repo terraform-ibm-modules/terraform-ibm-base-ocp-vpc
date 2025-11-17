@@ -69,7 +69,7 @@ locals {
 }
 
 module "ocp_base" {
-  source                              = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=install-deps"
+  source                              = "../.."
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
   tags                                = var.resource_tags
@@ -81,6 +81,5 @@ module "ocp_base" {
   worker_pools                        = local.worker_pools
   access_tags                         = var.access_tags
   ocp_entitlement                     = var.ocp_entitlement
-  enable_ocp_console                  = true
   disable_outbound_traffic_protection = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
 }

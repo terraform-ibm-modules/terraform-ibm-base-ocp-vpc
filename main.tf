@@ -100,12 +100,17 @@ locals {
 }
 
 resource "null_resource" "install_dependencies" {
+  count = var.install_dependencies ? 1 : 0
   # change trigger to run every time
   triggers = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
-    command = "${path.module}/scripts/install-deps.sh"
+    command     = "${path.module}/scripts/install-deps.sh"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      DISABLE_EXTERNAL_DOWNLOADS = var.disable_external_binary_download
+    }
   }
 }
 
