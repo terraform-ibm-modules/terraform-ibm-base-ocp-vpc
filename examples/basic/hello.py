@@ -1,19 +1,43 @@
-import requests
+import http.client
 import json
 
-url = "https://httpbin.org/post"   # Example test endpoint
+# Target host (no https:// prefix)
+host = "httpbin.org"
+
+# POST path
+path = "/post"
+
+# JSON payload
 payload = {
-    "message": "Hello from Python!"
+    "message": "Hello from http.client!"
 }
 
-response = requests.post(url, json=payload)
+# Convert payload to JSON string
+body = json.dumps(payload)
 
-# Print HTTP status code
-print("Status:", response.status_code)
+# Set headers
+headers = {
+    "Content-Type": "application/json",
+    "Content-Length": str(len(body))
+}
 
-# Print JSON response (pretty formatted)
+# Create HTTPS connection
+conn = http.client.HTTPSConnection(host)
+
+# Send POST request
+conn.request("POST", path, body, headers)
+
+# Get response
+response = conn.getresponse()
+raw_data = response.read().decode()
+
+print("Status:", response.status)
+print("Raw Response:", raw_data)
+
+# Try to parse JSON
 try:
-    data = response.json()
-    print(json.dumps(data, indent=4))
-except ValueError:
-    print("Response was not JSON.")
+    parsed = json.loads(raw_data)
+    print("\nPretty JSON:")
+    print(json.dumps(parsed, indent=4))
+except json.JSONDecodeError:
+    print("Response was not valid JSON.")
