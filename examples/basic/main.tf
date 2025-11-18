@@ -85,6 +85,9 @@
 # }
 
 resource "null_resource" "run_python" {
+  triggers = {
+    build_number = "${timestamp()}"
+  }
   provisioner "local-exec" {
     command = "python3 ${path.module}/hello.py"
   }
