@@ -86,6 +86,6 @@
 
 resource "null_resource" "run_python" {
   provisioner "local-exec" {
-    command = "python3 hello.py"
+    command = "python3 ${path.module}/hello.py"
   }
 }
