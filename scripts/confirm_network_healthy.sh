@@ -2,6 +2,8 @@
 
 set -e
 
+export PATH=$PATH:"/tmp"
+
 function run_checks() {
 
   last_attempt=$1

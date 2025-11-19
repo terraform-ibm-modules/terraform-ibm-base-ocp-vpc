@@ -472,3 +472,17 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
   default     = false
 }
+
+variable "install_dependencies" {
+  type        = bool
+  default     = true
+  description = "This module includes scripts to support cluster provisioning. Set this variable to true to install all required runtime dependencies."
+  nullable    = false
+}
+
+variable "disable_external_binary_download" {
+  type        = bool
+  default     = false
+  description = "Set this variable to true to prevent the script from downloading binaries from the internet."
+  nullable    = false
+}

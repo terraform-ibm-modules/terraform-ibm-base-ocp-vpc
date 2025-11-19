@@ -110,6 +110,9 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
 	})
+
+	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.ocp_base.null_resource.install_dependencies"}}
+
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
@@ -215,7 +218,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 
 	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
 
-	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
+	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit", "module.ocp_base.null_resource.install_dependencies"}}
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},

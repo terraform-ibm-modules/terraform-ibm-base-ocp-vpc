@@ -102,3 +102,17 @@ variable "audit_webhook_listener_image_tag_digest" {
     error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
   }
 }
+
+variable "install_dependencies" {
+  type        = bool
+  default     = true
+  description = "This module includes scripts to support cluster provisioning. Set this variable to true to install all required runtime dependencies."
+  nullable    = false
+}
+
+variable "disable_external_binary_download" {
+  type        = bool
+  default     = false
+  description = "Set this variable to true to prevent the script from downloading binaries from the internet."
+  nullable    = false
+}
