@@ -126,6 +126,14 @@ resource "ibm_resource_tag" "cos_access_tag" {
   resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
   tag_type    = "access"
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        for tag in var.access_tags : can(regex("[\\w\\-_\\.]+:[\\w\\-_\\.]+", tag)) && length(tag) <= 128
+      ])
+      error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\", see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits for more details"
+    }
+  }
 }
 
 ##############################################################################
@@ -160,6 +168,49 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
   lifecycle {
     ignore_changes = [kube_version]
+    precondition {
+      condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
+      error_message = "Please provide at most 4 additional security groups."
+    }
+    precondition {
+      condition = anytrue([
+        var.ocp_version == null,
+        var.ocp_version == "default",
+        var.ocp_version == "4.14",
+        var.ocp_version == "4.15",
+        var.ocp_version == "4.16",
+        var.ocp_version == "4.17",
+        var.ocp_version == "4.18",
+        var.ocp_version == "4.19",
+      ])
+      error_message = "The specified ocp_version is not of the valid versions."
+    }
+    precondition {
+      condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
+      error_message = "The input variable cluster_ready_when must be one of the following: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
+    }
+    precondition {
+      condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+      error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+    }
+    precondition {
+      error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+      condition     = contains(["default", "private", "vpe", "link"], var.cluster_config_endpoint_type)
+    }
+    precondition {
+      condition     = var.number_of_lbs >= 1
+      error_message = "Please set the number_of_lbs to a minimum of 1."
+    }
+
+    postcondition {
+      condition     = self.master_status == "Ready"
+      error_message = "Master status is ${self.master_status}, expected Ready."
+    }
+
+    postcondition {
+      condition     = self.state == "normal"
+      error_message = "Cluster is in ${self.state} state, expected normal."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -227,6 +278,52 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
 
   security_groups = local.cluster_security_groups
+
+  lifecycle {
+    precondition {
+      condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
+      error_message = "Please provide at most 4 additional security groups."
+    }
+    precondition {
+      condition = anytrue([
+        var.ocp_version == null,
+        var.ocp_version == "default",
+        var.ocp_version == "4.14",
+        var.ocp_version == "4.15",
+        var.ocp_version == "4.16",
+        var.ocp_version == "4.17",
+        var.ocp_version == "4.18",
+        var.ocp_version == "4.19",
+      ])
+      error_message = "The specified ocp_version is not of the valid versions."
+    }
+    precondition {
+      condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
+      error_message = "The input variable cluster_ready_when must be one of the following: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
+    }
+    precondition {
+      condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+      error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+    }
+    precondition {
+      error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+      condition     = contains(["default", "private", "vpe", "link"], var.cluster_config_endpoint_type)
+    }
+    precondition {
+      condition     = var.number_of_lbs >= 1
+      error_message = "Please set the number_of_lbs to a minimum of 1."
+    }
+
+    postcondition {
+      condition     = self.master_status == "Ready"
+      error_message = "Master status is ${self.master_status}, expected Ready."
+    }
+
+    postcondition {
+      condition     = self.state == "normal"
+      error_message = "Cluster is in ${self.state} state, expected normal."
+    }
+  }
 
   # This resource intentionally omits ignore_changes for kube_version to allow major version upgrades
 
@@ -299,6 +396,49 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
   lifecycle {
     ignore_changes = [worker_count, kube_version]
+    precondition {
+      condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
+      error_message = "Please provide at most 4 additional security groups."
+    }
+    precondition {
+      condition = anytrue([
+        var.ocp_version == null,
+        var.ocp_version == "default",
+        var.ocp_version == "4.14",
+        var.ocp_version == "4.15",
+        var.ocp_version == "4.16",
+        var.ocp_version == "4.17",
+        var.ocp_version == "4.18",
+        var.ocp_version == "4.19",
+      ])
+      error_message = "The specified ocp_version is not of the valid versions."
+    }
+    precondition {
+      condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
+      error_message = "The input variable cluster_ready_when must be one of the following: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
+    }
+    precondition {
+      condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+      error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+    }
+    precondition {
+      error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+      condition     = contains(["default", "private", "vpe", "link"], var.cluster_config_endpoint_type)
+    }
+    precondition {
+      condition     = var.number_of_lbs >= 1
+      error_message = "Please set the number_of_lbs to a minimum of 1."
+    }
+
+    postcondition {
+      condition     = self.master_status == "Ready"
+      error_message = "Master status is ${self.master_status}, expected Ready."
+    }
+
+    postcondition {
+      condition     = self.state == "normal"
+      error_message = "Cluster is in ${self.state} state, expected normal."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -371,6 +511,49 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
 
   lifecycle {
     ignore_changes = [worker_count]
+    precondition {
+      condition     = var.custom_security_group_ids == null ? true : length(var.custom_security_group_ids) <= 4
+      error_message = "Please provide at most 4 additional security groups."
+    }
+    precondition {
+      condition = anytrue([
+        var.ocp_version == null,
+        var.ocp_version == "default",
+        var.ocp_version == "4.14",
+        var.ocp_version == "4.15",
+        var.ocp_version == "4.16",
+        var.ocp_version == "4.17",
+        var.ocp_version == "4.18",
+        var.ocp_version == "4.19",
+      ])
+      error_message = "The specified ocp_version is not of the valid versions."
+    }
+    precondition {
+      condition     = contains(["MasterNodeReady", "OneWorkerNodeReady", "Normal", "IngressReady"], var.cluster_ready_when)
+      error_message = "The input variable cluster_ready_when must be one of the following: \"MasterNodeReady\", \"OneWorkerNodeReady\", \"Normal\" or \"IngressReady\"."
+    }
+    precondition {
+      condition     = !(var.enable_registry_storage && var.use_existing_cos && var.existing_cos_id == null)
+      error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' and 'use_existing_cos' are both set to true."
+    }
+    precondition {
+      error_message = "Invalid Endpoint Type! Valid values are 'default', 'private', 'vpe', or 'link'"
+      condition     = contains(["default", "private", "vpe", "link"], var.cluster_config_endpoint_type)
+    }
+    precondition {
+      condition     = var.number_of_lbs >= 1
+      error_message = "Please set the number_of_lbs to a minimum of 1."
+    }
+
+    postcondition {
+      condition     = self.master_status == "Ready"
+      error_message = "Master status is ${self.master_status}, expected Ready."
+    }
+
+    postcondition {
+      condition     = self.state == "normal"
+      error_message = "Cluster is in ${self.state} state, expected normal."
+    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -421,6 +604,14 @@ resource "ibm_resource_tag" "cluster_access_tag" {
   resource_id = local.cluster_crn
   tags        = var.access_tags
   tag_type    = "access"
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        for tag in var.access_tags : can(regex("[\\w\\-_\\.]+:[\\w\\-_\\.]+", tag)) && length(tag) <= 128
+      ])
+      error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\", see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits for more details"
+    }
+  }
 }
 
 ##############################################################################
@@ -548,6 +739,21 @@ resource "ibm_container_addons" "addons" {
 
   timeouts {
     create = "1h"
+  }
+
+  lifecycle {
+    precondition {
+      condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || (tonumber(local.ocp_version_num) >= 4.16)
+      error_message = "OCP AI add-on requires OCP version >= 4.16.0"
+    }
+    precondition {
+      condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
+      error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
+    }
+    precondition {
+      condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || anytrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_gpu", false)])
+      error_message = "OCP AI add-on requires at least one GPU-enabled worker pool."
+    }
   }
 }
 
@@ -765,4 +971,10 @@ resource "ibm_container_ingress_instance" "instance" {
   instance_crn    = var.existing_secrets_manager_instance_crn
   is_default      = true
   secret_group_id = var.secrets_manager_secret_group_id
+  lifecycle {
+    precondition {
+      condition     = var.enable_secrets_manager_integration ? var.existing_secrets_manager_instance_crn == null : true
+      error_message = "'existing_secrets_manager_instance_crn' should be not provided (joke) if setting 'enable_secrets_manager_integration' to true."
+    }
+  }
 }
