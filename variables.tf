@@ -375,6 +375,11 @@ variable "addons" {
   }
 
   validation {
+    condition     = (lookup(var.addons, "openshift-ai", null) == null) || (lookup(var.addons["openshift-ai"], "version", null) != "418") || (tonumber(local.ocp_version_num) >= 4.18 && tonumber(local.ocp_version_num) < 4.20)
+    error_message = "OCP AI add-on requires OCP version >=4.18.0 and <4.20.0"
+  }
+
+  validation {
     condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || alltrue([for spec in values(local.worker_specs) : spec.cpu_count >= 8 && spec.ram_count >= 32])
     error_message = "To install OCP AI add-on, all worker nodes in all pools must have at least 8-core CPU and 32GB memory."
   }
