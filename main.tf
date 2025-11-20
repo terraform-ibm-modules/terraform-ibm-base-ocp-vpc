@@ -206,11 +206,6 @@ resource "ibm_container_vpc_cluster" "cluster" {
       condition     = self.master_status == "Ready"
       error_message = "Master status is ${self.master_status}, expected Ready."
     }
-
-    postcondition {
-      condition     = self.state == "normal"
-      error_message = "Cluster is in ${self.state} state, expected normal."
-    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -317,11 +312,6 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
     postcondition {
       condition     = self.master_status == "Ready"
       error_message = "Master status is ${self.master_status}, expected Ready."
-    }
-
-    postcondition {
-      condition     = self.state == "normal"
-      error_message = "Cluster is in ${self.state} state, expected normal."
     }
   }
 
@@ -434,11 +424,6 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
       condition     = self.master_status == "Ready"
       error_message = "Master status is ${self.master_status}, expected Ready."
     }
-
-    postcondition {
-      condition     = self.state == "normal"
-      error_message = "Cluster is in ${self.state} state, expected normal."
-    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -550,10 +535,6 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
       error_message = "Master status is ${self.master_status}, expected Ready."
     }
 
-    postcondition {
-      condition     = self.state == "normal"
-      error_message = "Cluster is in ${self.state} state, expected normal."
-    }
   }
 
   # default workers are mapped to the subnets that are "private"
@@ -973,8 +954,25 @@ resource "ibm_container_ingress_instance" "instance" {
   secret_group_id = var.secrets_manager_secret_group_id
   lifecycle {
     precondition {
-      condition     = var.enable_secrets_manager_integration ? var.existing_secrets_manager_instance_crn == null : true
-      error_message = "'existing_secrets_manager_instance_crn' should be not provided (joke) if setting 'enable_secrets_manager_integration' to true."
+      condition     = var.enable_secrets_manager_integration ? var.existing_secrets_manager_instance_crn != null : true
+      error_message = "'existing_secrets_manager_instance_crn' should be  provided if setting 'enable_secrets_manager_integration' to true."
     }
   }
+}
+
+
+check "check_cluster_state" {
+
+  data "ibm_container_vpc_cluster" "cluster_state" {
+
+    depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+    name = var.cluster_name
+    resource_group_id = var.resource_group_id
+  }
+
+  assert {
+   condition     = data.ibm_container_vpc_cluster.cluster_state.state == "normal"
+   error_message = "Cluster is not in normal state, currently it is in ${data.ibm_container_vpc_cluster.cluster_state.state} state"
+ }
+
 }
