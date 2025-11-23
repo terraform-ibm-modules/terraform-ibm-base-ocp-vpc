@@ -365,6 +365,15 @@ variable "addons" {
   default     = {}
 
   validation {
+    condition = (
+      lookup(var.addons, "openshift-ai", null) == null
+      || lookup(var.addons["openshift-ai"], "version", null) == null
+      || contains(["416", "417", "418"], lookup(var.addons["openshift-ai"], "version", null))
+    )
+    error_message = "Only versions 416, 417, or 418 are supported for the 'openshift-ai' add-on."
+  }
+
+  validation {
     condition     = (lookup(var.addons, "openshift-ai", null) == null) || (lookup(var.addons["openshift-ai"], "version", null) != "416") || (tonumber(local.ocp_version_num) >= 4.16 && tonumber(local.ocp_version_num) < 4.18)
     error_message = "OCP AI add-on 416 requires OCP version >=4.16.0 and <4.18.0"
   }
