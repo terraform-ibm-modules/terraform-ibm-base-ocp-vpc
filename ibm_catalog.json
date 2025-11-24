@@ -757,12 +757,9 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
               "type_metadata": "string",
               "virtual": true,
               "required": true,
-              "type": "string",
-              "default_value": "standard",
               "options": [
                 {
                   "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
