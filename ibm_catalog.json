@@ -760,6 +760,7 @@
               "type_metadata": "string",
               "virtual": true,
               "required": true,
+              "default_value": "standard",
               "options": [
                 {
                   "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
