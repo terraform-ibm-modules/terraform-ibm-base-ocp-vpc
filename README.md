@@ -17,6 +17,9 @@ Optionally, the module supports advanced security group management for the worke
 
 - Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
 - Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
+- Ensure that you have an up-to-date version of the [oc](https://docs.redhat.com/en/documentation/openshift_container_platform/4.11/html/cli_tools/openshift-cli-oc).
+
+By default, the module automatically downloads the required dependencies if they are not already installed. You can disable this behavior by setting `install_dependencies` to `false`. When enabled, the module fetches dependencies from official online binaries. If you prefer to use third-party repositories, you can specify their URLs by setting the following environment variables: `CUSTOM_KUBECTL_URL`, `CUSTOM_JQ_URL`, and `CUSTOM_OC_URL`.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
