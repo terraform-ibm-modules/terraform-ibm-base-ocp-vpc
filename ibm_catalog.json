@@ -220,7 +220,7 @@
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Red Hat OpenShift cluster topology - Standard (Integrated setup with configurable services)<br>This diagram illustrates the overall architecture pattern. It remains static and does not update to reflect specific configuration options selected during deployment.",
+                  "caption": "Red Hat OpenShift cluster topology - Standard (Integrated setup with configurable services)",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/refs/heads/main/reference-architectures/deployable-architecture-ocp-cluster.svg",
                   "type": "image/svg+xml"
                 },
