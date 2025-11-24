@@ -1304,7 +1304,6 @@
               "key": "size",
               "type_metadata": "string",
               "required": true,
-              "type": "string",
               "options": [
                 {
                   "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones.",
