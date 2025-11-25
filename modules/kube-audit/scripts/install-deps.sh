@@ -45,9 +45,8 @@ function download {
 	local version=$2
 	local url=$3
 	local file=$4
-	local sumfile=$5
-	local tmp_dir=$6
-	local custom_url=$7
+	local tmp_dir=$5
+	local custom_url=$6
 
 	if [[ "$DISABLE_EXTERNAL_DOWNLOADS" == "true" && "$custom_url" != "true" ]]; then
 		echo "Downloads disabled (DISABLE_EXTERNAL_DOWNLOADS=true). Skipping $binary."
@@ -60,35 +59,7 @@ function download {
 	else
 		echo "Downloading ${binary} ${version}..."
 		curl --retry 3 -fLsS "${url}/${file}" --output "${tmp_dir}/${file}"
-
-		if [[ -n "$sumfile" ]]; then
-			curl --retry 3 -fLsS "${url}/${sumfile}" --output "${tmp_dir}/${sumfile}"
-		else
-			echo "No checksum file passed, skipping verification."
-		fi
 	fi
-}
-
-function verify {
-	local file=$1
-	local sumfile=$2
-	local tmp_dir=$3
-
-	echo "Verifying..."
-	local checksum
-	checksum=$(grep "${file}" "${tmp_dir}/${sumfile}" | awk '{print $1}')
-	echo "${checksum}  ${tmp_dir}/${file}" | ${SHA256_CMD} -c
-}
-
-function verify_alternative {
-	local file=$1
-	local sumfile=$2
-	local tmp_dir=$3
-
-	echo "Verifying..."
-	local checksum
-	checksum=$(cat "${tmp_dir}/${sumfile}")
-	echo "${checksum}  ${tmp_dir}/${file}" | ${SHA256_CMD} -c
 }
 
 #######################################
@@ -131,30 +102,6 @@ function clean {
 }
 
 #######################################
-# SHA256 Tool Detection
-#######################################
-
-SHA256_CMD=""
-if command -v sha256sum &>/dev/null && sha256sum --version 2>&1 | grep -q "GNU coreutils"; then
-	SHA256_CMD="sha256sum"
-elif command -v gsha256sum &>/dev/null; then
-	SHA256_CMD="gsha256sum"
-elif command -v shasum &>/dev/null; then
-	SHA256_CMD="shasum -a 256"
-else
-	if [[ "$OS" == "darwin" ]]; then
-		echo "-- Installing coreutils..."
-		brew install coreutils
-		SHA256_CMD="gsha256sum"
-	else
-		echo "sha256sum must be installed. Exiting."
-		exit 1
-	fi
-fi
-
-echo "Using SHA256 command: ${SHA256_CMD}"
-
-#######################################
 # Install: kubectl
 #######################################
 
@@ -172,16 +119,14 @@ if ! command -v kubectl >/dev/null 2>&1; then
 	BASE_URL="${CUSTOM_KUBECTL_URL:-https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${OS}/${ARCH}}"
 
 	FILE_NAME="kubectl"
-	SUMFILE="kubectl.sha256"
 
 	if [ -n "$CUSTOM_KUBECTL_URL" ]; then
-		download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR" "true"
+		download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR" "true"
 	else
-		download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
+		download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
 	fi
 
 	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_KUBECTL_URL") ]]; then
-		verify_alternative "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
 		copy_replace_binary "$BINARY" "$TMP_DIR"
 		clean "$TMP_DIR"
 	fi
@@ -212,12 +157,11 @@ if ! command -v jq >/dev/null 2>&1; then
 	BASE_URL="${CUSTOM_JQ_URL:-https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}}"
 
 	FILE_NAME="jq-${JQ_OS}-${ARCH}"
-	SUMFILE=""
 
 	if [ -n "$CUSTOM_JQ_URL" ]; then
-		download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR" "true"
+		download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR" "true"
 	else
-		download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
+		download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
 	fi
 
 	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_JQ_URL") ]]; then
@@ -245,20 +189,18 @@ BINARY=oc
 if ! command -v oc >/dev/null 2>&1; then
 	FILE_NAME="openshift-client-${OC_OS}-${OC_VERSION}.tar.gz"
 	BASE_URL="${CUSTOM_OC_URL:-https://mirror.openshift.com/pub/openshift-v4/${ARCH}/clients/ocp/${OC_VERSION}}"
-	SUMFILE="sha256sum.txt"
 	TMP_DIR=$(mktemp -d /tmp/${BINARY}-XXXXX)
 
 	echo
 	echo "-- Installing ${BINARY} ${OC_VERSION}..."
 
 	if [ -n "$CUSTOM_OC_URL" ]; then
-		download "$BINARY" "$OC_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR" "true"
+		download "$BINARY" "$OC_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR" "true"
 	else
-		download "$BINARY" "$OC_VERSION" "$BASE_URL" "$FILE_NAME" "$SUMFILE" "$TMP_DIR"
+		download "$BINARY" "$OC_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
 	fi
 
 	if [[ ! ("$DISABLE_EXTERNAL_DOWNLOADS" == "true" && -z "$CUSTOM_OC_URL") ]]; then
-		verify ${FILE_NAME} ${SUMFILE} "${TMP_DIR}"
 		tar -xzf "${TMP_DIR}/${FILE_NAME}" -C "${TMP_DIR}"
 		copy_replace_binary ${BINARY} "${TMP_DIR}"
 		clean "${TMP_DIR}"
