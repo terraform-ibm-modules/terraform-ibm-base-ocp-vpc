@@ -84,11 +84,11 @@
 #   disable_outbound_traffic_protection = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
 # }
 
-resource "null_resource" "run_python" {
+resource "null_resource" "run_bash" {
   triggers = {
     build_number = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command = "python3 ${path.module}/hello.py"
+    command = "${path.module}/hello.sh"
   }
 }
