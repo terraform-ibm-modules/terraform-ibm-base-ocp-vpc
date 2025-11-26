@@ -7,14 +7,6 @@ ARG=""
 DIRECTORY="/tmp"
 
 #######################################
-# Feature flags
-#######################################
-
-# Optional custom URL prefix for all binaries
-KUBECTL_DOWNLOAD_URL="${KUBECTL_DOWNLOAD_URL:-}"
-JQ_DOWNLOAD_URL="${JQ_DOWNLOAD_URL:-}"
-
-#######################################
 # OS / ARCH Detection
 #######################################
 
@@ -38,19 +30,13 @@ fi
 
 function download {
   local binary=$1
-  local version=$2
-  local url=$3
-  local file=$4
-  local tmp_dir=$5
-  local custom_url=$6
+  local url=$2
+  local file=$3
+  local tmp_dir=$4
 
-  if [ "$custom_url" = "true" ]; then
-    echo "Downloading ${binary}..."
-    curl --retry 3 -fLsS "${url}" --output "${tmp_dir}/${file}"
-  else
-    echo "Downloading ${binary} ${version}..."
-    curl --retry 3 -fLsS "${url}/${file}" --output "${tmp_dir}/${file}"
-  fi
+  echo "Downloading ${binary}..."
+  curl --retry 3 -fLsS "${url}" --output "${tmp_dir}/${file}"
+
 }
 
 #######################################
@@ -101,22 +87,16 @@ KUBECTL_VERSION=v1.34.1
 BINARY=kubectl
 
 if ! command -v kubectl >/dev/null 2>&1; then
-  echo "kubectl not found. Installing latest stable version locally..."
+  echo "kubectl not found. Installing version ${KUBECTL_VERSION} locally..."
   TMP_DIR=$(mktemp -d /tmp/${BINARY}-XXXXX)
 
   echo
   echo "-- Installing ${BINARY} ${KUBECTL_VERSION}..."
 
-  BASE_URL="${KUBECTL_DOWNLOAD_URL:-https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${OS}/${ARCH}}"
-
   FILE_NAME="kubectl"
+  BASE_URL="${KUBECTL_DOWNLOAD_URL:-https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/${FILE_NAME}}"
 
-  if [ -n "$KUBECTL_DOWNLOAD_URL" ]; then
-    download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR" "true"
-  else
-    download "$BINARY" "$KUBECTL_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
-  fi
-
+  download "$BINARY" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
   copy_replace_binary "$BINARY" "$TMP_DIR"
   clean "$TMP_DIR"
 
@@ -138,22 +118,16 @@ JQ_VERSION=1.7.1
 BINARY=jq
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "jq not found. Installing latest stable version locally..."
+  echo "jq not found. Installing version ${JQ_VERSION} locally..."
   TMP_DIR=$(mktemp -d /tmp/${BINARY}-XXXXX)
 
   echo
   echo "-- Installing ${BINARY} ${JQ_VERSION}..."
 
-  BASE_URL="${JQ_DOWNLOAD_URL:-https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}}"
-
   FILE_NAME="jq-${JQ_OS}-${ARCH}"
+  BASE_URL="${JQ_DOWNLOAD_URL:-https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/${FILE_NAME}}"
 
-  if [ -n "$JQ_DOWNLOAD_URL" ]; then
-    download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR" "true"
-  else
-    download "$BINARY" "$JQ_VERSION" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
-  fi
-
+  download "$BINARY" "$BASE_URL" "$FILE_NAME" "$TMP_DIR"
   mv "${TMP_DIR}/${FILE_NAME}" "${TMP_DIR}/${BINARY}"
   copy_replace_binary "$BINARY" "$TMP_DIR"
   clean "$TMP_DIR"
