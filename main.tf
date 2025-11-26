@@ -99,18 +99,14 @@ locals {
   default_wp_validation = local.rhcos_check ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
 }
 
-resource "null_resource" "install_dependencies" {
-  count = var.install_dependencies ? 1 : 0
-  # change trigger to run every time
+resource "null_resource" "install_required_binaries" {
+  count = var.install_required_binaries && (var.verify_worker_network_readiness || var.enable_ocp_console != null || lookup(var.addons, "cluster-autoscaler", null) != null) ? 1 : 0
   triggers = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-deps.sh"
+    command     = "${path.module}/scripts/install-binaries.sh"
     interpreter = ["/bin/bash", "-c"]
-    environment = {
-      DISABLE_EXTERNAL_DOWNLOADS = var.disable_external_binary_download
-    }
   }
 }
 
@@ -491,7 +487,7 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [null_resource.install_dependencies, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+  depends_on = [null_resource.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
@@ -507,7 +503,7 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
-  depends_on = [null_resource.install_dependencies, null_resource.confirm_network_healthy]
+  depends_on = [null_resource.install_required_binaries, null_resource.confirm_network_healthy]
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]
@@ -581,7 +577,7 @@ locals {
 
 resource "null_resource" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [null_resource.install_dependencies, ibm_container_addons.addons]
+  depends_on = [null_resource.install_required_binaries, ibm_container_addons.addons]
 
   provisioner "local-exec" {
     command     = "${path.module}/scripts/get_config_map_status.sh"
@@ -771,7 +767,6 @@ resource "time_sleep" "wait_for_auth_policy" {
   depends_on      = [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy[0]]
   create_duration = "30s"
 }
-
 
 resource "ibm_container_ingress_instance" "instance" {
   count           = var.enable_secrets_manager_integration ? 1 : 0

@@ -9,6 +9,7 @@ CLUSTER_ID="$4"
 RESOURCE_GROUP_ID="$5"
 POLICY="$6"
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
 export PATH=$PATH:"/tmp"
 
 get_cloud_endpoint() {

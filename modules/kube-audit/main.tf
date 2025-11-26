@@ -1,11 +1,13 @@
-resource "null_resource" "install_dependencies" {
-  count = var.install_dependencies ? 1 : 0
-  # change trigger to run every time
+resource "null_resource" "install_required_binaries" {
+  count = var.install_required_binaries ? 1 : 0
+
   triggers = {
-    build_number = timestamp()
+    set_audit_log_policy = null_resource.set_audit_log_policy
+    set_webhook          = null_resource.set_audit_webhook
+    kube_audit           = helm_release.kube_audit
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-deps.sh"
+    command     = "${path.module}/scripts/install-binaries.sh"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       DISABLE_EXTERNAL_DOWNLOADS = var.disable_external_binary_download
@@ -34,7 +36,7 @@ locals {
 }
 
 resource "null_resource" "set_audit_log_policy" {
-  depends_on = [null_resource.install_dependencies]
+  depends_on = [null_resource.install_required_binaries]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
@@ -56,7 +58,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.install_dependencies, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
+  depends_on    = [null_resource.install_required_binaries, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
@@ -112,7 +114,7 @@ locals {
 # }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [time_sleep.wait_for_kube_audit, null_resource.install_dependencies]
+  depends_on = [time_sleep.wait_for_kube_audit, null_resource.install_required_binaries]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }

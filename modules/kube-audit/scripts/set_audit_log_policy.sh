@@ -4,20 +4,21 @@ set -euo pipefail
 
 AUDIT_POLICY="$1"
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
 export PATH=$PATH:"/tmp"
 
-STORAGE_PROFILE="oc patch apiserver cluster --type='merge' -p '{\"spec\":{\"audit\":{\"profile\":\"$AUDIT_POLICY\"}}}'"
+STORAGE_PROFILE="kubectl patch apiserver cluster --type='merge' -p '{\"spec\":{\"audit\":{\"profile\":\"$AUDIT_POLICY\"}}}'"
 MAX_ATTEMPTS=10
 RETRY_WAIT=5
 
-function check_oc_cli() {
-    if ! command -v oc &>/dev/null; then
-        echo "Error: OpenShift CLI (oc) is not installed. Exiting."
+function check_kubectl_cli() {
+    if ! command -v kubectl &>/dev/null; then
+        echo "Error: kubectl is not installed. Exiting."
         exit 1
     fi
 }
 
-function apply_oc_patch() {
+function apply_kubectl_patch() {
 
     local attempt=0
     while [ $attempt -lt $MAX_ATTEMPTS ]; do
@@ -40,7 +41,7 @@ function apply_oc_patch() {
 
 echo "========================================="
 
-check_oc_cli
-apply_oc_patch
+check_kubectl_cli
+apply_kubectl_patch
 sleep 30
 echo "========================================="

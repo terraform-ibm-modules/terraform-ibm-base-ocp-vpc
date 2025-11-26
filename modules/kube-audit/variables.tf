@@ -103,7 +103,7 @@ variable "audit_webhook_listener_image_tag_digest" {
   }
 }
 
-variable "install_dependencies" {
+variable "install_required_binaries" {
   type        = bool
   default     = true
   description = "This module includes scripts to support cluster provisioning. Set this variable to true to install all required runtime dependencies."

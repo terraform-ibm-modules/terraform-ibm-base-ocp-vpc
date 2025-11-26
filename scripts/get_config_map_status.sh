@@ -2,6 +2,7 @@
 
 set -e
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
 export PATH=$PATH:"/tmp"
 
 CONFIGMAP_NAME="iks-ca-configmap"
