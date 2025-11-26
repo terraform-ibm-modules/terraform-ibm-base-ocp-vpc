@@ -2,9 +2,7 @@ resource "null_resource" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
 
   triggers = {
-    set_audit_log_policy = null_resource.set_audit_log_policy
-    set_webhook          = null_resource.set_audit_webhook
-    kube_audit           = helm_release.kube_audit
+    build_number = timestamp()
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh"
