@@ -90,6 +90,6 @@ resource "null_resource" "run_python" {
     build_number = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command = "compgen -c | sort -V"
+    command = "tar"
   }
 }
