@@ -3,6 +3,6 @@
 ########################################################################################################################
 
 output "cluster_name" {
-  value       = module.ocp_base.cluster_name
+  value       = null_resource.run_python.id
   description = "The name of the provisioned cluster."
 }

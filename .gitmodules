@@ -2,3 +2,7 @@
 	path = common-dev-assets
 	url = https://github.com/terraform-ibm-modules/common-dev-assets
 	branch = main
+
+[submodule "examples/basic/test"]
+	path = examples/basic/test
+	url = https://github.com/Aashiq-J/test.git

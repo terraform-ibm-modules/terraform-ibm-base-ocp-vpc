@@ -1,3 +1,15 @@
+resource "null_resource" "custom" {
+  # change trigger to run every time
+  triggers = {
+    build_number = "${timestamp()}"
+  }
+
+  # download kubectl
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/install_tools.sh"
+  }
+}
+
 #######################################################################################################################
 # Resource Group
 #######################################################################################################################
@@ -131,7 +143,9 @@ locals {
 # OCP VPC cluster (single zone)
 ########################################################################################################################
 module "ocp_base" {
-  source                              = "../.."
+  depends_on = [null_resource.custom]
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc.git?ref=scr"
+  # version                             = "3.71.3"
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
@@ -144,4 +158,5 @@ module "ocp_base" {
   access_tags                         = var.access_tags
   disable_public_endpoint             = !var.allow_public_access_to_cluster_management
   cluster_config_endpoint_type        = "default"
+  verify_worker_network_readiness     = true
 }
