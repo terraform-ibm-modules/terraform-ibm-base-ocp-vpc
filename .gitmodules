@@ -2,3 +2,7 @@
 	path = common-dev-assets
 	url = https://github.com/terraform-ibm-modules/common-dev-assets
 	branch = main
+[submodule "scripts/common-bash-library"]
+	path = scripts/common-bash-library
+	url = https://github.com/terraform-ibm-modules/common-bash-library
+	branch = more
