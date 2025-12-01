@@ -11,8 +11,7 @@ RETURN_CODE_ERROR=1
 echo "Downloading common-bash-library version ${TAG}."
 
 # download common-bash-library
-set +e
-if ! curl --silent \
+curl --silent \
     --connect-timeout 5 \
     --max-time 10 \
     --retry 3 \
@@ -22,11 +21,7 @@ if ! curl --silent \
     --show-error \
     --location \
     --output "${DIRECTORY}/common-bash.tar.gz" \
-    "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"; then
-    echo "Failed to download common-bash-library"
-    return ${RETURN_CODE_ERROR}
-fi
-set -e
+    "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
 mkdir -p "common-bash-library"
 tar -xzf "${DIRECTORY}/common-bash.tar.gz" --strip-components=1 -C "common-bash-library"
