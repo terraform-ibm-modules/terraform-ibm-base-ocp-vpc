@@ -1,15 +1,11 @@
 resource "null_resource" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
-
   triggers = {
     build_number = timestamp()
   }
   provisioner "local-exec" {
-    command     = "${path.root}/scripts/install-binaries.sh"
+    command     = "${path.module}/scripts/install-binaries.sh"
     interpreter = ["/bin/bash", "-c"]
-    environment = {
-      DISABLE_EXTERNAL_DOWNLOADS = var.disable_external_binary_download
-    }
   }
 }
 

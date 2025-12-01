@@ -106,13 +106,6 @@ variable "audit_webhook_listener_image_tag_digest" {
 variable "install_required_binaries" {
   type        = bool
   default     = true
-  description = "This module includes scripts to support cluster provisioning. Set this variable to true to install all required runtime dependencies."
-  nullable    = false
-}
-
-variable "disable_external_binary_download" {
-  type        = bool
-  default     = false
-  description = "Set this variable to true to prevent the script from downloading binaries from the internet."
+  description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. If the runtime does not have access to the public internet, you can override the download urls using environment variables `KUBECTL_DOWNLOAD_URL` and `JQ_DOWNLOAD_URL`. Set to false to skip running this script."
   nullable    = false
 }
