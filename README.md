@@ -15,7 +15,7 @@ Optionally, the module supports advanced security group management for the worke
 
 ### Before you begin
 
-- Ensure that you have an up-to-date version of the [curl](https://curl.se/docs/manpage.html).
+- Ensure that you have an up-to-date version of [curl](https://curl.se/docs/manpage.html).
 - [OPTIONAL] Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
 - [OPTIONAL] Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
 

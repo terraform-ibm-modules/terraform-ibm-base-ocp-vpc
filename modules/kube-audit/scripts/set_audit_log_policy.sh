@@ -2,11 +2,9 @@
 
 set -euo pipefail
 
+AUDIT_POLICY="$1"
 # The binaries downloaded by the install-binaries script are located in the /tmp directory.
-export PATH=$PATH:${1:-"/tmp"}
-AUDIT_POLICY="$2"
-
-
+export PATH=$PATH:${2:-"/tmp"}
 
 STORAGE_PROFILE="kubectl patch apiserver cluster --type='merge' -p '{\"spec\":{\"audit\":{\"profile\":\"$AUDIT_POLICY\"}}}'"
 MAX_ATTEMPTS=10
