@@ -26,7 +26,7 @@ mkdir -p "${DIRECTORY}/common-bash-library"
 tar -xzf "${DIRECTORY}/common-bash.tar.gz" --strip-components=1 -C "${DIRECTORY}/common-bash-library"
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
-# TThe file doesn’t exist at the time shellcheck runs, so this check is skipped.
+# The file doesn’t exist at the time shellcheck runs, so this check is skipped.
 # shellcheck disable=SC1091
 source "${DIRECTORY}/common-bash-library/common/common.sh"
 
