@@ -298,7 +298,6 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 module "kube_audit" {
   count                                   = var.enable_kube_audit ? 1 : 0
-  ibmcloud_api_key                        = var.ibmcloud_api_key
   source                                  = "../../modules/kube-audit"
   cluster_id                              = module.ocp_base.cluster_id
   cluster_resource_group_id               = module.ocp_base.resource_group_id

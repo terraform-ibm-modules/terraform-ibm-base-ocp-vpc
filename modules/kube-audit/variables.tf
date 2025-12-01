@@ -2,12 +2,6 @@
 # Cluster variables
 ##############################################################################
 
-variable "ibmcloud_api_key" {
-  type        = string
-  description = "The IBM Cloud api key to generate an IAM token."
-  sensitive   = true
-}
-
 variable "cluster_id" {
   type        = string
   description = "The ID of the cluster to deploy the log collection service in."

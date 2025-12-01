@@ -104,7 +104,9 @@ locals {
 resource "null_resource" "install_required_binaries" {
   count = var.install_required_binaries && (var.verify_worker_network_readiness || var.enable_ocp_console != null || lookup(var.addons, "cluster-autoscaler", null) != null) ? 1 : 0
   triggers = {
-    build_number = timestamp()
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+    cluster_autoscaler              = lookup(var.addons, "cluster-autoscaler", null) != null
+    enable_ocp_console              = var.enable_ocp_console
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh"
@@ -491,6 +493,10 @@ resource "null_resource" "confirm_network_healthy" {
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
   depends_on = [null_resource.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
 
+  triggers = {
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+  }
+
   provisioner "local-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh"
     interpreter = ["/bin/bash", "-c"]
@@ -506,6 +512,9 @@ resource "null_resource" "confirm_network_healthy" {
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
   depends_on = [null_resource.install_required_binaries, null_resource.confirm_network_healthy]
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
     interpreter = ["/bin/bash", "-c"]
@@ -581,6 +590,9 @@ resource "null_resource" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   depends_on = [null_resource.install_required_binaries, ibm_container_addons.addons]
 
+  triggers = {
+    cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
+  }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/get_config_map_status.sh"
     interpreter = ["/bin/bash", "-c"]
