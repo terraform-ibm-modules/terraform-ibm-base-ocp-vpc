@@ -6,13 +6,15 @@ import (
 	"os"
 	"strings"
 	"testing"
-
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/stretchr/testify/require"
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
@@ -86,9 +88,7 @@ func TestRunMultiClusterExample(t *testing.T) {
 		IgnoreDestroys: testhelper.Exemptions{ // Ignore for consistency check
 			List: []string{
 				"module.ocp_base_cluster_1.null_resource.confirm_network_healthy",
-				"module.ocp_base_cluster_1.null_resource.reset_api_key",
 				"module.ocp_base_cluster_2.null_resource.confirm_network_healthy",
-				"module.ocp_base_cluster_2.null_resource.reset_api_key",
 			},
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
@@ -111,7 +111,6 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
-			"module.ocp_base.null_resource.reset_api_key",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,
@@ -294,4 +293,181 @@ func TestMonolithExample(t *testing.T) {
 		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
+
+func TestAddonPermutations(t *testing.T) {
+	testCases := []testaddons.AddonTestCase{
+		{
+			Name:   "no-addons",
+			Prefix: "no-addons",
+			Dependencies: []cloudinfo.AddonConfig{
+				{
+					OfferingName:   "deploy-arch-ibm-slz-vpc",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true), // required addon
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-kms",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cos",
+					OfferingFlavor: "instance",
+					Enabled:        core.BoolPtr(true), // required addon
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-logs",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-activity-tracker",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-secrets-manager",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-scc-workload-protection",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+			},
+		},
+		{
+			Name:   "all-addons",
+			Prefix: "all-addons",
+			Dependencies: []cloudinfo.AddonConfig{
+				{
+					OfferingName:   "deploy-arch-ibm-slz-vpc",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-kms",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cos",
+					OfferingFlavor: "instance",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-logs",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-activity-tracker",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-secrets-manager",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-scc-workload-protection",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+			},
+		},
+		{
+			Name:   "observability-with-no-deps",
+			Prefix: "obs-no-dep",
+			Dependencies: []cloudinfo.AddonConfig{
+				{
+					OfferingName:   "deploy-arch-ibm-slz-vpc",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true), // required addon
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-kms",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cos",
+					OfferingFlavor: "instance",
+					Enabled:        core.BoolPtr(true), // required addon
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-logs",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-activity-tracker",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(true),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-secrets-manager",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-scc-workload-protection",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+				{
+					OfferingName:   "deploy-arch-ibm-event-notifications",
+					OfferingFlavor: "fully-configurable",
+					Enabled:        core.BoolPtr(false),
+				},
+			},
+		},
+	}
+
+	baseOptions := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:              t,
+		ResourceGroup:        resourceGroup,
+		QuietMode:            true,
+		DeployTimeoutMinutes: 240,
+	})
+
+	matrix := testaddons.AddonTestMatrix{
+		BaseOptions: baseOptions,
+		TestCases:   testCases,
+		BaseSetupFunc: func(baseOptions *testaddons.TestAddonOptions, testCase testaddons.AddonTestCase) *testaddons.TestAddonOptions {
+			return testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+				Testing:          t,
+				Prefix:           testCase.Prefix,
+				ResourceGroup:    resourceGroup,
+				VerboseOnFailure: true,
+			})
+		},
+		AddonConfigFunc: func(options *testaddons.TestAddonOptions, testCase testaddons.AddonTestCase) cloudinfo.AddonConfig {
+			return cloudinfo.NewAddonConfigTerraform(
+				options.Prefix,
+				"deploy-arch-ibm-slz-ocp",
+				"fully-configurable",
+				map[string]interface{}{},
+			)
+		},
+	}
+
+	baseOptions.RunAddonTestMatrix(matrix)
 }
