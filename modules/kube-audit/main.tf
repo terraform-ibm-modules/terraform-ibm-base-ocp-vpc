@@ -1,3 +1,7 @@
+locals {
+  binaries_path = "/tmp"
+}
+
 resource "null_resource" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
   triggers = {
@@ -8,7 +12,7 @@ resource "null_resource" "install_required_binaries" {
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-binaries.sh"
+    command     = "${path.root}/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
   }
 }
@@ -39,7 +43,7 @@ resource "null_resource" "set_audit_log_policy" {
     audit_log_policy = var.audit_log_policy
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_audit_log_policy.sh ${var.audit_log_policy}"
+    command     = "${path.module}/scripts/set_audit_log_policy.sh ${local.binaries_path} ${var.audit_log_policy}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
@@ -88,7 +92,7 @@ resource "helm_release" "kube_audit" {
   ]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace}"
+    command     = "${path.module}/scripts/confirm-rollout-status.sh ${local.binaries_path} ${var.audit_deployment_name} ${var.audit_namespace}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
@@ -116,7 +120,7 @@ resource "null_resource" "set_audit_webhook" {
     audit_log_policy = var.audit_log_policy
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"}"
+    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_TOKEN    = sensitive(data.ibm_iam_auth_token.webhook_api_key_tokendata.iam_access_token)

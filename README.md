@@ -15,10 +15,11 @@ Optionally, the module supports advanced security group management for the worke
 
 ### Before you begin
 
-- Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
-- Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
+- Ensure that you have an up-to-date version of the [curl](https://curl.se/docs/manpage.html).
+- [OPTIONAL] Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
+- [OPTIONAL] Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
 
-By default, the module automatically downloads the required dependencies if they are not already installed. You can disable this behavior by setting `install_required_binaries` to `false`. When enabled, the module fetches dependencies from official online binaries. If you prefer to use third-party repositories, you can specify their URLs by setting the following environment variables: `KUBECTL_DOWNLOAD_URL`, `JQ_DOWNLOAD_URL`.
+By default, the module automatically downloads the required dependencies if they are not already installed. You can disable this behavior by setting `install_required_binaries` to `false`. When enabled, the module fetches dependencies from official online binaries (requires public internet).
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -359,7 +360,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="input_existing_secrets_manager_instance_crn"></a> [existing\_secrets\_manager\_instance\_crn](#input\_existing\_secrets\_manager\_instance\_crn) | CRN of the Secrets Manager instance where Ingress certificate secrets are stored. If 'enable\_secrets\_manager\_integration' is set to true then this value is required. | `string` | `null` | no |
 | <a name="input_force_delete_storage"></a> [force\_delete\_storage](#input\_force\_delete\_storage) | Flag indicating whether or not to delete attached storage when destroying the cluster - Default: false | `bool` | `false` | no |
 | <a name="input_ignore_worker_pool_size_changes"></a> [ignore\_worker\_pool\_size\_changes](#input\_ignore\_worker\_pool\_size\_changes) | Enable if using worker autoscaling. Stops Terraform managing worker count | `bool` | `false` | no |
-| <a name="input_install_required_binaries"></a> [install\_required\_binaries](#input\_install\_required\_binaries) | When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. If the runtime does not have access to the public internet, you can override the download urls using environment variables `KUBECTL_DOWNLOAD_URL` and `JQ_DOWNLOAD_URL`. Set to false to skip running this script. | `bool` | `true` | no |
+| <a name="input_install_required_binaries"></a> [install\_required\_binaries](#input\_install\_required\_binaries) | When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script. | `bool` | `true` | no |
 | <a name="input_kms_config"></a> [kms\_config](#input\_kms\_config) | Use to attach a KMS instance to the cluster. If account\_id is not provided, defaults to the account in use. | <pre>object({<br/>    crk_id           = string<br/>    instance_id      = string<br/>    private_endpoint = optional(bool, true) # defaults to true<br/>    account_id       = optional(string)     # To attach KMS instance from another account<br/>    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed<br/>  })</pre> | `null` | no |
 | <a name="input_manage_all_addons"></a> [manage\_all\_addons](#input\_manage\_all\_addons) | Instructs Terraform to manage all cluster addons, even if addons were installed outside of the module. If set to 'true' this module destroys any addons that were installed by other sources. | `bool` | `false` | no |
 | <a name="input_number_of_lbs"></a> [number\_of\_lbs](#input\_number\_of\_lbs) | The number of LBs to associated the `additional_lb_security_group_names` security group with. | `number` | `1` | no |

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # The binaries downloaded by the install-binaries script are located in the /tmp directory.
-export PATH=$PATH:"/tmp"
+export PATH=$PATH:${1:-"/tmp"}
 
 PATCH_APPLY="kubectl patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Managed\"}}' --type=merge"
 PATCH_REMOVE="kubectl patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Removed\"}}' --type=merge"

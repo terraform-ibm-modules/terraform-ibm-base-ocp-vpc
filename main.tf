@@ -49,6 +49,8 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+
+  binaries_path = "/tmp"
 }
 
 # Local block to verify validations for OCP AI Addon.
@@ -109,7 +111,7 @@ resource "null_resource" "install_required_binaries" {
     enable_ocp_console              = var.enable_ocp_console
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-binaries.sh"
+    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
   }
 }
@@ -498,7 +500,7 @@ resource "null_resource" "confirm_network_healthy" {
   }
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_network_healthy.sh"
+    command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -516,7 +518,7 @@ resource "null_resource" "ocp_console_management" {
     enable_ocp_console = var.enable_ocp_console
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
+    command     = "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -594,7 +596,7 @@ resource "null_resource" "config_map_status" {
     cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/get_config_map_status.sh"
+    command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path

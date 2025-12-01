@@ -13,7 +13,7 @@ RESOURCE_GROUP_ID="$5"
 POLICY="$6"
 
 # The binaries downloaded by the install-binaries script are located in the /tmp directory.
-export PATH=$PATH:"/tmp"
+export PATH=$PATH:${7:-"/tmp"}
 
 get_cloud_endpoint() {
     cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
