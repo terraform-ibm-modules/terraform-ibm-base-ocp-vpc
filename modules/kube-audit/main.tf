@@ -12,7 +12,7 @@ resource "null_resource" "install_required_binaries" {
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
   }
   provisioner "local-exec" {
-    command     = "${path.root}/scripts/install-binaries.sh ${local.binaries_path}"
+    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
   }
 }

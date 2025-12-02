@@ -111,7 +111,8 @@ resource "null_resource" "install_required_binaries" {
     enable_ocp_console              = var.enable_ocp_console
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
+    # Using the script from the kube-audit module to avoid code duplication.
+    command     = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
   }
 }

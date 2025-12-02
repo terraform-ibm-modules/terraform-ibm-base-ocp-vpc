@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script is stored in the kube-audit module because modules cannot access
+# scripts placed in the root module when they are invoked individually.
+# Placing it here also avoids duplicating the install-binaries script across modules.
+
 set -o errexit
 set -o pipefail
 
