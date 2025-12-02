@@ -25,6 +25,8 @@ module "monolith_add_ons" {
   kms_encryption_enabled_boot_volume        = var.kms_encryption_enabled_boot_volume
   existing_boot_volume_kms_key_crn          = var.existing_boot_volume_kms_key_crn
   kms_plan                                  = var.kms_plan
+  en_service_plan                           = var.en_service_plan
+  en_service_endpoints                      = var.en_service_endpoints
   existing_secrets_manager_crn              = var.existing_secrets_manager_crn
   secrets_manager_service_plan              = var.secrets_manager_service_plan
   secrets_manager_endpoint_type             = var.secrets_manager_endpoint_type
@@ -32,11 +34,14 @@ module "monolith_add_ons" {
   existing_event_notifications_instance_crn = var.existing_event_notifications_instance_crn
   existing_cos_instance_crn                 = var.existing_cos_instance_crn
   cos_instance_plan                         = var.cos_instance_plan
+  management_endpoint_type_for_buckets      = var.management_endpoint_type_for_buckets
   existing_cloud_monitoring_crn             = var.existing_cloud_monitoring_crn
   cloud_monitoring_plan                     = var.cloud_monitoring_plan
   existing_cloud_logs_crn                   = var.existing_cloud_logs_crn
   scc_workload_protection_service_plan      = var.scc_workload_protection_service_plan
   enable_vpc_flow_logs                      = var.enable_vpc_flow_logs
+  app_config_plan                           = var.app_config_plan
+  app_config_service_endpoints              = var.app_config_service_endpoints
 }
 
 ########################################################################################################################

@@ -5,21 +5,21 @@
 module "existing_kms_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = var.existing_kms_instance_crn
 }
 
 module "existing_cluster_kms_key_crn_parser" {
   count   = var.existing_cluster_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = var.existing_cluster_kms_key_crn
 }
 
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = var.existing_boot_volume_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = var.existing_boot_volume_kms_key_crn
 }
 
@@ -102,200 +102,6 @@ module "kms" {
 }
 
 #################################################################################
-# Secrets Manager
-#################################################################################
-
-locals {
-  enable_secrets_manager_cluster      = var.existing_secrets_manager_crn == null ? true : false
-  parsed_existing_secrets_manager_crn = var.existing_secrets_manager_crn != null ? split(":", var.existing_secrets_manager_crn) : []
-  secrets_manager_guid                = var.existing_secrets_manager_crn != null ? (length(local.parsed_existing_secrets_manager_crn) > 0 ? local.parsed_existing_secrets_manager_crn[7] : null) : module.secrets_manager[0].secrets_manager_guid
-  secrets_manager_crn                 = var.existing_secrets_manager_crn != null ? var.existing_secrets_manager_crn : module.secrets_manager[0].secrets_manager_crn
-  secrets_manager_region              = var.existing_secrets_manager_crn != null ? (length(local.parsed_existing_secrets_manager_crn) > 0 ? local.parsed_existing_secrets_manager_crn[5] : null) : module.secrets_manager[0].secrets_manager_region
-  enable_event_notifications          = var.existing_event_notifications_instance_crn == null || var.existing_event_notifications_instance_crn == "" ? false : true
-  secret_groups_with_prefix = [
-    for group in var.secret_groups : merge(group, {
-      access_group_name = group.access_group_name != null ? "${local.prefix}${group.access_group_name}" : null
-    })
-  ]
-}
-
-module "secrets_manager_crn_parser" {
-  count   = var.existing_secrets_manager_crn != null ? 1 : 0
-  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.0"
-  crn     = var.existing_secrets_manager_crn
-}
-
-module "secrets_manager" {
-  count                         = local.enable_secrets_manager_cluster ? 1 : 0
-  source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.11.9"
-  existing_sm_instance_crn      = var.existing_secrets_manager_crn
-  resource_group_id             = var.resource_group_id
-  region                        = var.region
-  secrets_manager_name          = "${local.prefix}${var.secrets_manager_instance_name}"
-  sm_service_plan               = var.secrets_manager_service_plan
-  sm_tags                       = var.secrets_manager_resource_tags
-  skip_iam_authorization_policy = var.skip_secrets_manager_iam_auth_policy
-  # kms dependency
-  is_hpcs_key                       = local.is_hpcs_key
-  kms_encryption_enabled            = var.kms_encryption_enabled_cluster
-  kms_key_crn                       = local.cluster_kms_key_crn
-  skip_kms_iam_authorization_policy = var.skip_secrets_manager_kms_iam_auth_policy #|| local.create_cross_account_auth_policy
-  # event notifications dependency
-  enable_event_notification        = local.enable_event_notifications
-  existing_en_instance_crn         = local.enable_event_notifications ? var.existing_event_notifications_instance_crn : null
-  skip_en_iam_authorization_policy = var.skip_secrets_manager_event_notifications_iam_auth_policy
-  cbr_rules                        = var.secrets_manager_cbr_rules
-  endpoint_type                    = var.secrets_manager_endpoint_type
-  allowed_network                  = var.secrets_manager_allowed_network
-  secrets                          = local.secret_groups_with_prefix
-}
-
-#################################################################################
-# Secrets Manager Event Notifications Configuration
-#################################################################################
-
-locals {
-  parsed_existing_en_instance_crn = var.existing_event_notifications_instance_crn == null || var.existing_event_notifications_instance_crn == "" ? [] : split(":", var.existing_event_notifications_instance_crn)
-  existing_en_guid                = length(local.parsed_existing_en_instance_crn) > 0 ? local.parsed_existing_en_instance_crn[7] : null
-}
-
-data "ibm_en_destinations" "en_destinations" {
-  # if existing SM instance CRN is passed (!= null), then never do data lookup for EN destinations
-  count         = var.existing_secrets_manager_crn == null && local.enable_event_notifications && local.enable_secrets_manager_cluster ? 1 : 0
-  instance_guid = local.existing_en_guid
-}
-
-# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5533
-resource "time_sleep" "wait_for_secrets_manager" {
-  # if existing SM instance CRN is passed (!= null), then never work with EN
-  count      = var.existing_secrets_manager_crn == null && local.enable_event_notifications && local.enable_secrets_manager_cluster ? 1 : 0
-  depends_on = [module.secrets_manager]
-
-  create_duration = "30s"
-}
-
-resource "ibm_en_topic" "en_topic" {
-  # if existing SM instance CRN is passed (!= null), then never create EN topic
-  count         = var.existing_secrets_manager_crn == null && local.enable_event_notifications && local.enable_secrets_manager_cluster ? 1 : 0
-  depends_on    = [time_sleep.wait_for_secrets_manager]
-  instance_guid = local.existing_en_guid
-  name          = "Topic for Secrets Manager instance ${module.secrets_manager[0].secrets_manager_guid}"
-  description   = "Topic for Secrets Manager events routing"
-  sources {
-    id = local.secrets_manager_crn
-    rules {
-      enabled           = true
-      event_type_filter = "$.*"
-    }
-  }
-}
-
-resource "ibm_en_subscription_email" "email_subscription" {
-  # if existing SM instance CRN is passed (!= null), then never create EN email subscription
-  count          = var.existing_secrets_manager_crn == null && local.enable_event_notifications && length(var.event_notifications_email_list) > 0 && local.enable_secrets_manager_cluster ? 1 : 0
-  instance_guid  = local.existing_en_guid
-  name           = "Email for Secrets Manager Subscription"
-  description    = "Subscription for Secret Manager Events"
-  destination_id = [for s in toset(data.ibm_en_destinations.en_destinations[count.index].destinations) : s.id if s.type == "smtp_ibm"][0]
-  topic_id       = ibm_en_topic.en_topic[count.index].topic_id
-  attributes {
-    add_notification_payload = true
-    reply_to_mail            = var.event_notifications_reply_to_email
-    reply_to_name            = "Secret Manager Event Notifications Bot"
-    from_name                = var.event_notifications_from_email
-    invited                  = var.event_notifications_email_list
-  }
-}
-
-#################################################################################
-# COS
-#################################################################################
-
-locals {
-  create_cos_instance                      = var.existing_cos_instance_crn == null ? true : false
-  existing_secrets_manager_instance_guid   = var.existing_secrets_manager_crn != null ? module.secrets_manager_crn_parser[0].service_instance : local.enable_secrets_manager_cluster ? module.secrets_manager[0].secrets_manager_guid : ""
-  existing_secrets_manager_instance_region = var.existing_secrets_manager_crn != null ? module.secrets_manager_crn_parser[0].region : local.enable_secrets_manager_cluster ? module.secrets_manager[0].secrets_manager_region : ""
-
-  service_credential_secrets = [
-    for service_credentials in var.service_cred : {
-      secret_group_name        = service_credentials.secret_group_name
-      secret_group_description = service_credentials.secret_group_description
-      existing_secret_group    = service_credentials.existing_secret_group
-      secrets = [
-        for secret in service_credentials.service_credentials : {
-          secret_name                                 = secret.secret_name
-          secret_labels                               = secret.secret_labels
-          secret_auto_rotation                        = secret.secret_auto_rotation
-          secret_auto_rotation_unit                   = secret.secret_auto_rotation_unit
-          secret_auto_rotation_interval               = secret.secret_auto_rotation_interval
-          service_credentials_ttl                     = secret.service_credentials_ttl
-          service_credential_secret_description       = secret.service_credential_secret_description
-          service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
-          service_credentials_source_service_crn      = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].service_instance : module.cos[0].cos_instance_id
-          secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
-        }
-      ]
-    }
-  ]
-}
-
-module "existing_cos_instance_crn_parser" {
-  count   = var.existing_cos_instance_crn != null ? 1 : 0
-  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.0"
-  crn     = var.existing_cos_instance_crn
-}
-
-module "cos" {
-  count               = local.create_cos_instance != false ? 1 : 0
-  source              = "terraform-ibm-modules/cos/ibm//modules/fscloud"
-  version             = "10.5.9"
-  resource_group_id   = var.resource_group_id
-  create_cos_instance = local.create_cos_instance
-  cos_instance_name   = "${local.prefix}${var.cos_instance_name}"
-  resource_keys       = []
-  cos_plan            = var.cos_instance_plan
-  cos_tags            = var.cos_instance_resource_tags
-  access_tags         = var.cos_instance_access_tags
-  instance_cbr_rules  = var.cos_instance_cbr_rules
-}
-
-#################################################################################
-# Secrets Manager service credentials for COS
-#################################################################################
-
-# create s2s auth policy with Secrets Manager
-resource "ibm_iam_authorization_policy" "secrets_manager_key_manager" {
-  count                       = !var.skip_secrets_manager_cos_iam_auth_policy && (var.existing_secrets_manager_crn != null || local.enable_secrets_manager_cluster) ? 1 : 0
-  source_service_name         = "secrets-manager"
-  source_resource_instance_id = local.existing_secrets_manager_instance_guid
-  target_service_name         = "cloud-object-storage"
-  target_resource_instance_id = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].service_instance : module.cos[0].cos_instance_guid
-  roles                       = ["Key Manager"]
-  description                 = "Allow Secrets Manager with instance id ${local.existing_secrets_manager_instance_guid} to manage key for the COS instance"
-}
-
-# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
-resource "time_sleep" "wait_for_cos_authorization_policy" {
-  count           = length(local.service_credential_secrets) > 0 ? 1 : 0
-  depends_on      = [ibm_iam_authorization_policy.secrets_manager_key_manager]
-  create_duration = "30s"
-}
-
-module "secrets_manager_service_credentials" {
-  count                       = length(local.service_credential_secrets) > 0 ? 1 : 0
-  depends_on                  = [time_sleep.wait_for_cos_authorization_policy]
-  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.11.9"
-  existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
-  existing_sm_instance_region = local.existing_secrets_manager_instance_region
-  endpoint_type               = var.secrets_manager_endpoint_type
-  secrets                     = local.service_credential_secrets
-}
-
-#################################################################################
 # Cloud Monitoring
 #################################################################################
 
@@ -359,6 +165,346 @@ module "metrics_routing" {
   metrics_router_settings = var.enable_primary_metadata_region ? { primary_metadata_region = var.region } : null
 }
 
+
+
+########################################################################################################################
+# Event Notifications
+########################################################################################################################
+
+# If existing EN instance CRN passed, parse details from it
+module "existing_en_crn_parser" {
+  count   = var.existing_event_notifications_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.3.0"
+  crn     = var.existing_event_notifications_instance_crn
+}
+
+locals {
+  use_existing_en_instance  = var.existing_event_notifications_instance_crn != null
+  existing_en_instance_guid = local.use_existing_en_instance ? module.existing_en_crn_parser[0].service_instance : null
+  eventnotification_guid    = local.use_existing_en_instance ? local.existing_en_instance_guid : module.event_notifications[0].guid
+  eventnotification_crn     = local.use_existing_en_instance ? var.existing_event_notifications_instance_crn : module.event_notifications[0].crn
+  en_cos_bucket_name        = "${local.prefix}${var.en_cos_bucket_name}"
+}
+
+module "event_notifications" {
+  count                    = local.use_existing_en_instance ? 0 : 1
+  source                   = "terraform-ibm-modules/event-notifications/ibm"
+  version                  = "2.7.0"
+  resource_group_id        = var.resource_group_id
+  region                   = var.region
+  name                     = "${local.prefix}${var.event_notifications_instance_name}"
+  plan                     = var.en_service_plan
+  tags                     = var.en_resource_tags
+  access_tags              = var.en_access_tags
+  service_endpoints        = var.en_service_endpoints
+  service_credential_names = var.en_service_credential_names
+  # KMS Related
+  kms_encryption_enabled    = var.kms_encryption_enabled_cluster
+  kms_endpoint_url          = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? var.kms_endpoint_type == "private" ? module.kms[0].kms_private_endpoint : module.kms[0].kms_public_endpoint : var.kms_endpoint_url
+  existing_kms_instance_crn = var.existing_kms_instance_crn != null ? var.existing_kms_instance_crn : module.kms[0].key_protect_crn
+  root_key_id               = local.cluster_kms_key_id
+  skip_en_kms_auth_policy   = var.skip_event_notifications_kms_auth_policy
+  # COS Related
+  cos_integration_enabled = var.enable_collecting_failed_events
+  cos_bucket_name         = var.existing_event_notifications_instance_crn == null && var.enable_collecting_failed_events ? module.en_cos_buckets[0].buckets[local.en_cos_bucket_name].bucket_name : null
+  cos_instance_id         = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].resource : module.cos[0].cos_instance_id
+  skip_en_cos_auth_policy = var.skip_event_notifications_cos_auth_policy
+  cos_endpoint            = var.existing_event_notifications_instance_crn == null && var.enable_collecting_failed_events ? "https://${module.en_cos_buckets[0].buckets[local.en_cos_bucket_name].s3_endpoint_direct}" : null
+  cbr_rules               = var.en_cbr_rules
+}
+
+locals {
+  bucket_config = [{
+    access_tags                   = var.en_cos_bucket_access_tags
+    bucket_name                   = local.en_cos_bucket_name
+    add_bucket_name_suffix        = var.append_random_bucket_name_suffix
+    kms_encryption_enabled        = var.kms_encryption_enabled_buckets
+    kms_guid                      = local.cluster_existing_kms_guid
+    kms_key_crn                   = local.cluster_kms_key_crn
+    skip_iam_authorization_policy = false
+    management_endpoint_type      = var.management_endpoint_type_for_buckets
+    storage_class                 = var.cos_buckets_class
+    resource_instance_id          = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].resource : module.cos[0].cos_instance_id
+    region_location               = var.region
+    activity_tracking = {
+      read_data_events  = true
+      write_data_events = true
+      management_events = true
+    }
+    metrics_monitoring = {
+      usage_metrics_enabled   = true
+      request_metrics_enabled = true
+      metrics_monitoring_crn  = var.existing_cloud_monitoring_crn != null ? var.existing_cloud_monitoring_crn : module.cloud_monitoring[0].crn
+    }
+    force_delete = true
+  }]
+}
+
+module "en_cos_buckets" {
+  count          = var.enable_collecting_failed_events && var.existing_event_notifications_instance_crn == null ? 1 : 0
+  source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
+  version        = "10.5.8"
+  bucket_configs = local.bucket_config
+}
+
+########################################################################################################################
+# Service Credentials
+########################################################################################################################
+
+# If existing EN instance CRN passed, parse details from it
+module "existing_sm_crn_parser" {
+  count   = var.existing_secrets_manager_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.3.0"
+  crn     = var.existing_secrets_manager_crn
+}
+
+locals {
+  en_service_credential_secrets = [
+    for service_credentials in var.en_service_credential_secrets : {
+      secret_group_name        = service_credentials.secret_group_name
+      secret_group_description = service_credentials.secret_group_description
+      existing_secret_group    = service_credentials.existing_secret_group
+      secrets = [
+        for secret in service_credentials.service_credentials : {
+          secret_name                                 = secret.secret_name
+          secret_labels                               = secret.secret_labels
+          secret_auto_rotation                        = secret.secret_auto_rotation
+          secret_auto_rotation_unit                   = secret.secret_auto_rotation_unit
+          secret_auto_rotation_interval               = secret.secret_auto_rotation_interval
+          service_credentials_ttl                     = secret.service_credentials_ttl
+          service_credential_secret_description       = secret.service_credential_secret_description
+          service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
+          service_credentials_source_service_crn      = local.eventnotification_crn
+          secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
+        }
+      ]
+    }
+  ]
+}
+
+# create a service authorization between Secrets Manager and the target service (Event Notification)
+resource "ibm_iam_authorization_policy" "en_secrets_manager_key_manager" {
+  count                       = var.skip_event_notifications_secrets_manager_auth_policy || var.existing_secrets_manager_crn == null ? 0 : 1
+  source_service_name         = "secrets-manager"
+  source_resource_instance_id = local.existing_secrets_manager_instance_guid
+  target_service_name         = "event-notifications"
+  target_resource_instance_id = local.eventnotification_guid
+  roles                       = ["Key Manager"]
+  description                 = "Allow Secrets Manager instance to manage key for the event-notification instance"
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_en_authorization_policy" {
+  depends_on      = [ibm_iam_authorization_policy.en_secrets_manager_key_manager]
+  create_duration = "30s"
+}
+
+module "en_secrets_manager_service_credentials" {
+  count                       = length(local.en_service_credential_secrets) > 0 ? 1 : 0
+  depends_on                  = [time_sleep.wait_for_en_authorization_policy]
+  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
+  version                     = "2.11.9"
+  existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
+  existing_sm_instance_region = local.existing_secrets_manager_instance_region
+  endpoint_type               = var.secrets_manager_endpoint_type
+  secrets                     = local.en_service_credential_secrets
+}
+
+#################################################################################
+# Secrets Manager
+#################################################################################
+
+locals {
+  enable_secrets_manager_cluster      = var.existing_secrets_manager_crn == null ? true : false
+  parsed_existing_secrets_manager_crn = var.existing_secrets_manager_crn != null ? split(":", var.existing_secrets_manager_crn) : []
+  secrets_manager_guid                = var.existing_secrets_manager_crn != null ? (length(local.parsed_existing_secrets_manager_crn) > 0 ? local.parsed_existing_secrets_manager_crn[7] : null) : module.secrets_manager[0].secrets_manager_guid
+  secrets_manager_crn                 = var.existing_secrets_manager_crn != null ? var.existing_secrets_manager_crn : module.secrets_manager[0].secrets_manager_crn
+  secrets_manager_region              = var.existing_secrets_manager_crn != null ? (length(local.parsed_existing_secrets_manager_crn) > 0 ? local.parsed_existing_secrets_manager_crn[5] : null) : module.secrets_manager[0].secrets_manager_region
+  secret_groups_with_prefix = [
+    for group in var.secret_groups : merge(group, {
+      access_group_name = group.access_group_name != null ? "${local.prefix}${group.access_group_name}" : null
+    })
+  ]
+}
+
+module "secrets_manager_crn_parser" {
+  count   = var.existing_secrets_manager_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.3.0"
+  crn     = var.existing_secrets_manager_crn
+}
+
+module "secrets_manager" {
+  count                         = local.enable_secrets_manager_cluster ? 1 : 0
+  source                        = "terraform-ibm-modules/secrets-manager/ibm"
+  version                       = "2.11.9"
+  existing_sm_instance_crn      = var.existing_secrets_manager_crn
+  resource_group_id             = var.resource_group_id
+  region                        = var.region
+  secrets_manager_name          = "${local.prefix}${var.secrets_manager_instance_name}"
+  sm_service_plan               = var.secrets_manager_service_plan
+  sm_tags                       = var.secrets_manager_resource_tags
+  skip_iam_authorization_policy = var.skip_secrets_manager_iam_auth_policy
+  # kms dependency
+  is_hpcs_key                       = local.is_hpcs_key
+  kms_encryption_enabled            = var.kms_encryption_enabled_cluster
+  kms_key_crn                       = local.cluster_kms_key_crn
+  skip_kms_iam_authorization_policy = var.skip_secrets_manager_kms_iam_auth_policy #|| local.create_cross_account_auth_policy
+  # event notifications dependency
+  enable_event_notification        = true
+  existing_en_instance_crn         = local.eventnotification_crn
+  skip_en_iam_authorization_policy = var.skip_secrets_manager_event_notifications_iam_auth_policy
+  cbr_rules                        = var.secrets_manager_cbr_rules
+  endpoint_type                    = var.secrets_manager_endpoint_type
+  allowed_network                  = var.secrets_manager_allowed_network
+  secrets                          = local.secret_groups_with_prefix
+}
+
+#################################################################################
+# Secrets Manager Event Notifications Configuration
+#################################################################################
+
+locals {
+  parsed_existing_en_instance_crn = split(":", local.eventnotification_crn)
+  existing_en_guid                = length(local.parsed_existing_en_instance_crn) > 0 ? local.parsed_existing_en_instance_crn[7] : null
+}
+
+data "ibm_en_destinations" "en_sm_destinations" {
+  # if existing SM instance CRN is passed (!= null), then never do data lookup for EN destinations
+  count         = var.existing_secrets_manager_crn == null && local.enable_secrets_manager_cluster ? 1 : 0
+  instance_guid = local.existing_en_guid
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5533
+resource "time_sleep" "wait_for_secrets_manager" {
+  # if existing SM instance CRN is passed (!= null), then never work with EN
+  count      = var.existing_secrets_manager_crn == null && local.enable_secrets_manager_cluster ? 1 : 0
+  depends_on = [module.secrets_manager]
+
+  create_duration = "30s"
+}
+
+resource "ibm_en_topic" "en_sm_topic" {
+  # if existing SM instance CRN is passed (!= null), then never create EN topic
+  count         = var.existing_secrets_manager_crn == null && local.enable_secrets_manager_cluster ? 1 : 0
+  depends_on    = [time_sleep.wait_for_secrets_manager]
+  instance_guid = local.existing_en_guid
+  name          = "Topic for Secrets Manager instance ${module.secrets_manager[0].secrets_manager_guid}"
+  description   = "Topic for Secrets Manager events routing"
+  sources {
+    id = local.secrets_manager_crn
+    rules {
+      enabled           = true
+      event_type_filter = "$.*"
+    }
+  }
+}
+
+resource "ibm_en_subscription_email" "en_email_subscription" {
+  # if existing SM instance CRN is passed (!= null), then never create EN email subscription
+  count          = var.existing_secrets_manager_crn == null && length(var.event_notifications_email_list) > 0 && local.enable_secrets_manager_cluster ? 1 : 0
+  instance_guid  = local.existing_en_guid
+  name           = "Email for Secrets Manager Subscription"
+  description    = "Subscription for Secret Manager Events"
+  destination_id = [for s in toset(data.ibm_en_destinations.en_sm_destinations[count.index].destinations) : s.id if s.type == "smtp_ibm"][0]
+  topic_id       = ibm_en_topic.en_sm_topic[count.index].topic_id
+  attributes {
+    add_notification_payload = true
+    reply_to_mail            = var.event_notifications_reply_to_email
+    reply_to_name            = "Secret Manager Event Notifications Bot"
+    from_name                = var.event_notifications_from_email
+    invited                  = var.event_notifications_email_list
+  }
+}
+
+#################################################################################
+# COS
+#################################################################################
+
+locals {
+  create_cos_instance                      = var.existing_cos_instance_crn == null ? true : false
+  existing_secrets_manager_instance_guid   = var.existing_secrets_manager_crn != null ? module.secrets_manager_crn_parser[0].service_instance : local.enable_secrets_manager_cluster ? module.secrets_manager[0].secrets_manager_guid : ""
+  existing_secrets_manager_instance_region = var.existing_secrets_manager_crn != null ? module.secrets_manager_crn_parser[0].region : local.enable_secrets_manager_cluster ? module.secrets_manager[0].secrets_manager_region : ""
+
+  cos_service_credential_secrets = [
+    for service_credentials in var.service_cred : {
+      secret_group_name        = service_credentials.secret_group_name
+      secret_group_description = service_credentials.secret_group_description
+      existing_secret_group    = service_credentials.existing_secret_group
+      secrets = [
+        for secret in service_credentials.service_credentials : {
+          secret_name                                 = secret.secret_name
+          secret_labels                               = secret.secret_labels
+          secret_auto_rotation                        = secret.secret_auto_rotation
+          secret_auto_rotation_unit                   = secret.secret_auto_rotation_unit
+          secret_auto_rotation_interval               = secret.secret_auto_rotation_interval
+          service_credentials_ttl                     = secret.service_credentials_ttl
+          service_credential_secret_description       = secret.service_credential_secret_description
+          service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
+          service_credentials_source_service_crn      = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].service_instance : module.cos[0].cos_instance_id
+          secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
+        }
+      ]
+    }
+  ]
+}
+
+module "existing_cos_instance_crn_parser" {
+  count   = var.existing_cos_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.3.0"
+  crn     = var.existing_cos_instance_crn
+}
+
+module "cos" {
+  count               = local.create_cos_instance != false ? 1 : 0
+  source              = "terraform-ibm-modules/cos/ibm//modules/fscloud"
+  version             = "10.5.9"
+  resource_group_id   = var.resource_group_id
+  create_cos_instance = local.create_cos_instance
+  cos_instance_name   = "${local.prefix}${var.cos_instance_name}"
+  resource_keys       = []
+  cos_plan            = var.cos_instance_plan
+  cos_tags            = var.cos_instance_resource_tags
+  access_tags         = var.cos_instance_access_tags
+  instance_cbr_rules  = var.cos_instance_cbr_rules
+}
+
+#################################################################################
+# Secrets Manager service credentials for COS
+#################################################################################
+
+# create s2s auth policy with Secrets Manager
+resource "ibm_iam_authorization_policy" "cos_secrets_manager_key_manager" {
+  count                       = !var.skip_secrets_manager_cos_iam_auth_policy && (var.existing_secrets_manager_crn != null || local.enable_secrets_manager_cluster) ? 1 : 0
+  source_service_name         = "secrets-manager"
+  source_resource_instance_id = local.existing_secrets_manager_instance_guid
+  target_service_name         = "cloud-object-storage"
+  target_resource_instance_id = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].service_instance : module.cos[0].cos_instance_guid
+  roles                       = ["Key Manager"]
+  description                 = "Allow Secrets Manager with instance id ${local.existing_secrets_manager_instance_guid} to manage key for the COS instance"
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_cos_authorization_policy" {
+  count           = length(local.cos_service_credential_secrets) > 0 ? 1 : 0
+  depends_on      = [ibm_iam_authorization_policy.cos_secrets_manager_key_manager]
+  create_duration = "30s"
+}
+
+module "cos_secrets_manager_service_credentials" {
+  count                       = length(local.cos_service_credential_secrets) > 0 ? 1 : 0
+  depends_on                  = [time_sleep.wait_for_cos_authorization_policy]
+  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
+  version                     = "2.11.9"
+  existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
+  existing_sm_instance_region = local.existing_secrets_manager_instance_region
+  endpoint_type               = var.secrets_manager_endpoint_type
+  secrets                     = local.cos_service_credential_secrets
+}
+
 #################################################################################
 # Cloud Logs
 #################################################################################
@@ -409,7 +555,7 @@ module "cloud_logs" {
 
 module "cloud_logs_buckets" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.5.7"
+  version = "10.5.8"
   bucket_configs = [
     {
       bucket_name              = local.data_bucket_name
@@ -420,7 +566,7 @@ module "cloud_logs_buckets" {
       resource_instance_id     = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].resource : module.cos[0].cos_instance_id
       add_bucket_name_suffix   = var.append_random_bucket_name_suffix
       management_endpoint_type = var.management_endpoint_type_for_buckets
-      storage_class            = var.cloud_logs_cos_buckets_class
+      storage_class            = var.cos_buckets_class
       force_delete             = true # If this is set to false, and the bucket contains data, the destroy will fail. Setting it to false on destroy has no impact, it has to be set on apply, so hence hard coding to true."
       activity_tracking = {
         read_data_events  = true
@@ -442,7 +588,7 @@ module "cloud_logs_buckets" {
       resource_instance_id          = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].resource : module.cos[0].cos_instance_id
       add_bucket_name_suffix        = var.append_random_bucket_name_suffix
       management_endpoint_type      = var.management_endpoint_type_for_buckets
-      storage_class                 = var.cloud_logs_cos_buckets_class
+      storage_class                 = var.cos_buckets_class
       skip_iam_authorization_policy = true
       force_delete                  = true # If this is set to false, and the bucket contains data, the destroy will fail. Setting it to false on destroy has no impact, it has to be set on apply, so hence hard coding to true."
       activity_tracking = {
@@ -571,6 +717,79 @@ module "at_cos_bucket" {
   ]
 }
 
+########################################################################################################################
+# App Config
+########################################################################################################################
+module "app_config" {
+  source                                                     = "terraform-ibm-modules/app-configuration/ibm"
+  version                                                    = "1.14.2"
+  resource_group_id                                          = var.resource_group_id
+  region                                                     = var.region
+  app_config_name                                            = "${local.prefix}${var.app_config_name}"
+  app_config_plan                                            = var.app_config_plan
+  app_config_service_endpoints                               = var.app_config_service_endpoints
+  app_config_tags                                            = var.app_config_tags
+  app_config_collections                                     = var.app_config_collections
+  enable_config_aggregator                                   = var.enable_config_aggregator
+  config_aggregator_trusted_profile_name                     = "${local.prefix}${var.config_aggregator_trusted_profile_name}"
+  config_aggregator_resource_collection_regions              = var.config_aggregator_resource_collection_regions
+  config_aggregator_enterprise_id                            = var.config_aggregator_enterprise_id
+  config_aggregator_enterprise_trusted_profile_name          = "${local.prefix}${var.config_aggregator_enterprise_trusted_profile_name}"
+  config_aggregator_enterprise_trusted_profile_template_name = "${local.prefix}${var.config_aggregator_enterprise_trusted_profile_template_name}"
+  config_aggregator_enterprise_account_group_ids_to_assign   = var.config_aggregator_enterprise_account_group_ids_to_assign
+  config_aggregator_enterprise_account_ids_to_assign         = var.config_aggregator_enterprise_account_ids_to_assign
+  cbr_rules                                                  = var.apprapp_cbr_rules
+  kms_encryption_enabled                                     = var.kms_encryption_enabled_cluster
+  skip_app_config_kms_auth_policy                            = var.skip_app_config_kms_auth_policy
+  existing_kms_instance_crn                                  = var.existing_kms_instance_crn != null ? var.existing_kms_instance_crn : module.kms[0].key_protect_crn
+  kms_endpoint_url                                           = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? var.kms_endpoint_type == "private" ? module.kms[0].kms_private_endpoint : module.kms[0].kms_public_endpoint : var.kms_endpoint_url
+  root_key_id                                                = local.cluster_kms_key_id
+  enable_event_notifications                                 = true
+  skip_app_config_event_notifications_auth_policy            = var.skip_app_config_event_notifications_auth_policy
+  existing_event_notifications_instance_crn                  = local.eventnotification_crn
+  event_notifications_endpoint_url                           = var.existing_event_notifications_instance_crn != null ? var.event_notifications_endpoint_url : var.en_service_endpoints == "private" ? module.event_notifications[0].event_notifications_private_endpoint : module.event_notifications[0].event_notifications_public_endpoint
+  app_config_event_notifications_source_name                 = "${local.prefix}${var.app_config_event_notifications_source_name}"
+  event_notifications_integration_description                = "The App Configuration integration to send notifications of events to users from the Event Notifications instance GUID ${local.existing_en_guid}"
+}
+
+#######################################################################################################################
+# App Configuration Event Notifications Configuration
+#######################################################################################################################
+
+data "ibm_en_destinations" "en_apprapp_destinations" {
+  instance_guid = local.existing_en_guid
+}
+
+resource "ibm_en_topic" "en_apprapp_topic" {
+  depends_on    = [module.app_config]
+  instance_guid = local.existing_en_guid
+  name          = "Topic for App Configuration instance ${module.app_config.app_config_guid}"
+  description   = "Topic for App Configuration events routing"
+  sources {
+    id = module.app_config.app_config_crn
+    rules {
+      enabled           = true
+      event_type_filter = "$.*"
+    }
+  }
+}
+
+resource "ibm_en_subscription_email" "apprapp_email_subscription" {
+  count          = length(var.event_notifications_email_list) > 0 ? 1 : 0
+  instance_guid  = local.existing_en_guid
+  name           = "Email for App Configuration Subscription"
+  description    = "Subscription for App Configuration Events"
+  destination_id = [for s in toset(data.ibm_en_destinations.en_apprapp_destinations[count.index].destinations) : s.id if s.type == "smtp_ibm"][0]
+  topic_id       = ibm_en_topic.en_apprapp_topic[count.index].topic_id
+  attributes {
+    add_notification_payload = true
+    reply_to_mail            = var.event_notifications_reply_to_email
+    reply_to_name            = "App Configuration Event Notifications Bot"
+    from_name                = var.event_notifications_from_email
+    invited                  = var.event_notifications_email_list
+  }
+}
+
 #################################################################################
 # SCC Workload Protection
 #################################################################################
@@ -592,13 +811,11 @@ module "scc_wp" {
   cloud_monitoring_instance_crn                = var.existing_cloud_monitoring_crn != null ? var.existing_cloud_monitoring_crn : module.cloud_monitoring[0].crn
   access_tags                                  = var.scc_workload_protection_access_tags
   scc_wp_service_plan                          = var.scc_workload_protection_service_plan
-  app_config_crn                               = var.app_config_crn
+  app_config_crn                               = module.app_config.app_config_crn
   scc_workload_protection_trusted_profile_name = "${local.prefix}${var.scc_workload_protection_trusted_profile_name}"
   cbr_rules                                    = var.scc_wp_cbr_rules
   cspm_enabled                                 = var.cspm_enabled
 }
-
-
 
 #############################################################################
 # COS Bucket for VPC flow logs
@@ -617,7 +834,7 @@ locals {
     kms_key_crn                   = local.cluster_kms_key_crn
     skip_iam_authorization_policy = true
     management_endpoint_type      = var.management_endpoint_type_for_buckets
-    storage_class                 = var.cloud_logs_cos_buckets_class
+    storage_class                 = var.cos_buckets_class
     resource_instance_id          = var.existing_cos_instance_crn != null ? module.existing_cos_instance_crn_parser[0].resource : module.cos[0].cos_instance_id
     region_location               = var.region
     force_delete                  = true

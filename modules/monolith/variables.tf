@@ -253,6 +253,178 @@ variable "kms_cbr_rules" {
   }
 }
 
+########################################################################################################################
+# Event Notifications
+########################################################################################################################
+
+variable "event_notifications_instance_name" {
+  type        = string
+  description = "The name of the Event Notifications instance that is created by this solution. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
+  default     = "event-notifications"
+}
+
+variable "en_service_plan" {
+  type        = string
+  description = "The pricing plan of the Event Notifications instance. Possible values: `Lite`, `Standard`."
+  default     = "standard"
+  validation {
+    condition     = contains(["lite", "standard"], var.en_service_plan)
+    error_message = "The specified pricing plan is not available. The following plans are supported: `Lite`, `Standard`"
+  }
+}
+
+variable "en_service_endpoints" {
+  type        = string
+  description = "Specify whether you want to enable public, private, or both public and private service endpoints. Possible values: `public`, `private`, `public-and-private`."
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.en_service_endpoints)
+    error_message = "The specified service endpoint is not supported. The following endpoint options are supported: `public`, `private`, `public-and-private`"
+  }
+}
+
+variable "en_resource_tags" {
+  type        = list(string)
+  description = "The list of tags to add to the Event Notifications instance."
+  default     = []
+}
+
+variable "en_access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the Event Notifications instance created by the solution. For more information, [see here](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for tag in var.en_access_tags : can(regex("[\\w\\-_\\.]+:[\\w\\-_\\.]+", tag)) && length(tag) <= 128
+    ])
+    error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\". For more information, [see here](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limit)."
+  }
+}
+
+variable "en_service_credential_names" {
+  type        = map(string)
+  description = "A mapping of names and associated roles for service credentials that you want to create for the Event Notifications instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-event-notifications/blob/main/solutions/fully-configurable/DA-types.md#service-credentials-)."
+  default     = {}
+
+  validation {
+    condition     = alltrue([for name, role in var.en_service_credential_names : contains(["Manager", "Writer", "Reader", "Event Source Manager", "Channel Editor", "Event Notification Publisher", "Status Reporter", "Device Manager", "Email Sender", "Custom Email Status Reporter"], role)])
+    error_message = "The specified service credential role is not valid. The following values are valid for service credential roles: 'Manager', 'Writer', 'Reader', 'Event Source Manager', 'Channel Editor', 'Event Notification Publisher', 'Status Reporter', 'Device Manager', 'Email Sender', 'Custom Email Status Reporter'"
+  }
+}
+
+variable "kms_endpoint_url" {
+  type        = string
+  description = "The KMS endpoint URL to use when you configure KMS encryption. When set to true, a value must be passed for either `existing_kms_root_key_crn` or `existing_kms_instance_crn` (to create a new key). The Hyper Protect Crypto Services endpoint URL format is `https://api.private.<REGION>.hs-crypto.cloud.ibm.com:<port>` and the Key Protect endpoint URL format is `https://<REGION>.kms.cloud.ibm.com`. Not required if passing an existing instance using the `existing_event_notifications_instance_crn` input."
+  default     = null
+}
+
+variable "skip_event_notifications_kms_auth_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the Event Notifications instance to read the encryption key from the KMS instance. If a value is specified for `ibmcloud_kms_api_key`, the policy is created in the KMS account."
+  default     = false
+}
+
+variable "enable_collecting_failed_events" {
+  type        = bool
+  description = "Set to true to enable Cloud Object Storage integration. If enabled, you must also provide a Cloud Object Storage instance (for storing failed events) using the `existing_cos_instance_crn` variable. For more information, [see here](https://cloud.ibm.com/docs/event-notifications?topic=event-notifications-en-cfe-integrations)."
+  default     = true
+}
+
+variable "en_cos_bucket_name" {
+  type        = string
+  description = "The name to use when creating the Object Storage bucket for the storage of failed delivery events. Bucket names are globally unique. If `add_bucket_name_suffix` is set to `true`, a random 4 character string is added to this name to help ensure that the bucket name is unique. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
+  default     = "base-event-notifications-bucket"
+}
+
+variable "en_cos_bucket_access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the Cloud Object Storage bucket created by the solution. For more information, [see here](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for tag in var.en_cos_bucket_access_tags : can(regex("[\\w\\-_\\.]+:[\\w\\-_\\.]+", tag)) && length(tag) <= 128
+    ])
+    error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\". For more information, [see here](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits)."
+  }
+}
+
+variable "skip_event_notifications_secrets_manager_auth_policy" {
+  type        = bool
+  default     = false
+  description = "Whether an IAM authorization policy is created for Secrets Manager instance to create a service credential secrets for Event Notification.If set to false, the Secrets Manager instance passed by the user is granted the Key Manager access to the Event Notifications instance created by the Deployable Architecture. Set to `true` to use an existing policy. The value of this is ignored if any value for 'existing_secrets_manager_crn' is not passed."
+}
+
+variable "en_cbr_rules" {
+  type = list(object({
+    description = string
+    account_id  = string
+    rule_contexts = list(object({
+      attributes = optional(list(object({
+        name  = string
+        value = string
+    }))) }))
+    enforcement_mode = string
+    operations = optional(list(object({
+      api_types = list(object({
+        api_type_id = string
+      }))
+    })))
+  }))
+  description = "The list of context-based restrictions rules to create. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-event-notifications/tree/main/solutions/fully-configurable/DA-cbr_rules.md)."
+  default     = []
+}
+
+variable "en_service_credential_secrets" { # pragma: allowlist secret
+  type = list(object({
+    secret_group_name        = string                                      # pragma: allowlist secret
+    secret_group_description = optional(string)                            # pragma: allowlist secret
+    existing_secret_group    = optional(bool)                              # pragma: allowlist secret
+    service_credentials = list(object({                                    # pragma: allowlist secret
+      secret_name                                 = string                 # pragma: allowlist secret
+      service_credentials_source_service_role_crn = string                 # pragma: allowlist secret
+      secret_labels                               = optional(list(string)) # pragma: allowlist secret
+      secret_auto_rotation                        = optional(bool)         # pragma: allowlist secret
+      secret_auto_rotation_unit                   = optional(string)       # pragma: allowlist secret
+      secret_auto_rotation_interval               = optional(number)       # pragma: allowlist secret
+      service_credentials_ttl                     = optional(string)       # pragma: allowlist secret
+      service_credential_secret_description       = optional(string)       # pragma: allowlist secret
+
+    }))
+  }))
+  default     = []
+  description = "Service credential secrets configuration for Event Notification. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-event-notifications/tree/main/solutions/fully-configurable/DA-types.md#service-credential-secrets)."
+
+  validation {
+    # Service roles CRNs can be found at https://cloud.ibm.com/iam/roles, select Event Notifications and select the role
+    condition = alltrue([
+      for group in var.en_service_credential_secrets : alltrue([
+        # crn:v?:bluemix; two non-empty segments; three possibly empty segments; :serviceRole or role: non-empty segment
+        for credential in group.service_credentials : can(regex("^crn:v[0-9]:bluemix(:..*){2}(:.*){3}:(serviceRole|role):..*$", credential.service_credentials_source_service_role_crn))
+      ])
+    ])
+    error_message = "Provided value of `service_credentials_source_service_role_crn` is not valid. Refer [this](https://cloud.ibm.com/iam/roles) for allowed role/values."
+  }
+  validation {
+    condition     = length(var.en_service_credential_secrets) > 0 ? var.existing_secrets_manager_crn != null : true
+    error_message = "'existing_secrets_manager_crn' is required when adding service credentials with the 'service_credential_secrets' input."
+  }
+
+}
+
+variable "skip_event_notifications_cos_auth_policy" {
+  type        = bool
+  description = "Set to `true` to skip the creation of an IAM authorization policy that permits the Event Notifications instance `Object Writer` and `Reader` access to the given Object Storage bucket. Set to `true` to use an existing policy."
+  default     = false
+}
+
+variable "event_notifications_endpoint_url" {
+  type        = string
+  description = "The URL of the Event Notifications service endpoint to use for notifying configuration changes. For more information on the endpoint URL for Event Notifications, go to [Service endpoints](https://cloud.ibm.com/docs/event-notifications?topic=event-notifications-en-regions-endpoints#en-service-endpoints). It is required if `enable_event_notifications` is set to true."
+  default     = null
+}
+
 ##############################################################
 # Secrets Manager
 ##############################################################
@@ -783,12 +955,12 @@ variable "management_endpoint_type_for_buckets" {
   }
 }
 
-variable "cloud_logs_cos_buckets_class" {
+variable "cos_buckets_class" {
   type        = string
   default     = "smart"
   description = "The storage class of the newly provisioned IBM Cloud Logs Object Storage buckets. Possible values: `standard` or `smart`. Applies only if `existing_cloud_logs_crn` is not provided."
   validation {
-    condition     = contains(["standard", "smart"], var.cloud_logs_cos_buckets_class)
+    condition     = contains(["standard", "smart"], var.cos_buckets_class)
     error_message = "Allowed values for cos_bucket_class are \"standard\" or \"smart\"."
   }
 }
@@ -1018,6 +1190,186 @@ variable "skip_activity_tracker_cos_auth_policy" {
   default     = false
 }
 
+########################################################################################################################
+# App Config variables
+########################################################################################################################
+
+variable "app_config_name" {
+  type        = string
+  description = "Name for the App Configuration service instance."
+  default     = "app-config"
+  nullable    = false
+}
+
+variable "app_config_plan" {
+  type        = string
+  description = "Plan for the App Configuration service instance."
+  default     = "enterprise"
+  nullable    = false
+}
+
+variable "app_config_service_endpoints" {
+  type        = string
+  description = "Service Endpoints for the App Configuration service instance, valid endpoints are public or public-and-private."
+  default     = "public-and-private"
+  nullable    = false
+
+  validation {
+    condition     = contains(["public", "public-and-private"], var.app_config_service_endpoints)
+    error_message = "Value for service endpoints must be one of the following: \"public\" or \"public-and-private\"."
+  }
+}
+
+variable "app_config_collections" {
+  description = "(Optional, list) A list of collections to be added to the App Configuration instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-app-configuration/tree/main/solutions/fully-configurable/DA-collections.md)."
+  type = list(object({
+    name          = string
+    collection_id = string
+    description   = optional(string, null)
+    tags          = optional(string, null)
+  }))
+  default = []
+
+  validation {
+    condition = (
+      var.app_config_plan != "lite" ||
+      length(var.app_config_collections) <= 1
+    )
+    error_message = "When using the 'lite' plan, you can define at most 1 App Configuration collection."
+  }
+}
+
+variable "app_config_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to the App Config instance."
+  default     = []
+}
+
+variable "enable_config_aggregator" {
+  description = "Set to true to enable configuration aggregator. By setting to true a trusted profile will be created with the required access to record configuration data from all resources across regions in your account. [Learn more](https://cloud.ibm.com/docs/app-configuration?topic=app-configuration-ac-configuration-aggregator)."
+  type        = bool
+  default     = true
+  nullable    = false
+
+  # Lite plan does not support enabling Config Aggregator as mention in doc : https://cloud.ibm.com/docs/app-configuration?topic=app-configuration-ac-configuration-aggregator
+  validation {
+    condition     = !(var.enable_config_aggregator && var.app_config_plan == "lite")
+    error_message = "The configuration aggregator cannot be enabled when the app_config_plan is set to 'lite'. Please use a different plan (e.g., 'basic', 'standardv2', or 'enterprise')."
+  }
+}
+
+variable "config_aggregator_trusted_profile_name" {
+  description = "The name to give the trusted profile that will be created if `enable_config_aggregator` is set to `true`. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  type        = string
+  default     = "config-aggregator-trusted-profile"
+
+  validation {
+    condition     = var.enable_config_aggregator ? var.config_aggregator_trusted_profile_name != null : true
+    error_message = "'config_aggregator_trusted_profile_name' cannot be null if 'enable_config_aggregator' is true."
+  }
+}
+
+variable "config_aggregator_resource_collection_regions" {
+  type        = list(string)
+  description = "From which region do you want to collect configuration data? Only applies if `enable_config_aggregator` is set to true."
+  default     = ["all"]
+}
+
+variable "config_aggregator_enterprise_id" {
+  type        = string
+  description = "If the account is an enterprise account, this value should be set to the enterprise ID (NOTE: This is different to the account ID). "
+  default     = null
+
+  validation {
+    condition     = !var.enable_config_aggregator ? var.config_aggregator_enterprise_id == null : true
+    error_message = "A value can only be passed for 'config_aggregator_enterprise_id' if 'enable_config_aggregator' is true."
+  }
+}
+
+variable "config_aggregator_enterprise_trusted_profile_name" {
+  description = "The name to give the enterprise viewer trusted profile with that will be created if `enable_config_aggregator` is set to `true` and a value is passed for `config_aggregator_enterprise_id`. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  type        = string
+  default     = "config-aggregator-enterprise-trusted-profile"
+
+  validation {
+    condition     = var.enable_config_aggregator && var.config_aggregator_enterprise_id != null ? var.config_aggregator_enterprise_trusted_profile_name != null : true
+    error_message = "'config_aggregator_enterprise_trusted_profile_name' cannot be null if 'enable_config_aggregator' is true and a value is being passed for 'config_aggregator_enterprise_id'."
+  }
+}
+
+variable "config_aggregator_enterprise_trusted_profile_template_name" {
+  description = "The name to give the trusted profile template that will be created if `enable_config_aggregator` is set to `true` and a value is passed for `config_aggregator_enterprise_id`. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  type        = string
+  default     = "config-aggregator-trusted-profile-template"
+
+  validation {
+    condition     = var.enable_config_aggregator && var.config_aggregator_enterprise_id != null ? var.config_aggregator_enterprise_trusted_profile_template_name != null : true
+    error_message = "'config_aggregator_enterprise_trusted_profile_template_name' cannot be null if 'enable_config_aggregator' is true and a value is being passed for 'config_aggregator_enterprise_id'."
+  }
+}
+
+variable "config_aggregator_enterprise_account_group_ids_to_assign" {
+  type        = list(string)
+  default     = ["all"]
+  description = "A list of enterprise account group IDs to assign the trusted profile template to in order for the accounts to be scanned. Supports passing the string 'all' in the list to assign to all account groups. Only applies if `enable_config_aggregator` is true and a value is being passed for `config_aggregator_enterprise_id`."
+  nullable    = false
+
+  validation {
+    condition     = contains(var.config_aggregator_enterprise_account_group_ids_to_assign, "all") ? length(var.config_aggregator_enterprise_account_group_ids_to_assign) == 1 : true
+    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
+  }
+}
+
+variable "config_aggregator_enterprise_account_ids_to_assign" {
+  type        = list(string)
+  default     = []
+  description = "A list of enterprise account IDs to assign the trusted profile template to in order for the accounts to be scanned. Supports passing the string 'all' in the list to assign to all accounts. Only applies if `enable_config_aggregator` is true and a value is being passed for `config_aggregator_enterprise_id`."
+  nullable    = false
+
+  validation {
+    condition     = contains(var.config_aggregator_enterprise_account_ids_to_assign, "all") ? length(var.config_aggregator_enterprise_account_ids_to_assign) == 1 : true
+    error_message = "When specifying 'all' in the list, you cannot add any other values to the list"
+  }
+}
+
+variable "skip_app_config_kms_auth_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits App configuration instances in the resource group to read the encryption key from the KMS instance in the same account. If a value is specified for `ibmcloud_kms_api_key`, the policy is created in the other account."
+  default     = false
+}
+
+variable "skip_app_config_event_notifications_auth_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits App configuration instances to integrate with Event Notification in the same account."
+  default     = false
+}
+
+variable "app_config_event_notifications_source_name" {
+  type        = string
+  description = "The name by which Event Notifications source will be created in the existing Event Notification instance."
+  default     = "app-config-en"
+}
+
+variable "apprapp_cbr_rules" {
+  type = list(object({
+    description = string
+    account_id  = string
+    rule_contexts = list(object({
+      attributes = optional(list(object({
+        name  = string
+        value = string
+    }))) }))
+    enforcement_mode = string
+    operations = optional(list(object({
+      api_types = list(object({
+        api_type_id = string
+      }))
+    })))
+  }))
+  description = "The list of context-based restrictions rules to create. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-event-notifications/tree/main/solutions/fully-configurable/DA-cbr_rules.md)."
+  default     = []
+}
+
 #######################################################################################################################
 # SCC Workload Protection
 #######################################################################################################################
@@ -1083,25 +1435,8 @@ variable "scc_workload_protection_service_plan" {
 variable "cspm_enabled" {
   description = "Enable Cloud Security Posture Management (CSPM) for the Workload Protection instance. This will create a trusted profile associated with the SCC Workload Protection instance that has viewer / reader access to the App Config service and viewer access to the Enterprise service."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
-}
-
-variable "app_config_crn" {
-  description = "The CRN of an existing App Config instance to use with the SCC Workload Protection instance. Required if `cspm_enabled` is true. NOTE: Ensure the App Config instance has configuration aggregator enabled."
-  type        = string
-  default     = null
-  validation {
-    condition     = var.cspm_enabled ? var.app_config_crn != null : true
-    error_message = "Cannot be `null` if CSPM is enabled."
-  }
-  validation {
-    condition = anytrue([
-      can(regex("^crn:(.*:){3}apprapp:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.app_config_crn)),
-      var.app_config_crn == null,
-    ])
-    error_message = "The provided CRN is not a valid App Config CRN."
-  }
 }
 
 variable "scc_wp_cbr_rules" {

@@ -146,6 +146,21 @@ output "boot_volume_kms_account_id" {
 }
 
 ##############################################################################
+# EN Outputs
+##############################################################################
+
+output "en_crn" {
+  description = "Event Notification crn"
+  value       = local.eventnotification_crn
+}
+
+output "en_guid" {
+  description = "Event Notification guid"
+  value       = local.eventnotification_guid
+}
+
+
+##############################################################################
 # SM Outputs
 ##############################################################################
 

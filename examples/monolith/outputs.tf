@@ -131,6 +131,20 @@ output "kms_instance_crn" {
 }
 
 ##############################################################################
+# EN Outputs
+##############################################################################
+
+output "en_crn" {
+  description = "Event Notification crn"
+  value       = module.monolith_add_ons.en_crn
+}
+
+output "en_guid" {
+  description = "Event Notification guid"
+  value       = module.monolith_add_ons.en_guid
+}
+
+##############################################################################
 # SM Outputs
 ##############################################################################
 

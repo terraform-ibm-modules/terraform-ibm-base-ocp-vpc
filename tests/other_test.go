@@ -2,18 +2,11 @@
 package test
 
 import (
-	"fmt"
-	"os"
-	"strings"
 	"testing"
 
 	"github.com/IBM/go-sdk-core/v5/core"
-	"github.com/gruntwork-io/terratest/modules/files"
-	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
@@ -201,99 +194,45 @@ func TestFSCloudInSchematic(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func provisionPreReq(t *testing.T, p string) (string, *terraform.Options, error) {
-	// ------------------------------------------------------------------------------------
-	// Provision existing resources first
-	// ------------------------------------------------------------------------------------
-	prefix := fmt.Sprintf("%s-%s", p, strings.ToLower(random.UniqueId()))
-	realTerraformDir := "./existing-resources-monolith"
-	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, prefix)
-
-	// Verify ibmcloud_api_key variable is set
-	checkVariable := "TF_VAR_ibmcloud_api_key"
-	val, present := os.LookupEnv(checkVariable)
-	require.True(t, present, checkVariable+" environment variable not set")
-	require.NotEqual(t, "", val, checkVariable+" environment variable is empty")
-
-	logger.Log(t, "Tempdir: ", tempTerraformDir)
-	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: tempTerraformDir,
-		Vars: map[string]interface{}{
-			"prefix": prefix,
-		},
-		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
-		// This is the same as setting the -upgrade=true flag with terraform.
-		Upgrade: true,
-	})
-
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
-	if existErr != nil {
-		// assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-		return "", nil, existErr
-	}
-	return prefix, existingTerraformOptions, nil
-}
-
 func TestMonolithExample(t *testing.T) {
 	t.Parallel()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, "mon-ocp")
-
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				monolithExampleDir + "/*.tf",
-				fullyConfigurableTerraformDir + "/scripts/*.*",
-				"/scripts/*.*",
-				"kubeconfig/*.*",
-				"modules/kube-audit/*.*",
-				"modules/worker-pool/*.*",
-				"modules/kube-audit/kubeconfig/*.*",
-				"modules/kube-audit/scripts/*.*",
-				"modules/kube-audit/helm-charts/kube-audit/*.*",
-				"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
-				"modules/monolith/*.tf",
-			},
-			TemplateFolder:         monolithExampleDir,
-			Tags:                   []string{"monolith-base-ocp-test"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 240,
-			IgnoreAdds: testhelper.Exemptions{
-				List: []string{"module.monolith_add_ons.module.scc_wp.restapi_object.cspm"},
-			},
-			IgnoreUpdates: testhelper.Exemptions{
-				List: []string{"module.ocp_base.ibm_container_addons.addons"},
-			},
-		})
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "prefix", Value: prefix, DataType: "string"},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "kms_encryption_enabled_cluster", Value: true, DataType: "bool"},
-			{Name: "existing_event_notifications_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "event_notifications_instance_crn"), DataType: "string"},
-		}
-
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "mon-ocp",
+		TarIncludePatterns: []string{
+			"*.tf",
+			monolithExampleDir + "/*.tf",
+			fullyConfigurableTerraformDir + "/scripts/*.*",
+			"/scripts/*.*",
+			"kubeconfig/*.*",
+			"modules/kube-audit/*.*",
+			"modules/worker-pool/*.*",
+			"modules/kube-audit/kubeconfig/*.*",
+			"modules/kube-audit/scripts/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
+			"modules/monolith/*.tf",
+		},
+		TemplateFolder:         monolithExampleDir,
+		Tags:                   []string{"monolith-base-ocp-test"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 240,
+		IgnoreAdds: testhelper.Exemptions{
+			List: []string{"module.monolith_add_ons.module.scc_wp.restapi_object.cspm"},
+		},
+		IgnoreUpdates: testhelper.Exemptions{
+			List: []string{"module.ocp_base.ibm_container_addons.addons"},
+		},
+	})
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "kms_encryption_enabled_cluster", Value: true, DataType: "bool"},
 	}
 
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
-	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
-	if t.Failed() && strings.ToLower(envVal) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
-	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 }
 
 func TestAddonPermutations(t *testing.T) {

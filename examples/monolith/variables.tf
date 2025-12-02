@@ -155,6 +155,26 @@ variable "kms_plan" {
   # validation performed in terraform-ibm-key-protect module
 }
 
+variable "en_service_plan" {
+  type        = string
+  description = "The pricing plan of the Event Notifications instance. Possible values: `Lite`, `Standard`."
+  default     = "standard"
+  validation {
+    condition     = contains(["lite", "standard"], var.en_service_plan)
+    error_message = "The specified pricing plan is not available. The following plans are supported: `Lite`, `Standard`"
+  }
+}
+
+variable "en_service_endpoints" {
+  type        = string
+  description = "Specify whether you want to enable public, private, or both public and private service endpoints. Possible values: `public`, `private`, `public-and-private`."
+  default     = "public-and-private"
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.en_service_endpoints)
+    error_message = "The specified service endpoint is not supported. The following endpoint options are supported: `public`, `private`, `public-and-private`"
+  }
+}
+
 variable "existing_secrets_manager_crn" {
   type        = string
   description = "The CRN of an existing Secrets Manager instance. If not supplied, a new instance is created."
@@ -207,6 +227,16 @@ variable "cos_instance_plan" {
   }
 }
 
+variable "management_endpoint_type_for_buckets" {
+  description = "The type of endpoint for the IBM Terraform provider to use to manage Object Storage buckets. Possible values: `public`, `private`, `direct`. If you specify `private`, enable virtual routing and forwarding in your account, and the Terraform runtime must have access to the the IBM Cloud private network."
+  type        = string
+  default     = "direct"
+  validation {
+    condition     = contains(["public", "private", "direct"], var.management_endpoint_type_for_buckets)
+    error_message = "The specified management_endpoint_type_for_buckets is not a valid selection!"
+  }
+}
+
 variable "existing_cloud_monitoring_crn" {
   type        = string
   default     = null
@@ -253,6 +283,25 @@ variable "enable_vpc_flow_logs" {
   type        = bool
   nullable    = false
   default     = true
+}
+
+variable "app_config_plan" {
+  type        = string
+  description = "Plan for the App Configuration service instance."
+  default     = "enterprise"
+  nullable    = false
+}
+
+variable "app_config_service_endpoints" {
+  type        = string
+  description = "Service Endpoints for the App Configuration service instance, valid endpoints are public or public-and-private."
+  default     = "public"
+  nullable    = false
+
+  validation {
+    condition     = contains(["public", "public-and-private"], var.app_config_service_endpoints)
+    error_message = "Value for service endpoints must be one of the following: \"public\" or \"public-and-private\"."
+  }
 }
 
 ########################################################################################################################

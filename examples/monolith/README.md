@@ -1,4 +1,4 @@
-# IBM Cloud OpenShift DA - Monolith Add-ons Module
+# IBM Cloud OpenShift DA - Monolith Add-ons Module Example
 
 A simple example that shows how to provision a multi zone OCP VPC cluster as well as all foundational infrastructure and supporting services required for a secure and compliant OpenShift (OCP) cluster deployment on IBM Cloud VPC.
 
@@ -19,3 +19,5 @@ The following resources are provisioned by this example:
 - A COS instance along with 3 buckets for VPC flow logs, metrics/data bucket and activity tracker bucket.
 - A SCC-WP instance
 - A VPC instance
+- An event notifications instance
+- An app configuration service with aggregator enabled
