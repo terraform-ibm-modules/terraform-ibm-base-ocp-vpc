@@ -2,9 +2,6 @@
 
 set -euo pipefail
 
-# Adding sleep for the token to be ready
-sleep 10
-
 REGION="$1"
 PRIVATE_ENV="$2"
 CLUSTER_ENDPOINT="$3"
@@ -16,12 +13,32 @@ POLICY="$6"
 export PATH=$PATH:${7:-"/tmp"}
 
 get_cloud_endpoint() {
+    iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
+    IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
     cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
     cs_api_endpoint=${cs_api_endpoint#https://}
     IBMCLOUD_CS_API_ENDPOINT=${cs_api_endpoint%/global}
 }
 
 get_cloud_endpoint
+
+# This is a workaround function added to retrieve a new token, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107) is fixed.
+fetch_token() {
+    if [ "$IBMCLOUD_IAM_API_ENDPOINT" = "iam.cloud.ibm.com" ]; then
+        if [ "$PRIVATE_ENV" = true ]; then
+            IAM_URL="https://private.$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+        else
+            IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+        fi
+    else
+        IAM_URL="https://$IBMCLOUD_IAM_API_ENDPOINT/identity/token"
+    fi
+
+    token=$(curl -s -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IAM_API_KEY" -X POST "$IAM_URL") #pragma: allowlist secret
+    IAM_TOKEN=$(echo "$token" | jq -r .access_token)
+}
+
+fetch_token
 
 # This is a workaround function added to retrieve the CA cert, this can be removed once this issue(https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6068) is fixed.
 get_ca_cert() {
