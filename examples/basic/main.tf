@@ -84,13 +84,3 @@ module "ocp_base" {
   disable_outbound_traffic_protection = true # set as True to enable outbound traffic; required for accessing Operator Hub in the OpenShift console.
 }
 
-
-module "kube_audit" {
-  depends_on                = [module.ocp_base] # Wait for the cluster to completely deploy.
-  source                    = "git::https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc//modules//kube-audit?ref=install-deps"
-  cluster_id                = module.ocp_base.cluster_id
-  cluster_resource_group_id = module.resource_group.resource_group_id
-  audit_log_policy          = "WriteRequestBodies"
-  region                    = var.region
-  # ibmcloud_api_key          = var.ibmcloud_api_key
-}
