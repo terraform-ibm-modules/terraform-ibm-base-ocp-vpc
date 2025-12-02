@@ -111,7 +111,6 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
 	})
-
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},

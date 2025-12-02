@@ -115,10 +115,6 @@ locals {
 #   depends_on = [data.ibm_container_cluster_config.cluster_config]
 # }
 
-data "ibm_iam_auth_token" "webhook_api_key_tokendata" {
-  depends_on = [time_sleep.wait_for_kube_audit]
-}
-
 resource "null_resource" "set_audit_webhook" {
   depends_on = [null_resource.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
