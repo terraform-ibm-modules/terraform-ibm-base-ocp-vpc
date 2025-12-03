@@ -1,3 +1,22 @@
+locals {
+  binaries_path = "/tmp"
+}
+
+resource "null_resource" "install_required_binaries" {
+  count = var.install_required_binaries ? 1 : 0
+  triggers = {
+    audit_log_policy                        = var.audit_log_policy
+    audit_deployment_name                   = var.audit_deployment_name
+    audit_namespace                         = var.audit_namespace
+    audit_webhook_listener_image            = var.audit_webhook_listener_image
+    audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+  }
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 data "ibm_container_cluster_config" "cluster_config" {
   cluster_name_id   = var.cluster_id
   config_dir        = "${path.module}/kubeconfig"
@@ -19,11 +38,12 @@ locals {
 }
 
 resource "null_resource" "set_audit_log_policy" {
+  depends_on = [null_resource.install_required_binaries]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_audit_log_policy.sh ${var.audit_log_policy}"
+    command     = "${path.module}/scripts/set_audit_log_policy.sh ${var.audit_log_policy} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
@@ -40,7 +60,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
+  depends_on    = [null_resource.install_required_binaries, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
@@ -72,7 +92,7 @@ resource "helm_release" "kube_audit" {
   ]
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace}"
+    command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
@@ -96,12 +116,12 @@ locals {
 # }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [time_sleep.wait_for_kube_audit]
+  depends_on = [null_resource.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"}"
+    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_API_KEY  = var.ibmcloud_api_key

@@ -102,6 +102,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 			"*.tf",
 			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
 			"modules/worker-pool/*.tf",
+			"modules/kube-audit/scripts/*.sh",
 		},
 		TemplateFolder:             quickStartTerraformDir,
 		Tags:                       []string{"test-schematic"},

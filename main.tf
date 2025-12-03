@@ -49,6 +49,8 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+
+  binaries_path = "/tmp"
 }
 
 ########################################################################################################################
@@ -112,6 +114,20 @@ locals {
 
   # tflint-ignore: terraform_unused_declarations
   default_wp_validation = local.rhcos_check ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
+}
+
+resource "null_resource" "install_required_binaries" {
+  count = var.install_required_binaries && (var.verify_worker_network_readiness || var.enable_ocp_console != null || lookup(var.addons, "cluster-autoscaler", null) != null) ? 1 : 0
+  triggers = {
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+    cluster_autoscaler              = lookup(var.addons, "cluster-autoscaler", null) != null
+    enable_ocp_console              = var.enable_ocp_console
+  }
+  provisioner "local-exec" {
+    # Using the script from the kube-audit module to avoid code duplication.
+    command     = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
+    interpreter = ["/bin/bash", "-c"]
+  }
 }
 
 # Lookup the current default kube version
@@ -491,10 +507,14 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+  depends_on = [null_resource.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+
+  triggers = {
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+  }
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_network_healthy.sh"
+    command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -507,9 +527,12 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
-  depends_on = [null_resource.confirm_network_healthy]
+  depends_on = [null_resource.install_required_binaries, null_resource.confirm_network_healthy]
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
+    command     = "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -581,10 +604,13 @@ locals {
 
 resource "null_resource" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [ibm_container_addons.addons]
+  depends_on = [null_resource.install_required_binaries, ibm_container_addons.addons]
 
+  triggers = {
+    cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
+  }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/get_config_map_status.sh"
+    command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -771,7 +797,6 @@ resource "time_sleep" "wait_for_auth_policy" {
   depends_on      = [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy[0]]
   create_duration = "30s"
 }
-
 
 resource "ibm_container_ingress_instance" "instance" {
   count           = var.enable_secrets_manager_integration ? 1 : 0
