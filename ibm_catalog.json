@@ -761,11 +761,9 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
               "type_metadata": "string",
               "virtual": true,
               "required": true,
-              "type": "string",
               "default_value": "standard",
               "options": [
                 {
@@ -1310,7 +1308,6 @@
               "key": "size",
               "type_metadata": "string",
               "required": true,
-              "type": "string",
               "options": [
                 {
                   "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones.",
