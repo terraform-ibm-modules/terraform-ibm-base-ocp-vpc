@@ -364,9 +364,22 @@ variable "addons" {
   nullable    = false
   default     = {}
 
+  ########################################################################################################################
+  # OCP AI Addon version validation
+  ########################################################################################################################
+
   validation {
-    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || (tonumber(local.ocp_version_num) >= 4.16)
-    error_message = "OCP AI add-on requires OCP version >= 4.16.0"
+    condition = (
+      lookup(var.addons, "openshift-ai", null) == null ||
+      lookup(var.addons["openshift-ai"], "version", null) == null ||
+      (contains(keys(local.ocp_addon_versions_map), var.addons["openshift-ai"].version) &&
+        (local.ocp_version_num >= tonumber(regexall("\\d+\\.\\d+", split(" ", lookup(local.ocp_addon_versions_map, var.addons["openshift-ai"].version, null))[0])[0])) &&
+        (local.ocp_version_num < tonumber(regexall("\\d+\\.\\d+", split(" ", lookup(local.ocp_addon_versions_map, var.addons["openshift-ai"].version, null))[1])[0]))
+      )
+    )
+    error_message = (var.addons["openshift-ai"] != null && var.addons["openshift-ai"].version != null) ? (contains(keys(local.ocp_addon_versions_map), var.addons["openshift-ai"].version) ?
+      format("OCP AI add-on version: %s requires OCP version %s", var.addons["openshift-ai"].version, local.ocp_addon_versions_map[var.addons["openshift-ai"].version]) :
+    format("OCP AI add-on version: %s is not supported.", var.addons["openshift-ai"].version)) : null
   }
 
   validation {
