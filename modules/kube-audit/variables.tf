@@ -102,3 +102,10 @@ variable "audit_webhook_listener_image_tag_digest" {
     error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
   }
 }
+
+variable "install_required_binaries" {
+  type        = bool
+  default     = true
+  description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
+  nullable    = false
+}
