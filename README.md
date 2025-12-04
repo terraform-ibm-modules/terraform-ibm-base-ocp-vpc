@@ -290,6 +290,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
+| <a name="requirement_external"></a> [external](#requirement\_external) | ~> 2 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.78.2, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.16.1, < 3.0.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
@@ -327,9 +328,11 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [null_resource.install_required_binaries](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ocp_console_management](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [time_sleep.wait_for_auth_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [external_external.ocp_addon_versions](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |
 | [ibm_container_addons.existing_addons](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_addons) | data source |
 | [ibm_container_cluster_config.cluster_config](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_config) | data source |
 | [ibm_container_cluster_versions.cluster_versions](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/container_cluster_versions) | data source |
+| [ibm_iam_auth_token.tokendata](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_auth_token) | data source |
 | [ibm_is_lbs.all_lbs](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_lbs) | data source |
 | [ibm_is_virtual_endpoint_gateway.api_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
 | [ibm_is_virtual_endpoint_gateway.master_vpe](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/is_virtual_endpoint_gateway) | data source |
