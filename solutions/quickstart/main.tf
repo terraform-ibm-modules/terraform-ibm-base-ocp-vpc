@@ -125,6 +125,11 @@ locals {
 
     }
   ]
+  addons = {
+    openshift-ai = {
+      version = "416"
+    }
+  }
 }
 
 ########################################################################################################################
@@ -144,4 +149,5 @@ module "ocp_base" {
   access_tags                         = var.access_tags
   disable_public_endpoint             = !var.allow_public_access_to_cluster_management
   cluster_config_endpoint_type        = "default"
+  addons                              = local.addons
 }
