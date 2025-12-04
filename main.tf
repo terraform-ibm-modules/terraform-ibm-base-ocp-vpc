@@ -57,11 +57,13 @@ locals {
 # Get OCP AI Add-on Versions
 ########################################################################################################################
 
-data "external" "ocp_ai_addon_versions" {
-  program = ["bash", "${path.module}/scripts/get_ocp_ai_addon_versions.sh"]
+data "ibm_iam_auth_token" "tokendata" {}
+
+data "external" "ocp_addon_versions" {
+  program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
   query = {
-    ibmcloud_api_key = "xxxxxxxxxxxxxxxx", # Not sure where to get the API key; it’s required to log in to the IBM Cloud CLI.
-    region           = var.region
+    IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+    region    = var.region
   }
 }
 
@@ -77,7 +79,7 @@ locals {
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
-  ocp_addon_versions_map = data.external.ocp_ai_addon_versions.result
+  ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
 # Separate local block to handle os validations
