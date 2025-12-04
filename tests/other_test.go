@@ -17,6 +17,7 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
+const monolithExampleDir = "examples/monolith"
 
 func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -187,6 +188,47 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+	}
+
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestMonolithExample(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "mon-ocp",
+		TarIncludePatterns: []string{
+			"*.tf",
+			monolithExampleDir + "/*.tf",
+			fullyConfigurableTerraformDir + "/scripts/*.*",
+			"/scripts/*.*",
+			"kubeconfig/*.*",
+			"modules/kube-audit/*.*",
+			"modules/worker-pool/*.*",
+			"modules/kube-audit/kubeconfig/*.*",
+			"modules/kube-audit/scripts/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
+			"modules/monolith/*.tf",
+		},
+		TemplateFolder:         monolithExampleDir,
+		Tags:                   []string{"monolith-base-ocp-test"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 240,
+		IgnoreAdds: testhelper.Exemptions{
+			List: []string{"module.monolith_add_ons.module.scc_wp.restapi_object.cspm"},
+		},
+		IgnoreUpdates: testhelper.Exemptions{
+			List: []string{"module.ocp_base.ibm_container_addons.addons"},
+		},
+	})
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "kms_encryption_enabled_cluster", Value: true, DataType: "bool"},
 	}
 
 	err := options.RunSchematicTest()
