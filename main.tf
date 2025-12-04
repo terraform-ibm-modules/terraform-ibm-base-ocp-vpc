@@ -63,7 +63,7 @@ data "external" "ocp_addon_versions" {
   program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
   query = {
     IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
-    region    = var.region
+    REGION    = var.region
   }
 }
 
