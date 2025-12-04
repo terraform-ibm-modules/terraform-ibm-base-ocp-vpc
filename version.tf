@@ -20,7 +20,7 @@ terraform {
     }
     external = {
       source  = "hashicorp/external"
-      version = "~> 2"
+      version = ">=2.3.5, <3.0.0"
     }
   }
 }

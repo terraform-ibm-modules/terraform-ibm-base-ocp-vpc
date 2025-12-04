@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import http.client
 import json
+import os
 import sys
+from urllib.parse import urlparse
 
 
 def parse_input():
@@ -36,17 +38,40 @@ def validate_inputs(data):
     return token, region
 
 
-def fetch_addon_versions(iam_token, region):
+def get_env_variable():
+    """
+    Retrieves the value of an environment variable.
+    Returns:
+        str: The value of the environment variable.
+    """
+    api_endpoint = os.getenv(
+        "IBMCLOUD_CS_API_ENDPOINT", "https://containers.test.cloud.ibm.com/global"
+    )
+    return api_endpoint
+
+
+def fetch_addon_versions(iam_token, region, api_endpoint):
     """
     Fetches openshift add-on versions using HTTP connection.
     Args:
         iam_token (str): IBM Cloud IAM token for authentication.
         region (str): Region to query for add-ons.
+        api_endpoint (str): Base API endpoint URL.
     Returns:
         list: Parsed JSON response containing add-on information.
     """
-    url = "/global/v1/addons"
-    host = "containers.cloud.ibm.com"
+    # Add https if user passed just a hostname
+    if not api_endpoint.startswith("https://"):
+        api_endpoint = f"https://{api_endpoint}"
+
+    parsed = urlparse(api_endpoint)
+
+    # Default path to /global if none supplied
+    base_path = parsed.path.rstrip("/") if parsed.path else "/global"
+
+    # Final API path
+    url = f"{base_path}/v1/addons"
+    host = parsed.hostname
     headers = {
         "Authorization": f"Bearer {iam_token}",
         "Accept": "application/json",
@@ -120,8 +145,9 @@ def main():
     """
     data = parse_input()
     iam_token, region = validate_inputs(data)
-
-    addons_data = fetch_addon_versions(iam_token, region)
+    api_endpoint = get_env_variable()
+    api_endpoint = get_env_variable()
+    addons_data = fetch_addon_versions(iam_token, region, api_endpoint)
     transformed = transform_addons(addons_data)
     output = format_for_terraform(transformed)
 
