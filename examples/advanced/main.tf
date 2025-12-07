@@ -164,7 +164,10 @@ locals {
 }
 
 module "ocp_base" {
-  source                           = "../.."
+  source = "../.."
+  # remove the above line and uncomment the below 2 lines to consume the module from the registry
+  # source            = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_name                     = var.prefix
   resource_group_id                = module.resource_group.resource_group_id
   region                           = var.region
@@ -213,8 +216,11 @@ module "worker_pool" {
 ########################################################################################################################
 
 module "kube_audit" {
-  depends_on                = [module.ocp_base] # Wait for the cluster to completely deploy.
-  source                    = "../../modules/kube-audit"
+  depends_on = [module.ocp_base] # Wait for the cluster to completely deploy.
+  source     = "../../modules/kube-audit"
+  # remove the above line and uncomment the below 2 lines to consume the module from the registry
+  # source            = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/kube-audit"
+  # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   audit_log_policy          = "WriteRequestBodies"
