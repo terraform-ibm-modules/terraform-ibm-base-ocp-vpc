@@ -219,10 +219,19 @@ func TestMonolithExample(t *testing.T) {
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
 		IgnoreAdds: testhelper.Exemptions{
-			List: []string{"module.monolith_add_ons.module.scc_wp.restapi_object.cspm"},
+			List: []string{
+				"module.monolith_add_ons.module.scc_wp.restapi_object.cspm",
+			},
 		},
 		IgnoreUpdates: testhelper.Exemptions{
-			List: []string{"module.ocp_base.ibm_container_addons.addons"},
+			List: []string{
+				"module.ocp_base.ibm_container_addons.addons",
+				"module.logs_agent.helm_release.logs_agent",
+				"module.monitoring_agent.helm_release.cloud_monitoring_agent",
+				// Have to ignore account settings as other tests may be updating them concurrently
+				// which can cause consistency test to fail if not ignored.
+				"module.monolith_add_ons.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+			},
 		},
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{

@@ -1704,14 +1704,23 @@ variable "network_acls" {
       prepend_ibm_rules            = true
       rules = [
         {
-          name      = "allow-all-443-inbound"
+          name      = "allow-443-inbound-source"
           action    = "allow"
           direction = "inbound"
           tcp = {
-            port_min        = 443
-            port_max        = 443
             source_port_min = 443
             source_port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-443-inbound-dest"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            port_max = 443
+            port_min = 443
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
@@ -1721,8 +1730,6 @@ variable "network_acls" {
           action    = "allow"
           direction = "inbound"
           tcp = {
-            port_min        = 80
-            port_max        = 80
             source_port_min = 80
             source_port_max = 80
           }
@@ -1730,27 +1737,34 @@ variable "network_acls" {
           source      = "0.0.0.0/0"
         },
         {
-          name      = "allow-all-22-inbound"
+          name      = "allow-all-ingress-inbound"
           action    = "allow"
           direction = "inbound"
           tcp = {
-            port_min        = 22
-            port_max        = 22
-            source_port_min = 22
-            source_port_max = 22
+            source_port_min = 30000
+            source_port_max = 32767
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
         },
         {
-          name      = "allow-all-443-outbound"
+          name      = "allow-443-outbound-source"
           action    = "allow"
           direction = "outbound"
           tcp = {
             source_port_min = 443
             source_port_max = 443
-            port_min        = 443
-            port_max        = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-443-outbound-dest"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
@@ -1760,23 +1774,19 @@ variable "network_acls" {
           action    = "allow"
           direction = "outbound"
           tcp = {
-            source_port_min = 80
-            source_port_max = 80
-            port_min        = 80
-            port_max        = 80
+            port_min = 80
+            port_max = 80
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
         },
         {
-          name      = "allow-all-22-outbound"
+          name      = "allow-all-ingress-outbound"
           action    = "allow"
           direction = "outbound"
           tcp = {
-            source_port_min = 22
-            source_port_max = 22
-            port_min        = 22
-            port_max        = 22
+            port_min = 30000
+            port_max = 32767
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
