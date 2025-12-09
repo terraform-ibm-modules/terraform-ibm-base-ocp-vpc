@@ -56,9 +56,8 @@ variable "openshift_version" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "openshift-qs"
+  default     = "cluster"
 }
-
 
 variable "address_prefix" {
   description = "The IP range that defines a certain location for the VPC. Use only with manual address prefixes."
@@ -72,11 +71,10 @@ variable "ocp_entitlement" {
   default     = null
 }
 
-
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)."
-  default     = "RHEL_9_64"
+  default     = "RHCOS"
 }
 
 variable "access_tags" {

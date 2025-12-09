@@ -63,14 +63,14 @@ locals {
       pool_name        = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type     = "bx2.4x16"
       workers_per_zone = 2 # minimum of 2 is allowed when using single zone
-      operating_system = "REDHAT_8_64"
+      operating_system = "RHEL_9_64"
     },
     {
       subnet_prefix                 = "default"
       pool_name                     = "custom-sg"
       machine_type                  = "bx2.4x16"
       workers_per_zone              = 2
-      operating_system              = "REDHAT_8_64"
+      operating_system              = "RHEL_9_64"
       additional_security_group_ids = [module.custom_sg["custom-worker-pool-sg"].security_group_id]
     },
   ]
@@ -95,7 +95,10 @@ module "custom_sg" {
 
 
 module "ocp_base" {
-  source                            = "../.."
+  source = "../.."
+  # remove the above line and uncomment the below 2 lines to consume the module from the registry
+  # source            = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   resource_group_id                 = module.resource_group.resource_group_id
   region                            = var.region
   tags                              = var.resource_tags

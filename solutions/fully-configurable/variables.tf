@@ -38,7 +38,6 @@ variable "prefix" {
   }
 }
 
-
 variable "existing_resource_group_name" {
   type        = string
   description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
@@ -64,7 +63,7 @@ variable "access_tags" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "openshift"
+  default     = "cluster"
 }
 
 variable "openshift_version" {

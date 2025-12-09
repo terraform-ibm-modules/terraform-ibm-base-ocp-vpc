@@ -8,6 +8,7 @@ The following resources are provisioned by this example:
 - A VPC with subnets across 3 zones.
 - A public gateway for all the three zones
 - A multi-zone (3 zone) KMS encrypted OCP VPC cluster, with worker pools in each zone.
+- An additional worker pool named `workerpool` is created and attached to the cluster using the `worker-pool` submodule.
 - Auto scaling enabled for the default worker pool.
 - Taints against the workers in zone-2 and zone-3.
 - Enable Kubernetes API server audit logs.
