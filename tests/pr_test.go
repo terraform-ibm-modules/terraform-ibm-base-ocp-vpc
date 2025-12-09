@@ -44,10 +44,6 @@ var (
 	permanentResources map[string]interface{}
 )
 
-var IgnoreUpdates = []string{
-	"module.kube_audit[0].helm_release.kube_audit",
-}
-
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
 func TestMain(m *testing.M) {
@@ -212,9 +208,6 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		TarIncludePatterns: []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
 		TemplateFolder:     fullyConfigurableTerraformDir,
 		Tags:               []string{"test-schematic"},
-		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
-			List: IgnoreUpdates,
-		},
 		DeleteWorkspaceOnFail:      false,
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
