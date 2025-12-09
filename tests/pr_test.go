@@ -203,11 +203,11 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:            t,
-		Prefix:             "fc-upg",
-		TarIncludePatterns: []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
-		TemplateFolder:     fullyConfigurableTerraformDir,
-		Tags:               []string{"test-schematic"},
+		Testing:                    t,
+		Prefix:                     "fc-upg",
+		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
+		TemplateFolder:             fullyConfigurableTerraformDir,
+		Tags:                       []string{"test-schematic"},
 		DeleteWorkspaceOnFail:      false,
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
