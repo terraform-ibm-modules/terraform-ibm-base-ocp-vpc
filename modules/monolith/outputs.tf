@@ -130,21 +130,6 @@ output "kms_config" {
   value       = local.kms_config
 }
 
-output "boot_volume_kms_key_id" {
-  description = "The Key ID for the boot volume encryption"
-  value       = local.boot_volume_kms_key_id
-}
-
-output "boot_volume_existing_kms_guid" {
-  description = "The  GUID for the boot volume encryption"
-  value       = local.boot_volume_existing_kms_guid
-}
-
-output "boot_volume_kms_account_id" {
-  description = "The Account ID for the boot volume encryption"
-  value       = local.boot_volume_kms_account_id
-}
-
 ##############################################################################
 # EN Outputs
 ##############################################################################
@@ -319,4 +304,33 @@ output "scc_workload_protection_api_endpoint" {
   description = "SCC Workload Protection API endpoint"
   value       = module.scc_wp.api_endpoint
   sensitive   = true
+}
+
+##############################################################################
+# Cluster Outputs
+##############################################################################
+
+output "cluster_name" {
+  value       = module.ocp_base.cluster_name
+  description = "The name of the provisioned OpenShift cluster."
+}
+
+output "cluster_id" {
+  value       = module.ocp_base.cluster_id
+  description = "The unique identifier assigned to the provisioned OpenShift cluster."
+}
+
+output "cluster_crn" {
+  description = "The Cloud Resource Name (CRN) of the provisioned OpenShift cluster."
+  value       = module.ocp_base.cluster_crn
+}
+
+output "workerpools" {
+  description = "A list of worker pools associated with the provisioned cluster"
+  value       = module.ocp_base.workerpools
+}
+
+output "ocp_version" {
+  description = "The version of OpenShift running on the provisioned cluster."
+  value       = module.ocp_base.ocp_version
 }

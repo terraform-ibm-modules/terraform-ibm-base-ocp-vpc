@@ -220,7 +220,7 @@ func TestMonolithExample(t *testing.T) {
 		WaitJobCompleteMinutes: 240,
 		IgnoreAdds: testhelper.Exemptions{
 			List: []string{
-				"module.monolith_add_ons.module.scc_wp.restapi_object.cspm",
+				"module.ocp_cluster_with_add_ons.module.scc_wp.restapi_object.cspm",
 			},
 		},
 		IgnoreUpdates: testhelper.Exemptions{
@@ -230,14 +230,13 @@ func TestMonolithExample(t *testing.T) {
 				"module.monitoring_agent.helm_release.cloud_monitoring_agent",
 				// Have to ignore account settings as other tests may be updating them concurrently
 				// which can cause consistency test to fail if not ignored.
-				"module.monolith_add_ons.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+				"module.ocp_cluster_with_add_ons.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
 			},
 		},
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "kms_encryption_enabled_cluster", Value: true, DataType: "bool"},
 	}
 
 	err := options.RunSchematicTest()
