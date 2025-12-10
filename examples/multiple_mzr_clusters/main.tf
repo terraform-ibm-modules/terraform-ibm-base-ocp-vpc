@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.0"
+  version = "1.4.3"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -193,7 +193,7 @@ module "monitoring_agent_1" {
     helm = helm.helm_cluster_1
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.16.2"
+  version                   = "1.19.0"
   cluster_id                = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
@@ -205,7 +205,7 @@ module "monitoring_agent_2" {
     helm = helm.helm_cluster_2
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.16.2"
+  version                   = "1.19.0"
   cluster_id                = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
