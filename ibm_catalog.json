@@ -490,7 +490,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -499,7 +504,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -516,7 +526,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -545,6 +560,7 @@
             },
             {
               "key": "existing_subnet_ids",
+              "display_name": "existing_subnets",
               "hidden": true,
               "custom_config": {
                 "type": "platform_resource",
@@ -732,7 +748,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -741,6 +762,7 @@
             },
             {
               "key": "existing_secrets_manager_instance_crn",
+              "display_name": "existing_secrets_manager_instance",
               "value_constraints": [
                 {
                   "type": "regex",
@@ -798,6 +820,7 @@
             },
             {
               "key": "existing_vpc_crn",
+              "display_name": "existing_vpc",
               "hidden": true,
               "value_constraints": [
                 {
@@ -819,11 +842,12 @@
             },
             {
               "key": "existing_cos_instance_crn",
+              "display_name": "existing_cos_instance",
               "hidden": true,
               "value_constraints": [
                 {
                   "type": "regex",
-                  "description": "The value provided for 'existing_cos_instance_crn' is not valid.",
+                  "description": "The value provided for 'existing_cos_instance' is not valid.",
                   "value": "^crn:(.*:){3}cloud-object-storage:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ],
