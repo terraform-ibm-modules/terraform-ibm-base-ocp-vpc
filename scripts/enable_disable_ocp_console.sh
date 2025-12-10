@@ -2,19 +2,21 @@
 
 set -euo pipefail
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
+export PATH=$PATH:${1:-"/tmp"}
 
-PATCH_APPLY="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Managed\"}}' --type=merge"
-PATCH_REMOVE="oc patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Removed\"}}' --type=merge"
+PATCH_APPLY="kubectl patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Managed\"}}' --type=merge"
+PATCH_REMOVE="kubectl patch consoles.operator.openshift.io cluster --patch '{\"spec\":{\"managementState\":\"Removed\"}}' --type=merge"
 MAX_ATTEMPTS=10
 
-function check_oc_cli() {
-  if ! command -v oc &> /dev/null; then
-    echo "Error: OpenShift CLI (oc) is not installed. Exiting."
+function check_kubectl_cli() {
+  if ! command -v kubectl &> /dev/null; then
+    echo "Error: kubectl is not installed. Exiting."
     exit 1
   fi
 }
 
-function apply_oc_patch() {
+function apply_kubectl_patch() {
 
   local attempt=0
   local retry_wait_time=5
@@ -36,7 +38,7 @@ function apply_oc_patch() {
   exit 1
 }
 
-function remove_oc_patch() {
+function remove_kubectl_patch() {
 
   local attempt=0
   local retry_wait_time=5
@@ -65,14 +67,14 @@ if [[ -z "${ENABLE_OCP_CONSOLE:-}" ]]; then
     exit 1
 fi
 
-check_oc_cli
+check_kubectl_cli
 
 if [ "${ENABLE_OCP_CONSOLE}" == "true" ]; then
     echo "Enabling the OpenShift Console"
-    apply_oc_patch
+    apply_kubectl_patch
 else
     echo "Disabling the OpenShift Console"
-    remove_oc_patch
+    remove_kubectl_patch
 fi
 
 echo "========================================="
