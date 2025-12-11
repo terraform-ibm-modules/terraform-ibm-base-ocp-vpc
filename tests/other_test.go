@@ -17,7 +17,7 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
-const monolithExampleDir = "examples/containerized_app_landing_zone"
+const openshiftLandingZoneExampleDir = "examples/containerized_app_landing_zone"
 
 func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -194,7 +194,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func TestMonolithExample(t *testing.T) {
+func TestOpenshiftLandingZoneExample(t *testing.T) {
 	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
@@ -202,7 +202,7 @@ func TestMonolithExample(t *testing.T) {
 		Prefix:  "mon-ocp",
 		TarIncludePatterns: []string{
 			"*.tf",
-			monolithExampleDir + "/*.tf",
+			openshiftLandingZoneExampleDir + "/*.tf",
 			fullyConfigurableTerraformDir + "/scripts/*.*",
 			"/scripts/*.*",
 			"kubeconfig/*.*",
@@ -214,13 +214,13 @@ func TestMonolithExample(t *testing.T) {
 			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
 			"modules/containerized_app_landing_zone/*.tf",
 		},
-		TemplateFolder:         monolithExampleDir,
-		Tags:                   []string{"monolith-base-ocp-test"},
+		TemplateFolder:         openshiftLandingZoneExampleDir,
+		Tags:                   []string{"openshift-landing-zone-test"},
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
 		IgnoreAdds: testhelper.Exemptions{
 			List: []string{
-				"module.ocp_cluster_with_add_ons.module.scc_wp.restapi_object.cspm",
+				"module.openshift_landing_zone.module.scc_wp.restapi_object.cspm",
 			},
 		},
 		IgnoreUpdates: testhelper.Exemptions{
@@ -230,7 +230,7 @@ func TestMonolithExample(t *testing.T) {
 				"module.monitoring_agent.helm_release.cloud_monitoring_agent",
 				// Have to ignore account settings as other tests may be updating them concurrently
 				// which can cause consistency test to fail if not ignored.
-				"module.ocp_cluster_with_add_ons.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+				"module.openshift_landing_zone.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
 			},
 		},
 	})

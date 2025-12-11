@@ -26,7 +26,7 @@ The primary goal of this module is to provision an OpenShift cluster on VPC and 
 ## Usage
 
 ```hcl
-module "monolith_ocp_add_ons" {
+module "openshift_landing_zone" {
     source                                    = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/containerized_app_landing_zone"
     version                                   = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
     prefix                                    = "<PREFIX>"

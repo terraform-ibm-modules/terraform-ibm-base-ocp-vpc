@@ -9,10 +9,10 @@ module "resource_group" {
 }
 
 ########################################################################################################################
-# Add-ons
+# OpenShift cluster integrated with other services
 ########################################################################################################################
 
-module "ocp_cluster_with_add_ons" {
+module "openshift_landing_zone" {
   source                                    = "../../modules/containerized_app_landing_zone"
   prefix                                    = var.prefix
   region                                    = var.region
@@ -46,7 +46,7 @@ module "ocp_cluster_with_add_ons" {
 }
 
 data "ibm_container_cluster_config" "cluster_config" {
-  cluster_name_id   = module.ocp_cluster_with_add_ons.cluster_id
+  cluster_name_id   = module.openshift_landing_zone.cluster_id
   resource_group_id = module.resource_group.resource_group_id
   config_dir        = "${path.module}/../../kubeconfig"
 }
@@ -58,10 +58,10 @@ data "ibm_container_cluster_config" "cluster_config" {
 module "monitoring_agent" {
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
   version                   = "1.19.0"
-  cluster_id                = module.ocp_cluster_with_add_ons.cluster_id
+  cluster_id                = module.openshift_landing_zone.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   is_vpc_cluster            = true
-  access_key                = module.ocp_cluster_with_add_ons.cloud_monitoring_access_key
+  access_key                = module.openshift_landing_zone.cloud_monitoring_access_key
   instance_region           = var.region
   metrics_filter            = [{ exclude = "metricA.*" }, { include = "metricB.*" }]
   container_filter          = [{ type = "exclude", parameter = "kubernetes.namespace.name", name = "kube-system" }]
@@ -84,7 +84,6 @@ module "trusted_profile" {
   version                     = "3.2.0"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
-  # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agent and routers sending logs.
   trusted_profile_policies = [{
     roles             = ["Sender"]
     unique_identifier = "logs-agent"
@@ -92,12 +91,11 @@ module "trusted_profile" {
       service = "logs"
     }]
   }]
-  # Set up fine-grained authorization for `logs-agent` running in ROKS cluster in `ibm-observe` namespace.
   trusted_profile_links = [{
     cr_type           = "ROKS_SA"
     unique_identifier = "logs-agent-link"
     links = [{
-      crn       = module.ocp_cluster_with_add_ons.cluster_crn
+      crn       = module.openshift_landing_zone.cluster_crn
       namespace = local.logs_agent_namespace
       name      = local.logs_agent_name
     }]
@@ -106,20 +104,18 @@ module "trusted_profile" {
 }
 
 module "logs_agent" {
-  source                    = "terraform-ibm-modules/logs-agent/ibm"
-  version                   = "1.10.0"
-  cluster_id                = module.ocp_cluster_with_add_ons.cluster_id
-  cluster_resource_group_id = module.resource_group.resource_group_id
-  # Logs agent
+  source                        = "terraform-ibm-modules/logs-agent/ibm"
+  version                       = "1.10.0"
+  cluster_id                    = module.openshift_landing_zone.cluster_id
+  cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
   logs_agent_namespace          = local.logs_agent_namespace
   logs_agent_name               = local.logs_agent_name
-  cloud_logs_ingress_endpoint   = module.ocp_cluster_with_add_ons.cloud_logs_ingress_private_endpoint
+  cloud_logs_ingress_endpoint   = module.openshift_landing_zone.cloud_logs_ingress_private_endpoint
   cloud_logs_ingress_port       = 3443
-  # example of how to add additional metadata to the logs agent
   logs_agent_additional_metadata = [{
     key   = "cluster_id"
-    value = module.ocp_cluster_with_add_ons.cluster_id
+    value = module.openshift_landing_zone.cluster_id
   }]
   logs_agent_resources = {
     limits = {
@@ -131,6 +127,5 @@ module "logs_agent" {
       memory = "1Gi"
     }
   }
-  # example of how to add additional log source path
   logs_agent_system_logs = ["/logs/*.log"]
 }
