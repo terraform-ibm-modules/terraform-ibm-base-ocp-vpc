@@ -86,4 +86,5 @@ module "ocp_base" {
   ocp_entitlement                     = var.ocp_entitlement
   disable_outbound_traffic_protection = false
   disable_public_endpoint             = true
+  cluster_config_endpoint_type        = "vpe"
 }
