@@ -17,7 +17,7 @@ const advancedExampleDir = "examples/advanced"
 const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
-const monolithExampleDir = "examples/monolith"
+const monolithExampleDir = "examples/containerized_app_landing_zone"
 
 func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -212,7 +212,7 @@ func TestMonolithExample(t *testing.T) {
 			"modules/kube-audit/scripts/*.*",
 			"modules/kube-audit/helm-charts/kube-audit/*.*",
 			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
-			"modules/monolith/*.tf",
+			"modules/containerized_app_landing_zone/*.tf",
 		},
 		TemplateFolder:         monolithExampleDir,
 		Tags:                   []string{"monolith-base-ocp-test"},

@@ -13,7 +13,7 @@ module "resource_group" {
 ########################################################################################################################
 
 module "ocp_cluster_with_add_ons" {
-  source                                    = "../../modules/monolith"
+  source                                    = "../../modules/containerized_app_landing_zone"
   prefix                                    = var.prefix
   region                                    = var.region
   ibmcloud_api_key                          = var.ibmcloud_api_key

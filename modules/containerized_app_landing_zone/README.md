@@ -27,14 +27,14 @@ The primary goal of this module is to provision an OpenShift cluster on VPC and 
 
 ```hcl
 module "monolith_ocp_add_ons" {
-    source                                    = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/monolith"
+    source                                    = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/containerized_app_landing_zone"
     version                                   = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
     prefix                                    = "<PREFIX>"
     region                                    = "us-south"
     resource_group_id                         = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
 }
 ```
-To run this module refer to the example [here](../../examples/monolith)
+To run this module refer to the example [here](../../examples/containerized_app_landing_zone)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
