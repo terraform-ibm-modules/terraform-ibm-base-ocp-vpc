@@ -199,7 +199,7 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
-		Prefix:  "mon-ocp",
+		Prefix:  "ocp-lz",
 		TarIncludePatterns: []string{
 			"*.tf",
 			openshiftLandingZoneExampleDir + "/*.tf",

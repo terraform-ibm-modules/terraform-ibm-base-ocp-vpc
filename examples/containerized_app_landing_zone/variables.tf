@@ -11,7 +11,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix for name of all resource created by this example"
-  default     = "mon-eg"
+  default     = "ocp-lz"
   validation {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
@@ -49,7 +49,7 @@ variable "existing_event_notifications_instance_crn" {
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect)."
+  description = "The CRN of an existing KMS instance."
 
   validation {
     condition = anytrue([

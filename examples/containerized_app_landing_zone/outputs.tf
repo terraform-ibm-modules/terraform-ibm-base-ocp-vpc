@@ -1,6 +1,31 @@
-########################################################################################################################
-# Outputs
-########################################################################################################################
+##############################################################################
+# Cluster Outputs
+##############################################################################
+
+output "cluster_name" {
+  value       = module.openshift_landing_zone.cluster_name
+  description = "The name of the provisioned OpenShift cluster."
+}
+
+output "cluster_id" {
+  value       = module.openshift_landing_zone.cluster_id
+  description = "The unique identifier assigned to the provisioned OpenShift cluster."
+}
+
+output "cluster_crn" {
+  description = "The Cloud Resource Name (CRN) of the provisioned OpenShift cluster."
+  value       = module.openshift_landing_zone.cluster_crn
+}
+
+output "workerpools" {
+  description = "A list of worker pools associated with the provisioned cluster"
+  value       = module.openshift_landing_zone.workerpools
+}
+
+output "ocp_version" {
+  description = "The version of OpenShift running on the provisioned cluster."
+  value       = module.openshift_landing_zone.ocp_version
+}
 
 
 ##############################################################################
@@ -111,7 +136,7 @@ output "vpe_crn" {
 ##############################################################################
 
 output "kms_guid" {
-  description = "Key Protect instance GUID or the KMS instance GUID if existing_kms_instance_crn was set"
+  description = "KMS instance GUID"
   value       = module.openshift_landing_zone.kms_guid
 }
 
@@ -120,32 +145,27 @@ output "kms_account_id" {
   value       = module.openshift_landing_zone.kms_account_id
 }
 
-output "key_protect_id" {
-  description = "Key Protect instance ID when an instance is created, otherwise null"
-  value       = module.openshift_landing_zone.key_protect_id
-}
-
 output "kms_instance_crn" {
   value       = module.openshift_landing_zone.kms_instance_crn
-  description = "The CRN of the Hyper Protect Crypto Service instance or Key Protect instance"
+  description = "The CRN of the KMS instance"
 }
 
 ##############################################################################
-# EN Outputs
+# Events Notification Outputs
 ##############################################################################
 
-output "en_crn" {
+output "events_notification_crn" {
   description = "Event Notification crn"
-  value       = module.openshift_landing_zone.en_crn
+  value       = module.openshift_landing_zone.events_notification_crn
 }
 
-output "en_guid" {
+output "events_notification_guid" {
   description = "Event Notification guid"
-  value       = module.openshift_landing_zone.en_guid
+  value       = module.openshift_landing_zone.events_notification_guid
 }
 
 ##############################################################################
-# SM Outputs
+# Secrets Manager Outputs
 ##############################################################################
 
 output "secrets_manager_guid" {
@@ -271,33 +291,4 @@ output "scc_workload_protection_crn" {
 output "scc_workload_protection_name" {
   description = "SCC Workload Protection instance name"
   value       = module.openshift_landing_zone.scc_workload_protection_name
-}
-
-##############################################################################
-# Cluster Outputs
-##############################################################################
-
-output "cluster_name" {
-  value       = module.openshift_landing_zone.cluster_name
-  description = "The name of the provisioned OpenShift cluster."
-}
-
-output "cluster_id" {
-  value       = module.openshift_landing_zone.cluster_id
-  description = "The unique identifier assigned to the provisioned OpenShift cluster."
-}
-
-output "cluster_crn" {
-  description = "The Cloud Resource Name (CRN) of the provisioned OpenShift cluster."
-  value       = module.openshift_landing_zone.cluster_crn
-}
-
-output "workerpools" {
-  description = "A list of worker pools associated with the provisioned cluster"
-  value       = module.openshift_landing_zone.workerpools
-}
-
-output "ocp_version" {
-  description = "The version of OpenShift running on the provisioned cluster."
-  value       = module.openshift_landing_zone.ocp_version
 }

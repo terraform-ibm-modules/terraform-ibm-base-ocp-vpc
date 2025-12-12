@@ -76,7 +76,7 @@ variable "kms_encryption_enabled_cluster" {
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect)."
+  description = "The CRN of an existing KMS instance."
 
   validation {
     condition = anytrue([

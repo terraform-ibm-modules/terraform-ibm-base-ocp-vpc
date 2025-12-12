@@ -1,8 +1,12 @@
 # Landing zone for containerized applications with OpenShift
 
-This module provides a plain vanilla terraform implementation of the secure landing zone architecture- a production-grade Red Hat OpenShift platform on IBM Cloud VPC by providing a fully integrated ecosystem out of the box. Rather than just provisioning compute resources, it orchestrates the critical "operational glue" required for enterprise workloads—automatically wiring together Key Management, Secrets Manager, Cloud Logs, and Cloud Monitoring. This comprehensive approach reduces operational overhead and eliminates manual configuration errors, ensuring your environment is secure, observable, and ready.
+This module provides a **terraform implementation** of the secure landing zone architecture - a production-grade Red Hat OpenShift platform on IBM Cloud VPC by providing a fully integrated ecosystem. Rather than just provisioning compute resources, it orchestrates the critical **operational glue** required for enterprise workloads—automatically wiring together **Key Management**, **Secrets Manager**, **Cloud Logs**, **Cloud Monitoring**, **Cloud Object Storage** and **Events Notification**. This comprehensive approach reduces operational overhead and eliminates manual configuration errors, ensuring your environment is secure, observable, and ready.
 
-Secure, Compliant, and Scalable Designed to support a wide range of business needs—from rapid sandbox experimentation to highly regulated financial services deployments—the architecture is secure by design and fully configurable. It incorporates robust compliance features, such as SCC Workload Protection and automated audit logging, while allowing you to tailor specific integrations and worker pools to your requirements. This flexibility enables organizations to standardize on a single, reliable architectural pattern that streamlines security approvals and scales effortlessly with business demand.
+Secure, Compliant, and Scalable Designed to support a wide range of business needs, the architecture is secure by design and fully configurable. It incorporates robust compliance features, such as **SCC Workload Protection**, while allowing you to tailor specific integrations and worker pools to your requirements. This flexibility enables organizations to standardize on a single, reliable architectural pattern that streamlines security approvals and scales effortlessly with business demand.
+
+### Reference Architecture
+
+![Architecture Diagram](../../reference-architectures/deployable-architecture-ocp-cluster.svg)
 
 ### Components
 
@@ -19,22 +23,19 @@ The primary goal of this module is to provision an OpenShift cluster on VPC and 
 * `App Configuration`: Optional provision and configuration of IBM Cloud App Configuration for centralized feature flag and property management, securely integrated with KMS and Event Notifications. [Learn more](https://registry.terraform.io/modules/terraform-ibm-modules/app-configuration/ibm/1.14.2) about the service module.
 * `Context-Based Restrictions (CBR)`: Optional support for defining and attaching network access rules (CBR zones and rules) to all supported services (KMS, COS, Secrets Manager) to enforce zero-trust networking. [Learn more](https://registry.terraform.io/modules/terraform-ibm-modules/cbr/ibm/1.34.0) about the service module.
 
-### Reference Architecture
-
-![Architecture Diagram](../../reference-architectures/deployable-architecture-ocp-cluster.svg)
-
 ## Usage
 
 ```hcl
 module "openshift_landing_zone" {
-    source                                    = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/containerized_app_landing_zone"
-    version                                   = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
-    prefix                                    = "<PREFIX>"
-    region                                    = "us-south"
-    resource_group_id                         = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+    source            = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/containerized_app_landing_zone"
+    version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
+    prefix            = "<PREFIX>"
+    ibmcloud_api_key  = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+    region            = "us-south"
+    resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
 }
 ```
-To run this module refer to the example [here](../../examples/containerized_app_landing_zone)
+To run this module refer to the code [here](../../examples/containerized_app_landing_zone)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
