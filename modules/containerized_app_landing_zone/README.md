@@ -30,7 +30,7 @@ module "openshift_landing_zone" {
     source            = "terraform-ibm-modules/base-ocp-vpc/ibm//modules/containerized_app_landing_zone"
     version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
     prefix            = "<PREFIX>"
-    ibmcloud_api_key  = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
+    ibmcloud_api_key  = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX" # pragma: allowlist secret
     region            = "us-south"
     resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
 }
@@ -210,7 +210,7 @@ To run this module refer to the code [here](../../examples/containerized_app_lan
 | <a name="input_existing_cos_instance_crn"></a> [existing\_cos\_instance\_crn](#input\_existing\_cos\_instance\_crn) | The CRN of an existing Object Storage instance. | `string` | `null` | no |
 | <a name="input_existing_event_notifications_instance_crn"></a> [existing\_event\_notifications\_instance\_crn](#input\_existing\_event\_notifications\_instance\_crn) | The CRN of the Event Notifications service used to enable lifecycle notifications for your Secrets Manager instance. | `string` | `null` | no |
 | <a name="input_existing_event_notifications_instances"></a> [existing\_event\_notifications\_instances](#input\_existing\_event\_notifications\_instances) | List of Event Notifications instance details for routing critical events that occur in your IBM Cloud Logs. | <pre>list(object({<br/>    crn                  = string<br/>    integration_name     = optional(string)<br/>    skip_iam_auth_policy = optional(bool, false)<br/>  }))</pre> | `[]` | no |
-| <a name="input_existing_kms_instance_crn"></a> [existing\_kms\_instance\_crn](#input\_existing\_kms\_instance\_crn) | The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). | `string` | `null` | no |
+| <a name="input_existing_kms_instance_crn"></a> [existing\_kms\_instance\_crn](#input\_existing\_kms\_instance\_crn) | The CRN of an existing KMS instance. | `string` | `null` | no |
 | <a name="input_existing_secrets_manager_crn"></a> [existing\_secrets\_manager\_crn](#input\_existing\_secrets\_manager\_crn) | The CRN of an existing Secrets Manager instance. If not supplied, a new instance is created. | `string` | `null` | no |
 | <a name="input_flow_logs_cos_bucket_archive_days"></a> [flow\_logs\_cos\_bucket\_archive\_days](#input\_flow\_logs\_cos\_bucket\_archive\_days) | The number of days before the `archive_type` rule action takes effect for the flow logs cloud object storage bucket. | `number` | `90` | no |
 | <a name="input_flow_logs_cos_bucket_archive_type"></a> [flow\_logs\_cos\_bucket\_archive\_type](#input\_flow\_logs\_cos\_bucket\_archive\_type) | The storage class or archive type you want the object to transition to in the flow logs cloud object storage bucket. | `string` | `"Glacier"` | no |
@@ -326,13 +326,11 @@ To run this module refer to the code [here](../../examples/containerized_app_lan
 | <a name="output_cos_instance_crn"></a> [cos\_instance\_crn](#output\_cos\_instance\_crn) | COS instance crn |
 | <a name="output_cos_instance_guid"></a> [cos\_instance\_guid](#output\_cos\_instance\_guid) | COS instance guid |
 | <a name="output_cos_instance_id"></a> [cos\_instance\_id](#output\_cos\_instance\_id) | COS instance ID |
-| <a name="output_en_crn"></a> [en\_crn](#output\_en\_crn) | Event Notification crn |
-| <a name="output_en_guid"></a> [en\_guid](#output\_en\_guid) | Event Notification guid |
-| <a name="output_key_protect_id"></a> [key\_protect\_id](#output\_key\_protect\_id) | Key Protect instance ID when an instance is created, otherwise null |
+| <a name="output_events_notification_crn"></a> [events\_notification\_crn](#output\_events\_notification\_crn) | Event Notification crn |
+| <a name="output_events_notification_guid"></a> [events\_notification\_guid](#output\_events\_notification\_guid) | Event Notification guid |
 | <a name="output_kms_account_id"></a> [kms\_account\_id](#output\_kms\_account\_id) | The account ID of the KMS instance. |
-| <a name="output_kms_config"></a> [kms\_config](#output\_kms\_config) | The KMS config needed for OCP cluster |
-| <a name="output_kms_guid"></a> [kms\_guid](#output\_kms\_guid) | Key Protect instance GUID or the KMS instance GUID if existing\_kms\_instance\_crn was set |
-| <a name="output_kms_instance_crn"></a> [kms\_instance\_crn](#output\_kms\_instance\_crn) | The CRN of the Hyper Protect Crypto Service instance or Key Protect instance |
+| <a name="output_kms_guid"></a> [kms\_guid](#output\_kms\_guid) | KMS instance GUID |
+| <a name="output_kms_instance_crn"></a> [kms\_instance\_crn](#output\_kms\_instance\_crn) | The CRN of the KMS instance |
 | <a name="output_logs_bucket_crn"></a> [logs\_bucket\_crn](#output\_logs\_bucket\_crn) | Logs Cloud Object Storage bucket CRN |
 | <a name="output_metrics_bucket_crn"></a> [metrics\_bucket\_crn](#output\_metrics\_bucket\_crn) | Metrics Cloud Object Storage bucket CRN |
 | <a name="output_network_acls"></a> [network\_acls](#output\_network\_acls) | List of shortnames and IDs of network ACLs. |
