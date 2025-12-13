@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.3"
+  version = "1.4.5"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -225,7 +225,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-lb-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.8.5"
+  version                      = "2.8.6"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []
