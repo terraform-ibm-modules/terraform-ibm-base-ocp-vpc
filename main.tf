@@ -765,7 +765,7 @@ module "cbr_rule" {
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.4"
+  version = "1.3.5"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
