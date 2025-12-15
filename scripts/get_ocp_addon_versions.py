@@ -44,9 +44,9 @@ def get_env_variable():
     Returns:
         str: The value of the environment variable.
     """
-    api_endpoint = os.getenv(
-        "IBMCLOUD_CS_API_ENDPOINT", "https://containers.test.cloud.ibm.com/global"
-    )
+    api_endpoint = os.getenv("IBMCLOUD_CS_API_ENDPOINT")
+    if not api_endpoint:
+        api_endpoint = "https://containers.test.cloud.ibm.com/global"
     return api_endpoint
 
 
@@ -69,8 +69,6 @@ def fetch_addon_versions(iam_token, region, api_endpoint):
     # Default path to /global if none supplied
     base_path = parsed.path.rstrip("/") if parsed.path else "/global"
 
-    # Final API path
-    url = f"{base_path}/v1/addons"
     host = parsed.hostname
     headers = {
         "Authorization": f"Bearer {iam_token}",
@@ -80,6 +78,8 @@ def fetch_addon_versions(iam_token, region, api_endpoint):
 
     conn = http.client.HTTPSConnection(host)
     try:
+        # Final API path
+        url = f"{base_path}/v1/addons"
         conn.request("GET", url, headers=headers)
         response = conn.getresponse()
         data = response.read().decode()
@@ -96,9 +96,9 @@ def fetch_addon_versions(iam_token, region, api_endpoint):
         conn.close()
 
 
-def transform_addons(addons_data):
+def transform_cluster_addons_data(addons_data):
     """
-    Transforms the raw add-on data into a nested dictionary structured by add-on name and version.
+    Transforms cluster add-on raw data into a nested dictionary structured by add-on name and version.
     Args:
         addons_data: Raw data returned by the add-on API.
     Returns:
@@ -146,9 +146,8 @@ def main():
     data = parse_input()
     iam_token, region = validate_inputs(data)
     api_endpoint = get_env_variable()
-    api_endpoint = get_env_variable()
     addons_data = fetch_addon_versions(iam_token, region, api_endpoint)
-    transformed = transform_addons(addons_data)
+    transformed = transform_cluster_addons_data(addons_data)
     output = format_for_terraform(transformed)
 
     print(json.dumps(output))
