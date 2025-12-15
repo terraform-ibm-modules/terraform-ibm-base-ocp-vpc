@@ -633,5 +633,5 @@ variable "audit_webhook_listener_image" {
 variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
-  default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144"
+  default     = "728d5027a778c083ab1dddc3901e988fa054b084@sha256:56074f4ae86eef46e97ea24532769a22fb99c33bfbad657cea4aa370a48fb4e2"
 }
