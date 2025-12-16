@@ -60,17 +60,6 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 	return nil
 }
 
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
-
-	output, err := options.RunTestConsistency()
-
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{

@@ -357,3 +357,14 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	err := options.RunAddonTest()
 	require.NoError(t, err)
 }
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
