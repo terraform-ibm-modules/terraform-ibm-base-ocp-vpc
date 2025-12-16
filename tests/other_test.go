@@ -14,7 +14,6 @@ import (
 )
 
 const advancedExampleDir = "examples/advanced"
-const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 
