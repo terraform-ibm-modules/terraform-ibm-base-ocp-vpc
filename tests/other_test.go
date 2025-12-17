@@ -17,29 +17,6 @@ const advancedExampleDir = "examples/advanced"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 
-func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     terraformDir,
-		Prefix:           prefix,
-		ResourceGroup:    resourceGroup,
-		CloudInfoService: sharedInfoSvc,
-		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
-			List: []string{
-				"module.logs_agents.helm_release.logs_agent",
-			},
-		},
-		TerraformVars: map[string]interface{}{
-			"ocp_version":     ocpVersion,
-			"access_tags":     permanentResources["accessTags"],
-			"ocp_entitlement": "cloud_pak",
-		},
-		CheckApplyResultForUpgrade: true,
-	})
-
-	return options
-}
-
 func getClusterIngress(options *testhelper.TestOptions) error {
 
 	// Get output of the last apply

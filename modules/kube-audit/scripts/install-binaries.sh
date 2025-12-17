@@ -26,7 +26,6 @@ curl --silent \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-# mkdir -p "${DIRECTORY}/common-bash-library"
 tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 

@@ -359,13 +359,11 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
+func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:          t,
-		TerraformDir:     basicExampleDir,
-		Prefix:           "base-ocp",
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
@@ -374,12 +372,20 @@ func TestRunBasicExample(t *testing.T) {
 			},
 		},
 		TerraformVars: map[string]interface{}{
-			"ocp_version":     ocpVersion4,
+			"ocp_version":     ocpVersion,
 			"access_tags":     permanentResources["accessTags"],
 			"ocp_entitlement": "cloud_pak",
 		},
 		CheckApplyResultForUpgrade: true,
 	})
+
+	return options
+}
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
 
 	output, err := options.RunTestConsistency()
 
