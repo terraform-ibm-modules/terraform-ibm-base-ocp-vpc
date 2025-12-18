@@ -175,6 +175,11 @@ variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
   default     = 1
+
+  validation {
+    condition     = can(regex("^[1-9][0-9]*$", var.default_worker_pool_workers_per_zone))
+    error_message = "Worker count per zone must be greater than 0."
+  }
 }
 
 variable "default_worker_pool_operating_system" {
@@ -242,6 +247,13 @@ variable "additional_worker_pools" {
 variable "existing_cos_instance_crn" {
   type        = string
   description = "The CRN of an already existing Object Storage instance to use for OpenShift internal registry storage."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}cloud-object-storage:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_cos_instance_crn))
+    ])
+    error_message = "The value provided for 'existing_cos_instance_crn' is not valid."
+  }
 }
 
 ##############################################################
@@ -251,6 +263,13 @@ variable "existing_cos_instance_crn" {
 variable "existing_vpc_crn" {
   type        = string
   description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the default worker pool is provisioned across all the subnets in the VPC."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}is:(.*:)([aos]\\/[\\w_\\-]+)::vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_vpc_crn))
+    ])
+    error_message = "The value provided for 'existing_vpc_crn' is not valid."
+  }
 }
 
 variable "existing_subnet_ids" {
@@ -380,10 +399,10 @@ variable "existing_kms_instance_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
       var.existing_kms_instance_crn == null,
     ])
-    error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' in not valid."
+    error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' is not valid."
   }
 }
 
@@ -394,10 +413,10 @@ variable "existing_cluster_kms_key_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_cluster_kms_key_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_cluster_kms_key_crn)),
       var.existing_cluster_kms_key_crn == null,
     ])
-    error_message = "The provided KMS key CRN in the input 'existing_cluster_kms_key_crn' in not valid."
+    error_message = "The provided KMS key CRN in the input 'existing_cluster_kms_key_crn' is not valid."
   }
 
   validation {
@@ -466,10 +485,10 @@ variable "existing_boot_volume_kms_key_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
       var.existing_boot_volume_kms_key_crn == null,
     ])
-    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' in not valid."
+    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' is not valid."
   }
 }
 
@@ -532,12 +551,28 @@ variable "existing_secrets_manager_instance_crn" {
   type        = string
   description = "CRN of the Secrets Manager instance where Ingress certificate secrets are stored. If 'enable_secrets_manager_integration' is set to true then this value is required."
   default     = null
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_secrets_manager_instance_crn)),
+      var.existing_secrets_manager_instance_crn == null,
+    ])
+    error_message = "The value provided for 'existing_secrets_manager_instance_crn' is not valid."
+  }
 }
 
 variable "secrets_manager_secret_group_id" {
   type        = string
   description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If 'enable_secrets_manager_integration' is set to true and 'secrets_manager_secret_group_id' is not provided, a new group will be created with the same name as cluster_id."
   default     = null
+
+  validation {
+    condition = anytrue([
+      can(regex("[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}", var.secrets_manager_secret_group_id)),
+      var.secrets_manager_secret_group_id == null,
+    ])
+    error_message = "The value provided for 'secrets_manager_secret_group_id' is not valid."
+  }
 }
 
 variable "secrets_manager_endpoint_type" {
