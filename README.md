@@ -27,7 +27,6 @@ By default, the module automatically downloads the required dependencies if they
 ## Overview
 * [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
 * [Submodules](./modules)
-    * [containerized_app_landing_zone](./modules/containerized_app_landing_zone)
     * [fscloud](./modules/fscloud)
     * [kube-audit](./modules/kube-audit)
     * [worker-pool](./modules/worker-pool)
