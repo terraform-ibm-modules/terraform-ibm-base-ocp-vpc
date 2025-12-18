@@ -203,6 +203,7 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 		TarIncludePatterns: []string{
 			"*.tf",
 			openshiftLandingZoneExampleDir + "/*.tf",
+			openshiftLandingZoneExampleDir + "/kubeconfig/*.*",
 			fullyConfigurableTerraformDir + "/scripts/*.*",
 			"/scripts/*.*",
 			"kubeconfig/*.*",
@@ -212,7 +213,6 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 			"modules/kube-audit/scripts/*.*",
 			"modules/kube-audit/helm-charts/kube-audit/*.*",
 			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
-			"modules/containerized_app_landing_zone/*.tf",
 		},
 		TemplateFolder:         openshiftLandingZoneExampleDir,
 		Tags:                   []string{"openshift-landing-zone-test"},
@@ -220,7 +220,7 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 		WaitJobCompleteMinutes: 240,
 		IgnoreAdds: testhelper.Exemptions{
 			List: []string{
-				"module.openshift_landing_zone.module.scc_wp.restapi_object.cspm",
+				"module.scc_wp.restapi_object.cspm",
 			},
 		},
 		IgnoreUpdates: testhelper.Exemptions{
@@ -230,7 +230,7 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 				"module.monitoring_agent.helm_release.cloud_monitoring_agent",
 				// Have to ignore account settings as other tests may be updating them concurrently
 				// which can cause consistency test to fail if not ignored.
-				"module.openshift_landing_zone.module.metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+				"metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
 			},
 		},
 	})
