@@ -14,33 +14,9 @@ import (
 )
 
 const advancedExampleDir = "examples/advanced"
-const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const openshiftLandingZoneExampleDir = "examples/containerized_app_landing_zone"
-
-func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     terraformDir,
-		Prefix:           prefix,
-		ResourceGroup:    resourceGroup,
-		CloudInfoService: sharedInfoSvc,
-		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
-			List: []string{
-				"module.logs_agents.helm_release.logs_agent",
-			},
-		},
-		TerraformVars: map[string]interface{}{
-			"ocp_version":     ocpVersion,
-			"access_tags":     permanentResources["accessTags"],
-			"ocp_entitlement": "cloud_pak",
-		},
-		CheckApplyResultForUpgrade: true,
-	})
-
-	return options
-}
 
 func getClusterIngress(options *testhelper.TestOptions) error {
 
@@ -59,17 +35,6 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
 	}
 	return nil
-}
-
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
-
-	output, err := options.RunTestConsistency()
-
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunMultiClusterExample(t *testing.T) {

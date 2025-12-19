@@ -26,19 +26,18 @@ curl --silent \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-mkdir -p "${DIRECTORY}/common-bash-library"
-tar -xzf "${DIRECTORY}/common-bash.tar.gz" --strip-components=1 -C "${DIRECTORY}/common-bash-library"
+tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
-# shellcheck disable=SC1091
-source "${DIRECTORY}/common-bash-library/common/common.sh"
+# shellcheck disable=SC1091,SC1090
+source "${DIRECTORY}/common-bash-library-${TAG#v}/common/common.sh"
 
 echo "Installing jq."
 install_jq "latest" "${DIRECTORY}" "true"
 echo "Installing kubectl."
 install_kubectl "latest" "${DIRECTORY}" "true"
 
-rm -rf "${DIRECTORY}/common-bash-library"
+rm -rf "${DIRECTORY}/common-bash-library-${TAG#v}"
 
 echo "Installation complete successfully"

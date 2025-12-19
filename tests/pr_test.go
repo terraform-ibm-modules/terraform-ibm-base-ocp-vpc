@@ -26,6 +26,7 @@ import (
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
+const basicExampleDir = "examples/basic"
 const quickStartTerraformDir = "solutions/quickstart"
 const resourceGroup = "geretain-test-base-ocp-vpc"
 
@@ -352,4 +353,38 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
+}
+
+func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:          t,
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
+		ResourceGroup:    resourceGroup,
+		CloudInfoService: sharedInfoSvc,
+		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
+			List: []string{
+				"module.logs_agents.helm_release.logs_agent",
+			},
+		},
+		TerraformVars: map[string]interface{}{
+			"ocp_version":     ocpVersion,
+			"access_tags":     permanentResources["accessTags"],
+			"ocp_entitlement": "cloud_pak",
+		},
+		CheckApplyResultForUpgrade: true,
+	})
+
+	return options
+}
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
