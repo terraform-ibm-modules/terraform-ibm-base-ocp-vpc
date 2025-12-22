@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.5"
+  version = "1.4.7"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "10.7.2"
+  version                       = "10.7.6"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -30,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.7.2"
+  version = "10.7.6"
 
   bucket_configs = [
     {
@@ -52,7 +52,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.10.1"
+  version           = "8.10.4"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -225,7 +225,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-lb-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.8.6"
+  version                      = "2.8.8"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []

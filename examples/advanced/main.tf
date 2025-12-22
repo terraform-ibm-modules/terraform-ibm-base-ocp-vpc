@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.5"
+  version = "1.4.7"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.4"
+  version                   = "5.5.9"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -240,7 +240,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.2"
+  version           = "1.10.9"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -249,7 +249,7 @@ module "cloud_logs" {
 
 module "trusted_profile" {
   source                      = "terraform-ibm-modules/trusted-profile/ibm"
-  version                     = "3.2.7"
+  version                     = "3.2.12"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
   # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agents and routers sending logs.
@@ -276,7 +276,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.15.3"
+  version                       = "1.15.5"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id

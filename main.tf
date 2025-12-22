@@ -141,7 +141,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.7.2"
+  version                = "10.7.6"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -657,7 +657,7 @@ locals {
 module "attach_sg_to_lb" {
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.6"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -708,7 +708,7 @@ locals {
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.6"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -717,7 +717,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.6"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -726,7 +726,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.6"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]
@@ -780,7 +780,7 @@ module "cbr_rule" {
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.4"
+  version = "1.3.7"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
