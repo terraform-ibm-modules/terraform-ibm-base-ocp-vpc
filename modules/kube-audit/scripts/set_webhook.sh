@@ -9,10 +9,12 @@ CLUSTER_ID="$4"
 RESOURCE_GROUP_ID="$5"
 POLICY="$6"
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
+export PATH=$PATH:${7:-"/tmp"}
+
 get_cloud_endpoint() {
     iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
     IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
-
     cs_api_endpoint="${IBMCLOUD_CS_API_ENDPOINT:-"containers.cloud.ibm.com"}"
     cs_api_endpoint=${cs_api_endpoint#https://}
     IBMCLOUD_CS_API_ENDPOINT=${cs_api_endpoint%/global}

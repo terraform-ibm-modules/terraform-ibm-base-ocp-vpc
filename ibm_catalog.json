@@ -26,7 +26,7 @@
         "ROKS"
       ],
       "short_description": "Deploys an OpenShift topology on VPC with flexible configurations, QuickStart options for simplified setup, and advanced features for security and compliance",
-      "long_description": "This solution enables the provisioning of Red Hat OpenShift clusters on IBM Cloud VPC using a range of configurations tailored to different needs — from sandbox experimentation to validated financial services deployments. Each variation offers a distinct balance of customization, integration with security and observability features, and readiness for production or evaluation use. Whether you're exploring OpenShift capabilities or deploying in regulated environments, these configurations help accelerate your cloud-native journey.",
+      "long_description": "This solution enables the provisioning of Red Hat OpenShift clusters on IBM Cloud VPC using a range of configurations tailored to different needs — from sandbox experimentation to validated financial services deployments. Each variation offers a distinct balance of customization, integration with security and observability features, and readiness for production or evaluation use. Whether you're exploring OpenShift capabilities or deploying in regulated environments, these configurations help accelerate your cloud-native journey. \n\nLeverage [Terraform IBM Modules](https://github.com/terraform-ibm-modules) to shape and scale your solutions. You can integrate Terraform IBM Modules (TIM) to extend functionality and design a solution tailored to your environment and operations needs. These modules offer reusable, customizable elements that follow IBM Cloud's recommended practices. You can access the [source code and documentation](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone) and use it to extend your current architecture or create new solutions.",
       "offering_docs_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-overview#overview-ocp",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/images/ocp_icon.svg",
       "provider_name": "IBM",
@@ -66,6 +66,10 @@
         {
           "title": "Sets up activity tracking for the OpenShift cluster",
           "description": "Optionally, you can deploy [Cloud automation for Activity Tracker Event Routing](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-activity-tracker-918453c3-4f97-4583-8c4a-83ef12fc7916-global) to route and securely store auditing events that are related to your OpenShift cluster."
+        },
+        {
+          "title": "Composable and Extensible Architecture",
+          "description": "This architecture illustrates how Terraform IBM Modules(TIM) can be integrated to deliver a complete solution on IBM Cloud. Each module is a reusable, and validated component for security, compliance, and operational IBM best practices. You can deploy this architecture as-is or configure it as code by leveraging the underlying modules to fit your specific requirements. Explore the [source code and documentation](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone) to adapt, extend, or create entirely new solutions using these building blocks."
         }
       ],
       "flavors": [
@@ -476,7 +480,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -490,7 +499,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -499,7 +513,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -516,7 +535,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -545,7 +569,18 @@
             },
             {
               "key": "existing_subnet_ids",
-              "hidden": true
+              "display_name": "existing_subnets",
+              "hidden": true,
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "subnet",
+                  "selection": "multi_select",
+                  "valueType": "id"
+                }
+              }
             },
             {
               "key": "use_private_endpoint",
@@ -636,7 +671,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -653,7 +693,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ],
               "hidden": true
@@ -665,7 +705,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_cluster_kms_key_crn' in not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -702,7 +742,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_boot_volume_kms_key_crn' in not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -722,7 +762,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -731,13 +776,24 @@
             },
             {
               "key": "existing_secrets_manager_instance_crn",
+              "display_name": "existing_secrets_manager_instance",
               "value_constraints": [
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_secrets_manager_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ],
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "secrets-manager",
+                  "selection": "single_select",
+                  "valueType": "crn"
+                }
+              },
               "hidden": true
             },
             {
@@ -757,11 +813,9 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
               "type_metadata": "string",
               "virtual": true,
               "required": true,
-              "type": "string",
               "default_value": "standard",
               "options": [
                 {
@@ -778,25 +832,47 @@
             },
             {
               "key": "existing_vpc_crn",
+              "display_name": "existing_vpc",
               "hidden": true,
               "value_constraints": [
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_vpc_crn' is not valid.",
-                  "value": "^crn:(.*:){3}is:(.*:){2}:vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^crn:v\\d:(.*:){2}is:(.*:)([aos]\\/[\\w_\\-]+):vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
-              ]
+              ],
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "vpc",
+                  "selection": "single_select",
+                  "valueType": "crn"
+                }
+              }
             },
             {
               "key": "existing_cos_instance_crn",
+              "display_name": "existing_cos_instance",
               "hidden": true,
               "value_constraints": [
                 {
                   "type": "regex",
-                  "description": "The value provided for 'existing_cos_instance_crn' is not valid.",
-                  "value": "^crn:(.*:){3}cloud-object-storage:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "description": "The value provided for 'existing_cos_instance' is not valid.",
+                  "value": "^crn:v\\d:(.*:){2}cloud-object-storage:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
-              ]
+              ],
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "cloud-object-storage",
+                  "selection": "single_select",
+                  "valueType": "crn"
+                }
+              }
             },
             {
               "key": "skip_ocp_secrets_manager_iam_auth_policy",
@@ -812,7 +888,12 @@
               "custom_config": {
                 "grouping": "deployment",
                 "original_grouping": "deployment",
-                "type": "code_editor"
+                "type": "code_editor",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -826,7 +907,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -1306,7 +1392,6 @@
               "key": "size",
               "type_metadata": "string",
               "required": true,
-              "type": "string",
               "options": [
                 {
                   "description": "bx2.4x16 with 4 vCPU and 16 GB memory, 2 nodes across 2 zones.",

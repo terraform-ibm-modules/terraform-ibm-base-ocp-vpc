@@ -102,13 +102,13 @@ variable "worker_pools" {
   }
 
   validation {
-    condition = alltrue([
+    condition = (contains(local.valid_ocp_versions, local.ocp_version_num)) && alltrue([
       for wp in var.worker_pools :
       (local.ocp_version_num == "4.14" && wp.operating_system == local.os_rhel) ||
       (local.ocp_version_num == "4.15" && contains([local.os_rhel, local.os_rhcos], wp.operating_system)) ||
       (contains(["4.16", "4.17"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhel, local.os_rhcos], wp.operating_system)) ||
-      (local.ocp_version_num == "4.18" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
-      (local.ocp_version_num == "4.19" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system))
+      (contains(["4.18", "4.19", "4.20"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
+      (tonumber(local.ocp_version_num) >= 4.21 && wp.operating_system == local.os_rhcos)
     ])
     error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); v4.18: (RHCOS, RHEL_9_64); v4.19: (RHEL_9_64, RHCOS)"
   }
@@ -471,4 +471,11 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   type        = bool
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
   default     = false
+}
+
+variable "install_required_binaries" {
+  type        = bool
+  default     = true
+  description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
+  nullable    = false
 }

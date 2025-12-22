@@ -95,10 +95,17 @@ variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   nullable    = false
-  default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144"
+  default     = "728d5027a778c083ab1dddc3901e988fa054b084@sha256:56074f4ae86eef46e97ea24532769a22fb99c33bfbad657cea4aa370a48fb4e2"
 
   validation {
     condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_tag_digest))
     error_message = "The value of the audit webhook listener image version must match the tag and sha256 image digest format"
   }
+}
+
+variable "install_required_binaries" {
+  type        = bool
+  default     = true
+  description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
+  nullable    = false
 }
