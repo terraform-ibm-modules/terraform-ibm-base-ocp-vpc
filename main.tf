@@ -82,6 +82,27 @@ locals {
   ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
+locals {
+  openshift_ai_version   = try(var.addons["openshift-ai"].version, null)
+  openshift_ai_supported = (local.openshift_ai_version != null && contains(keys(local.ocp_ai_addon_supported_versions), local.openshift_ai_version))
+  ocp_supported_range    = (local.openshift_ai_supported ? local.ocp_ai_addon_supported_versions[local.openshift_ai_version].supported_openshift_range : null)
+  ocp_min_max_range      = (local.ocp_supported_range != null ? split(" ", local.ocp_supported_range) : [])
+  ocp_min                = (local.ocp_supported_range != null ? tonumber(regexall("\\d+\\.\\d+", local.ocp_min_max_range[0])[0]) : null)
+  ocp_max                = (local.ocp_supported_range != null ? tonumber(regexall("\\d+\\.\\d+", local.ocp_min_max_range[1])[0]) : null)
+
+  openshift_ocp_compatible = (local.ocp_supported_range != null && local.ocp_version_num >= local.ocp_min && local.ocp_version_num < local.ocp_max)
+}
+
+
+resource "null_resource" "validate_ocp_ai_addons" {
+  lifecycle {
+    precondition {
+      condition     = (local.openshift_ai_version == null || (local.openshift_ai_supported && local.openshift_ocp_compatible))
+      error_message = (local.openshift_ai_version == null ? "" : (!local.openshift_ai_supported ? format("OCP AI add-on version %s is not supported.", local.openshift_ai_version) : format("OCP AI add-on version %s requires OCP version %s.", local.openshift_ai_version, local.ocp_supported_range)))
+    }
+  }
+}
+
 # Separate local block to handle os validations
 locals {
   os_rhel  = "REDHAT_8_64"
