@@ -101,7 +101,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		Region:        region,
 		TarIncludePatterns: []string{
 			"*.tf",
-			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
+			quickStartTerraformDir + "/*.tf", "scripts/*.*", "kubeconfig/README.md",
 			"modules/worker-pool/*.tf",
 			"modules/kube-audit/scripts/*.sh",
 		},
@@ -162,7 +162,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "ocp-fc",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/worker-pool/*.tf", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.*", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/worker-pool/*.tf", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
@@ -203,7 +203,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                    t,
 		Prefix:                     "fc-upg",
-		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
+		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.*", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
 		TemplateFolder:             fullyConfigurableTerraformDir,
 		Tags:                       []string{"test-schematic"},
 		DeleteWorkspaceOnFail:      false,
