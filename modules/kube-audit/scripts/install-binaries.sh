@@ -26,7 +26,7 @@ curl --silent \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"
+tar -xvf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}" --no-same-permissions --no-same-owner
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
