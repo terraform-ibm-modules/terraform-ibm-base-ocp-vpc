@@ -14,8 +14,7 @@ TAG=v0.2.0
 echo "Downloading common-bash-library version ${TAG}."
 
 # download common-bash-library
-curl --silent \
-    --connect-timeout 5 \
+curl --connect-timeout 5 \
     --max-time 10 \
     --retry 3 \
     --retry-delay 2 \
@@ -26,7 +25,7 @@ curl --silent \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-tar -xvf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}" --no-same-permissions --no-same-owner
+tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
