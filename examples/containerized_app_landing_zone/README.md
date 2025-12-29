@@ -39,28 +39,28 @@ The primary goal of this example is to provision an OpenShift cluster on VPC and
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_activity_tracker"></a> [activity\_tracker](#module\_activity\_tracker) | terraform-ibm-modules/activity-tracker/ibm | 1.5.10 |
+| <a name="module_activity_tracker"></a> [activity\_tracker](#module\_activity\_tracker) | terraform-ibm-modules/activity-tracker/ibm | 1.5.15 |
 | <a name="module_app_config"></a> [app\_config](#module\_app\_config) | terraform-ibm-modules/app-configuration/ibm | 1.14.4 |
-| <a name="module_at_cos_bucket"></a> [at\_cos\_bucket](#module\_at\_cos\_bucket) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.7.6 |
-| <a name="module_cloud_logs"></a> [cloud\_logs](#module\_cloud\_logs) | terraform-ibm-modules/cloud-logs/ibm | 1.10.10 |
-| <a name="module_cloud_logs_buckets"></a> [cloud\_logs\_buckets](#module\_cloud\_logs\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.7.6 |
-| <a name="module_cloud_monitoring"></a> [cloud\_monitoring](#module\_cloud\_monitoring) | terraform-ibm-modules/cloud-monitoring/ibm | 1.12.6 |
-| <a name="module_cos"></a> [cos](#module\_cos) | terraform-ibm-modules/cos/ibm//modules/fscloud | 10.7.6 |
-| <a name="module_en_cos_buckets"></a> [en\_cos\_buckets](#module\_en\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.7.6 |
-| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.10.23 |
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.5.10 |
-| <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.15.6 |
-| <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.12.6 |
+| <a name="module_at_cos_bucket"></a> [at\_cos\_bucket](#module\_at\_cos\_bucket) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.8.3 |
+| <a name="module_cloud_logs"></a> [cloud\_logs](#module\_cloud\_logs) | terraform-ibm-modules/cloud-logs/ibm | 1.10.15 |
+| <a name="module_cloud_logs_buckets"></a> [cloud\_logs\_buckets](#module\_cloud\_logs\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.8.3 |
+| <a name="module_cloud_monitoring"></a> [cloud\_monitoring](#module\_cloud\_monitoring) | terraform-ibm-modules/cloud-monitoring/ibm | 1.12.12 |
+| <a name="module_cos"></a> [cos](#module\_cos) | terraform-ibm-modules/cos/ibm//modules/fscloud | 10.8.3 |
+| <a name="module_en_cos_buckets"></a> [en\_cos\_buckets](#module\_en\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.8.3 |
+| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.10.29 |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.5.16 |
+| <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.16.2 |
+| <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.12.12 |
 | <a name="module_monitoring_agent"></a> [monitoring\_agent](#module\_monitoring\_agent) | terraform-ibm-modules/monitoring-agent/ibm | 1.19.2 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.4.7 |
-| <a name="module_scc_wp"></a> [scc\_wp](#module\_scc\_wp) | terraform-ibm-modules/scc-workload-protection/ibm | 1.16.10 |
-| <a name="module_secret_group"></a> [secret\_group](#module\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.32 |
-| <a name="module_secrets_manager"></a> [secrets\_manager](#module\_secrets\_manager) | terraform-ibm-modules/secrets-manager/ibm | 2.12.10 |
-| <a name="module_trusted_profile"></a> [trusted\_profile](#module\_trusted\_profile) | terraform-ibm-modules/trusted-profile/ibm | 3.2.13 |
+| <a name="module_scc_wp"></a> [scc\_wp](#module\_scc\_wp) | terraform-ibm-modules/scc-workload-protection/ibm | 1.16.15 |
+| <a name="module_secret_group"></a> [secret\_group](#module\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.35 |
+| <a name="module_secrets_manager"></a> [secrets\_manager](#module\_secrets\_manager) | terraform-ibm-modules/secrets-manager/ibm | 2.12.13 |
+| <a name="module_trusted_profile"></a> [trusted\_profile](#module\_trusted\_profile) | terraform-ibm-modules/trusted-profile/ibm | 3.2.17 |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-ibm-modules/landing-zone-vpc/ibm | 8.10.4 |
-| <a name="module_vpc_cos_buckets"></a> [vpc\_cos\_buckets](#module\_vpc\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.7.6 |
-| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 4.8.11 |
+| <a name="module_vpc_cos_buckets"></a> [vpc\_cos\_buckets](#module\_vpc\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.8.3 |
+| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 4.8.17 |
 
 ### Resources
 

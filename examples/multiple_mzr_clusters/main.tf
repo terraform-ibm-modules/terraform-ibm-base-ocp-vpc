@@ -176,7 +176,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 
 module "monitoring_instance" {
   source                  = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                 = "1.12.6"
+  version                 = "1.12.12"
   resource_group_id       = module.resource_group.resource_group_id
   region                  = var.region
   plan                    = "graduated-tier"
