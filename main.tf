@@ -53,6 +53,20 @@ locals {
   binaries_path = "/tmp"
 }
 
+########################################################################################################################
+# Get OCP AI Add-on Versions
+########################################################################################################################
+
+data "ibm_iam_auth_token" "tokendata" {}
+
+data "external" "ocp_addon_versions" {
+  program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
+  query = {
+    IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+    REGION    = var.region
+  }
+}
+
 # Local block to verify validations for OCP AI Addon.
 locals {
 
@@ -65,6 +79,7 @@ locals {
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
+  ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
 # Separate local block to handle os validations
