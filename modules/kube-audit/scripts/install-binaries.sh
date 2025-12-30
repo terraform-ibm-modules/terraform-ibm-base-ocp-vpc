@@ -14,7 +14,8 @@ TAG=v0.2.0
 echo "Downloading common-bash-library version ${TAG}."
 
 # download common-bash-library
-curl --connect-timeout 5 \
+curl --silent \
+    --connect-timeout 5 \
     --max-time 10 \
     --retry 3 \
     --retry-delay 2 \
@@ -24,6 +25,8 @@ curl --connect-timeout 5 \
     --location \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
+
+uname -a
 
 tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}" --no-overwrite-dir
 rm -f "${DIRECTORY}/common-bash.tar.gz"
