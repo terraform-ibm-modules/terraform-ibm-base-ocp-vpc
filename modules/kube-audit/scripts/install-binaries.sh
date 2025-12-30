@@ -25,7 +25,7 @@ curl --connect-timeout 5 \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"
+tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}" --no-overwrite-dir
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
