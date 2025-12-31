@@ -49,6 +49,22 @@ locals {
 
   # for versions older than 4.15, this value must be null, or provider gives error
   disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+
+  binaries_path = "/tmp"
+}
+
+########################################################################################################################
+# Get OCP AI Add-on Versions
+########################################################################################################################
+
+data "ibm_iam_auth_token" "tokendata" {}
+
+data "external" "ocp_addon_versions" {
+  program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
+  query = {
+    IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+    REGION    = var.region
+  }
 }
 
 # Local block to verify validations for OCP AI Addon.
@@ -63,6 +79,7 @@ locals {
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
+  ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
 # Separate local block to handle os validations
@@ -101,6 +118,20 @@ locals {
   default_wp_validation = local.rhcos_check ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
 }
 
+resource "null_resource" "install_required_binaries" {
+  count = var.install_required_binaries && (var.verify_worker_network_readiness || var.enable_ocp_console != null || lookup(var.addons, "cluster-autoscaler", null) != null) ? 1 : 0
+  triggers = {
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+    cluster_autoscaler              = lookup(var.addons, "cluster-autoscaler", null) != null
+    enable_ocp_console              = var.enable_ocp_console
+  }
+  provisioner "local-exec" {
+    # Using the script from the kube-audit module to avoid code duplication.
+    command     = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 # Lookup the current default kube version
 data "ibm_container_cluster_versions" "cluster_versions" {
   resource_group_id = var.resource_group_id
@@ -110,7 +141,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.5.11"
+  version                = "10.8.3"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -478,10 +509,14 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+  depends_on = [null_resource.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+
+  triggers = {
+    verify_worker_network_readiness = var.verify_worker_network_readiness
+  }
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_network_healthy.sh"
+    command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -494,9 +529,12 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
-  depends_on = [null_resource.confirm_network_healthy]
+  depends_on = [null_resource.install_required_binaries, null_resource.confirm_network_healthy]
+  triggers = {
+    enable_ocp_console = var.enable_ocp_console
+  }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/enable_disable_ocp_console.sh"
+    command     = "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -568,10 +606,13 @@ locals {
 
 resource "null_resource" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [ibm_container_addons.addons]
+  depends_on = [null_resource.install_required_binaries, ibm_container_addons.addons]
 
+  triggers = {
+    cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
+  }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/get_config_map_status.sh"
+    command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
@@ -616,7 +657,7 @@ locals {
 module "attach_sg_to_lb" {
   count                          = length(var.additional_lb_security_group_ids)
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.0"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_lb_security_group_ids[count.index]
   use_existing_security_group_id = true
   target_ids                     = [for index in range(var.number_of_lbs) : local.lbs_associated_with_cluster[index]] # number_of_lbs is necessary to give a static number of elements to tf to accomplish the apply when the cluster does not initially exists
@@ -667,7 +708,7 @@ locals {
 module "attach_sg_to_master_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["master"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.0"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["master"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.master_vpe_id]
@@ -676,7 +717,7 @@ module "attach_sg_to_master_vpe" {
 module "attach_sg_to_api_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["api"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.0"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["api"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.api_vpe_id]
@@ -685,7 +726,7 @@ module "attach_sg_to_api_vpe" {
 module "attach_sg_to_registry_vpe" {
   count                          = length(var.additional_vpe_security_group_ids["registry"])
   source                         = "terraform-ibm-modules/security-group/ibm"
-  version                        = "2.8.0"
+  version                        = "2.8.8"
   existing_security_group_id     = var.additional_vpe_security_group_ids["registry"][count.index]
   use_existing_security_group_id = true
   target_ids                     = [local.registry_vpe_id]
@@ -706,7 +747,7 @@ locals {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.34.0"
+  version          = "1.35.6"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
@@ -739,7 +780,7 @@ module "cbr_rule" {
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.0"
+  version = "1.3.7"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
@@ -758,7 +799,6 @@ resource "time_sleep" "wait_for_auth_policy" {
   depends_on      = [ibm_iam_authorization_policy.ocp_secrets_manager_iam_auth_policy[0]]
   create_duration = "30s"
 }
-
 
 resource "ibm_container_ingress_instance" "instance" {
   count           = var.enable_secrets_manager_integration ? 1 : 0

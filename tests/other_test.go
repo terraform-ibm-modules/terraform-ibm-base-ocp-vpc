@@ -14,32 +14,9 @@ import (
 )
 
 const advancedExampleDir = "examples/advanced"
-const basicExampleDir = "examples/basic"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
-
-func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:          t,
-		TerraformDir:     terraformDir,
-		Prefix:           prefix,
-		ResourceGroup:    resourceGroup,
-		CloudInfoService: sharedInfoSvc,
-		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
-			List: []string{
-				"module.logs_agents.helm_release.logs_agent",
-			},
-		},
-		TerraformVars: map[string]interface{}{
-			"ocp_version":     ocpVersion,
-			"access_tags":     permanentResources["accessTags"],
-			"ocp_entitlement": "cloud_pak",
-		},
-		CheckApplyResultForUpgrade: true,
-	})
-
-	return options
-}
+const openshiftLandingZoneExampleDir = "examples/containerized_app_landing_zone"
 
 func getClusterIngress(options *testhelper.TestOptions) error {
 
@@ -58,17 +35,6 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
 	}
 	return nil
-}
-
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
-
-	output, err := options.RunTestConsistency()
-
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunMultiClusterExample(t *testing.T) {
@@ -187,6 +153,55 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
+	}
+
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestOpenshiftLandingZoneExample(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "ocp-lz",
+		TarIncludePatterns: []string{
+			"*.tf",
+			openshiftLandingZoneExampleDir + "/*.tf",
+			openshiftLandingZoneExampleDir + "/kubeconfig/*.*",
+			fullyConfigurableTerraformDir + "/scripts/*.*",
+			"/scripts/*.*",
+			"kubeconfig/*.*",
+			"modules/kube-audit/*.*",
+			"modules/worker-pool/*.*",
+			"modules/kube-audit/kubeconfig/*.*",
+			"modules/kube-audit/scripts/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/*.*",
+			"modules/kube-audit/helm-charts/kube-audit/templates/*.*",
+		},
+		TemplateFolder:         openshiftLandingZoneExampleDir,
+		Tags:                   []string{"openshift-landing-zone-test"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 240,
+		IgnoreAdds: testhelper.Exemptions{
+			List: []string{
+				"module.scc_wp.restapi_object.cspm",
+			},
+		},
+		IgnoreUpdates: testhelper.Exemptions{
+			List: []string{
+				"module.ocp_base.ibm_container_addons.addons",
+				"module.logs_agent.helm_release.logs_agent",
+				"module.monitoring_agent.helm_release.cloud_monitoring_agent",
+				// Have to ignore account settings as other tests may be updating them concurrently
+				// which can cause consistency test to fail if not ignored.
+				"metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+			},
+		},
+	})
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 	}
 
 	err := options.RunSchematicTest()
