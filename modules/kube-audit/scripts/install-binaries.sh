@@ -26,9 +26,24 @@ curl --silent \
     --output "${DIRECTORY}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-sleep 5
+MAX_RETRIES=5
+ATTEMPT=1
 
-tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}" --no-overwrite-dir
+while [ "$ATTEMPT" -le "$MAX_RETRIES" ]; do
+  if tar -xzf "${DIRECTORY}/common-bash.tar.gz" -C "${DIRECTORY}"; then
+    break
+  fi
+
+  echo "tar extraction failed (attempt ${ATTEMPT}/${MAX_RETRIES})"
+  ATTEMPT=$((ATTEMPT + 1))
+  sleep 2
+done
+
+if [ "$ATTEMPT" -gt "$MAX_RETRIES" ]; then
+  echo "tar extraction failed after ${MAX_RETRIES} attempts"
+  exit 1
+fi
+
 rm -f "${DIRECTORY}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
