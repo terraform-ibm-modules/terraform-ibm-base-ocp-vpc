@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.16"
+  version                     = "5.5.19"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -279,7 +279,7 @@ module "secret_group" {
   }
   count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.35"
+  version                  = "1.3.36"
   region                   = module.existing_secrets_manager_instance_parser[0].region
   secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
   secret_group_name        = module.ocp_base.cluster_id
