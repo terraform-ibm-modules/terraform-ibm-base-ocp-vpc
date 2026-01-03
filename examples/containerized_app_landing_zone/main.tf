@@ -49,7 +49,7 @@ locals {
 
 module "kms" {
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.19"
+  version                     = "5.5.20"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   create_key_protect_instance = true
@@ -117,7 +117,7 @@ locals {
 
 module "event_notifications" {
   source            = "terraform-ibm-modules/event-notifications/ibm"
-  version           = "2.10.31"
+  version           = "2.10.32"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "${var.prefix}-event-notifications"
@@ -214,7 +214,7 @@ locals {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.12.14"
+  version                       = "2.12.15"
   resource_group_id             = module.resource_group.resource_group_id
   region                        = var.region
   secrets_manager_name          = "${var.prefix}-secrets-manager"
@@ -323,7 +323,7 @@ locals {
 module "cloud_logs" {
   depends_on        = [time_sleep.wait_for_cos_authorization_policy]
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.17"
+  version           = "1.10.18"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   instance_name     = "${var.prefix}-cloud-logs"
@@ -436,7 +436,7 @@ locals {
 
 module "activity_tracker" {
   source  = "terraform-ibm-modules/activity-tracker/ibm"
-  version = "1.5.18"
+  version = "1.5.19"
   cos_targets = [
     {
       bucket_name                       = module.at_cos_bucket.buckets[local.activity_tracker_cos_target_bucket_name].bucket_name
