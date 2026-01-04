@@ -47,7 +47,7 @@ The primary goal of this example is to provision an OpenShift cluster on VPC and
 | <a name="module_cloud_monitoring"></a> [cloud\_monitoring](#module\_cloud\_monitoring) | terraform-ibm-modules/cloud-monitoring/ibm | 1.12.15 |
 | <a name="module_cos"></a> [cos](#module\_cos) | terraform-ibm-modules/cos/ibm//modules/fscloud | 10.8.3 |
 | <a name="module_en_cos_buckets"></a> [en\_cos\_buckets](#module\_en\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.8.3 |
-| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.10.33 |
+| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.10.34 |
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.5.20 |
 | <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.16.3 |
 | <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.12.15 |

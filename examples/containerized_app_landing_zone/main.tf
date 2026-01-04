@@ -117,7 +117,7 @@ locals {
 
 module "event_notifications" {
   source            = "terraform-ibm-modules/event-notifications/ibm"
-  version           = "2.10.33"
+  version           = "2.10.34"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "${var.prefix}-event-notifications"
