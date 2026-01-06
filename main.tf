@@ -53,6 +53,20 @@ locals {
   binaries_path = "/tmp"
 }
 
+########################################################################################################################
+# Get OCP AI Add-on Versions
+########################################################################################################################
+
+data "ibm_iam_auth_token" "tokendata" {}
+
+data "external" "ocp_addon_versions" {
+  program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
+  query = {
+    IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
+    REGION    = var.region
+  }
+}
+
 # Local block to verify validations for OCP AI Addon.
 locals {
 
@@ -65,6 +79,7 @@ locals {
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
+  ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
 # Separate local block to handle os validations
@@ -126,7 +141,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.7.6"
+  version                = "10.8.3"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -732,7 +747,7 @@ locals {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.34.0"
+  version          = "1.35.8"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
