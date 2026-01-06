@@ -252,6 +252,49 @@ To workaround the issue simply attempt a re-apply of the terraform and it should
     A new version is detected because the Kubernetes master node is updated outside of Terraform, and the Terraform state is out of date with that version.
 
     The Kubernetes version is ignored in the module code, so the infrastructure will not be modified. The message identifies that drift exists in the versions, and after running the `terraform apply` command, the state will be refreshed.
+  
+#### The refresh token contains subject type 'ServiceId', which is not valid for the intended operation.
+
+When provisioning the base-ocp module in IBM Cloud Schematics using an IAM access token (Service ID) instead of an API key, the Terraform plan fails during the cluster configuration lookup.
+
+The failure occurs in the ibm_container_cluster_config data source, even though the provider configuration is valid:
+```
+provider "ibm" {
+  region = var.region
+}
+```
+the failure occurs in the `ibm_container_cluster_config data` source. During the plan phase, Terraform is unable to download the cluster configuration and returns the following error:
+```
+| Planning failed. Terraform encountered an error while generating this plan.
+| 
+| 
+| Error: [ERROR] Error downloading the cluster config [d50jqc1b0qvhhqn88k8g]: Request failed with status code: 400, BXNIM0453E: The refresh token contains subject type 'ServiceId', which is not valid for the intended operation. Supported subject types are UserId, Profile.
+| 
+|   with module.ocp_base.data.ibm_container_cluster_config.cluster_config[0],
+|   on ../../main.tf line 448, in data "ibm_container_cluster_config" "cluster_config":
+|  448: data "ibm_container_cluster_config" "cluster_config" {
+| 
+| ---
+| id: terraform-82a5043b
+| summary: '[ERROR] Error downloading the cluster config
+| [d50jqc1b0qvhhqn88k8g]: Request
+|   failed with status code: 400, BXNIM0453E: The refresh token contains subject type
+|   ''ServiceId'', which is not valid for the intended operation. Supported subject
+|   types are UserId, Profile.'
+| severity: error
+| resource: (Data) ibm_container_cluster_config
+| operation: read
+| component:
+|   name: github.com/IBM-Cloud/terraform-provider-ibm
+|   version: 1.79.2
+| ---
+| 
+```
+
+This indicates that the ibm_container_cluster_config data source does not support authentication using refresh tokens derived from Service IDs.
+
+Workaround:
+Provision the module using an IBM Cloud API key associated with a user account, rather than a Service ID.
 
 ### Required IAM access policies
 
