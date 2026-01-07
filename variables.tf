@@ -365,29 +365,63 @@ variable "addons" {
   default     = {}
 
   ########################################################################################################################
-  # OCP AI Addon version validation
+  # OCP addons version validation
   ########################################################################################################################
 
   validation {
-    condition = (
-      try(var.addons["openshift-ai"].version, null) == null ||
-      (
-        contains(keys(local.ocp_ai_addon_supported_versions), try(var.addons["openshift-ai"].version, "") != null ? try(var.addons["openshift-ai"].version, "") : "") &&
+    condition = alltrue([
+      for addon_name, addon_cfg in var.addons : (
+        try(addon_cfg.version, null) == null ? true :
+        contains(keys(local.ocp_all_addon_versions), addon_name) &&
+        contains(keys(local.ocp_all_addon_versions[addon_name]), tostring(addon_cfg.version)) &&
+        (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) >=
         (
-          local.ocp_version_num >= tonumber(regexall("\\d+\\.\\d+", split(" ", lookup(local.ocp_ai_addon_supported_versions, try(var.addons["openshift-ai"].version, "") != null ? try(var.addons["openshift-ai"].version, "") : "", { supported_openshift_range = "0.0 0.0" }).supported_openshift_range)[0])[0])
+          (
+            tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[0]) * 100 +
+            tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[1])
+          )
         ) &&
         (
-          local.ocp_version_num < tonumber(regexall("\\d+\\.\\d+", split(" ", lookup(local.ocp_ai_addon_supported_versions, try(var.addons["openshift-ai"].version, "") != null ? try(var.addons["openshift-ai"].version, "") : "", { supported_openshift_range = "0.0 0.0" }).supported_openshift_range)[1])[0])
+          (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) <
+          (
+            (
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[0]) * 100 +
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[1])
+            )
+          )
         )
       )
-    )
+    ])
 
-    error_message = (
-      try(var.addons["openshift-ai"].version, null) != null ?
-      (contains(keys(local.ocp_ai_addon_supported_versions), try(var.addons["openshift-ai"].version, "")) ?
-        format("OCP AI add-on version %s requires OCP version %s", try(var.addons["openshift-ai"].version, ""), lookup(local.ocp_ai_addon_supported_versions, try(var.addons["openshift-ai"].version, ""), { supported_openshift_range = "" }).supported_openshift_range) :
-      format("OCP AI add-on version %s is not supported.", try(var.addons["openshift-ai"].version, ""))) : "Invalid OCP AI configuration."
-    )
+    error_message = join("\n", flatten([
+      "Addon validation failed:",
+      [
+        for addon_name, addon_cfg in var.addons : (
+          try(addon_cfg.version, null) == null ? [] :
+          !contains(keys(local.ocp_all_addon_versions), addon_name) ?
+          ["- Addon '${addon_name}' is not recognized."] :
+          !contains(keys(local.ocp_all_addon_versions[addon_name]), tostring(addon_cfg.version)) ?
+          ["- Addon '${addon_name}' version '${addon_cfg.version}' is not supported."] :
+
+          (
+            (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) <
+            (
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[0]) * 100 +
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[1])
+            ) ||
+            (
+              (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) >=
+              (
+                tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[0]) * 100 +
+                tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[1])
+              )
+            )
+          ) ?
+          ["- Addon '${addon_name}' version '${addon_cfg.version}' requires OCP version '${lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range}'"] :
+          []
+        )
+      ]
+    ]))
   }
 
   validation {

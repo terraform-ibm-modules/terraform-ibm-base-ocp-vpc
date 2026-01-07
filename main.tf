@@ -54,7 +54,7 @@ locals {
 }
 
 ########################################################################################################################
-# Get OCP AI Add-on Versions
+# Get OCP addon versions
 ########################################################################################################################
 
 data "ibm_iam_auth_token" "tokendata" {}
@@ -64,6 +64,14 @@ data "external" "ocp_addon_versions" {
   query = {
     IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
     REGION    = var.region
+  }
+}
+
+# Local block to decode the json strings returned by the external data source
+locals {
+  ocp_all_addon_versions = {
+    for addon, value in data.external.ocp_addon_versions.result :
+    addon => jsondecode(value)
   }
 }
 
@@ -79,7 +87,6 @@ locals {
       is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
     }
   }
-  ocp_ai_addon_supported_versions = jsondecode(data.external.ocp_addon_versions.result["openshift-ai"])
 }
 
 # Separate local block to handle os validations
