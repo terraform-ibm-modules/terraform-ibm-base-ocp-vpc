@@ -253,6 +253,46 @@ To workaround the issue simply attempt a re-apply of the terraform and it should
 
     The Kubernetes version is ignored in the module code, so the infrastructure will not be modified. The message identifies that drift exists in the versions, and after running the `terraform apply` command, the state will be refreshed.
 
+#### Error downloading cluster config: refresh token contains subject type 'ServiceId'
+
+When provisioning this module in IBM Cloud Schematics, you may encounter the following error during the Terraform plan phase:
+```
+| Planning failed. Terraform encountered an error while generating this plan.
+|
+|
+| Error: [ERROR] Error downloading the cluster config [d50jqc1b0qvhhqn88k8g]: Request failed with status code: 400, BXNIM0453E: The refresh token contains subject type 'ServiceId', which is not valid for the intended operation. Supported subject types are UserId, Profile.
+|
+|   with module.ocp_base.data.ibm_container_cluster_config.cluster_config[0],
+|   on ../../main.tf line 448, in data "ibm_container_cluster_config" "cluster_config":
+|  448: data "ibm_container_cluster_config" "cluster_config" {
+|
+| ---
+| id: terraform-82a5043b
+| summary: '[ERROR] Error downloading the cluster config
+| [d50jqc1b0qvhhqn88k8g]: Request
+|   failed with status code: 400, BXNIM0453E: The refresh token contains subject type
+|   ''ServiceId'', which is not valid for the intended operation. Supported subject
+|   types are UserId, Profile.'
+| severity: error
+| resource: (Data) ibm_container_cluster_config
+| operation: read
+| component:
+|   name: github.com/IBM-Cloud/terraform-provider-ibm
+|   version: 1.79.2
+| ---
+|
+```
+
+This error typically occurs when an API key is not explicitly passed to the IBM Cloud provider configuration in Schematics and the user triggers the plan or apply action through the IBM Cloud CLI when authenticated as a Service ID. The following provider configuration will trigger this error:
+
+```
+provider "ibm" {
+  region = var.region
+}
+```
+
+To resolve this issue, explicitly provide an `ibmcloud_api_key` in your provider configuration when running in Schematics. The API key can be associated with either a user account or a Service ID. This happens because when a Service ID is used to trigger the Schematics workspace, Schematics passes an IAM access token for authentication, but OpenShift cluster operations require an API key.
+
 ### Required IAM access policies
 
 You need the following permissions to run this module.
