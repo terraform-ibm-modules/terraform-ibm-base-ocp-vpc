@@ -318,7 +318,8 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-slz-ocp",
 		"fully-configurable",
 		map[string]interface{}{
-			"region": region,
+			"region":                     : region,
+			"existing_resource_group_name": options.ResourceGroup,
 		},
 	)
 
