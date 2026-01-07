@@ -21,6 +21,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
+            - containerPort: 4443
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -29,3 +30,12 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /certificates
+              name: certificates
+              readOnly: true
+      volumes:
+        - name: certificates
+          secret:
+            secretName: audit-webhook
+            optional: true

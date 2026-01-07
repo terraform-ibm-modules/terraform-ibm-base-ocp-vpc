@@ -107,7 +107,7 @@ resource "time_sleep" "wait_for_kube_audit" {
 }
 
 locals {
-  audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/${var.audit_deployment_name}-service/proxy/post"
+  audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
 }
 
 # see [issue](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107)
