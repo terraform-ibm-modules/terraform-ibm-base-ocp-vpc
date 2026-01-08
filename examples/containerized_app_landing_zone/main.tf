@@ -856,7 +856,6 @@ module "ocp_base" {
   existing_cos_id                       = module.cos.cos_instance_crn
   vpc_id                                = module.vpc.vpc_id
   vpc_subnets                           = local.vpc_subnets
-  ocp_version                           = "4.19"
   worker_pools                          = local.worker_pools
   kms_config                            = local.kms_config
   existing_secrets_manager_instance_crn = module.secrets_manager.secrets_manager_crn
