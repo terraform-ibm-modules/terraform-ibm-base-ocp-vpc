@@ -81,7 +81,7 @@ locals {
 
 module "cloud_monitoring" {
   source                      = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                     = "1.12.15"
+  version                     = "1.12.16"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   instance_name               = "${var.prefix}-cloud-monitoring"
@@ -93,7 +93,7 @@ module "cloud_monitoring" {
 
 module "metrics_routing" {
   source  = "terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing"
-  version = "1.12.15"
+  version = "1.12.16"
   metrics_router_targets = [
     {
       destination_crn                 = module.cloud_monitoring.crn
@@ -117,7 +117,7 @@ locals {
 
 module "event_notifications" {
   source            = "terraform-ibm-modules/event-notifications/ibm"
-  version           = "2.10.34"
+  version           = "2.10.35"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "${var.prefix}-event-notifications"
@@ -323,7 +323,7 @@ locals {
 module "cloud_logs" {
   depends_on        = [time_sleep.wait_for_cos_authorization_policy]
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.19"
+  version           = "1.10.20"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   instance_name     = "${var.prefix}-cloud-logs"
@@ -501,7 +501,7 @@ module "at_cos_bucket" {
 
 module "app_config" {
   source                                                     = "terraform-ibm-modules/app-configuration/ibm"
-  version                                                    = "1.14.7"
+  version                                                    = "1.14.8"
   resource_group_id                                          = module.resource_group.resource_group_id
   region                                                     = var.region
   app_config_name                                            = "${var.prefix}-app-config"
@@ -570,7 +570,7 @@ resource "ibm_en_subscription_email" "apprapp_email_subscription" {
 
 module "scc_wp" {
   source                                       = "terraform-ibm-modules/scc-workload-protection/ibm"
-  version                                      = "1.16.17"
+  version                                      = "1.16.18"
   name                                         = "${var.prefix}-scc-workload-protection"
   region                                       = var.region
   resource_group_id                            = module.resource_group.resource_group_id
@@ -764,7 +764,7 @@ locals {
 # Create VPC
 module "vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "8.10.4"
+  version              = "8.10.5"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   create_vpc           = true
@@ -907,7 +907,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 module "monitoring_agent" {
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.19.2"
+  version                   = "1.19.5"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   is_vpc_cluster            = true
@@ -955,7 +955,7 @@ module "trusted_profile" {
 
 module "logs_agent" {
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.16.3"
+  version                       = "1.17.1"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
