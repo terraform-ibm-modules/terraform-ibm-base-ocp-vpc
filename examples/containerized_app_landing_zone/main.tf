@@ -49,7 +49,7 @@ locals {
 
 module "kms" {
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.20"
+  version                     = "5.5.21"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   create_key_protect_instance = true
@@ -214,7 +214,7 @@ locals {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.12.16"
+  version                       = "2.12.17"
   resource_group_id             = module.resource_group.resource_group_id
   region                        = var.region
   secrets_manager_name          = "${var.prefix}-secrets-manager"
@@ -570,7 +570,7 @@ resource "ibm_en_subscription_email" "apprapp_email_subscription" {
 
 module "scc_wp" {
   source                                       = "terraform-ibm-modules/scc-workload-protection/ibm"
-  version                                      = "1.16.18"
+  version                                      = "1.16.19"
   name                                         = "${var.prefix}-scc-workload-protection"
   region                                       = var.region
   resource_group_id                            = module.resource_group.resource_group_id
