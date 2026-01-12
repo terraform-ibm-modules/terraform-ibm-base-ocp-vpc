@@ -152,6 +152,26 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 	fmt.Println(stdout.String())
 }
 
+func getClusterIngressSchematics(options *testschematic.TestSchematicOptions) error {
+	
+	// Get output of last apply
+	outputs := options.LastTestTerraformOutputs
+
+	// Validate that the "cluster_id" key is present in the outputs
+	expectedOutputs := []string{"cluster_id"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_id" is available
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		// Check the cluster ingress health
+		options.CloudInfoService = sharedInfoSvc
+		options.CloudInfoService.GetClusterIngressStatus(outputs["cluster_id"].(string))
+
+		// sharedInfoSvc.GetClusterIngressStatus(outputs["cluster_id"].(string))
+	}
+	return nil
+}
+
 func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	t.Parallel()
 
@@ -276,6 +296,7 @@ func TestRunQuickstartSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs")
+	options.PostApplyHook = getClusterIngressSchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, options.ResourceGroup)
