@@ -2,9 +2,9 @@ locals {
   binaries_path = "/tmp"
 }
 
-resource "null_resource" "install_required_binaries" {
+resource "terraform_data" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
-  triggers = {
+  triggers_replace = {
     audit_log_policy                        = var.audit_log_policy
     audit_deployment_name                   = var.audit_deployment_name
     audit_namespace                         = var.audit_namespace
@@ -38,7 +38,7 @@ locals {
 }
 
 resource "null_resource" "set_audit_log_policy" {
-  depends_on = [null_resource.install_required_binaries]
+  depends_on = [terraform_data.install_required_binaries]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
@@ -60,7 +60,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.install_required_binaries, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
+  depends_on    = [terraform_data.install_required_binaries, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
@@ -116,7 +116,7 @@ locals {
 # }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [null_resource.install_required_binaries, time_sleep.wait_for_kube_audit]
+  depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
     audit_log_policy = var.audit_log_policy
   }
