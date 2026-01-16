@@ -938,6 +938,10 @@
               "hidden": true
             },
             {
+              "key": "encrypt_taffic_with_https",
+              "hidden": true
+            },
+            {
               "key": "audit_deployment_name",
               "hidden": true
             },
