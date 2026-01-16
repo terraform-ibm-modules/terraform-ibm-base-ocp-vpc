@@ -25,7 +25,7 @@ cluster_ip=$(
         --namespace "${NAMESPACE}" \
         --output jsonpath='{.spec.clusterIP}' \
         --timeout 5m \
-        svc/${SERVICE}
+        svc/"${SERVICE}"
 )
 
 echo "Cluster IP detected: ${cluster_ip}"
@@ -84,10 +84,10 @@ EOF
     kubectl wait \
         --for jsonpath='{.status.certificate}' \
         --timeout 5m \
-        csr/${CSR_NAME}
+        csr/"${CSR_NAME}"
 
     SERVER_CERT="$(
-        kubectl get csr/${CSR_NAME} \
+        kubectl get csr/"${CSR_NAME}" \
             -o jsonpath='{.status.certificate}' | base64 --decode
     )"
 }
@@ -107,10 +107,10 @@ kubectl create secret tls "${SECRET_NAME}" \
 echo "Restarting deployment..."
 kubectl rollout restart \
     --namespace "${NAMESPACE}" \
-    deploy/${DEPLOYMENT}
+    deploy/"${DEPLOYMENT}"
 
 echo "Waiting for rollout to complete..."
 kubectl rollout status \
     --timeout 1m \
     --namespace "${NAMESPACE}" \
-    deploy/${DEPLOYMENT}
+    deploy/"${DEPLOYMENT}"
