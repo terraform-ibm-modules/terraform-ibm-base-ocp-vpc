@@ -10,6 +10,7 @@ resource "null_resource" "install_required_binaries" {
     audit_namespace                         = var.audit_namespace
     audit_webhook_listener_image            = var.audit_webhook_listener_image
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+    encrypt_taffic_with_https               = var.encrypt_taffic_with_https
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
@@ -100,14 +101,30 @@ resource "helm_release" "kube_audit" {
   }
 }
 
+resource "null_resource" "encrypt_taffic_with_https" {
+  depends_on = [null_resource.install_required_binaries, helm_release.kube_audit]
+  count      = var.encrypt_taffic_with_https ? 1 : 0
+  triggers = {
+    encrypt_taffic_with_https = var.encrypt_taffic_with_https
+  }
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+    }
+  }
+}
+
+
 # wait for the kube-audit resources.
 resource "time_sleep" "wait_for_kube_audit" {
-  depends_on      = [helm_release.kube_audit]
+  depends_on      = [null_resource.encrypt_taffic_with_https]
   create_duration = "60s"
 }
 
 locals {
-  audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
+  audit_server = var.encrypt_taffic_with_https ? "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/https:${var.audit_deployment_name}-service:https/proxy/post" : "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
 }
 
 # see [issue](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107)
