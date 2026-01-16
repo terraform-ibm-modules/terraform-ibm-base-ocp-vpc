@@ -125,9 +125,9 @@ locals {
   default_wp_validation = local.rhcos_check ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
 }
 
-resource "null_resource" "install_required_binaries" {
+resource "terraform_data" "install_required_binaries" {
   count = var.install_required_binaries && (var.verify_worker_network_readiness || var.enable_ocp_console != null || lookup(var.addons, "cluster-autoscaler", null) != null) ? 1 : 0
-  triggers = {
+  triggers_replace = {
     verify_worker_network_readiness = var.verify_worker_network_readiness
     cluster_autoscaler              = lookup(var.addons, "cluster-autoscaler", null) != null
     enable_ocp_console              = var.enable_ocp_console
@@ -516,7 +516,7 @@ resource "null_resource" "confirm_network_healthy" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on = [null_resource.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
+  depends_on = [terraform_data.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
 
   triggers = {
     verify_worker_network_readiness = var.verify_worker_network_readiness
@@ -536,7 +536,7 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 resource "null_resource" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
-  depends_on = [null_resource.install_required_binaries, null_resource.confirm_network_healthy]
+  depends_on = [terraform_data.install_required_binaries, null_resource.confirm_network_healthy]
   triggers = {
     enable_ocp_console = var.enable_ocp_console
   }
@@ -613,7 +613,7 @@ locals {
 
 resource "null_resource" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [null_resource.install_required_binaries, ibm_container_addons.addons]
+  depends_on = [terraform_data.install_required_binaries, ibm_container_addons.addons]
 
   triggers = {
     cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null

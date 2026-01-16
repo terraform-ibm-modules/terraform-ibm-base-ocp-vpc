@@ -8,13 +8,11 @@ set -o errexit
 set -o pipefail
 
 DIRECTORY=${1:-"/tmp"}
+export PATH=$PATH:$DIRECTORY
 # renovate: datasource=github-tags depName=terraform-ibm-modules/common-bash-library
 TAG=v0.2.0
 # Running multiple Terraform executions on the same environment that share a /tmp directory can lead to conflicts during script execution.
-SUFFIX=""
-for _ in {1..4}; do
-    SUFFIX+=${RANDOM:0:1}
-done
+TMP_DIR=$(mktemp -d "${DIRECTORY}/common-bash-XXXXX")
 
 echo "Downloading common-bash-library version ${TAG}."
 
@@ -28,22 +26,22 @@ curl --silent \
     --fail \
     --show-error \
     --location \
-    --output "${DIRECTORY}/common-bash-${SUFFIX}.tar.gz" \
+    --output "${TMP_DIR}/common-bash.tar.gz" \
     "https://github.com/terraform-ibm-modules/common-bash-library/archive/refs/tags/$TAG.tar.gz"
 
-mkdir -p "${DIRECTORY}/common-bash-library-${SUFFIX}"
-tar -xzf "${DIRECTORY}/common-bash-${SUFFIX}.tar.gz" -C "${DIRECTORY}/common-bash-library-${SUFFIX}"
-rm -f "${DIRECTORY}/common-bash-${SUFFIX}.tar.gz"
+mkdir -p "${TMP_DIR}/common-bash-library"
+tar -xzf "${TMP_DIR}/common-bash.tar.gz" -C "${TMP_DIR}"
+rm -f "${TMP_DIR}/common-bash.tar.gz"
 
 # The file doesn’t exist at the time shellcheck runs, so this check is skipped.
 # shellcheck disable=SC1091,SC1090
-source "${DIRECTORY}/common-bash-library-${SUFFIX}/common-bash-library-${TAG#v}/common/common.sh"
+source "${TMP_DIR}/common-bash-library-${TAG#v}/common/common.sh"
 
 echo "Installing jq."
 install_jq "latest" "${DIRECTORY}" "true"
 echo "Installing kubectl."
 install_kubectl "latest" "${DIRECTORY}" "true"
 
-rm -rf "${DIRECTORY}/common-bash-library-${SUFFIX}"
+rm -rf "$TMP_DIR"
 
 echo "Installation complete successfully"
