@@ -279,7 +279,7 @@ module "secret_group" {
   }
   count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.36"
+  version                  = "1.3.37"
   region                   = module.existing_secrets_manager_instance_parser[0].region
   secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
   secret_group_name        = module.ocp_base.cluster_id
