@@ -635,3 +635,10 @@ variable "audit_webhook_listener_image_tag_digest" {
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   default     = "6bd7b1ba79ef1a524bfe814c0b1680d525b467c2@sha256:256cc03000fa6f0a23732d47ba7f0db5ec2d838cfdd799dd12375a47262de76f"
 }
+
+variable "encrypt_taffic_with_https" {
+  type        = bool
+  default     = true
+  description = "When set to true, the traffic in transit is encrypted with HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
+  nullable    = false
+}

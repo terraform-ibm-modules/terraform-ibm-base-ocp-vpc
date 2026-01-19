@@ -310,4 +310,5 @@ module "kube_audit" {
   audit_deployment_name                   = var.audit_deployment_name
   audit_webhook_listener_image            = var.audit_webhook_listener_image
   audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+  encrypt_taffic_with_https               = var.encrypt_taffic_with_https
 }
