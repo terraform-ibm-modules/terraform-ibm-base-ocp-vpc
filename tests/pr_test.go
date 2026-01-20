@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
@@ -152,23 +153,42 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 	fmt.Println(stdout.String())
 }
 
-func getClusterIngressSchematics(options *testschematic.TestSchematicOptions) error {
-	
+func checkClusterIngressHealthySchematics(options *testschematic.TestSchematicOptions) error {
 	// Get output of last apply
 	outputs := options.LastTestTerraformOutputs
+
+	// Set default timeout and delay time
+	clusterCheckTimeoutMinutes := 10
+	clusterCheckDelayMinutes := 1
 
 	// Validate that the "cluster_id" key is present in the outputs
 	expectedOutputs := []string{"cluster_id"}
 	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
 
-	// Proceed with the cluster ingress health check if "cluster_id" is available
-	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		// Check the cluster ingress health
-		options.CloudInfoService = sharedInfoSvc
-		options.CloudInfoService.GetClusterIngressStatus(outputs["cluster_id"].(string))
-
-		// sharedInfoSvc.GetClusterIngressStatus(outputs["cluster_id"].(string))
+	// Stop if "cluster_id" is not available
+	if !assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		return nil
 	}
+
+	// Check the cluster ingress health
+	startTime := time.Now()
+	healthy := false
+	for {
+		clusterId := outputs["cluster_id"].(map[string]interface {})["value"]
+		options.CloudInfoService = sharedInfoSvc
+		ingressStatus, err := options.CloudInfoService.GetClusterIngressStatus(clusterId.(string))
+		if ingressStatus == "healthy" {
+			healthy = true
+			break
+		} else if ingressStatus == "critical" || err != nil {
+			if time.Since(startTime) > time.Duration(clusterCheckTimeoutMinutes)*time.Minute {
+				break
+			}
+			logger.Log(options.Testing, "Cluster Ingress is critical, retrying after delay...")
+			time.Sleep(time.Duration(clusterCheckDelayMinutes) * time.Minute)
+		}
+	}
+	assert.True(options.Testing, healthy, "Cluster Ingress failed to become healthy")
 	return nil
 }
 
@@ -207,6 +227,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 	}
+	options.PostApplyHook = checkClusterIngressHealthySchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, rg)
@@ -296,7 +317,7 @@ func TestRunQuickstartSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs")
-	options.PostApplyHook = getClusterIngressSchematics
+	options.PostApplyHook = checkClusterIngressHealthySchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, options.ResourceGroup)
