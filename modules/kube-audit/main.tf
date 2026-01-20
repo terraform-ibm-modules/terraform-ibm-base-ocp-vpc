@@ -135,7 +135,8 @@ locals {
 resource "null_resource" "set_audit_webhook" {
   depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
-    audit_log_policy = var.audit_log_policy
+    audit_log_policy          = var.audit_log_policy
+    encrypt_taffic_with_https = var.encrypt_taffic_with_https
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"
