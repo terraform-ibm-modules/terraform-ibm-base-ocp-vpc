@@ -310,4 +310,5 @@ module "kube_audit" {
   audit_deployment_name                   = var.audit_deployment_name
   audit_webhook_listener_image            = var.audit_webhook_listener_image
   audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+  enable_https_traffic                    = var.enable_kube_audit_https_traffic
 }

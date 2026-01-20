@@ -290,5 +290,5 @@ module "logs_agents" {
     value = module.ocp_base.cluster_id
   }]
   # example of how to add only kube-audit log source path
-  logs_agent_selected_log_source_paths = ["/var/log/audit/*.log"]
+  logs_agent_system_logs = ["/var/log/audit/*.log"]
 }
