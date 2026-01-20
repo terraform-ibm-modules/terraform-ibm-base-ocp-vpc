@@ -10,7 +10,7 @@ resource "terraform_data" "install_required_binaries" {
     audit_namespace                         = var.audit_namespace
     audit_webhook_listener_image            = var.audit_webhook_listener_image
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
-    encrypt_taffic_with_https               = var.encrypt_taffic_with_https
+    enable_https_traffic                    = var.enable_https_traffic
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
@@ -101,11 +101,11 @@ resource "helm_release" "kube_audit" {
   }
 }
 
-resource "null_resource" "encrypt_taffic_with_https" {
+resource "null_resource" "enable_https_traffic" {
   depends_on = [terraform_data.install_required_binaries, helm_release.kube_audit]
-  count      = var.encrypt_taffic_with_https ? 1 : 0
+  count      = var.enable_https_traffic ? 1 : 0
   triggers = {
-    encrypt_taffic_with_https = var.encrypt_taffic_with_https
+    enable_https_traffic = var.enable_https_traffic
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
@@ -119,12 +119,12 @@ resource "null_resource" "encrypt_taffic_with_https" {
 
 # wait for the kube-audit resources.
 resource "time_sleep" "wait_for_kube_audit" {
-  depends_on      = [null_resource.encrypt_taffic_with_https]
+  depends_on      = [null_resource.enable_https_traffic]
   create_duration = "60s"
 }
 
 locals {
-  audit_server = var.encrypt_taffic_with_https ? "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/https:${var.audit_deployment_name}-service:https/proxy/post" : "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
+  audit_server = var.enable_https_traffic ? "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/https:${var.audit_deployment_name}-service:https/proxy/post" : "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
 }
 
 # see [issue](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107)
@@ -135,8 +135,8 @@ locals {
 resource "null_resource" "set_audit_webhook" {
   depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
-    audit_log_policy          = var.audit_log_policy
-    encrypt_taffic_with_https = var.encrypt_taffic_with_https
+    audit_log_policy     = var.audit_log_policy
+    enable_https_traffic = var.enable_https_traffic
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"

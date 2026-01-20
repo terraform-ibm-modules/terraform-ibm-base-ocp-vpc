@@ -110,9 +110,9 @@ variable "install_required_binaries" {
   nullable    = false
 }
 
-variable "encrypt_taffic_with_https" {
+variable "enable_https_traffic" {
   type        = bool
   default     = true
-  description = "When set to true, the traffic in transit is encrypted with HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
+  description = "When set to true, the traffic in transit between the audit webhook service in the cluster and the components that send audit events to it is encrypted using HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
   nullable    = false
 }

@@ -938,7 +938,7 @@
               "hidden": true
             },
             {
-              "key": "encrypt_taffic_with_https",
+              "key": "enable_kube_audit_https_traffic",
               "hidden": true
             },
             {
