@@ -279,7 +279,7 @@ module "secret_group" {
   }
   count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.36"
+  version                  = "1.3.37"
   region                   = module.existing_secrets_manager_instance_parser[0].region
   secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
   secret_group_name        = module.ocp_base.cluster_id
@@ -310,4 +310,5 @@ module "kube_audit" {
   audit_deployment_name                   = var.audit_deployment_name
   audit_webhook_listener_image            = var.audit_webhook_listener_image
   audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+  enable_https_traffic                    = var.enable_kube_audit_https_traffic
 }

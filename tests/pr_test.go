@@ -48,9 +48,12 @@ var (
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
 func TestMain(m *testing.M) {
-	sharedInfoSvc, _ = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
-
 	var err error
+	sharedInfoSvc, err = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
 	if err != nil {
 		log.Fatal(err)
@@ -213,7 +216,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	})
 	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
 	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
-	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.kube_audit[0].null_resource.install_required_binaries[0]"}}
+	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.kube_audit[0].terraform_data.install_required_binaries[0]"}}
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		// Required Core Variables
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},

@@ -109,3 +109,10 @@ variable "install_required_binaries" {
   description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
   nullable    = false
 }
+
+variable "enable_https_traffic" {
+  type        = bool
+  default     = true
+  description = "When set to true, the traffic in transit between the audit webhook service in the cluster and the components that send audit events to it is encrypted using HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
+  nullable    = false
+}
