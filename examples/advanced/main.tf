@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.21"
+  version                   = "5.5.23"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -240,7 +240,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.24"
+  version           = "1.10.26"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -276,7 +276,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.17.2"
+  version                       = "1.17.4"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
