@@ -8,9 +8,9 @@ locals {
   # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
   default_pool = element([for pool in var.worker_pools : pool if pool.pool_name == "default"], 0)
 
-  default_ocp_version = "${jsondecode(data.external.oc_versions.result.openshift)["default"]}_openshift"
+  default_ocp_version = "${data.ibm_container_cluster_versions.cluster_versions.default_openshift_version}_openshift"
   ocp_version         = var.ocp_version == null || var.ocp_version == "default" ? local.default_ocp_version : "${var.ocp_version}_openshift"
-  valid_versions_list = jsondecode(data.external.oc_versions.result.openshift)["valid_versions"]
+  valid_versions_list = data.ibm_container_cluster_versions.cluster_versions.valid_openshift_versions
   valid_ocp_versions  = [for version in local.valid_versions_list : regex("^([0-9]+\\.[0-9]+)", version)[0]]
 
   cos_name = var.use_existing_cos == true || (var.use_existing_cos == false && var.cos_name != null) ? var.cos_name : "${var.cluster_name}_cos"
@@ -53,22 +53,11 @@ locals {
   binaries_path = "/tmp"
 }
 
-data "ibm_iam_auth_token" "tokendata" {}
-
-########################################################################################################################
-# Get OpenShift Versions
-########################################################################################################################
-
-data "external" "oc_versions" {
-  program = ["python3", "${path.module}/scripts/get_oc_versions.py"]
-  query = {
-    IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
-  }
-}
-
 ########################################################################################################################
 # Get OCP addon versions
 ########################################################################################################################
+
+data "ibm_iam_auth_token" "tokendata" {}
 
 data "external" "ocp_addon_versions" {
   program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
@@ -149,6 +138,9 @@ resource "terraform_data" "install_required_binaries" {
     interpreter = ["/bin/bash", "-c"]
   }
 }
+
+# Lookup the current default kube version
+data "ibm_container_cluster_versions" "cluster_versions" {}
 
 module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
