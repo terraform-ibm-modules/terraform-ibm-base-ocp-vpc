@@ -140,9 +140,7 @@ resource "terraform_data" "install_required_binaries" {
 }
 
 # Lookup the current default kube version
-data "ibm_container_cluster_versions" "cluster_versions" {
-  resource_group_id = var.resource_group_id
-}
+data "ibm_container_cluster_versions" "cluster_versions" {}
 
 module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
