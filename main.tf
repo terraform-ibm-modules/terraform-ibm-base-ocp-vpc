@@ -575,18 +575,18 @@ locals {
 
 moved {
   from = ibm_container_addons.addons
-  to = ibm_container_addons.addons[0]
+  to   = ibm_container_addons.addons[0]
 }
 
 resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
 
   count = length([
-   for k, v in local.addons : k if v != null
-   ]) > 0 ? 1 : 0
+    for k, v in local.addons : k if v != null
+  ]) > 0 ? 1 : 0
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
