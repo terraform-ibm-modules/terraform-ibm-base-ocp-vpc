@@ -71,7 +71,7 @@ func TestMain(m *testing.M) {
 	ocpVars := []*string{&ocpVersion1, &ocpVersion2, &ocpVersion3, &ocpVersion4}
 
 	if ocpVersionCount < 4 {
-		log.Printf("Warning: OCP versions returned by the API (%v) differ from the original list and will be integrated with the expected versions list", validOCPVersions)
+		log.Printf("Warning: OCP versions list returned by the API (%v) has less than 4 valid versions hence some tests will run on duplicate versions.", validOCPVersions)
 	}
 
 	for i := 0; i < len(ocpVars); i++ {
