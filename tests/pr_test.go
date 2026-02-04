@@ -70,6 +70,10 @@ func TestMain(m *testing.M) {
 	}
 	ocpVars := []*string{&ocpVersion1, &ocpVersion2, &ocpVersion3, &ocpVersion4}
 
+	if ocpVersionCount < 4 {
+		log.Printf("Warning: OCP versions returned by the API (%v) differ from the original list and will be integrated with the expected versions list", validOCPVersions)
+	}
+
 	for i := 0; i < len(ocpVars); i++ {
 		idx := ocpVersionCount - 1 - i // count from the end
 
