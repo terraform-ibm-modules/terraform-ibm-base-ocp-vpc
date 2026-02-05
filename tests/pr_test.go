@@ -60,6 +60,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// Get kube versions
+	expectedOCPVersions := 4
 	validOCPVersions, err := sharedInfoSvc.GetKubeVersions("openshift")
 	if err != nil {
 		log.Fatalf("failed to get kube versions: %v", err)
@@ -70,8 +71,8 @@ func TestMain(m *testing.M) {
 	}
 	ocpVars := []*string{&ocpVersion1, &ocpVersion2, &ocpVersion3, &ocpVersion4}
 
-	if ocpVersionCount < 4 {
-		log.Printf("Warning: OCP versions list returned by the API (%v) has less than 4 valid versions hence some tests will run on duplicate versions.", validOCPVersions)
+	if ocpVersionCount < expectedOCPVersions {
+		log.Printf("Warning: OCP versions list returned by the API (%v) has less than %d valid versions hence some tests will run on duplicate versions.", validOCPVersions, expectedOCPVersions)
 	}
 
 	for i := 0; i < len(ocpVars); i++ {
