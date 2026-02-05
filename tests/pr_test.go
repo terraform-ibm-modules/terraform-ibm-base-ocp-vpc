@@ -34,15 +34,15 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.19"                   // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.18"                   // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.17"                   // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.16"                   // used by TestRunAddRulesToSGExample and TestRunBasicExample
 const terraformVersion = "terraform_v1.12.2" // This should match the version in the ibm_catalog.json
 
 var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
 	permanentResources map[string]interface{}
+	ocpVersion1        string // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+	ocpVersion2        string // used by TestCustomSGExample and TestRunCustomsgExample
+	ocpVersion3        string // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+	ocpVersion4        string // used by TestRunAddRulesToSGExample and TestRunBasicExample
 )
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
@@ -57,6 +57,31 @@ func TestMain(m *testing.M) {
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// Get kube versions
+	expectedOCPVersions := 4
+	validOCPVersions, err := sharedInfoSvc.GetKubeVersions("openshift")
+	if err != nil {
+		log.Fatalf("failed to get kube versions: %v", err)
+	}
+	ocpVersionCount := len(validOCPVersions)
+	if ocpVersionCount == 0 {
+		log.Fatal("openshift version list is empty")
+	}
+	ocpVars := []*string{&ocpVersion1, &ocpVersion2, &ocpVersion3, &ocpVersion4}
+
+	if ocpVersionCount < expectedOCPVersions {
+		log.Printf("Warning: OCP versions list returned by the API (%v) has less than %d valid versions hence some tests will run on duplicate versions.", validOCPVersions, expectedOCPVersions)
+	}
+
+	for i := 0; i < len(ocpVars); i++ {
+		idx := ocpVersionCount - 1 - i // count from the end
+
+		if idx < 0 {
+			idx = 0 // fallback
+		}
+		*ocpVars[i] = validOCPVersions[idx]
 	}
 
 	os.Exit(m.Run())
@@ -243,6 +268,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 // so we want to keep testing this use-case in the PR pipelines.
 func TestRunCustomsgExample(t *testing.T) {
 	t.Parallel()
+	t.Skip("Temporarily skipping due to https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/issues/852")
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:          t,
