@@ -633,7 +633,7 @@ variable "audit_webhook_listener_image" {
 variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
-  default     = "b16a686272d760fadc51e85f44c9945570d610b4@sha256:c1a400d03bd0d66aa61facaef246e6422021a86071ec52742367c8059c105263"
+  default     = "1819657b89757e3869bebba250040db390923c5c@sha256:80cbe2c58faa0e215ac4d85dd8c645a34f72e0cf9c1dc3977fa7fea267a524eb"
 }
 
 variable "enable_kube_audit_https_traffic" {
