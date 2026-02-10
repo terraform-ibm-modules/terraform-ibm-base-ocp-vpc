@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -331,10 +332,11 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:       t,
-		Prefix:        "ocp-def",
-		ResourceGroup: resourceGroup,
-		QuietMode:     false, // Suppress logs except on failure
+		Testing:               t,
+		Prefix:                "ocp-def",
+		ResourceGroup:         resourceGroup,
+		QuietMode:             false, // Suppress logs except on failure
+		OverrideInputMappings: core.BoolPtr(true),
 	})
 	region := "eu-de"
 
