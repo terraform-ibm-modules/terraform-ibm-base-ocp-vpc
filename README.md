@@ -247,7 +247,7 @@ When provisioning this module, you might encounter the following error during th
 2025/10/20 14:28:57 Terraform apply |   with module.ocp_base.ibm_container_vpc_cluster.cluster[0],
  2025/10/20 14:28:57 Terraform apply |   on ../../main.tf line 140, in resource "ibm_container_vpc_cluster" "cluster":
  2025/10/20 14:28:57 Terraform apply |  140: resource "ibm_container_vpc_cluster" "cluster" {
- 2025/10/20 14:28:57 Terraform apply | 
+ 2025/10/20 14:28:57 Terraform apply |
  2025/10/20 14:28:57 Terraform apply | ---
  2025/10/20 14:28:57 Terraform apply | id: terraform-40a3a1fe
  2025/10/20 14:28:57 Terraform apply | summary: 'Request failed with status code: 400, ServerErrorResponse:
