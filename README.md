@@ -240,6 +240,39 @@ During cluster provisioning a containers apikey is created if one does not alrea
 
 To workaround the issue simply attempt a re-apply of the terraform and it should pass on second attempt. If you still face issues, an IBM Cloud support case should be created with the `Kubernetes service` and include the `incidentID` from the error.
 
+#### The entitlement 'cloud_pak' was not found
+When provisioning this module, you might encounter the following error during the Terraform apply phase if a value has been set for ocp_entitlement.
+
+```
+2025/10/20 14:28:57 Terraform apply |   with module.ocp_base.ibm_container_vpc_cluster.cluster[0],
+ 2025/10/20 14:28:57 Terraform apply |   on ../../main.tf line 140, in resource "ibm_container_vpc_cluster" "cluster":
+ 2025/10/20 14:28:57 Terraform apply |  140: resource "ibm_container_vpc_cluster" "cluster" {
+ 2025/10/20 14:28:57 Terraform apply |
+ 2025/10/20 14:28:57 Terraform apply | ---
+ 2025/10/20 14:28:57 Terraform apply | id: terraform-40a3a1fe
+ 2025/10/20 14:28:57 Terraform apply | summary: 'Request failed with status code: 400, ServerErrorResponse:
+ 2025/10/20 14:28:57 Terraform apply | {"incidentID":"a0701484-1dcf-a82e-90b1-455464f7064c","code":"E3595","description":"The
+ 2025/10/20 14:28:57 Terraform apply |   entitlement ''cloud_pak'' was not found. Specify ''ocp_entitled'' to search for
+ 2025/10/20 14:28:57 Terraform apply |   any supported license or entitlement. If no match is found, then you do not have
+ 2025/10/20 14:28:57 Terraform apply |   a supported license or entitlement.","type":"BadRequest"}'
+ 2025/10/20 14:28:57 Terraform apply | severity: error
+ 2025/10/20 14:28:57 Terraform apply | resource: ibm_container_vpc_cluster
+ 2025/10/20 14:28:57 Terraform apply | operation: create
+ 2025/10/20 14:28:57 Terraform apply | component:
+ 2025/10/20 14:28:57 Terraform apply |   name: github.com/IBM-Cloud/terraform-provider-ibm
+ 2025/10/20 14:28:57 Terraform apply |   version: 1.83.3
+ 2025/10/20 14:28:57 Terraform apply | ---
+```
+
+This error typically occurs when the OpenShift cluster API key for the target region and resource group is invalid, expired, or not properly associated with the required entitlement.
+
+To resolve this issue, Replace the API key for all clusters in the specified region and targeted resource group.
+```
+  ibmcloud target -g <resource-group>
+  ibmcloud oc api-key reset --region <region>
+```
+
+
 #### New kube_version message
 
 - When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
