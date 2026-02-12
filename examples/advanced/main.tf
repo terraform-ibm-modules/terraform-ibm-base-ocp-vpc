@@ -113,7 +113,7 @@ locals {
       pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type                      = "mx2.4x32"
       workers_per_zone                  = 1
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHCOS"
       enableAutoscaling                 = true
       minSize                           = 1
       maxSize                           = 6
@@ -125,7 +125,7 @@ locals {
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
       secondary_storage                 = "300gb.5iops-tier"
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHCOS"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {
@@ -133,7 +133,7 @@ locals {
       pool_name                         = "zone-3"
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHCOS"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
@@ -157,7 +157,7 @@ locals {
       subnet_prefix    = "zone-1"
       pool_name        = "workerpool"
       machine_type     = "bx2.4x16"
-      operating_system = "REDHAT_8_64"
+      operating_system = "RHCOS"
       workers_per_zone = 2
     }
   ]
