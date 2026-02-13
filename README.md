@@ -28,9 +28,9 @@ By default, the module automatically downloads the required dependant binaries (
 ## Overview
 * [terraform-ibm-base-ocp-vpc](#terraform-ibm-base-ocp-vpc)
 * [Submodules](./modules)
-    * <a href="./modules/fscloud">Financial Services Cloud Profile</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./modules/kube-audit">Kubernetes API server audit logs</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-kube-audit-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/kube-audit"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./modules/worker-pool">Worker pool module</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-worker-pool-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/worker-pool"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+    * [fscloud](./modules/fscloud)
+    * [kube-audit](./modules/kube-audit)
+    * [worker-pool](./modules/worker-pool)
 * [Examples](./examples)
 :information_source: Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
     * <a href="./examples/add_rules_to_sg">Cluster security group rules example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-add_rules_to_sg-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/add_rules_to_sg"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
