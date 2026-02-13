@@ -11,16 +11,17 @@ Use this module to provision an [IBM Cloud Red Hat OpenShift cluster](https://cl
 
 Optionally, the module supports advanced security group management for the worker nodes, VPE, and load balancer associated with the cluster. This feature allows you to configure security groups for the cluster's worker nodes, VPE, and load balancer.
 
-:exclamation: **Important:** You can't update Red Hat OpenShift cluster nodes by using this module. The Terraform logic ignores updates to prevent possible destructive changes.
+By default, the module automatically downloads the required dependant binaries ([jq](https://jqlang.github.io/jq) and [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) from the public internet if they are not detected in th terraform runtime. You can disable this behavior by setting `install_required_binaries` to `false`.
 
-### Before you begin
-
-- Ensure that you have an up-to-date version of [curl](https://curl.se/docs/manpage.html).
-- Ensure that you have an up-to-date version of [tar](https://www.gnu.org/software/tar/).
-- [OPTIONAL] Ensure that you have an up-to-date version of the [jq](https://jqlang.github.io/jq).
-- [OPTIONAL] Ensure that you have an up-to-date version of the [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl).
-
-By default, the module automatically downloads the required dependencies if they are not already installed. You can disable this behavior by setting `install_required_binaries` to `false`. When enabled, the module fetches dependencies from official online binaries (requires public internet).
+### Helpful resources
+- [Understanding Red Hat OpenShift on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-overview)
+- [Understanding secure by default Cluster VPC Networking](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group-reference)
+- [Upgrading OpenShift version using terraform](/docs/upgrading-ocp-version.md)
+- [How to re-create the default worker pool](/docs/re-create-default-pool.md)
+- [Advanced security group configuration options](/docs/advanced-security-group-rules.md)
+- [Setting up encryption for Block Storage for VPC](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-block#vpc-block-encryption)
+- [Setting up KMS encryption for File Storage for VPC](https://cloud.ibm.com/docs/openshift?topic=openshift-storage-file-vpc-apps#storage-file-kms)
+- [Getting started with custom service endpoints](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#getting-started-with-custom-service-endpoints)
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -40,6 +41,10 @@ By default, the module automatically downloads the required dependencies if they
     * <a href="./examples/custom_sg">Attaching custom security groups</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-custom_sg-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/custom_sg"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
     * <a href="./examples/fscloud">Financial Services compliant example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
     * <a href="./examples/multiple_mzr_clusters">2 MZR clusters in same VPC example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-multiple_mzr_clusters-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/multiple_mzr_clusters"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+* [Deployable Architectures](./solutions)
+    * <a href="./solutions/fully-configurable">Cloud automation for Red Hat OpenShift Container Platform on VPC (Fully configurable)</a>
+    * <a href="./solutions/quickstart">Cloud automation for Red Hat OpenShift Container Platform on VPC (QuickStart)</a>
+* [Known issues](#known-issues)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -51,7 +56,7 @@ By default, the module automatically downloads the required dependencies if they
 ```hcl
 module "ocp_base" {
   source               = "terraform-ibm-modules/base-ocp-vpc/ibm"
-  version              = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
+  version              = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_name         = "example-cluster-name"
   resource_group_id    = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   region               = "us-south"
@@ -123,210 +128,6 @@ module "ocp_base" {
 }
 ```
 
-### Customizing default cloud service endpoints
-
-The user must export the endpoint as an environment variable in order to use custom cloud service endpoints with this module. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints#getting-started-with-custom-service-endpoints).
-
-**Important** The only supported method for customizing cloud service endpoints is to export the environment variables endpoint; be sure to export the value for `IBMCLOUD_IAM_API_ENDPOINT`, `IBMCLOUD_CS_API_ENDPOINT` and `IBMCLOUD_IS_NG_API_ENDPOINT`. For example,
-
-```
-export IBMCLOUD_IAM_API_ENDPOINT="<endpoint_url>"
-export IBMCLOUD_CS_API_ENDPOINT="<endpoint_url>"
-export IBMCLOUD_IS_NG_API_ENDPOINT="<endpoint_url>"
-```
-
-### Secure by default cluster settings
-
-In OCP version 4.15, outbound traffic is disabled by default. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group-reference).
-
-There is a provision to toggle outbound traffic by using the modules' `disable_outbound_traffic_protection` input. Refer [Managing outbound traffic protection in VPC clusters](https://cloud.ibm.com/docs/openshift?topic=openshift-sbd-allow-outbound#sbd-example-oh).
-
-### Important Considerations for Terraform and Default Worker Pool
-
-**Changes Requiring Re-creation of Default Worker Pool**
-
-If you need to make changes to the default worker pool that require its re-creation (e.g., changing the worker node `operating_system`), you need to follow 3 steps:
-
-1. you must set the `allow_default_worker_pool_replacement` variable to `true`, perform the apply.
-2. Once the first apply is successful, then make the required change to the default worker pool object, perform the apply.
-3. After successful apply of the default worker pool change set `allow_default_worker_pool_replacement` back to `false` in the code before the subsequent apply.
-
-This is **only** necessary for changes that require the recreation the entire default pool and is **not needed for scenarios that does not require recreating the worker pool such as changing the number of workers in the default worker pool**.
-
-This approach is due to a limitation in the Terraform provider that may be lifted in the future.
-
-### Advanced security group options
-
-The Terraform module provides options to attach additional security groups to the worker nodes, VPE, and load balancer associated with the cluster.
-
-The [custom_sg example](./examples/custom_sg/) demonstrates how to use these capabilities.
-
-See the IBM Cloud documentation on this topic [here](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-security-group&interface=ui)
-
-Tip: The [terraform-ibm-security-groups](https://github.com/terraform-ibm-modules/terraform-ibm-security-group) module can be used to create security groups and rules.
-
-#### Worker nodes
-
-- Additional security groups can be specified at cluster creation time. These security groups are attached to all worker nodes of the cluster, including additional worker nodes/pools added after the creation of the cluster. See the variable `custom_security_group_ids`.
-- Additional security groups can be specified for specific worker pools. These security groups only apply to the worker pool. See the field `additional_security_group_ids` in the variable `worker_pools`.
-
-In all cases, note that:
-
-- The default VPC security is no longer attached to the worker nodes.
-- You can opt-out of attaching the IBM-managed cluster security group (named kube-<clusterId>) through the flag `attach_ibm_managed_security_group`.
-- It is impossible to change the security groups associated with a cluster after the creation of that cluster.
-
-#### VPEs (Virtual Private Endpoints)
-
-- The IBM Cloud OCP stack creates VPEs by default. Prior to version 4.14, a VPE to the master is created. From version 4.14, VPEs to the master, container registry, and IBM Cloud kube APIs are created.
-- You can attach additional security groups through the `additional_vpe_security_group_ids` variable.
-- The default IBM-managed security group is attached to those VPEs in all cases.
-
-#### Load balancers
-
-- The IBM Cloud OCP stack manages the lifecycle of VPC Loadbalancers for your cluster. See the _LoadBalancer_ section in the [Understanding options for exposing apps](https://cloud.ibm.com/docs/openshift?topic=openshift-cs_network_planning).
-- By default, one load balancer is created at cluster creation for the default cluster ingress.
-- You can attach additional security groups using the `additional_lb_security_group_ids` variable. This set of security groups is attached to all loadbalancers managed by the cluster.
-- **Important**: If additional load balancers are added after creating the cluster, for example, by exposing a Kubernetes service of type LoadBalancer, update the `number_of_lbs` variable and re-run this module to attach the extra security groups to the newly created load balancer.
-- The default IBM-managed security group is attached to the LBs in all cases.
-
-### OpenShift Version Upgrade
-
-Consumers who want to deploy an OpenShift cluster through this module and later manage **master** version upgrades via Terraform must set the variable `enable_openshift_version_upgrade` to `true`. Master upgrade typically require manual checks, and potential updates to the workload, therefore this option is set to `false` by default. This is an advanced capability that we recommend to set to `true` only if you have a robust process to handle master upgrades before updating the version via Terraform.
-
-Existing users: this capability was introduced in v3.64 of the module. Existing users with a cluster created on previous version of the module can also enable this variable to manage version upgrades through Terraform. However, when `enable_openshift_version_upgrade` is set to `true`, Terraform may plan to destroy and re-create the cluster because the resource type in the module changes. To prevent this, you **must** migrate the existing state to the new resource address before applying any changes - `ibm_container_vpc_cluster.cluster[0]` to `ibm_container_vpc_cluster.cluster_with_upgrade[0]` or, when using auto-scaling, `ibm_container_vpc_cluster.autoscaling_cluster[0]` to `ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0]`. This is a one time migration of the state.
-
-There are several options to do this:
-
-#### Use terraform moved blocks (recommended)
-
-The recommended approach is to use Terraform's native `moved` block feature:
-
-```hcl
-# Example assuming your OCP module is called "ocp"
-moved {
-  from = module.ocp.ibm_container_vpc_cluster.cluster[0]
-  to   = module.ocp.ibm_container_vpc_cluster.cluster_with_upgrade[0]
-}
-```
-
-For auto-scaling clusters:
-```hcl
-moved {
-  from = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster[0]
-  to   = module.ocp.ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0]
-}
-```
-
-Add this block to your Terraform configuration, run `terraform plan` to verify the state migration, then `terraform apply` to apply the changes. This approach works for both local Terraform and Schematics deployments.
-
-After a successful migration and once all team members have applied the changes, you can safely remove the moved blocks from your configuration.
-
-#### Alternative: manual state migration
-
-If you prefer not to use moved blocks, you can manually use the terraform state mv command to migrate resources:
-
-- For local Terraform deployments, see the [terraform state mv documentation](https://developer.hashicorp.com/terraform/cli/commands/state/mv)
-- For Schematics deployments, see the [ibmcloud schematics workspace state mv documentation](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-wks_statemv)
-
-
-### Troubleshooting
-
-#### The specified API key could not be found
-
-During cluster provisioning a containers apikey is created if one does not already exist for the given resource group and region ([learn more](https://cloud.ibm.com/docs/containers?topic=containers-access-creds)). Occasionally replication of the newly created apikey can be delayed causing the cluster creation to fail with an error like this:
-
-`Error: Request failed with status code: 404, ServerErrorResponse: {"incidentID":"c5caf83e-5f08-48c9-9778-6f3eb0ce1d16,c5caf83e-5f08-48c9-9778-6f3eb0ce1d16","code":"E06f9","description":"The specified API key could not be found.","type":""}`
-
-To workaround the issue simply attempt a re-apply of the terraform and it should pass on second attempt. If you still face issues, an IBM Cloud support case should be created with the `Kubernetes service` and include the `incidentID` from the error.
-
-#### The entitlement 'cloud_pak' was not found
-When provisioning this module, you might encounter the following error during the Terraform apply phase if a value has been set for ocp_entitlement.
-
-```
-2025/10/20 14:28:57 Terraform apply |   with module.ocp_base.ibm_container_vpc_cluster.cluster[0],
- 2025/10/20 14:28:57 Terraform apply |   on ../../main.tf line 140, in resource "ibm_container_vpc_cluster" "cluster":
- 2025/10/20 14:28:57 Terraform apply |  140: resource "ibm_container_vpc_cluster" "cluster" {
- 2025/10/20 14:28:57 Terraform apply |
- 2025/10/20 14:28:57 Terraform apply | ---
- 2025/10/20 14:28:57 Terraform apply | id: terraform-40a3a1fe
- 2025/10/20 14:28:57 Terraform apply | summary: 'Request failed with status code: 400, ServerErrorResponse:
- 2025/10/20 14:28:57 Terraform apply | {"incidentID":"a0701484-1dcf-a82e-90b1-455464f7064c","code":"E3595","description":"The
- 2025/10/20 14:28:57 Terraform apply |   entitlement ''cloud_pak'' was not found. Specify ''ocp_entitled'' to search for
- 2025/10/20 14:28:57 Terraform apply |   any supported license or entitlement. If no match is found, then you do not have
- 2025/10/20 14:28:57 Terraform apply |   a supported license or entitlement.","type":"BadRequest"}'
- 2025/10/20 14:28:57 Terraform apply | severity: error
- 2025/10/20 14:28:57 Terraform apply | resource: ibm_container_vpc_cluster
- 2025/10/20 14:28:57 Terraform apply | operation: create
- 2025/10/20 14:28:57 Terraform apply | component:
- 2025/10/20 14:28:57 Terraform apply |   name: github.com/IBM-Cloud/terraform-provider-ibm
- 2025/10/20 14:28:57 Terraform apply |   version: 1.83.3
- 2025/10/20 14:28:57 Terraform apply | ---
-```
-
-This error typically occurs when the OpenShift cluster API key for the target region and resource group is invalid, expired, or not properly associated with the required entitlement.
-
-To resolve this issue, Replace the API key for all clusters in the specified region and targeted resource group.
-```
-  ibmcloud target -g <resource-group>
-  ibmcloud oc api-key reset --region <region>
-```
-
-
-#### New kube_version message
-
-- When you run a `terraform plan` command, you might get a message about a new version of Kubernetes, as in the following example:
-
-    ```terraform
-    kube_version = "4.12.16_openshift" -> "4.12.20_openshift"
-
-    Unless you have made equivalent changes to your configuration, or ignored the relevant attributes using ignore_changes, the following plan may include actions to undo or respond to these changes.
-    ```
-
-    A new version is detected because the Kubernetes master node is updated outside of Terraform, and the Terraform state is out of date with that version.
-
-    The Kubernetes version is ignored in the module code, so the infrastructure will not be modified. The message identifies that drift exists in the versions, and after running the `terraform apply` command, the state will be refreshed.
-
-#### Error downloading cluster config: refresh token contains subject type 'ServiceId'
-
-When provisioning this module in IBM Cloud Schematics, you may encounter the following error during the Terraform plan phase:
-```
-| Planning failed. Terraform encountered an error while generating this plan.
-|
-|
-| Error: [ERROR] Error downloading the cluster config [d50jqc1b0qvhhqn88k8g]: Request failed with status code: 400, BXNIM0453E: The refresh token contains subject type 'ServiceId', which is not valid for the intended operation. Supported subject types are UserId, Profile.
-|
-|   with module.ocp_base.data.ibm_container_cluster_config.cluster_config[0],
-|   on ../../main.tf line 448, in data "ibm_container_cluster_config" "cluster_config":
-|  448: data "ibm_container_cluster_config" "cluster_config" {
-|
-| ---
-| id: terraform-82a5043b
-| summary: '[ERROR] Error downloading the cluster config
-| [d50jqc1b0qvhhqn88k8g]: Request
-|   failed with status code: 400, BXNIM0453E: The refresh token contains subject type
-|   ''ServiceId'', which is not valid for the intended operation. Supported subject
-|   types are UserId, Profile.'
-| severity: error
-| resource: (Data) ibm_container_cluster_config
-| operation: read
-| component:
-|   name: github.com/IBM-Cloud/terraform-provider-ibm
-|   version: 1.79.2
-| ---
-|
-```
-
-This error typically occurs when an API key is not explicitly passed to the IBM Cloud provider configuration in Schematics and the user triggers the plan or apply action through the IBM Cloud CLI when authenticated as a Service ID. The following provider configuration will trigger this error:
-
-```
-provider "ibm" {
-  region = var.region
-}
-```
-
-To resolve this issue, explicitly provide an `ibmcloud_api_key` in your provider configuration when running in Schematics. The API key can be associated with either a user account or a Service ID. This happens because when a Service ID is used to trigger the Schematics workspace, Schematics passes an IAM access token for authentication, but OpenShift cluster operations require an API key.
-
 ### Required IAM access policies
 
 You need the following permissions to run this module.
@@ -354,10 +155,6 @@ Optionally, you need the following permissions to attach Access Management tags 
 - IAM Services
   - **Tagging** service
     - `Administrator` platform access
-
-### Note
-
-- One worker pool should always be named as `default`. Refer [issue 2849](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849) for further details.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -485,6 +282,11 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="output_vpe_url"></a> [vpe\_url](#output\_vpe\_url) | The virtual private endpoint URL of the Kubernetes cluster. |
 | <a name="output_workerpools"></a> [workerpools](#output\_workerpools) | Worker pools created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Known issues
+
+For a list of common known issues see:
+- [Known issues with Red Hat OpenShift on IBM Cloud / IBM Cloud Kubernetes Service when using terraform](https://cloud.ibm.com/docs/ibm-cloud-provider-for-terraform?topic=ibm-cloud-provider-for-terraform-known-issues)
 
 <!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
 ## Contributing
