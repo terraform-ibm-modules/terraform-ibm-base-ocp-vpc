@@ -127,6 +127,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 			"scripts/*.*",
 			"examples/fscloud/*.tf",
 			"modules/*/*.tf",
+			"modules/kube-audit/scripts/*.sh",
 			"kubeconfig/README.md",
 		},
 		ResourceGroup:          resourceGroup,
