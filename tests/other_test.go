@@ -124,9 +124,10 @@ func TestFSCloudInSchematic(t *testing.T) {
 		Prefix:  "base-ocp-fscloud",
 		TarIncludePatterns: []string{
 			"*.tf",
-			"scripts/*.sh",
+			"scripts/*.*",
 			"examples/fscloud/*.tf",
 			"modules/*/*.tf",
+			"modules/kube-audit/scripts/*.sh",
 			"kubeconfig/README.md",
 		},
 		ResourceGroup:          resourceGroup,

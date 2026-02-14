@@ -70,7 +70,7 @@ module "worker_pools" {
             pool_name        = "default"
             machine_type     = "bx2.4x16"
             workers_per_zone = 2
-            operating_system = "REDHAT_8_64"
+            operating_system = "RHCOS"
         }
     ]
     ignore_worker_pool_size_changes       = false
