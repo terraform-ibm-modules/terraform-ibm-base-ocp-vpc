@@ -223,7 +223,7 @@ module "kube_audit" {
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
-  audit_log_policy          = "WriteRequestBodies"
+  audit_log_policy          = "verbose"
   region                    = var.region
   ibmcloud_api_key          = var.ibmcloud_api_key
 }

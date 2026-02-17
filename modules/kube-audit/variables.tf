@@ -64,12 +64,12 @@ variable "cluster_config_endpoint_type" {
 
 variable "audit_log_policy" {
   type        = string
-  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`."
   default     = "default"
 
   validation {
-    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
-    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'verbose'"
+    condition     = contains(["default", "verbose"], var.audit_log_policy)
   }
 }
 
