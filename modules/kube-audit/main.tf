@@ -125,7 +125,7 @@ resource "null_resource" "set_audit_webhook" {
     enable_https_traffic = var.enable_https_traffic
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"
+    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_API_KEY  = var.ibmcloud_api_key
