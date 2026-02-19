@@ -66,7 +66,7 @@ module "vpc" {
   clean_default_sg_acl                   = true
   enable_vpc_flow_logs                   = true
   create_authorization_policy_vpc_to_cos = true
-  existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
+  existing_storage_bucket_name           = module.flowlogs_bucket.buckets["${var.prefix}-vpc-flowlogs"].bucket_name
   security_group_rules                   = []
   existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
   subnets = {

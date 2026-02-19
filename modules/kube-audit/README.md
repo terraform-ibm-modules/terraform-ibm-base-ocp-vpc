@@ -71,7 +71,6 @@ No modules.
 |------|------|
 | [helm_release.kube_audit](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [null_resource.enable_https_traffic](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [null_resource.set_audit_log_policy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.set_audit_webhook](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [terraform_data.install_required_binaries](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [time_sleep.wait_for_kube_audit](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
@@ -83,7 +82,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_audit_deployment_name"></a> [audit\_deployment\_name](#input\_audit\_deployment\_name) | The name of log collection deployment and service. | `string` | `"ibmcloud-kube-audit"` | no |
-| <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`. | `string` | `"default"` | no |
+| <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`. | `string` | `"default"` | no |
 | <a name="input_audit_namespace"></a> [audit\_namespace](#input\_audit\_namespace) | The name of the namespace where log collection service and a deployment will be created. | `string` | `"ibm-kube-audit"` | no |
 | <a name="input_audit_webhook_listener_image"></a> [audit\_webhook\_listener\_image](#input\_audit\_webhook\_listener\_image) | The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.The sub-module uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image. | `string` | `"icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"` | no |
 | <a name="input_audit_webhook_listener_image_tag_digest"></a> [audit\_webhook\_listener\_image\_tag\_digest](#input\_audit\_webhook\_listener\_image\_tag\_digest) | The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`. | `string` | `"8309d2a56ef85a5c486f195178d68c616a5123b3@sha256:a484d3dfeeb8f021fd51ca54fcc8a6618e0d49eecd1ca8c520d73d51cbfbfdb4"` | no |
