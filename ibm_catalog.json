@@ -953,8 +953,8 @@
                 },
                 {
                   "description": "Detailed verbose logging.",
-                  "displayname": "Write Request Bodies",
-                  "value": "WriteRequestBodies"
+                  "displayname": "Verbose",
+                  "value": "verbose"
                 }
               ]
             },
