@@ -437,8 +437,8 @@ locals {
 module "activity_tracker" {
 
   depends_on = [module.cos]
-  source  = "terraform-ibm-modules/activity-tracker/ibm"
-  version = "1.6.13"
+  source     = "terraform-ibm-modules/activity-tracker/ibm"
+  version    = "1.6.13"
   cos_targets = [
     {
       bucket_name                       = module.at_cos_bucket.buckets[local.activity_tracker_cos_target_bucket_name].bucket_name
