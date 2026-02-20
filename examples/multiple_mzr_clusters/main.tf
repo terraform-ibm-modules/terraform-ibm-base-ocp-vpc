@@ -193,7 +193,7 @@ module "monitoring_agent_1" {
     helm = helm.helm_cluster_1
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.20.0"
+  version                   = "1.21.0"
   cluster_id                = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
@@ -205,7 +205,7 @@ module "monitoring_agent_2" {
     helm = helm.helm_cluster_2
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.20.0"
+  version                   = "1.21.0"
   cluster_id                = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
