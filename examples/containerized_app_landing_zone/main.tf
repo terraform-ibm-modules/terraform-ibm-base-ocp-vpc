@@ -435,6 +435,8 @@ locals {
 }
 
 module "activity_tracker" {
+
+  depends_on = [module.cos]
   source  = "terraform-ibm-modules/activity-tracker/ibm"
   version = "1.6.13"
   cos_targets = [
@@ -443,7 +445,7 @@ module "activity_tracker" {
       endpoint                          = module.at_cos_bucket.buckets[local.activity_tracker_cos_target_bucket_name].s3_endpoint_private
       instance_id                       = module.cos.cos_instance_crn
       target_region                     = var.region
-      target_name                       = module.cos.cos_instance_name
+      target_name                       = "${var.prefix}-cos-instance"
       skip_atracker_cos_iam_auth_policy = false
       service_to_service_enabled        = true
     }
@@ -453,7 +455,7 @@ module "activity_tracker" {
     {
       instance_id   = module.cloud_logs.crn
       target_region = var.region
-      target_name   = module.cos.cos_instance_name
+      target_name   = "${var.prefix}-cos-instance"
     }
   ]
 
