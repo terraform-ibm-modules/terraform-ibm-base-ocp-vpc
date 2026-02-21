@@ -483,6 +483,7 @@ module "worker_pools" {
   worker_pools                          = var.worker_pools
   ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
   allow_default_worker_pool_replacement = var.allow_default_worker_pool_replacement
+  worker_pools_taints                   = var.worker_pools_taints
 }
 
 ##############################################################################
