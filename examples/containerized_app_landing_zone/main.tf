@@ -323,7 +323,7 @@ locals {
 module "cloud_logs" {
   depends_on        = [time_sleep.wait_for_cos_authorization_policy]
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.11.4"
+  version           = "1.12.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   instance_name     = "${var.prefix}-cloud-logs"
@@ -907,7 +907,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 module "monitoring_agent" {
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.20.0"
+  version                   = "1.21.0"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   is_vpc_cluster            = true
@@ -955,7 +955,7 @@ module "trusted_profile" {
 
 module "logs_agent" {
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.18.1"
+  version                       = "1.18.4"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
