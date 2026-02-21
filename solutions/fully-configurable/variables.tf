@@ -14,7 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. **Important:** If you are deploying a VPC using the VPC DA, changing the prefix after initial deployment will cause Terraform to plan destruction and recreation of VPC resources. Changing the prefix should be treated as provisioning a new VPC environment, not renaming existing VPC resources. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 
   validation {
     # - null and empty string is allowed
