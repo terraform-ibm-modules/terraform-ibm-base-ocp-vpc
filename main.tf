@@ -805,11 +805,39 @@ resource "time_sleep" "wait_for_auth_policy" {
   create_duration = "30s"
 }
 
+resource "terraform_data" "delete_secrets" {
+
+  count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  input = {
+    secret_id                   = module.secret_group[0].secret_group_id
+    secrets_manager_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
+    secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
+    secrets_manager_endpoint    = module.existing_secrets_manager_instance_parser[0].ctype
+  }
+  provisioner "local-exec" {
+    when        = destroy
+    command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
+module "secret_group" {
+  count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
+  source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
+  version                  = "1.4.5"
+  region                   = module.existing_secrets_manager_instance_parser[0].region
+  secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
+  secret_group_name        = local.cluster_id
+  secret_group_description = "Secret group for storing ingress certificates for cluster ${var.cluster_name} with id: ${local.cluster_id}"
+  endpoint_type            = module.existing_secrets_manager_instance_parser[0].ctype
+}
+
+
 resource "ibm_container_ingress_instance" "instance" {
   count           = var.enable_secrets_manager_integration ? 1 : 0
   depends_on      = [time_sleep.wait_for_auth_policy]
   cluster         = var.cluster_name
   instance_crn    = var.existing_secrets_manager_instance_crn
   is_default      = true
-  secret_group_id = var.secrets_manager_secret_group_id
+  secret_group_id = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
 }
