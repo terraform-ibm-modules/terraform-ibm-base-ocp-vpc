@@ -180,6 +180,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.35.14 |
 | <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 10.14.1 |
 | <a name="module_existing_secrets_manager_instance_parser"></a> [existing\_secrets\_manager\_instance\_parser](#module\_existing\_secrets\_manager\_instance\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.4.2 |
+| <a name="module_secret_group"></a> [secret\_group](#module\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.4.5 |
 | <a name="module_worker_pools"></a> [worker\_pools](#module\_worker\_pools) | ./modules/worker-pool | n/a |
 
 ### Resources
@@ -199,6 +200,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | [null_resource.config_map_status](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.confirm_network_healthy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.ocp_console_management](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [terraform_data.delete_secrets](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.install_required_binaries](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [time_sleep.wait_for_auth_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [external_external.ocp_addon_versions](https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external) | data source |

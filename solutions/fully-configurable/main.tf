@@ -237,7 +237,7 @@ module "ocp_base" {
   worker_pools_taints                      = var.worker_pools_taints
   enable_secrets_manager_integration       = var.enable_secrets_manager_integration
   existing_secrets_manager_instance_crn    = var.existing_secrets_manager_instance_crn
-  secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
+  secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id
   skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
 }
 
@@ -246,45 +246,6 @@ module "existing_secrets_manager_instance_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
   version = "1.4.2"
   crn     = var.existing_secrets_manager_instance_crn
-}
-
-resource "terraform_data" "delete_secrets" {
-
-  count = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
-  input = {
-    secret_id                   = module.secret_group[0].secret_group_id
-    provider_visibility         = var.provider_visibility
-    secrets_manager_instance_id = module.existing_secrets_manager_instance_parser[0].service_instance
-    secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
-    secrets_manager_endpoint    = var.secrets_manager_endpoint_type
-  }
-  # api key in triggers_replace to avoid it to be printed out in clear text in terraform_data output
-  triggers_replace = {
-    api_key = var.ibmcloud_api_key
-  }
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.provider_visibility} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
-    interpreter = ["/bin/bash", "-c"]
-
-    environment = {
-      API_KEY = self.triggers_replace.api_key
-    }
-  }
-}
-
-module "secret_group" {
-  providers = {
-    ibm = ibm.secrets_manager
-  }
-  count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
-  source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.4.5"
-  region                   = module.existing_secrets_manager_instance_parser[0].region
-  secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
-  secret_group_name        = module.ocp_base.cluster_id
-  secret_group_description = "Secret group for storing ingress certificates for cluster ${var.cluster_name} with id: ${module.ocp_base.cluster_id}"
-  endpoint_type            = var.secrets_manager_endpoint_type
 }
 
 data "ibm_container_cluster_config" "cluster_config" {

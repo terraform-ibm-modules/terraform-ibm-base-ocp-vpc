@@ -575,16 +575,6 @@ variable "secrets_manager_secret_group_id" {
   }
 }
 
-variable "secrets_manager_endpoint_type" {
-  type        = string
-  description = "The type of endpoint (public or private) to connect to the Secrets Manager API. The Terraform provider uses this endpoint type to interact with the Secrets Manager API."
-  default     = "private"
-  validation {
-    condition     = contains(["public", "private"], var.secrets_manager_endpoint_type)
-    error_message = "The specified service endpoint is not a valid selection!"
-  }
-}
-
 variable "skip_ocp_secrets_manager_iam_auth_policy" {
   type        = bool
   description = "To skip creating auth policy that allows OCP cluster 'Manager' role access in the existing Secrets Manager instance for managing ingress certificates."
