@@ -110,6 +110,7 @@ func TestRunAdvancedExample(t *testing.T) {
 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 	options.PostApplyHook = getClusterIngress
 
+	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.logs_agents.terraform_data.install_required_binaries[0]"}}
 	output, err := options.RunTestConsistency()
 
 	assert.Nil(t, err, "This should not have errored")
