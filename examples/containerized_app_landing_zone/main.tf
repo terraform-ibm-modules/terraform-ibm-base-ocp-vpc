@@ -165,7 +165,7 @@ locals {
 
 module "en_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.1"
+  version        = "10.14.2"
   bucket_configs = local.en_cos_bucket_config
 }
 
@@ -284,7 +284,7 @@ resource "ibm_en_subscription_email" "en_email_subscription" {
 
 module "cos" {
   source              = "terraform-ibm-modules/cos/ibm//modules/fscloud"
-  version             = "10.14.1"
+  version             = "10.14.2"
   resource_group_id   = module.resource_group.resource_group_id
   create_cos_instance = true
   cos_instance_name   = "${var.prefix}-cos-instance"
@@ -348,7 +348,7 @@ module "cloud_logs" {
 
 module "cloud_logs_buckets" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.1"
+  version = "10.14.2"
   bucket_configs = [
     {
       bucket_name              = local.data_bucket_name
@@ -463,7 +463,7 @@ module "activity_tracker" {
 
 module "at_cos_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.1"
+  version = "10.14.2"
   bucket_configs = [
     for value in local.at_buckets_config :
     {
@@ -618,7 +618,7 @@ locals {
 # Create COS bucket using the defined bucket configuration
 module "vpc_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.1"
+  version        = "10.14.2"
   bucket_configs = local.flow_logs_bucket_config
 }
 
