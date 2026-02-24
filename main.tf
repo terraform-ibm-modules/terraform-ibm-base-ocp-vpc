@@ -146,7 +146,7 @@ module "cos_instance" {
   count = var.enable_registry_storage && !var.use_existing_cos ? 1 : 0
 
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.14.1"
+  version                = "10.14.2"
   cos_instance_name      = local.cos_name
   resource_group_id      = var.resource_group_id
   cos_plan               = local.cos_plan
@@ -483,6 +483,7 @@ module "worker_pools" {
   worker_pools                          = var.worker_pools
   ignore_worker_pool_size_changes       = var.ignore_worker_pool_size_changes
   allow_default_worker_pool_replacement = var.allow_default_worker_pool_replacement
+  worker_pools_taints                   = var.worker_pools_taints
 }
 
 ##############################################################################
