@@ -19,15 +19,12 @@ if [[ $secrets_manager_endpoint == "private" ]];then
 fi
 base_url="${base_url}.${secrets_manager_region}.secrets-manager.appdomain.cloud"
 
-# generate iam token
-iam_token=$(ibmcloud iam oauth-tokens --output json | jq -r '.iam_token')
-
 # curl command would return the list of secrets, jq is used to fetch length of secrets array in json output and fetching id of secret at particular index
 # which will be used while making the DELETE request
 
 
 json_output=$(curl --fail --retry 3 -s -X GET --location \
-  --header "Authorization: Bearer ${iam_token}" \
+  --header "Authorization: Bearer ${IAM_TOKEN}" \
   --header "Accept: application/json" \
   "${base_url}/api/v2/secrets?groups=$secret_group_id")
 
@@ -48,7 +45,7 @@ for ((i=0; i<secrets_length; i++)); do
   secret_name=$(echo "$json_output" | jq -r ".secrets[$i].name")
   echo "Deleting secret ${secret_name} with id ${secret_id}" >&2
   for ((j=1; j<=retryCount; j++)); do
-    if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${iam_token}" "${base_url}/api/v2/secrets/${secret_id}";then
+    if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${IAM_TOKEN}" "${base_url}/api/v2/secrets/${secret_id}";then
       if [[ "$j" == "$retryCount" ]];then
         echo "Failed to delete the secret.. please delete manually" >&2
         exit 1
@@ -65,7 +62,7 @@ echo "Waiting for the secrets to be deleted" >&2
 sleep 5
 
 secret_count=$(curl --fail --retry 3 -s -X GET --location \
-    --header "Authorization: Bearer ${iam_token}" \
+    --header "Authorization: Bearer ${IAM_TOKEN}" \
     --header "Accept: application/json" \
     "${base_url}/api/v2/secrets?groups=$secret_group_id" | \
   jq '.secrets | length')

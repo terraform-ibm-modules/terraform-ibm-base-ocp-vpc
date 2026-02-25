@@ -814,10 +814,18 @@ resource "terraform_data" "delete_secrets" {
     secrets_manager_region      = module.existing_secrets_manager_instance_parser[0].region
     secrets_manager_endpoint    = module.existing_secrets_manager_instance_parser[0].ctype
   }
+  # api key in triggers_replace to avoid it to be printed out in clear text in terraform_data output
+  triggers_replace = {
+    iam_access_token = data.ibm_iam_auth_token.tokendata.iam_access_token
+  }
   provisioner "local-exec" {
     when        = destroy
     command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
     interpreter = ["/bin/bash", "-c"]
+
+    environment = {
+      IAM_TOKEN = self.triggers_replace.iam_access_token
+    }
   }
 }
 
