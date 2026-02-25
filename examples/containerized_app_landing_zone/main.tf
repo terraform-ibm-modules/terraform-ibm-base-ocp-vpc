@@ -103,7 +103,7 @@ module "metrics_routing" {
     }
   ]
 
-  metrics_router_routes   = local.default_metrics_router_route
+  metrics_router_routes = local.default_metrics_router_route
 }
 
 #########################################################################################################
