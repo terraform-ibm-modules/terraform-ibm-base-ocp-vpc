@@ -44,6 +44,7 @@ locals {
       ]
     }
   ]
+  cos_instance_name = "${var.prefix}-cos-instance"
 }
 
 
@@ -286,7 +287,7 @@ module "cos" {
   version             = "10.14.3"
   resource_group_id   = module.resource_group.resource_group_id
   create_cos_instance = true
-  cos_instance_name   = "${var.prefix}-cos-instance"
+  cos_instance_name   = local.cos_instance_name
   cos_plan            = "standard" # Possible values are `standard` or `cos-one-rate-plan`.
 }
 
@@ -443,7 +444,7 @@ module "activity_tracker" {
       endpoint                          = module.at_cos_bucket.buckets[local.activity_tracker_cos_target_bucket_name].s3_endpoint_private
       instance_id                       = module.cos.cos_instance_crn
       target_region                     = var.region
-      target_name                       = "${var.prefix}-cos-instance"
+      target_name                       = local.cos_instance_name
       skip_atracker_cos_iam_auth_policy = false
       service_to_service_enabled        = true
     }
@@ -453,7 +454,7 @@ module "activity_tracker" {
     {
       instance_id   = module.cloud_logs.crn
       target_region = var.region
-      target_name   = "${var.prefix}-cos-instance"
+      target_name   = local.cos_instance_name
     }
   ]
 
