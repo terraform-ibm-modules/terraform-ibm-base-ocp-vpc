@@ -49,14 +49,14 @@ The primary goal of this example is to provision an OpenShift cluster on VPC and
 | <a name="module_at_cos_bucket"></a> [at\_cos\_bucket](#module\_at\_cos\_bucket) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.14.3 |
 | <a name="module_cloud_logs"></a> [cloud\_logs](#module\_cloud\_logs) | terraform-ibm-modules/cloud-logs/ibm | 1.12.2 |
 | <a name="module_cloud_logs_buckets"></a> [cloud\_logs\_buckets](#module\_cloud\_logs\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.14.3 |
-| <a name="module_cloud_monitoring"></a> [cloud\_monitoring](#module\_cloud\_monitoring) | terraform-ibm-modules/cloud-monitoring/ibm | 1.13.6 |
+| <a name="module_cloud_monitoring"></a> [cloud\_monitoring](#module\_cloud\_monitoring) | terraform-ibm-modules/cloud-monitoring/ibm | 1.14.1 |
 | <a name="module_cos"></a> [cos](#module\_cos) | terraform-ibm-modules/cos/ibm//modules/fscloud | 10.14.3 |
 | <a name="module_en_cos_buckets"></a> [en\_cos\_buckets](#module\_en\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.14.3 |
-| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.11.19 |
+| <a name="module_event_notifications"></a> [event\_notifications](#module\_event\_notifications) | terraform-ibm-modules/event-notifications/ibm | 2.11.20 |
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.5.31 |
-| <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.18.4 |
-| <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.13.6 |
-| <a name="module_monitoring_agent"></a> [monitoring\_agent](#module\_monitoring\_agent) | terraform-ibm-modules/monitoring-agent/ibm | 1.21.0 |
+| <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.19.1 |
+| <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.14.1 |
+| <a name="module_monitoring_agent"></a> [monitoring\_agent](#module\_monitoring\_agent) | terraform-ibm-modules/monitoring-agent/ibm | 1.21.1 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.4.8 |
 | <a name="module_scc_wp"></a> [scc\_wp](#module\_scc\_wp) | terraform-ibm-modules/scc-workload-protection/ibm | 1.17.6 |
@@ -65,7 +65,7 @@ The primary goal of this example is to provision an OpenShift cluster on VPC and
 | <a name="module_trusted_profile"></a> [trusted\_profile](#module\_trusted\_profile) | terraform-ibm-modules/trusted-profile/ibm | 3.2.19 |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-ibm-modules/landing-zone-vpc/ibm | 8.15.3 |
 | <a name="module_vpc_cos_buckets"></a> [vpc\_cos\_buckets](#module\_vpc\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.14.3 |
-| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 5.0.4 |
+| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 5.0.5 |
 
 ### Resources
 

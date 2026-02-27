@@ -82,7 +82,7 @@ locals {
 
 module "cloud_monitoring" {
   source                      = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                     = "1.13.6"
+  version                     = "1.14.1"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   instance_name               = "${var.prefix}-cloud-monitoring"
@@ -94,7 +94,7 @@ module "cloud_monitoring" {
 
 module "metrics_routing" {
   source  = "terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing"
-  version = "1.13.6"
+  version = "1.14.1"
   metrics_router_targets = [
     {
       destination_crn                 = module.cloud_monitoring.crn
@@ -117,7 +117,7 @@ locals {
 
 module "event_notifications" {
   source            = "terraform-ibm-modules/event-notifications/ibm"
-  version           = "2.11.19"
+  version           = "2.11.20"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "${var.prefix}-event-notifications"
@@ -792,7 +792,7 @@ module "vpc" {
 
 module "vpe_gateway" {
   source            = "terraform-ibm-modules/vpe-gateway/ibm"
-  version           = "5.0.4"
+  version           = "5.0.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -908,7 +908,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 module "monitoring_agent" {
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.21.0"
+  version                   = "1.21.1"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   is_vpc_cluster            = true
@@ -956,7 +956,7 @@ module "trusted_profile" {
 
 module "logs_agent" {
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.18.4"
+  version                       = "1.19.1"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
