@@ -64,12 +64,12 @@ variable "cluster_config_endpoint_type" {
 
 variable "audit_log_policy" {
   type        = string
-  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`."
   default     = "default"
 
   validation {
-    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
-    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'verbose'"
+    condition     = contains(["default", "verbose"], var.audit_log_policy)
   }
 }
 
@@ -95,7 +95,7 @@ variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   nullable    = false
-  default     = "728d5027a778c083ab1dddc3901e988fa054b084@sha256:56074f4ae86eef46e97ea24532769a22fb99c33bfbad657cea4aa370a48fb4e2"
+  default     = "5d31703a976c9a62007917de5d4a82c3b494bbde@sha256:61bb88b5febd05a34bf582693673bad90df0ed9f9d8b58ebc7ab718de4049d6d"
 
   validation {
     condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_tag_digest))
@@ -107,5 +107,12 @@ variable "install_required_binaries" {
   type        = bool
   default     = true
   description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
+  nullable    = false
+}
+
+variable "enable_https_traffic" {
+  type        = bool
+  default     = true
+  description = "When set to true, the traffic in transit between the audit webhook service in the cluster and the components that send audit events to it is encrypted using HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
   nullable    = false
 }

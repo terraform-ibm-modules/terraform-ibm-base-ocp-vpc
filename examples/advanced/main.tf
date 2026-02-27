@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.16"
+  version                   = "5.5.31"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -113,7 +113,7 @@ locals {
       pool_name                         = "default" # ibm_container_vpc_cluster automatically names default pool "default" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type                      = "mx2.4x32"
       workers_per_zone                  = 1
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHEL_9_64"
       enableAutoscaling                 = true
       minSize                           = 1
       maxSize                           = 6
@@ -125,7 +125,7 @@ locals {
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
       secondary_storage                 = "300gb.5iops-tier"
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHEL_9_64"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     },
     {
@@ -133,7 +133,7 @@ locals {
       pool_name                         = "zone-3"
       machine_type                      = "bx2.4x16"
       workers_per_zone                  = 1
-      operating_system                  = "REDHAT_8_64"
+      operating_system                  = "RHEL_9_64"
       boot_volume_encryption_kms_config = local.boot_volume_encryption_kms_config
     }
   ]
@@ -157,7 +157,7 @@ locals {
       subnet_prefix    = "zone-1"
       pool_name        = "workerpool"
       machine_type     = "bx2.4x16"
-      operating_system = "REDHAT_8_64"
+      operating_system = "RHEL_9_64"
       workers_per_zone = 2
     }
   ]
@@ -184,7 +184,7 @@ module "ocp_base" {
   # Enable if using worker autoscaling. Stops Terraform managing worker count.
   ignore_worker_pool_size_changes = true
   addons = {
-    "cluster-autoscaler" = { version = "1.2.3" }
+    "cluster-autoscaler" = { version = "1.2.4" }
   }
   kms_config = {
     instance_id = module.kp_all_inclusive.kms_guid
@@ -223,7 +223,7 @@ module "kube_audit" {
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
-  audit_log_policy          = "WriteRequestBodies"
+  audit_log_policy          = "verbose"
   region                    = var.region
   ibmcloud_api_key          = var.ibmcloud_api_key
 }
@@ -240,7 +240,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.15"
+  version           = "1.12.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
@@ -249,7 +249,7 @@ module "cloud_logs" {
 
 module "trusted_profile" {
   source                      = "terraform-ibm-modules/trusted-profile/ibm"
-  version                     = "3.2.17"
+  version                     = "3.2.19"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
   # As a `Sender`, you can send logs to your IBM Cloud Logs service instance - but not query or tail logs. This role is meant to be used by agents and routers sending logs.
@@ -276,7 +276,7 @@ module "trusted_profile" {
 module "logs_agents" {
   depends_on                    = [module.kube_audit]
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.16.2"
+  version                       = "1.18.4"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
@@ -290,5 +290,5 @@ module "logs_agents" {
     value = module.ocp_base.cluster_id
   }]
   # example of how to add only kube-audit log source path
-  logs_agent_selected_log_source_paths = ["/var/log/audit/*.log"]
+  logs_agent_system_logs = ["/var/log/audit/*.log"]
 }

@@ -2,14 +2,15 @@ locals {
   binaries_path = "/tmp"
 }
 
-resource "null_resource" "install_required_binaries" {
+resource "terraform_data" "install_required_binaries" {
   count = var.install_required_binaries ? 1 : 0
-  triggers = {
+  triggers_replace = {
     audit_log_policy                        = var.audit_log_policy
     audit_deployment_name                   = var.audit_deployment_name
     audit_namespace                         = var.audit_namespace
     audit_webhook_listener_image            = var.audit_webhook_listener_image
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+    enable_https_traffic                    = var.enable_https_traffic
   }
   provisioner "local-exec" {
     command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
@@ -37,20 +38,6 @@ locals {
   validate_existing_vpc_id = tonumber(regex("^([0-9]+\\.[0-9]+)", data.ibm_container_vpc_cluster.cluster.kube_version)[0]) > "4.14" ? true : tobool("Kubernetes API server audit logs forwarding is only supported in ocp versions 4.15 and later.")
 }
 
-resource "null_resource" "set_audit_log_policy" {
-  depends_on = [null_resource.install_required_binaries]
-  triggers = {
-    audit_log_policy = var.audit_log_policy
-  }
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_audit_log_policy.sh ${var.audit_log_policy} ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
-    }
-  }
-}
-
 #########################################################################################################################
 # Creates a log collection service and container
 ########################################################################################################################
@@ -60,7 +47,7 @@ locals {
 }
 
 resource "helm_release" "kube_audit" {
-  depends_on    = [null_resource.install_required_binaries, null_resource.set_audit_log_policy, data.ibm_container_vpc_cluster.cluster]
+  depends_on    = [terraform_data.install_required_binaries, data.ibm_container_vpc_cluster.cluster]
   name          = var.audit_deployment_name
   chart         = local.kube_audit_chart_location
   timeout       = 1200
@@ -100,14 +87,30 @@ resource "helm_release" "kube_audit" {
   }
 }
 
+resource "null_resource" "enable_https_traffic" {
+  depends_on = [terraform_data.install_required_binaries, helm_release.kube_audit]
+  count      = var.enable_https_traffic ? 1 : 0
+  triggers = {
+    enable_https_traffic = var.enable_https_traffic
+  }
+  provisioner "local-exec" {
+    command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+    }
+  }
+}
+
+
 # wait for the kube-audit resources.
 resource "time_sleep" "wait_for_kube_audit" {
-  depends_on      = [helm_release.kube_audit]
+  depends_on      = [null_resource.enable_https_traffic]
   create_duration = "60s"
 }
 
 locals {
-  audit_server = "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/${var.audit_deployment_name}-service/proxy/post"
+  audit_server = var.enable_https_traffic ? "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/https:${var.audit_deployment_name}-service:https/proxy/post" : "https://127.0.0.1:2040/api/v1/namespaces/${var.audit_namespace}/services/http:${var.audit_deployment_name}-service:http/proxy/post"
 }
 
 # see [issue](https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6107)
@@ -116,12 +119,13 @@ locals {
 # }
 
 resource "null_resource" "set_audit_webhook" {
-  depends_on = [null_resource.install_required_binaries, time_sleep.wait_for_kube_audit]
+  depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
   triggers = {
-    audit_log_policy = var.audit_log_policy
+    audit_log_policy     = var.audit_log_policy
+    enable_https_traffic = var.enable_https_traffic
   }
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy != "default" ? "verbose" : "default"} ${local.binaries_path}"
+    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       IAM_API_KEY  = var.ibmcloud_api_key

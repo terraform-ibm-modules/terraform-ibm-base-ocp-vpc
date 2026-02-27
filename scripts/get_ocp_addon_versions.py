@@ -46,7 +46,7 @@ def get_env_variable():
     """
     api_endpoint = os.getenv("IBMCLOUD_CS_API_ENDPOINT")
     if not api_endpoint:
-        api_endpoint = "https://containers.test.cloud.ibm.com/global"
+        api_endpoint = "https://containers.cloud.ibm.com/global"
     return api_endpoint
 
 

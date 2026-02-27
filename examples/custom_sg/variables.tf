@@ -37,7 +37,7 @@ variable "resource_tags" {
 variable "ocp_version" {
   type        = string
   description = "Version of the OCP cluster to provision"
-  default     = "4.14"
+  default     = null
 }
 
 variable "enable_openshift_version_upgrade" {

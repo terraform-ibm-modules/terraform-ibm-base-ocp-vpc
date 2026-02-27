@@ -123,7 +123,7 @@ This variable defines the worker node pools for your OCP cluster, with each pool
     machine_type                      = "bx2.4x16"
     workers_per_zone                  = 1
     secondary_storage                 = "300gb.5iops-tier"
-    operating_system                  = "REDHAT_9_64"
+    operating_system                  = "RHCOS"
   },
   {
     vpc_subnets                       = [
@@ -141,7 +141,7 @@ This variable defines the worker node pools for your OCP cluster, with each pool
     pool_name                         = "zone-3"
     machine_type                      = "bx2.4x16"
     workers_per_zone                  = 1
-    operating_system                  = "REDHAT_9_64"
+    operating_system                  = "RHCOS"
   }
 ]
 ```
