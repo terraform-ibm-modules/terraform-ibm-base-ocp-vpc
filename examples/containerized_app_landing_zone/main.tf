@@ -44,6 +44,7 @@ locals {
       ]
     }
   ]
+  cos_instance_name = "${var.prefix}-cos-instance"
 }
 
 
@@ -103,8 +104,7 @@ module "metrics_routing" {
     }
   ]
 
-  metrics_router_routes   = local.default_metrics_router_route
-  metrics_router_settings = { primary_metadata_region = var.region }
+  metrics_router_routes = local.default_metrics_router_route
 }
 
 #########################################################################################################
@@ -165,7 +165,7 @@ locals {
 
 module "en_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.2"
+  version        = "10.14.3"
   bucket_configs = local.en_cos_bucket_config
 }
 
@@ -284,10 +284,10 @@ resource "ibm_en_subscription_email" "en_email_subscription" {
 
 module "cos" {
   source              = "terraform-ibm-modules/cos/ibm//modules/fscloud"
-  version             = "10.14.2"
+  version             = "10.14.3"
   resource_group_id   = module.resource_group.resource_group_id
   create_cos_instance = true
-  cos_instance_name   = "${var.prefix}-cos-instance"
+  cos_instance_name   = local.cos_instance_name
   cos_plan            = "standard" # Possible values are `standard` or `cos-one-rate-plan`.
 }
 
@@ -348,7 +348,7 @@ module "cloud_logs" {
 
 module "cloud_logs_buckets" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.2"
+  version = "10.14.3"
   bucket_configs = [
     {
       bucket_name              = local.data_bucket_name
@@ -435,6 +435,7 @@ locals {
 }
 
 module "activity_tracker" {
+
   source  = "terraform-ibm-modules/activity-tracker/ibm"
   version = "1.6.13"
   cos_targets = [
@@ -443,7 +444,7 @@ module "activity_tracker" {
       endpoint                          = module.at_cos_bucket.buckets[local.activity_tracker_cos_target_bucket_name].s3_endpoint_private
       instance_id                       = module.cos.cos_instance_crn
       target_region                     = var.region
-      target_name                       = module.cos.cos_instance_name
+      target_name                       = local.cos_instance_name
       skip_atracker_cos_iam_auth_policy = false
       service_to_service_enabled        = true
     }
@@ -453,7 +454,7 @@ module "activity_tracker" {
     {
       instance_id   = module.cloud_logs.crn
       target_region = var.region
-      target_name   = module.cos.cos_instance_name
+      target_name   = local.cos_instance_name
     }
   ]
 
@@ -463,7 +464,7 @@ module "activity_tracker" {
 
 module "at_cos_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.2"
+  version = "10.14.3"
   bucket_configs = [
     for value in local.at_buckets_config :
     {
@@ -618,7 +619,7 @@ locals {
 # Create COS bucket using the defined bucket configuration
 module "vpc_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.2"
+  version        = "10.14.3"
   bucket_configs = local.flow_logs_bucket_config
 }
 
