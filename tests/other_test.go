@@ -55,7 +55,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion1,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -76,7 +78,9 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion4,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -95,7 +99,9 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
 			"ocp_version":          ocpVersion3,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 
 	output, err := options.RunTestConsistency()
 
@@ -136,6 +142,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
 		TerraformVersion:       terraformVersion,
+		CloudInfoService:       sharedInfoSvc,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
@@ -155,6 +162,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 	}
+	options.PostApplyHook = getClusterIngressSchematics
 
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
@@ -199,11 +207,13 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 				"metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
 			},
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 	}
+	options.PostApplyHook = getClusterIngressSchematics
 
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
