@@ -508,7 +508,7 @@ module "worker_pools" {
 
 ##############################################################################
 
-resource "null_resource" "confirm_network_healthy" {
+resource "terraform_data" "confirm_network_healthy" {
 
   count = var.verify_worker_network_readiness ? 1 : 0
 
@@ -517,7 +517,7 @@ resource "null_resource" "confirm_network_healthy" {
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
   depends_on = [terraform_data.install_required_binaries, ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools]
 
-  triggers = {
+  triggers_replace = {
     verify_worker_network_readiness = var.verify_worker_network_readiness
   }
 
@@ -533,10 +533,10 @@ resource "null_resource" "confirm_network_healthy" {
 ##############################################################################
 # Enable or Disable OCP Console Patch
 ##############################################################################
-resource "null_resource" "ocp_console_management" {
+resource "terraform_data" "ocp_console_management" {
   count      = var.enable_ocp_console != null ? 1 : 0
-  depends_on = [terraform_data.install_required_binaries, null_resource.confirm_network_healthy]
-  triggers = {
+  depends_on = [terraform_data.install_required_binaries, terraform_data.confirm_network_healthy]
+  triggers_replace = {
     enable_ocp_console = var.enable_ocp_console
   }
   provisioner "local-exec" {
@@ -576,7 +576,7 @@ resource "ibm_container_addons" "addons" {
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
-  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on        = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, terraform_data.confirm_network_healthy]
   cluster           = local.cluster_id
   resource_group_id = var.resource_group_id
 
@@ -610,11 +610,11 @@ locals {
 
 }
 
-resource "null_resource" "config_map_status" {
+resource "terraform_data" "config_map_status" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
   depends_on = [terraform_data.install_required_binaries, ibm_container_addons.addons]
 
-  triggers = {
+  triggers_replace = {
     cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
   }
   provisioner "local-exec" {
@@ -628,7 +628,7 @@ resource "null_resource" "config_map_status" {
 
 resource "kubernetes_config_map_v1_data" "set_autoscaling" {
   count      = lookup(var.addons, "cluster-autoscaler", null) != null ? 1 : 0
-  depends_on = [null_resource.config_map_status]
+  depends_on = [terraform_data.config_map_status]
 
   metadata {
     name      = "iks-ca-configmap"
@@ -652,7 +652,7 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
 ##############################################################################
 
 data "ibm_is_lbs" "all_lbs" {
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, terraform_data.confirm_network_healthy]
   count      = length(var.additional_lb_security_group_ids) > 0 ? 1 : 0
 }
 
@@ -688,19 +688,19 @@ locals {
 
 data "ibm_is_virtual_endpoint_gateway" "master_vpe" {
   count      = length(var.additional_vpe_security_group_ids["master"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, terraform_data.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["master"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "api_vpe" {
   count      = length(var.additional_vpe_security_group_ids["api"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, terraform_data.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["api"]
 }
 
 data "ibm_is_virtual_endpoint_gateway" "registry_vpe" {
   count      = length(var.additional_vpe_security_group_ids["registry"])
-  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, null_resource.confirm_network_healthy]
+  depends_on = [ibm_container_vpc_cluster.cluster, ibm_container_vpc_cluster.cluster_with_upgrade, ibm_container_vpc_cluster.autoscaling_cluster, ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade, module.worker_pools, terraform_data.confirm_network_healthy]
   name       = local.vpes_to_attach_to_sg["registry"]
 }
 

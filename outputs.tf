@@ -5,19 +5,19 @@
 output "cluster_id" {
   description = "ID of the cluster"
   value       = local.cluster_id
-  depends_on  = [null_resource.confirm_network_healthy]
+  depends_on  = [terraform_data.confirm_network_healthy]
 }
 
 output "cluster_name" {
   description = "Name of the cluster"
   value       = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].name : ibm_container_vpc_cluster.cluster_with_upgrade[0].name) : (var.ignore_worker_pool_size_changes ? ibm_container_vpc_cluster.autoscaling_cluster[0].name : ibm_container_vpc_cluster.cluster[0].name)
-  depends_on  = [null_resource.confirm_network_healthy]
+  depends_on  = [terraform_data.confirm_network_healthy]
 }
 
 output "cluster_crn" {
   description = "CRN of the cluster"
   value       = local.cluster_crn
-  depends_on  = [null_resource.confirm_network_healthy]
+  depends_on  = [terraform_data.confirm_network_healthy]
 }
 
 output "workerpools" {

@@ -278,7 +278,7 @@ func TestRunCustomsgExample(t *testing.T) {
 		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.terraform_data.confirm_network_healthy",
 		},
 		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{

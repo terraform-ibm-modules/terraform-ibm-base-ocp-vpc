@@ -87,10 +87,10 @@ resource "helm_release" "kube_audit" {
   }
 }
 
-resource "null_resource" "enable_https_traffic" {
+resource "terraform_data" "enable_https_traffic" {
   depends_on = [terraform_data.install_required_binaries, helm_release.kube_audit]
   count      = var.enable_https_traffic ? 1 : 0
-  triggers = {
+  triggers_replace = {
     enable_https_traffic = var.enable_https_traffic
   }
   provisioner "local-exec" {
@@ -105,7 +105,7 @@ resource "null_resource" "enable_https_traffic" {
 
 # wait for the kube-audit resources.
 resource "time_sleep" "wait_for_kube_audit" {
-  depends_on      = [null_resource.enable_https_traffic]
+  depends_on      = [terraform_data.enable_https_traffic]
   create_duration = "60s"
 }
 
@@ -118,9 +118,9 @@ locals {
 #   depends_on = [data.ibm_container_cluster_config.cluster_config]
 # }
 
-resource "null_resource" "set_audit_webhook" {
+resource "terraform_data" "set_audit_webhook" {
   depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
-  triggers = {
+  triggers_replace = {
     audit_log_policy     = var.audit_log_policy
     enable_https_traffic = var.enable_https_traffic
   }
