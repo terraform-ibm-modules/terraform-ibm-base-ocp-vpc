@@ -50,7 +50,7 @@ locals {
 
 module "kms" {
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.32"
+  version                     = "5.5.33"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   create_key_protect_instance = true
@@ -82,7 +82,7 @@ locals {
 
 module "cloud_monitoring" {
   source                      = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                     = "1.14.2"
+  version                     = "1.14.3"
   resource_group_id           = module.resource_group.resource_group_id
   region                      = var.region
   instance_name               = "${var.prefix}-cloud-monitoring"
@@ -94,7 +94,7 @@ module "cloud_monitoring" {
 
 module "metrics_routing" {
   source  = "terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing"
-  version = "1.14.2"
+  version = "1.14.3"
   metrics_router_targets = [
     {
       destination_crn                 = module.cloud_monitoring.crn
@@ -117,7 +117,7 @@ locals {
 
 module "event_notifications" {
   source            = "terraform-ibm-modules/event-notifications/ibm"
-  version           = "2.11.21"
+  version           = "2.11.23"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "${var.prefix}-event-notifications"
@@ -165,7 +165,7 @@ locals {
 
 module "en_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.4"
+  version        = "10.14.5"
   bucket_configs = local.en_cos_bucket_config
 }
 
@@ -214,7 +214,7 @@ locals {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.13.7"
+  version                       = "2.13.8"
   resource_group_id             = module.resource_group.resource_group_id
   region                        = var.region
   secrets_manager_name          = "${var.prefix}-secrets-manager"
@@ -284,7 +284,7 @@ resource "ibm_en_subscription_email" "en_email_subscription" {
 
 module "cos" {
   source              = "terraform-ibm-modules/cos/ibm//modules/fscloud"
-  version             = "10.14.4"
+  version             = "10.14.5"
   resource_group_id   = module.resource_group.resource_group_id
   create_cos_instance = true
   cos_instance_name   = local.cos_instance_name
@@ -323,7 +323,7 @@ locals {
 module "cloud_logs" {
   depends_on        = [time_sleep.wait_for_cos_authorization_policy]
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.12.3"
+  version           = "1.12.4"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   instance_name     = "${var.prefix}-cloud-logs"
@@ -348,7 +348,7 @@ module "cloud_logs" {
 
 module "cloud_logs_buckets" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.4"
+  version = "10.14.5"
   bucket_configs = [
     {
       bucket_name              = local.data_bucket_name
@@ -464,7 +464,7 @@ module "activity_tracker" {
 
 module "at_cos_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.14.4"
+  version = "10.14.5"
   bucket_configs = [
     for value in local.at_buckets_config :
     {
@@ -502,7 +502,7 @@ module "at_cos_bucket" {
 
 module "app_config" {
   source                                                     = "terraform-ibm-modules/app-configuration/ibm"
-  version                                                    = "1.15.11"
+  version                                                    = "1.15.12"
   resource_group_id                                          = module.resource_group.resource_group_id
   region                                                     = var.region
   app_config_name                                            = "${var.prefix}-app-config"
@@ -619,7 +619,7 @@ locals {
 # Create COS bucket using the defined bucket configuration
 module "vpc_cos_buckets" {
   source         = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version        = "10.14.4"
+  version        = "10.14.5"
   bucket_configs = local.flow_logs_bucket_config
 }
 
@@ -765,7 +765,7 @@ locals {
 # Create VPC
 module "vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "8.15.4"
+  version              = "8.15.5"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   create_vpc           = true
@@ -888,7 +888,7 @@ resource "terraform_data" "delete_secrets" {
 
 module "secret_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.4.6"
+  version                  = "1.4.7"
   region                   = module.secrets_manager.secrets_manager_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = module.ocp_base.cluster_id
