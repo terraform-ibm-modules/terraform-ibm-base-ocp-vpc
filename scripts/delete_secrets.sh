@@ -11,6 +11,28 @@ secrets_manager_instance_id=$2
 secrets_manager_region=$3
 secrets_manager_endpoint=$4
 
+# decide the iam endpoint depending upon the IBMCLOUD_IAM_API_ENDPOINT env variable set by the user and
+# whether provider visibility is public or private
+iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
+IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
+
+if [[ "$IBMCLOUD_IAM_API_ENDPOINT" == "iam.cloud.ibm.com" ]]; then
+    if [[ "$secrets_manager_endpoint" == "private" ]]; then
+      IBMCLOUD_IAM_API_ENDPOINT="private.${IBMCLOUD_IAM_API_ENDPOINT}"
+    fi
+fi
+
+# generate iam_token from the ibmcloud_api_key. This will be used to make API requests to secrets manager instance endpoint for fetching and deleting secrets
+iam_response=$(curl --retry 3 -s -X POST "https://${IBMCLOUD_IAM_API_ENDPOINT}/identity/token" --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' --data-urlencode 'grant_type=urn:ibm:params:oauth:grant-type:apikey' --data-urlencode "apikey=$API_KEY") # pragma: allowlist secret
+error_message=$(echo "${iam_response}" | jq 'has("errorMessage")')
+
+if [[ "${error_message}" != false ]]; then
+    echo "${iam_response}" | jq '.errorMessage' >&2
+    echo "Could not obtain an IAM access token" >&2
+    exit 1
+fi
+iam_token=$(echo "${iam_response}" | jq -r '.access_token')
+
 # deciding the url of secrets_manager_instance depending upon whether secrets_manager_endpoint is public or private
 
 base_url=https://${secrets_manager_instance_id}
@@ -24,7 +46,7 @@ base_url="${base_url}.${secrets_manager_region}.secrets-manager.appdomain.cloud"
 
 
 json_output=$(curl --fail --retry 3 -s -X GET --location \
-  --header "Authorization: Bearer ${IAM_TOKEN}" \
+  --header "Authorization: Bearer ${iam_token}" \
   --header "Accept: application/json" \
   "${base_url}/api/v2/secrets?groups=$secret_group_id")
 
@@ -45,7 +67,7 @@ for ((i=0; i<secrets_length; i++)); do
   secret_name=$(echo "$json_output" | jq -r ".secrets[$i].name")
   echo "Deleting secret ${secret_name} with id ${secret_id}" >&2
   for ((j=1; j<=retryCount; j++)); do
-    if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${IAM_TOKEN}" "${base_url}/api/v2/secrets/${secret_id}";then
+    if ! curl --retry 3 -X DELETE --location --header "Authorization: Bearer ${iam_token}" "${base_url}/api/v2/secrets/${secret_id}";then
       if [[ "$j" == "$retryCount" ]];then
         echo "Failed to delete the secret.. please delete manually" >&2
         exit 1
@@ -62,7 +84,7 @@ echo "Waiting for the secrets to be deleted" >&2
 sleep 5
 
 secret_count=$(curl --fail --retry 3 -s -X GET --location \
-    --header "Authorization: Bearer ${IAM_TOKEN}" \
+    --header "Authorization: Bearer ${iam_token}" \
     --header "Accept: application/json" \
     "${base_url}/api/v2/secrets?groups=$secret_group_id" | \
   jq '.secrets | length')

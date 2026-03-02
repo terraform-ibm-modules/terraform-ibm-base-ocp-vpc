@@ -132,6 +132,7 @@ locals {
 ########################################################################################################################
 module "ocp_base" {
   source                              = "../.."
+  ibmcloud_api_key                    = var.ibmcloud_api_key
   cluster_name                        = local.cluster_name
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region

@@ -4,6 +4,7 @@ module "fscloud" {
   source = "../.."
 
   cluster_name                          = var.cluster_name
+  ibmcloud_api_key                      = var.ibmcloud_api_key
   resource_group_id                     = var.resource_group_id
   region                                = var.region
   force_delete_storage                  = var.force_delete_storage

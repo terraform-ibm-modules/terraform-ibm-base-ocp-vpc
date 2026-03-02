@@ -202,6 +202,7 @@ locals {
 
 module "ocp_base" {
   source                                   = "../.."
+  ibmcloud_api_key                         = var.ibmcloud_api_key
   resource_group_id                        = module.resource_group.resource_group_id
   region                                   = local.vpc_region
   tags                                     = var.cluster_resource_tags

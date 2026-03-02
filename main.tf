@@ -817,7 +817,7 @@ resource "terraform_data" "delete_secrets" {
   }
   # api key in triggers_replace to avoid it to be printed out in clear text in terraform_data output
   triggers_replace = {
-    iam_access_token = data.ibm_iam_auth_token.tokendata.iam_access_token
+    api_key = var.ibmcloud_api_key
   }
   provisioner "local-exec" {
     when        = destroy
@@ -825,7 +825,7 @@ resource "terraform_data" "delete_secrets" {
     interpreter = ["/bin/bash", "-c"]
 
     environment = {
-      IAM_TOKEN = self.triggers_replace.iam_access_token
+      API_KEY = self.triggers_replace.api_key
     }
   }
 }

@@ -235,6 +235,7 @@ module "custom_sg" {
 
 module "ocp_fscloud" {
   source                           = "../../modules/fscloud"
+  ibmcloud_api_key                 = var.ibmcloud_api_key
   cluster_name                     = var.prefix
   resource_group_id                = module.resource_group.resource_group_id
   region                           = var.region
