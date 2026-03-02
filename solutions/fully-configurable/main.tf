@@ -242,6 +242,13 @@ module "ocp_base" {
   skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
 }
 
+# Use moved block for secret group
+
+moved {
+  from = module.secret_group
+  to   = module.ocp.module.secret_group
+}
+
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
