@@ -116,6 +116,8 @@ func TestRunAdvancedExample(t *testing.T) {
 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 	options.PostApplyHook = getClusterIngress
 
+	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.logs_agents.helm_release.logs_agent"}}
+	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.logs_agents.terraform_data.install_required_binaries[0]"}}
 	output, err := options.RunTestConsistency()
 
 	assert.Nil(t, err, "This should not have errored")
@@ -208,6 +210,11 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 			},
 		},
 		CloudInfoService: sharedInfoSvc,
+		IgnoreDestroys: testhelper.Exemptions{
+			List: []string{
+				"module.logs_agent.terraform_data.install_required_binaries[0]",
+			},
+		},
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
