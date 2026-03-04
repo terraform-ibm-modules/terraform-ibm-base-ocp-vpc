@@ -134,8 +134,7 @@ resource "terraform_data" "install_required_binaries" {
   }
   provisioner "remote-exec" {
     # Using the script from the kube-audit module to avoid code duplication.
-    command     = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
+    script = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
   }
 }
 
@@ -522,11 +521,13 @@ resource "terraform_data" "confirm_network_healthy" {
   }
 
   provisioner "remote-exec" {
-    command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
-    }
+    inline = [
+      "export KUBECONFIG=${data.ibm_container_cluster_config.cluster_config[0].config_file_path}",
+    "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"]
+    # interpreter = ["/bin/bash", "-c"]
+    # environment = {
+    #   KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+    # }
   }
 }
 
@@ -540,12 +541,15 @@ resource "terraform_data" "ocp_console_management" {
     enable_ocp_console = var.enable_ocp_console
   }
   provisioner "remote-exec" {
-    command     = "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
-      ENABLE_OCP_CONSOLE = var.enable_ocp_console
-    }
+    inline = [
+      "export KUBECONFIG=${data.ibm_container_cluster_config.cluster_config[0].config_file_path}",
+      "export ENABLE_OCP_CONSOLE=${var.enable_ocp_console}",
+    "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"]
+    # interpreter = ["/bin/bash", "-c"]
+    # environment = {
+    #   KUBECONFIG         = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+    #   ENABLE_OCP_CONSOLE = var.enable_ocp_console
+    # }
   }
 }
 
@@ -618,11 +622,15 @@ resource "terraform_data" "config_map_status" {
     cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
   }
   provisioner "remote-exec" {
-    command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
-    }
+    # command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
+    # interpreter = ["/bin/bash", "-c"]
+    # environment = {
+    #   KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path
+    # }
+    inline = [
+      "export KUBECONFIG=${data.ibm_container_cluster_config.cluster_config[0].config_file_path}",
+      "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
+    ]
   }
 }
 
