@@ -12,7 +12,7 @@ resource "terraform_data" "install_required_binaries" {
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
     enable_https_traffic                    = var.enable_https_traffic
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
   }
@@ -78,7 +78,7 @@ resource "helm_release" "kube_audit" {
     }
   ]
 
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
@@ -93,7 +93,7 @@ resource "terraform_data" "enable_https_traffic" {
   triggers_replace = {
     enable_https_traffic = var.enable_https_traffic
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
     interpreter = ["/bin/bash", "-c"]
     environment = {
@@ -124,7 +124,7 @@ resource "terraform_data" "set_audit_webhook" {
     audit_log_policy     = var.audit_log_policy
     enable_https_traffic = var.enable_https_traffic
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {

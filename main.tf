@@ -132,7 +132,7 @@ resource "terraform_data" "install_required_binaries" {
     cluster_autoscaler              = lookup(var.addons, "cluster-autoscaler", null) != null
     enable_ocp_console              = var.enable_ocp_console
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     # Using the script from the kube-audit module to avoid code duplication.
     command     = "${path.module}/modules/kube-audit/scripts/install-binaries.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
@@ -521,7 +521,7 @@ resource "terraform_data" "confirm_network_healthy" {
     verify_worker_network_readiness = var.verify_worker_network_readiness
   }
 
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
@@ -539,7 +539,7 @@ resource "terraform_data" "ocp_console_management" {
   triggers_replace = {
     enable_ocp_console = var.enable_ocp_console
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/enable_disable_ocp_console.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
@@ -617,7 +617,7 @@ resource "terraform_data" "config_map_status" {
   triggers_replace = {
     cluster_autoscaler = lookup(var.addons, "cluster-autoscaler", null) != null
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     command     = "${path.module}/scripts/get_config_map_status.sh ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {

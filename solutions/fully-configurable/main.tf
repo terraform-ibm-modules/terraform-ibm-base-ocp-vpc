@@ -262,7 +262,7 @@ resource "terraform_data" "delete_secrets" {
   triggers_replace = {
     api_key = var.ibmcloud_api_key
   }
-  provisioner "local-exec" {
+  provisioner "remote-exec" {
     when        = destroy
     command     = "${path.module}/scripts/delete_secrets.sh ${self.input.secret_id} ${self.input.provider_visibility} ${self.input.secrets_manager_instance_id} ${self.input.secrets_manager_region} ${self.input.secrets_manager_endpoint}"
     interpreter = ["/bin/bash", "-c"]
