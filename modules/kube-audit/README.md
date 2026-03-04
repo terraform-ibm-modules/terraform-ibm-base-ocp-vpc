@@ -57,7 +57,7 @@ module "kube_audit" {
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0.0, <4.0.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.78.2, <2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.80.0, <2.0.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1, < 4.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
 
@@ -71,7 +71,6 @@ No modules.
 |------|------|
 | [helm_release.kube_audit](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [null_resource.enable_https_traffic](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [null_resource.set_audit_log_policy](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.set_audit_webhook](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [terraform_data.install_required_binaries](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [time_sleep.wait_for_kube_audit](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
@@ -83,10 +82,10 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_audit_deployment_name"></a> [audit\_deployment\_name](#input\_audit\_deployment\_name) | The name of log collection deployment and service. | `string` | `"ibmcloud-kube-audit"` | no |
-| <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`. | `string` | `"default"` | no |
+| <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`. | `string` | `"default"` | no |
 | <a name="input_audit_namespace"></a> [audit\_namespace](#input\_audit\_namespace) | The name of the namespace where log collection service and a deployment will be created. | `string` | `"ibm-kube-audit"` | no |
 | <a name="input_audit_webhook_listener_image"></a> [audit\_webhook\_listener\_image](#input\_audit\_webhook\_listener\_image) | The audit webhook listener image reference in the format of `[registry-url]/[namespace]/[image]`.The sub-module uses the `icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs` image to forward logs to IBM Cloud Logs. This image is for demonstration purposes only. For a production solution, configure and maintain your own log forwarding image. | `string` | `"icr.io/ibm/ibmcloud-kube-audit-to-ibm-cloud-logs"` | no |
-| <a name="input_audit_webhook_listener_image_tag_digest"></a> [audit\_webhook\_listener\_image\_tag\_digest](#input\_audit\_webhook\_listener\_image\_tag\_digest) | The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`. | `string` | `"b16a686272d760fadc51e85f44c9945570d610b4@sha256:c1a400d03bd0d66aa61facaef246e6422021a86071ec52742367c8059c105263"` | no |
+| <a name="input_audit_webhook_listener_image_tag_digest"></a> [audit\_webhook\_listener\_image\_tag\_digest](#input\_audit\_webhook\_listener\_image\_tag\_digest) | The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`. | `string` | `"9935044bf2f18c99599dea4d283dbd979c3fb6aa@sha256:41d236623edb7b1d8252a7ce76d096019d20de99dc1b0f6fc7956c4fb15845a4"` | no |
 | <a name="input_cluster_config_endpoint_type"></a> [cluster\_config\_endpoint\_type](#input\_cluster\_config\_endpoint\_type) | Specify which type of endpoint to use for for cluster config access: 'default', 'private', 'vpe', 'link'. 'default' value will use the default endpoint of the cluster. | `string` | `"default"` | no |
 | <a name="input_cluster_id"></a> [cluster\_id](#input\_cluster\_id) | The ID of the cluster to deploy the log collection service in. | `string` | n/a | yes |
 | <a name="input_cluster_resource_group_id"></a> [cluster\_resource\_group\_id](#input\_cluster\_resource\_group\_id) | The resource group ID of the cluster. | `string` | n/a | yes |

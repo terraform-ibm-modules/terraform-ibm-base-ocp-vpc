@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -92,19 +92,25 @@ locals {
 
   worker_pools = [
     {
-      subnet_prefix    = "default"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      operating_system = local.os_rhcos
+      subnet_prefix     = "default"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      minSize           = 2
+      maxSize           = 3
+      enableAutoscaling = true
+      operating_system  = local.os_rhcos
     },
     {
-      subnet_prefix    = "default"
-      pool_name        = "logging-worker-pool"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      labels           = { "dedicated" : "logging-worker-pool" }
-      operating_system = local.os_rhel_9
+      subnet_prefix     = "default"
+      pool_name         = "logging-worker-pool"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = { "dedicated" : "logging-worker-pool" }
+      minSize           = 2
+      maxSize           = 3
+      enableAutoscaling = true
+      operating_system  = local.os_rhel_9
     }
   ]
 
@@ -120,7 +126,10 @@ locals {
 }
 
 module "ocp_base_cluster_1" {
-  source                              = "../.."
+  source = "../.."
+  providers = {
+    kubernetes = kubernetes.kubernetes_cluster_1
+  }
   cluster_name                        = "${var.prefix}-cluster-1"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
@@ -133,10 +142,18 @@ module "ocp_base_cluster_1" {
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
+  addons = {
+    cluster-autoscaler = {
+      version = "1.2.4"
+    }
+  }
 }
 
 module "ocp_base_cluster_2" {
   source = "../.."
+  providers = {
+    kubernetes = kubernetes.kubernetes_cluster_2
+  }
   # remove the above line and uncomment the below 2 lines to consume the module from the registry
   # source            = "terraform-ibm-modules/base-ocp-vpc/ibm"
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
@@ -152,6 +169,11 @@ module "ocp_base_cluster_2" {
   ocp_version                         = var.ocp_version
   tags                                = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
+  addons = {
+    cluster-autoscaler = {
+      version = "1.2.4"
+    }
+  }
 }
 
 ########################################################################################################################
@@ -176,7 +198,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 
 module "monitoring_instance" {
   source                  = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                 = "1.12.21"
+  version                 = "1.14.3"
   resource_group_id       = module.resource_group.resource_group_id
   region                  = var.region
   plan                    = "graduated-tier"
@@ -193,7 +215,7 @@ module "monitoring_agent_1" {
     helm = helm.helm_cluster_1
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.19.6"
+  version                   = "1.21.1"
   cluster_id                = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
@@ -205,9 +227,10 @@ module "monitoring_agent_2" {
     helm = helm.helm_cluster_2
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.19.6"
+  version                   = "1.21.1"
   cluster_id                = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
   instance_region           = var.region
+  cluster_shield_deploy     = false
 }

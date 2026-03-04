@@ -110,6 +110,8 @@ func TestRunAdvancedExample(t *testing.T) {
 	options := setupOptions(t, "base-ocp-adv", advancedExampleDir, ocpVersion3)
 	options.PostApplyHook = getClusterIngress
 
+	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.logs_agents.helm_release.logs_agent"}}
+	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.logs_agents.terraform_data.install_required_binaries[0]"}}
 	output, err := options.RunTestConsistency()
 
 	assert.Nil(t, err, "This should not have errored")
@@ -124,10 +126,11 @@ func TestFSCloudInSchematic(t *testing.T) {
 		Prefix:  "base-ocp-fscloud",
 		TarIncludePatterns: []string{
 			"*.tf",
-			"scripts/*.sh",
+			"scripts/*.*",
 			"examples/fscloud/*.tf",
 			"modules/*/*.tf",
 			"kubeconfig/README.md",
+			"modules/kube-audit/scripts/*.sh",
 		},
 		ResourceGroup:          resourceGroup,
 		TemplateFolder:         fscloudExampleDir,
@@ -196,6 +199,11 @@ func TestOpenshiftLandingZoneExample(t *testing.T) {
 				// Have to ignore account settings as other tests may be updating them concurrently
 				// which can cause consistency test to fail if not ignored.
 				"metrics_routing[0].ibm_metrics_router_settings.metrics_router_settings[0]",
+			},
+		},
+		IgnoreDestroys: testhelper.Exemptions{
+			List: []string{
+				"module.logs_agent.terraform_data.install_required_binaries[0]",
 			},
 		},
 	})

@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "cos_fscloud" {
   source                        = "terraform-ibm-modules/cos/ibm"
-  version                       = "10.9.6"
+  version                       = "10.14.5"
   resource_group_id             = module.resource_group.resource_group_id
   create_cos_bucket             = false
   cos_instance_name             = "${var.prefix}-cos"
@@ -30,7 +30,7 @@ module "cos_fscloud" {
 
 module "flowlogs_bucket" {
   source  = "terraform-ibm-modules/cos/ibm//modules/buckets"
-  version = "10.9.6"
+  version = "10.14.5"
 
   bucket_configs = [
     {
@@ -52,7 +52,7 @@ module "flowlogs_bucket" {
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.12.5"
+  version           = "8.15.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -66,7 +66,7 @@ module "vpc" {
   clean_default_sg_acl                   = true
   enable_vpc_flow_logs                   = true
   create_authorization_policy_vpc_to_cos = true
-  existing_storage_bucket_name           = module.flowlogs_bucket.bucket_configs[0].bucket_name
+  existing_storage_bucket_name           = module.flowlogs_bucket.buckets["${var.prefix}-vpc-flowlogs"].bucket_name
   security_group_rules                   = []
   existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
   subnets = {
@@ -112,7 +112,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "cbr_vpc_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.35.12"
+  version          = "1.35.17"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -124,7 +124,7 @@ module "cbr_vpc_zone" {
 
 module "cbr_zone_schematics" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.35.12"
+  version          = "1.35.17"
   name             = "${var.prefix}-schematics-zone"
   zone_description = "CBR Network zone containing Schematics"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -139,7 +139,7 @@ module "cbr_zone_schematics" {
 
 module "cbr_rules" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.35.12"
+  version          = "1.35.17"
   rule_description = "${var.prefix} rule for vpc flow log access to cos"
   enforcement_mode = "enabled"
   resources = [{
@@ -225,7 +225,7 @@ locals {
 module "custom_sg" {
   for_each                     = toset(["custom-lb-sg"])
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.8.8"
+  version                      = "2.8.9"
   add_ibm_cloud_internal_rules = false
   security_group_name          = each.key
   security_group_rules         = []

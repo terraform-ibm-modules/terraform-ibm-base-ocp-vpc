@@ -64,12 +64,12 @@ variable "cluster_config_endpoint_type" {
 
 variable "audit_log_policy" {
   type        = string
-  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`."
   default     = "default"
 
   validation {
-    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
-    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'verbose'"
+    condition     = contains(["default", "verbose"], var.audit_log_policy)
   }
 }
 
@@ -95,7 +95,7 @@ variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   nullable    = false
-  default     = "b16a686272d760fadc51e85f44c9945570d610b4@sha256:c1a400d03bd0d66aa61facaef246e6422021a86071ec52742367c8059c105263"
+  default     = "9935044bf2f18c99599dea4d283dbd979c3fb6aa@sha256:41d236623edb7b1d8252a7ce76d096019d20de99dc1b0f6fc7956c4fb15845a4"
 
   validation {
     condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_tag_digest))
