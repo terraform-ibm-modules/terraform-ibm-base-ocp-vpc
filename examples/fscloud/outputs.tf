@@ -6,3 +6,8 @@ output "cluster_name" {
   value       = module.ocp_fscloud.cluster_name
   description = "The name of the provisioned cluster."
 }
+
+output "cluster_id" {
+  value       = module.ocp_fscloud.cluster_id
+  description = "The unique identifier assigned to the provisioned OpenShift cluster."
+}
