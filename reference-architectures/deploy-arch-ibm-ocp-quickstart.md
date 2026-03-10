@@ -12,7 +12,7 @@ authors:
   - name: "Prateek Sharma"
 
 # The release that the reference architecture describes
-version: 3.76.4
+version: 3.80.3
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -55,7 +55,7 @@ content-type: reference-architecture
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
-{: toc-version="3.76.4"}
+{: toc-version="3.80.3"}
 
 The QuickStart variation of the Landing zone for containerized applications with OpenShift deployable architecture creates a fully customizable Virtual Private Cloud (VPC) environment in a single region. The solution provides a single Red Hat OpenShift cluster in a secure VPC for your workloads. The QuickStart variation is designed to deploy quickly for demonstration and development.
 
