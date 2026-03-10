@@ -7,10 +7,9 @@ set -e
 # default group.
 
 secret_group_id=$1
-provider_visibility=$2
-secrets_manager_instance_id=$3
-secrets_manager_region=$4
-secrets_manager_endpoint=$5
+secrets_manager_instance_id=$2
+secrets_manager_region=$3
+secrets_manager_endpoint=$4
 
 # decide the iam endpoint depending upon the IBMCLOUD_IAM_API_ENDPOINT env variable set by the user and
 # whether provider visibility is public or private
@@ -18,7 +17,7 @@ iam_cloud_endpoint="${IBMCLOUD_IAM_API_ENDPOINT:-"iam.cloud.ibm.com"}"
 IBMCLOUD_IAM_API_ENDPOINT=${iam_cloud_endpoint#https://}
 
 if [[ "$IBMCLOUD_IAM_API_ENDPOINT" == "iam.cloud.ibm.com" ]]; then
-    if [[ "$provider_visibility" == "private" ]]; then
+    if [[ "$secrets_manager_endpoint" == "private" ]]; then
       IBMCLOUD_IAM_API_ENDPOINT="private.${IBMCLOUD_IAM_API_ENDPOINT}"
     fi
 fi

@@ -2,6 +2,12 @@
 # Input Variables
 ##############################################################################
 
+variable "ibmcloud_api_key" {
+  type        = string
+  description = "The IBM Cloud api key."
+  sensitive   = true
+}
+
 # Resource Group Variables
 variable "resource_group_id" {
   type        = string

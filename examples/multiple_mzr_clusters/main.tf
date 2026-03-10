@@ -130,6 +130,7 @@ module "ocp_base_cluster_1" {
   providers = {
     kubernetes = kubernetes.kubernetes_cluster_1
   }
+  ibmcloud_api_key                    = var.ibmcloud_api_key
   cluster_name                        = "${var.prefix}-cluster-1"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
@@ -157,6 +158,7 @@ module "ocp_base_cluster_2" {
   # remove the above line and uncomment the below 2 lines to consume the module from the registry
   # source            = "terraform-ibm-modules/base-ocp-vpc/ibm"
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
+  ibmcloud_api_key                    = var.ibmcloud_api_key
   cluster_name                        = "${var.prefix}-cluster-2"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = var.region
