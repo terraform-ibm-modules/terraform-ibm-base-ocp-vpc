@@ -37,6 +37,26 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 	return nil
 }
 
+func getMultiClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name_1" and "cluster_name_2" keys are present in the outputs
+	expectedOutputs := []string{"cluster_name_1", "cluster_name_2"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name_1" and "cluster_name_2" are valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_1"].(string))
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_2"].(string))
+	}
+	return nil
+}
+
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -57,7 +77,7 @@ func TestRunMultiClusterExample(t *testing.T) {
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
-	options.PostApplyHook = getClusterIngress
+	options.PostApplyHook = getMultiClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")

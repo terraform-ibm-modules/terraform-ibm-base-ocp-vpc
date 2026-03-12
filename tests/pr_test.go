@@ -187,12 +187,12 @@ func getClusterIngressSchematics(options *testschematic.TestSchematicOptions) er
 	outputs := options.LastTestTerraformOutputs
 
 	// Validate that the "cluster_id" key is present in the outputs
-	expectedOutputs := []string{"cluster_id"}
+	expectedOutputs := []string{"cluster_name"}
 	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
 
 	// Proceed with the cluster ingress health check if "cluster_id" is valid
 	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		clusterId := outputs["cluster_id"].(map[string]interface{})["value"]
+		clusterId := outputs["cluster_name"].(map[string]interface{})["value"]
 		healthy := options.CloudInfoService.CheckClusterIngressHealthyDefaultTimeout(clusterId.(string), log.Println)
 		assert.True(options.Testing, healthy, "Cluster ingress failed to become healthy")
 	}
