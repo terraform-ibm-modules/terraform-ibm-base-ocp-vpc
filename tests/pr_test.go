@@ -182,6 +182,45 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 	fmt.Println(stdout.String())
 }
 
+func getClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name" key is present in the outputs
+	expectedOutputs := []string{"cluster_name"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name" is valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+	}
+	return nil
+}
+
+func getMultiClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name_1" and "cluster_name_2" keys are present in the outputs
+	expectedOutputs := []string{"cluster_name_1", "cluster_name_2"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name_1" and "cluster_name_2" are valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_1"].(string))
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_2"].(string))
+	}
+	return nil
+}
+
 func getClusterIngressSchematics(options *testschematic.TestSchematicOptions) error {
 	// Get output of last apply
 	outputs := options.LastTestTerraformOutputs
