@@ -48,6 +48,30 @@ module "flowlogs_bucket" {
 ########################################################################################################################
 # VPC
 ########################################################################################################################
+locals {
+  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+  network_acl = {
+    name                         = "${local.prefix}acl"
+    add_ibm_cloud_internal_rules = true
+    add_vpc_connectivity_rules   = true
+    prepend_ibm_rules            = true
+    rules = [{
+      name        = "${local.prefix}inbound"
+      action      = "allow"
+      source      = "0.0.0.0/0"
+      destination = "0.0.0.0/0"
+      direction   = "inbound"
+      },
+      {
+        name        = "${local.prefix}outbound"
+        action      = "allow"
+        source      = "0.0.0.0/0"
+        destination = "0.0.0.0/0"
+        direction   = "outbound"
+      }
+    ]
+  }
+}
 
 module "vpc" {
   depends_on        = [module.flowlogs_bucket]
@@ -69,24 +93,25 @@ module "vpc" {
   existing_storage_bucket_name           = module.flowlogs_bucket.buckets["${var.prefix}-vpc-flowlogs"].bucket_name
   security_group_rules                   = []
   existing_cos_instance_guid             = module.cos_fscloud.cos_instance_guid
+  network_acls                           = [local.network_acl]
   subnets = {
     zone-1 = [
       {
-        acl_name = "vpc-acl"
+        acl_name = "${local.prefix}acl"
         name     = "zone-1"
         cidr     = "10.10.10.0/24"
       }
     ],
     zone-2 = [
       {
-        acl_name = "vpc-acl"
+        acl_name = "${local.prefix}acl"
         name     = "zone-2"
         cidr     = "10.20.10.0/24"
       }
     ],
     zone-3 = [
       {
-        acl_name = "vpc-acl"
+        acl_name = "${local.prefix}acl"
         name     = "zone-3"
         cidr     = "10.30.10.0/24"
       }

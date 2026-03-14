@@ -140,6 +140,7 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		WaitJobCompleteMinutes:     360,
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
+		CloudInfoService:           sharedInfoSvc,
 	})
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -181,6 +182,62 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 	fmt.Println(stdout.String())
 }
 
+func getClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name" key is present in the outputs
+	expectedOutputs := []string{"cluster_name"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name" is valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+	}
+	return nil
+}
+
+func getMultiClusterIngress(options *testhelper.TestOptions) error {
+
+	// Get output of the last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		return nil
+	}
+
+	// Validate that the "cluster_name_1" and "cluster_name_2" keys are present in the outputs
+	expectedOutputs := []string{"cluster_name_1", "cluster_name_2"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_name_1" and "cluster_name_2" are valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_1"].(string))
+		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_2"].(string))
+	}
+	return nil
+}
+
+func getClusterIngressSchematics(options *testschematic.TestSchematicOptions) error {
+	// Get output of last apply
+	outputs := options.LastTestTerraformOutputs
+
+	// Validate that the "cluster_id" key is present in the outputs
+	expectedOutputs := []string{"cluster_name"}
+	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+
+	// Proceed with the cluster ingress health check if "cluster_id" is valid
+	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
+		clusterId := outputs["cluster_name"].(map[string]interface{})["value"]
+		healthy := options.CloudInfoService.CheckClusterIngressHealthyDefaultTimeout(clusterId.(string), log.Println)
+		assert.True(options.Testing, healthy, "Cluster ingress failed to become healthy")
+	}
+	return nil
+}
+
 func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	t.Parallel()
 
@@ -197,6 +254,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		DeleteWorkspaceOnFail: false,
 		TerraformVersion:      terraformVersion,
 		Region:                terraform.Output(t, existingTerraformOptions, "region"),
+		CloudInfoService:      sharedInfoSvc,
 	})
 
 	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
@@ -216,6 +274,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 	}
+	options.PostApplyHook = getClusterIngressSchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, rg)
@@ -239,6 +298,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
 		Region:                     terraform.Output(t, existingTerraformOptions, "region"),
+		CloudInfoService:           sharedInfoSvc,
 	})
 	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
 	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
@@ -258,6 +318,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 	}
+	options.PostApplyHook = getClusterIngressSchematics
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, rg)
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
@@ -288,6 +349,7 @@ func TestRunCustomsgExample(t *testing.T) {
 			"enable_openshift_version_upgrade": true,
 		},
 	})
+	options.PostApplyHook = getClusterIngress
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, options.ResourceGroup)
@@ -305,6 +367,7 @@ func TestRunQuickstartSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs")
+	options.PostApplyHook = getClusterIngressSchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, options.ResourceGroup)
@@ -318,6 +381,7 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs-upg")
+	options.PostApplyHook = getClusterIngressSchematics
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, options.ResourceGroup)
@@ -413,6 +477,7 @@ func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+	options.PostApplyHook = getClusterIngress
 
 	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
 	createContainersApikey(t, options.Region, resourceGroup)
