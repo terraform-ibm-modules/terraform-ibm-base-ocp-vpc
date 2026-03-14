@@ -56,16 +56,16 @@ The primary goal of this example is to provision an OpenShift cluster on VPC and
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.5.36 |
 | <a name="module_logs_agent"></a> [logs\_agent](#module\_logs\_agent) | terraform-ibm-modules/logs-agent/ibm | 1.20.1 |
 | <a name="module_metrics_routing"></a> [metrics\_routing](#module\_metrics\_routing) | terraform-ibm-modules/cloud-monitoring/ibm//modules/metrics_routing | 1.14.5 |
-| <a name="module_monitoring_agent"></a> [monitoring\_agent](#module\_monitoring\_agent) | terraform-ibm-modules/monitoring-agent/ibm | 1.21.2 |
+| <a name="module_monitoring_agent"></a> [monitoring\_agent](#module\_monitoring\_agent) | terraform-ibm-modules/monitoring-agent/ibm | 1.21.4 |
 | <a name="module_ocp_base"></a> [ocp\_base](#module\_ocp\_base) | ../.. | n/a |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.4.8 |
 | <a name="module_scc_wp"></a> [scc\_wp](#module\_scc\_wp) | terraform-ibm-modules/scc-workload-protection/ibm | 1.18.0 |
 | <a name="module_secret_group"></a> [secret\_group](#module\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.4.8 |
 | <a name="module_secrets_manager"></a> [secrets\_manager](#module\_secrets\_manager) | terraform-ibm-modules/secrets-manager/ibm | 2.13.9 |
-| <a name="module_trusted_profile"></a> [trusted\_profile](#module\_trusted\_profile) | terraform-ibm-modules/trusted-profile/ibm | 3.2.19 |
+| <a name="module_trusted_profile"></a> [trusted\_profile](#module\_trusted\_profile) | terraform-ibm-modules/trusted-profile/ibm | 3.2.20 |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-ibm-modules/landing-zone-vpc/ibm | 8.15.10 |
 | <a name="module_vpc_cos_buckets"></a> [vpc\_cos\_buckets](#module\_vpc\_cos\_buckets) | terraform-ibm-modules/cos/ibm//modules/buckets | 10.14.8 |
-| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 5.0.7 |
+| <a name="module_vpe_gateway"></a> [vpe\_gateway](#module\_vpe\_gateway) | terraform-ibm-modules/vpe-gateway/ibm | 5.1.0 |
 
 ### Resources
 
