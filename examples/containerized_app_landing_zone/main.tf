@@ -765,7 +765,7 @@ locals {
 # Create VPC
 module "vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "8.15.10"
+  version              = "8.15.11"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   create_vpc           = true
@@ -792,7 +792,7 @@ module "vpc" {
 
 module "vpe_gateway" {
   source            = "terraform-ibm-modules/vpe-gateway/ibm"
-  version           = "5.0.7"
+  version           = "5.1.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -908,7 +908,7 @@ data "ibm_container_cluster_config" "cluster_config" {
 
 module "monitoring_agent" {
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.21.2"
+  version                   = "1.21.4"
   cluster_id                = module.ocp_base.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   is_vpc_cluster            = true
@@ -932,7 +932,7 @@ locals {
 
 module "trusted_profile" {
   source                      = "terraform-ibm-modules/trusted-profile/ibm"
-  version                     = "3.2.19"
+  version                     = "3.2.20"
   trusted_profile_name        = "${var.prefix}-profile"
   trusted_profile_description = "Logs agent Trusted Profile"
   trusted_profile_policies = [{
@@ -956,7 +956,7 @@ module "trusted_profile" {
 
 module "logs_agent" {
   source                        = "terraform-ibm-modules/logs-agent/ibm"
-  version                       = "1.20.1"
+  version                       = "1.20.2"
   cluster_id                    = module.ocp_base.cluster_id
   cluster_resource_group_id     = module.resource_group.resource_group_id
   logs_agent_trusted_profile_id = module.trusted_profile.trusted_profile.id
