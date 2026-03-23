@@ -299,3 +299,40 @@ variable "enable_ocp_console" {
   type        = bool
   default     = true
 }
+
+##############################################################
+# Cluster Timeout Configuration
+##############################################################
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for cluster deletion operations. Specify a duration string (e.g., '2h', '30m')."
+  default     = "2h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_delete_timeout))
+    error_message = "The cluster_delete_timeout value must be a valid duration string (e.g., '2h', '30m', '90s')."
+  }
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for cluster creation operations. Specify a duration string (e.g., '3h', '45m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_create_timeout))
+    error_message = "The cluster_create_timeout value must be a valid duration string (e.g., '3h', '45m', '180s')."
+  }
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for cluster update operations. Specify a duration string (e.g., '3h', '1h30m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_update_timeout))
+    error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
+  }
+}
