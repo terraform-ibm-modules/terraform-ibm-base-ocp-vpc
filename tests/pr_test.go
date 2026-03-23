@@ -196,7 +196,8 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 
 	// Proceed with the cluster ingress health check if "cluster_name" is valid
 	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
+		healthy := options.CloudInfoService.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string), log.Println)
+		assert.True(options.Testing, healthy, "Cluster ingress failed to become healthy")
 	}
 	return nil
 }
@@ -215,8 +216,9 @@ func getMultiClusterIngress(options *testhelper.TestOptions) error {
 
 	// Proceed with the cluster ingress health check if "cluster_name_1" and "cluster_name_2" are valid
 	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_1"].(string))
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_2"].(string))
+		healthy_cluster1 := options.CloudInfoService.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_1"].(string), log.Println)
+		healthy_cluster2 := options.CloudInfoService.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name_2"].(string), log.Println)
+		assert.True(options.Testing, (healthy_cluster1 && healthy_cluster2), "Cluster ingress failed to become healthy")
 	}
 	return nil
 }
