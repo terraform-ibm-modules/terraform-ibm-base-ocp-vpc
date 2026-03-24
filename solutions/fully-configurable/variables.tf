@@ -14,7 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md). **Important:** When deploying VPC using VPC deployable architecture, updating the prefix after the initial deployment may require recreating certain resources. Learn more about this limitation [here](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-known-issues#ki-vpc-prefix-change-recreate)."
 
   validation {
     # - null and empty string is allowed
@@ -633,7 +633,7 @@ variable "audit_webhook_listener_image" {
 variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
-  default     = "5d31703a976c9a62007917de5d4a82c3b494bbde@sha256:61bb88b5febd05a34bf582693673bad90df0ed9f9d8b58ebc7ab718de4049d6d"
+  default     = "930a4de1eafd082b47deab8376957302667f01b5@sha256:979f66480aa83641f699288fec511283c3067bab39011e35e58abb9abd5ec672"
 }
 
 variable "enable_kube_audit_https_traffic" {

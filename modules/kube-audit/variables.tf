@@ -95,7 +95,7 @@ variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
   nullable    = false
-  default     = "5d31703a976c9a62007917de5d4a82c3b494bbde@sha256:61bb88b5febd05a34bf582693673bad90df0ed9f9d8b58ebc7ab718de4049d6d"
+  default     = "930a4de1eafd082b47deab8376957302667f01b5@sha256:979f66480aa83641f699288fec511283c3067bab39011e35e58abb9abd5ec672"
 
   validation {
     condition     = can(regex("^[a-f0-9]{40}@sha256:[a-f0-9]{64}$", var.audit_webhook_listener_image_tag_digest))

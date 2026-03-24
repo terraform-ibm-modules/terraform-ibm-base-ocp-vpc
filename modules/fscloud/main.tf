@@ -20,7 +20,8 @@ module "fscloud" {
   worker_pools_taints                   = var.worker_pools_taints
   pod_subnet_cidr                       = var.pod_subnet_cidr
   service_subnet_cidr                   = var.service_subnet_cidr
-  use_existing_cos                      = true
+  enable_registry_storage               = var.enable_registry_storage
+  use_existing_cos                      = var.enable_registry_storage
   existing_cos_id                       = var.existing_cos_id
   tags                                  = var.tags
   kms_config                            = var.kms_config

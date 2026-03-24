@@ -119,7 +119,19 @@ variable "force_delete_storage" {
 
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance"
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' is true."
+  default     = null
+
+  validation {
+    condition     = !(var.enable_registry_storage && var.existing_cos_id == null)
+    error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' is set to true."
+  }
+}
+
+variable "enable_registry_storage" {
+  type        = bool
+  description = "Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature."
+  default     = true
 }
 
 variable "kms_config" {
