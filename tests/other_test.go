@@ -46,8 +46,8 @@ func TestRunMultiClusterExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 		IgnoreDestroys: testhelper.Exemptions{ // Ignore for consistency check
 			List: []string{
-				"module.ocp_base_cluster_1.null_resource.confirm_network_healthy",
-				"module.ocp_base_cluster_2.null_resource.confirm_network_healthy",
+				"module.ocp_base_cluster_1.terraform_data.confirm_network_healthy",
+				"module.ocp_base_cluster_2.terraform_data.confirm_network_healthy",
 			},
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
@@ -69,7 +69,7 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		Prefix:        "sg-rules",
 		ResourceGroup: resourceGroup,
 		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.terraform_data.confirm_network_healthy",
 		},
 		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
 		ImplicitRequired: false,

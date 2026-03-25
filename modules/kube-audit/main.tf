@@ -12,9 +12,9 @@ resource "terraform_data" "install_required_binaries" {
     audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
     enable_https_traffic                    = var.enable_https_traffic
   }
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
+  provisioner "remote-exec" {
+    script = "${path.module}/scripts/install-binaries.sh ${local.binaries_path}"
+    # interpreter = ["/bin/bash", "-c"]
   }
 }
 
@@ -78,34 +78,40 @@ resource "helm_release" "kube_audit" {
     }
   ]
 
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace} ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
-    }
+  provisioner "remote-exec" {
+    # command     = "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace} ${local.binaries_path}"
+    # interpreter = ["/bin/bash", "-c"]
+    # environment = {
+    #   KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+    # }
+    inline = ["export KUBECONFIG=${data.ibm_container_cluster_config.cluster_config.config_file_path}",
+    "${path.module}/scripts/confirm-rollout-status.sh ${var.audit_deployment_name} ${var.audit_namespace} ${local.binaries_path}"]
   }
 }
 
-resource "null_resource" "enable_https_traffic" {
+resource "terraform_data" "enable_https_traffic" {
   depends_on = [terraform_data.install_required_binaries, helm_release.kube_audit]
   count      = var.enable_https_traffic ? 1 : 0
-  triggers = {
+  triggers_replace = {
     enable_https_traffic = var.enable_https_traffic
   }
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
-    }
+  provisioner "remote-exec" {
+    # command     = "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
+    # interpreter = ["/bin/bash", "-c"]
+    # environment = {
+    #   KUBECONFIG = data.ibm_container_cluster_config.cluster_config.config_file_path
+    # }
+    inline = [
+      "export KUBECONFIG=${data.ibm_container_cluster_config.cluster_config[0].config_file_path}",
+      "${path.module}/scripts/https_audit.sh ${var.audit_namespace} ${var.audit_deployment_name} ${var.audit_deployment_name}-secret"
+    ]
   }
 }
 
 
 # wait for the kube-audit resources.
 resource "time_sleep" "wait_for_kube_audit" {
-  depends_on      = [null_resource.enable_https_traffic]
+  depends_on      = [terraform_data.enable_https_traffic]
   create_duration = "60s"
 }
 
@@ -118,20 +124,22 @@ locals {
 #   depends_on = [data.ibm_container_cluster_config.cluster_config]
 # }
 
-resource "null_resource" "set_audit_webhook" {
+resource "terraform_data" "set_audit_webhook" {
   depends_on = [terraform_data.install_required_binaries, time_sleep.wait_for_kube_audit]
-  triggers = {
+  triggers_replace = {
     audit_log_policy     = var.audit_log_policy
     enable_https_traffic = var.enable_https_traffic
   }
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
-    interpreter = ["/bin/bash", "-c"]
-    environment = {
-      IAM_API_KEY  = var.ibmcloud_api_key
-      AUDIT_SERVER = local.audit_server
-      CLIENT_CERT  = data.ibm_container_cluster_config.cluster_config.admin_certificate
-      CLIENT_KEY   = data.ibm_container_cluster_config.cluster_config.admin_key
-    }
+  provisioner "remote-exec" {
+    # command     = "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
+    # interpreter = ["/bin/bash", "-c"]
+    inline = [
+      "export IAM_API_KEY=${var.ibmcloud_api_key}",
+      "export AUDIT_SERVER=${local.audit_server}",
+      "export CLIENT_CERT=${data.ibm_container_cluster_config.cluster_config.admin_certificate}",
+      "export CLIENT_KEY=${data.ibm_container_cluster_config.cluster_config.admin_key}",
+      "${path.module}/scripts/set_webhook.sh ${var.region} ${var.use_private_endpoint} ${var.cluster_config_endpoint_type} ${var.cluster_id} ${var.cluster_resource_group_id} ${var.audit_log_policy} ${local.binaries_path}"
+
+    ]
   }
 }
