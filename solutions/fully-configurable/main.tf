@@ -239,6 +239,9 @@ module "ocp_base" {
   existing_secrets_manager_instance_crn    = var.existing_secrets_manager_instance_crn
   secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
   skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
+  cluster_create_timeout                   = var.cluster_create_timeout
+  cluster_delete_timeout                   = var.cluster_delete_timeout
+  cluster_update_timeout                   = var.cluster_update_timeout
 }
 
 module "existing_secrets_manager_instance_parser" {
