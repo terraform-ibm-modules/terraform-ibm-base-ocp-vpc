@@ -642,3 +642,40 @@ variable "enable_kube_audit_https_traffic" {
   description = "When set to true, the traffic in transit between the audit webhook service in the cluster and the components that send audit events to it is encrypted using HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
   nullable    = false
 }
+
+##############################################################
+# Cluster Timeout Configuration
+##############################################################
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for cluster deletion operations. Specify a duration string (e.g., '2h', '30m')."
+  default     = "2h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_delete_timeout))
+    error_message = "The cluster_delete_timeout value must be a valid duration string (e.g., '2h', '30m', '90s')."
+  }
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for cluster creation operations. Specify a duration string (e.g., '3h', '45m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_create_timeout))
+    error_message = "The cluster_create_timeout value must be a valid duration string (e.g., '3h', '45m', '180s')."
+  }
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for cluster update operations. Specify a duration string (e.g., '3h', '1h30m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_update_timeout))
+    error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
+  }
+}
