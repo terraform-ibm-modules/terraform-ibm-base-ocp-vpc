@@ -969,6 +969,18 @@
             {
               "key": "audit_webhook_listener_image_tag_digest",
               "hidden": true
+            },
+            {
+              "key": "cluster_create_timeout",
+              "hidden": true
+            },
+            {
+              "key": "cluster_delete_timeout",
+              "hidden": true
+            },
+            {
+              "key": "cluster_update_timeout",
+              "hidden": true
             }
           ],
           "dependencies": [

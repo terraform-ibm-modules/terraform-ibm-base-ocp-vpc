@@ -18,10 +18,6 @@ locals {
   # if not enable_registry_storage then set cos to 'null', otherwise use existing or new CRN
   cos_instance_crn = var.enable_registry_storage == true ? (var.use_existing_cos != false ? var.existing_cos_id : module.cos_instance[0].cos_instance_id) : null
 
-  delete_timeout = "2h"
-  create_timeout = "3h"
-  update_timeout = "3h"
-
   # tflint-ignore: terraform_unused_declarations
   cluster_with_upgrade_id = var.ignore_worker_pool_size_changes ? try(ibm_container_vpc_cluster.autoscaling_cluster_with_upgrade[0].id, null) : try(ibm_container_vpc_cluster.cluster_with_upgrade[0].id, null)
   # tflint-ignore: terraform_unused_declarations
@@ -233,9 +229,9 @@ resource "ibm_container_vpc_cluster" "cluster" {
 
   timeouts {
     # Extend create, update and delete timeout to static values.
-    delete = local.delete_timeout
-    create = local.create_timeout
-    update = local.update_timeout
+    delete = var.cluster_delete_timeout
+    create = var.cluster_create_timeout
+    update = var.cluster_update_timeout
   }
 }
 
@@ -301,9 +297,9 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
 
   timeouts {
     # Extend create, update and delete timeout to static values.
-    delete = local.delete_timeout
-    create = local.create_timeout
-    update = local.update_timeout
+    delete = var.cluster_delete_timeout
+    create = var.cluster_create_timeout
+    update = var.cluster_update_timeout
   }
 }
 
@@ -372,9 +368,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
 
   timeouts {
     # Extend create, update and delete timeout to static values.
-    delete = local.delete_timeout
-    create = local.create_timeout
-    update = local.update_timeout
+    delete = var.cluster_delete_timeout
+    create = var.cluster_create_timeout
+    update = var.cluster_update_timeout
   }
 }
 
@@ -444,9 +440,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
 
   timeouts {
     # Extend create, update and delete timeout to static values.
-    delete = local.delete_timeout
-    create = local.create_timeout
-    update = local.update_timeout
+    delete = var.cluster_delete_timeout
+    create = var.cluster_create_timeout
+    update = var.cluster_update_timeout
   }
 }
 
