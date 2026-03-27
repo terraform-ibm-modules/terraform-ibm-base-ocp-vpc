@@ -1,7 +1,7 @@
 # Landing zone for containerized applications with OpenShift example
 
 <!-- BEGIN SCHEMATICS DEPLOY HOOK -->
-<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-containerized_app_landing_zone-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/containerized_app_landing_zone"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom;"></a>
+<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=containerized_app_landing_zone-example&repository=https://github.com/terraform-ibm-modules/sample-iac-solutions/tree/main/containerized_app_landing_zone"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom;"></a>
 <!-- END SCHEMATICS DEPLOY HOOK -->
 
 :exclamation: **Note:** This file only contains the overview of the **Containerized Applications with Landing Zone Example**. The actual terraform code can be found here - [Containerized-app-landing-zone](https://github.com/terraform-ibm-modules/sample-iac-solutions/tree/main/containerized_app_landing_zone)
