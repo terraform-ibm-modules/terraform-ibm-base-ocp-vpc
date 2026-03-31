@@ -62,7 +62,7 @@ func TestMain(m *testing.M) {
 
 	// Get kube versions
 	expectedOCPVersions := 4
-	validOCPVersions, err := sharedInfoSvc.GetKubeVersions("openshift")
+	validOCPVersions, _, err := sharedInfoSvc.GetKubeVersions("openshift")
 	if err != nil {
 		log.Fatalf("failed to get kube versions: %v", err)
 	}

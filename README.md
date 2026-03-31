@@ -51,10 +51,6 @@ By default, the module automatically downloads the required dependant binaries (
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/containerized_app_landing_zone">Landing zone for containerized applications with OpenShift example</a>
-        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-containerized_app_landing_zone-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/containerized_app_landing_zone"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-      </li>
-      <li>
         <a href="./examples/cross_kms_support">Cross account KMS encryption example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-cross_kms_support-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/cross_kms_support"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
