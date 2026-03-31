@@ -60,6 +60,5 @@ module "cos" {
   cos_instance_name      = "${var.prefix}-cos"
   cos_tags               = var.resource_tags
   bucket_name            = "${var.prefix}-bucket"
-  retention_enabled      = false
   kms_encryption_enabled = false
 }
