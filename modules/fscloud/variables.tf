@@ -119,7 +119,19 @@ variable "force_delete_storage" {
 
 variable "existing_cos_id" {
   type        = string
-  description = "The COS id of an already existing COS instance"
+  description = "The COS id of an already existing COS instance to use for OpenShift internal registry storage. Only required if 'enable_registry_storage' is true."
+  default     = null
+
+  validation {
+    condition     = !(var.enable_registry_storage && var.existing_cos_id == null)
+    error_message = "A value for 'existing_cos_id' must be provided when 'enable_registry_storage' is set to true."
+  }
+}
+
+variable "enable_registry_storage" {
+  type        = bool
+  description = "Set to `true` to enable IBM Cloud Object Storage for the Red Hat OpenShift internal image registry. Set to `false` only for new cluster deployments in an account that is allowlisted for this feature."
+  default     = true
 }
 
 variable "kms_config" {
@@ -288,8 +300,39 @@ variable "enable_ocp_console" {
   default     = true
 }
 
-variable "skip_cluster_apikey_creation" {
-  type        = bool
-  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
-  default     = false
+##############################################################
+# Cluster Timeout Configuration
+##############################################################
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for cluster deletion operations. Specify a duration string (e.g., '2h', '30m')."
+  default     = "2h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_delete_timeout))
+    error_message = "The cluster_delete_timeout value must be a valid duration string (e.g., '2h', '30m', '90s')."
+  }
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for cluster creation operations. Specify a duration string (e.g., '3h', '45m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_create_timeout))
+    error_message = "The cluster_create_timeout value must be a valid duration string (e.g., '3h', '45m', '180s')."
+  }
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for cluster update operations. Specify a duration string (e.g., '3h', '1h30m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_update_timeout))
+    error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
+  }
 }

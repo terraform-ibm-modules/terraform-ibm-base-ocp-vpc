@@ -20,7 +20,8 @@ module "fscloud" {
   worker_pools_taints                   = var.worker_pools_taints
   pod_subnet_cidr                       = var.pod_subnet_cidr
   service_subnet_cidr                   = var.service_subnet_cidr
-  use_existing_cos                      = true
+  enable_registry_storage               = var.enable_registry_storage
+  use_existing_cos                      = var.enable_registry_storage
   existing_cos_id                       = var.existing_cos_id
   tags                                  = var.tags
   kms_config                            = var.kms_config
@@ -34,5 +35,7 @@ module "fscloud" {
   additional_vpe_security_group_ids     = var.additional_vpe_security_group_ids
   cbr_rules                             = var.cbr_rules
   enable_ocp_console                    = var.enable_ocp_console
-  skip_cluster_apikey_creation          = var.skip_cluster_apikey_creation
+  cluster_create_timeout                = var.cluster_create_timeout
+  cluster_delete_timeout                = var.cluster_delete_timeout
+  cluster_update_timeout                = var.cluster_update_timeout
 }

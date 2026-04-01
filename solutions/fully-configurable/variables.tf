@@ -14,7 +14,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = true
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md). **Important:** When deploying VPC using VPC deployable architecture, updating the prefix after the initial deployment may require recreating certain resources. Learn more about this limitation [here](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-known-issues#ki-vpc-prefix-change-recreate)."
 
   validation {
     # - null and empty string is allowed
@@ -37,7 +37,6 @@ variable "prefix" {
     error_message = "Prefix must not exceed 16 characters."
   }
 }
-
 
 variable "existing_resource_group_name" {
   type        = string
@@ -64,7 +63,7 @@ variable "access_tags" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "openshift"
+  default     = "cluster"
 }
 
 variable "openshift_version" {
@@ -176,6 +175,11 @@ variable "default_worker_pool_workers_per_zone" {
   type        = number
   description = "Number of worker nodes in each zone of the cluster."
   default     = 1
+
+  validation {
+    condition     = can(regex("^[1-9][0-9]*$", var.default_worker_pool_workers_per_zone))
+    error_message = "Worker count per zone must be greater than 0."
+  }
 }
 
 variable "default_worker_pool_operating_system" {
@@ -243,6 +247,13 @@ variable "additional_worker_pools" {
 variable "existing_cos_instance_crn" {
   type        = string
   description = "The CRN of an already existing Object Storage instance to use for OpenShift internal registry storage."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}cloud-object-storage:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_cos_instance_crn))
+    ])
+    error_message = "The value provided for 'existing_cos_instance_crn' is not valid."
+  }
 }
 
 ##############################################################
@@ -252,6 +263,13 @@ variable "existing_cos_instance_crn" {
 variable "existing_vpc_crn" {
   type        = string
   description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the default worker pool is provisioned across all the subnets in the VPC."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}is:(.*:)([aos]\\/[\\w_\\-]+)::vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_vpc_crn))
+    ])
+    error_message = "The value provided for 'existing_vpc_crn' is not valid."
+  }
 }
 
 variable "existing_subnet_ids" {
@@ -381,10 +399,10 @@ variable "existing_kms_instance_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
       var.existing_kms_instance_crn == null,
     ])
-    error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' in not valid."
+    error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' is not valid."
   }
 }
 
@@ -395,10 +413,10 @@ variable "existing_cluster_kms_key_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_cluster_kms_key_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_cluster_kms_key_crn)),
       var.existing_cluster_kms_key_crn == null,
     ])
-    error_message = "The provided KMS key CRN in the input 'existing_cluster_kms_key_crn' in not valid."
+    error_message = "The provided KMS key CRN in the input 'existing_cluster_kms_key_crn' is not valid."
   }
 
   validation {
@@ -467,10 +485,10 @@ variable "existing_boot_volume_kms_key_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
       var.existing_boot_volume_kms_key_crn == null,
     ])
-    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' in not valid."
+    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' is not valid."
   }
 }
 
@@ -533,12 +551,28 @@ variable "existing_secrets_manager_instance_crn" {
   type        = string
   description = "CRN of the Secrets Manager instance where Ingress certificate secrets are stored. If 'enable_secrets_manager_integration' is set to true then this value is required."
   default     = null
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_secrets_manager_instance_crn)),
+      var.existing_secrets_manager_instance_crn == null,
+    ])
+    error_message = "The value provided for 'existing_secrets_manager_instance_crn' is not valid."
+  }
 }
 
 variable "secrets_manager_secret_group_id" {
   type        = string
   description = "Secret group ID where Ingress secrets are stored in the Secrets Manager instance. If 'enable_secrets_manager_integration' is set to true and 'secrets_manager_secret_group_id' is not provided, a new group will be created with the same name as cluster_id."
   default     = null
+
+  validation {
+    condition = anytrue([
+      can(regex("[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}", var.secrets_manager_secret_group_id)),
+      var.secrets_manager_secret_group_id == null,
+    ])
+    error_message = "The value provided for 'secrets_manager_secret_group_id' is not valid."
+  }
 }
 
 variable "secrets_manager_endpoint_type" {
@@ -569,12 +603,12 @@ variable "enable_kube_audit" {
 
 variable "audit_log_policy" {
   type        = string
-  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `WriteRequestBodies`."
+  description = "Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`."
   default     = "default"
 
   validation {
-    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'WriteRequestBodies'"
-    condition     = contains(["default", "WriteRequestBodies"], var.audit_log_policy)
+    error_message = "Invalid Audit log policy Type! Valid values are 'default' or 'verbose'"
+    condition     = contains(["default", "verbose"], var.audit_log_policy)
   }
 }
 
@@ -599,11 +633,49 @@ variable "audit_webhook_listener_image" {
 variable "audit_webhook_listener_image_tag_digest" {
   type        = string
   description = "The tag or digest for the audit webhook listener image to deploy. If changing the value, ensure it is compatible with `audit_webhook_listener_image`."
-  default     = "deaabcb8225e800385413ba420cf3f819d3b0671@sha256:acf123f4dba63534cbc104c6886abedff9d25a22a34ab7b549ede988ed6e7144"
+  default     = "189016125b33f865f1474ff303c109430b87e77b@sha256:31a61eacda2819cfaf3538b54ef2276a41655cffe6259e724faff202a27449c5"
 }
 
-variable "skip_cluster_apikey_creation" {
+variable "enable_kube_audit_https_traffic" {
   type        = bool
-  description = "To skip resetting the `containers-kubernetes-key` for the given region and resource group."
-  default     = false
+  default     = true
+  description = "When set to true, the traffic in transit between the audit webhook service in the cluster and the components that send audit events to it is encrypted using HTTPS. This automates the steps mentioned [here](https://cloud.ibm.com/docs/openshift?topic=openshift-health-audit#secure-setup). Certificate rotation still requires manual intervention to replace the secret and restart the deployment."
+  nullable    = false
+}
+
+##############################################################
+# Cluster Timeout Configuration
+##############################################################
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for cluster deletion operations. Specify a duration string (e.g., '2h', '30m')."
+  default     = "2h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_delete_timeout))
+    error_message = "The cluster_delete_timeout value must be a valid duration string (e.g., '2h', '30m', '90s')."
+  }
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for cluster creation operations. Specify a duration string (e.g., '3h', '45m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_create_timeout))
+    error_message = "The cluster_create_timeout value must be a valid duration string (e.g., '3h', '45m', '180s')."
+  }
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for cluster update operations. Specify a duration string (e.g., '3h', '1h30m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_update_timeout))
+    error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
+  }
 }

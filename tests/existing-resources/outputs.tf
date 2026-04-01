@@ -31,3 +31,8 @@ output "cos_instance_id" {
   description = "The ID of the Cloud Object Storage instance"
   value       = module.cos.cos_instance_id
 }
+
+output "region" {
+  description = "Region"
+  value       = var.region
+}

@@ -2,12 +2,15 @@
 package test
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -24,6 +27,7 @@ import (
 
 const fullyConfigurableTerraformDir = "solutions/fully-configurable"
 const customsgExampleDir = "examples/custom_sg"
+const basicExampleDir = "examples/basic"
 const quickStartTerraformDir = "solutions/quickstart"
 const resourceGroup = "geretain-test-base-ocp-vpc"
 
@@ -31,26 +35,54 @@ const resourceGroup = "geretain-test-base-ocp-vpc"
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 // Ensure there is one test per supported OCP version
-const ocpVersion1 = "4.19"                   // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
-const ocpVersion2 = "4.18"                   // used by TestCustomSGExample and TestRunCustomsgExample
-const ocpVersion3 = "4.17"                   // used by TestRunAdvancedExample and TestCrossKmsSupportExample
-const ocpVersion4 = "4.16"                   // used by TestRunAddRulesToSGExample and TestRunBasicExample
 const terraformVersion = "terraform_v1.12.2" // This should match the version in the ibm_catalog.json
 
 var (
 	sharedInfoSvc      *cloudinfo.CloudInfoService
 	permanentResources map[string]interface{}
+	ocpVersion1        string // used by TestRunFullyConfigurable, TestRunUpgradeFullyConfigurable, TestFSCloudInSchematic and TestRunMultiClusterExample
+	ocpVersion2        string // used by TestCustomSGExample and TestRunCustomsgExample
+	ocpVersion3        string // used by TestRunAdvancedExample and TestCrossKmsSupportExample
+	ocpVersion4        string // used by TestRunAddRulesToSGExample and TestRunBasicExample
 )
 
 // TestMain will be run before any parallel tests, used to set up a shared InfoService object to track region usage
 // for multiple tests
 func TestMain(m *testing.M) {
-	sharedInfoSvc, _ = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
-
 	var err error
+	sharedInfoSvc, err = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// Get kube versions
+	expectedOCPVersions := 4
+	validOCPVersions, _, err := sharedInfoSvc.GetKubeVersions("openshift")
+	if err != nil {
+		log.Fatalf("failed to get kube versions: %v", err)
+	}
+	ocpVersionCount := len(validOCPVersions)
+	if ocpVersionCount == 0 {
+		log.Fatal("openshift version list is empty")
+	}
+	ocpVars := []*string{&ocpVersion1, &ocpVersion2, &ocpVersion3, &ocpVersion4}
+
+	if ocpVersionCount < expectedOCPVersions {
+		log.Printf("Warning: OCP versions list returned by the API (%v) has less than %d valid versions hence some tests will run on duplicate versions.", validOCPVersions, expectedOCPVersions)
+	}
+
+	for i := 0; i < len(ocpVars); i++ {
+		idx := ocpVersionCount - 1 - i // count from the end
+
+		if idx < 0 {
+			idx = 0 // fallback
+		}
+		*ocpVars[i] = validOCPVersions[idx]
 	}
 
 	os.Exit(m.Run())
@@ -98,8 +130,9 @@ func setupQuickstartOptions(t *testing.T, prefix string) *testschematic.TestSche
 		Region:        region,
 		TarIncludePatterns: []string{
 			"*.tf",
-			quickStartTerraformDir + "/*.tf", "scripts/*.sh", "kubeconfig/README.md",
+			quickStartTerraformDir + "/*.tf", "scripts/*.*", "kubeconfig/README.md",
 			"modules/worker-pool/*.tf",
+			"modules/kube-audit/scripts/*.sh",
 		},
 		TemplateFolder:             quickStartTerraformDir,
 		Tags:                       []string{"test-schematic"},
@@ -130,6 +163,24 @@ func cleanupTerraform(t *testing.T, options *terraform.Options, prefix string) {
 	logger.Log(t, "END: Destroy (existing resources)")
 }
 
+func createContainersApikey(t *testing.T, region string, rg string) {
+
+	err := os.Setenv("IBMCLOUD_API_KEY", validateEnvVariable(t, "TF_VAR_ibmcloud_api_key"))
+	require.NoError(t, err, "Failed to set IBMCLOUD_API_KEY environment variable")
+	scriptPath := "../common-dev-assets/scripts/iks-api-key-reset/reset_iks_api_key.sh"
+	cmd := exec.Command("bash", scriptPath, region, rg)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	// Execute the command
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Failed to execute script: %v\nStderr: %s", err, stderr.String())
+	}
+	// Print script output
+	fmt.Println(stdout.String())
+}
+
 func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	t.Parallel()
 
@@ -140,12 +191,15 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:               t,
 		Prefix:                "ocp-fc",
-		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/worker-pool/*.tf", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
+		TarIncludePatterns:    []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.*", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/worker-pool/*.tf", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*"},
 		TemplateFolder:        fullyConfigurableTerraformDir,
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
 		TerraformVersion:      terraformVersion,
+		Region:                terraform.Output(t, existingTerraformOptions, "region"),
 	})
+
+	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -153,7 +207,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "cluster_name", Value: "cluster", DataType: "string"},
 		{Name: "openshift_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
-		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "existing_resource_group_name", Value: rg, DataType: "string"},
 		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
 		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
@@ -162,32 +216,35 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 	}
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, rg)
+
 	require.NoError(t, options.RunSchematicTest(), "This should not have errored")
 	cleanupTerraform(t, existingTerraformOptions, prefix)
 }
 
-// Upgrade Test does not require KMS encryption
 func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
-
 	// Provision existing resources first
 	prefix := fmt.Sprintf("ocp-existing-%s", strings.ToLower(random.UniqueId()))
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
-
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                    t,
 		Prefix:                     "fc-upg",
-		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.sh", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
+		TarIncludePatterns:         []string{"*.tf", fullyConfigurableTerraformDir + "/*.*", fullyConfigurableTerraformDir + "/scripts/*.*", "scripts/*.*", "kubeconfig/README.md", "modules/kube-audit/*.*", "modules/kube-audit/kubeconfig/README.md", "modules/kube-audit/scripts/*.sh", fullyConfigurableTerraformDir + "/kubeconfig/README.md", "modules/kube-audit/helm-charts/kube-audit/*.*", "modules/kube-audit/helm-charts/kube-audit/templates/*.*", "modules/worker-pool/*.tf"},
 		TemplateFolder:             fullyConfigurableTerraformDir,
 		Tags:                       []string{"test-schematic"},
 		DeleteWorkspaceOnFail:      false,
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
+		Region:                     terraform.Output(t, existingTerraformOptions, "region"),
 	})
-
+	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
 	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
-
+	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.kube_audit[0].terraform_data.install_required_binaries[0]"}}
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		// Required Core Variables
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "cluster_name", Value: "cluster", DataType: "string"},
@@ -197,8 +254,12 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
+		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 	}
-
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, rg)
 	require.NoError(t, options.RunSchematicUpgradeTest(), "This should not have errored")
 	cleanupTerraform(t, existingTerraformOptions, prefix)
 }
@@ -214,7 +275,7 @@ func TestRunCustomsgExample(t *testing.T) {
 		Testing:          t,
 		TerraformDir:     customsgExampleDir,
 		Prefix:           "base-ocp-customsg",
-		ResourceGroup:    "geretain-test-base-ocp-vpc",
+		ResourceGroup:    resourceGroup,
 		CloudInfoService: sharedInfoSvc,
 		ImplicitDestroy: []string{
 			"module.ocp_base.null_resource.confirm_network_healthy",
@@ -227,6 +288,9 @@ func TestRunCustomsgExample(t *testing.T) {
 			"enable_openshift_version_upgrade": true,
 		},
 	})
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
 
 	output, err := options.RunTestConsistency()
 
@@ -241,6 +305,10 @@ func TestRunQuickstartSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs")
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
+
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
 }
@@ -250,6 +318,10 @@ func TestRunQuickstartUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 
 	options := setupQuickstartOptions(t, "ocp-qs-upg")
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, options.ResourceGroup)
+
 	err := options.RunSchematicUpgradeTest()
 	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
@@ -260,18 +332,24 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:       t,
-		Prefix:        "ocp-def",
-		ResourceGroup: resourceGroup,
-		QuietMode:     false, // Suppress logs except on failure
+		Testing:               t,
+		Prefix:                "ocp-def",
+		ResourceGroup:         resourceGroup,
+		QuietMode:             false, // Suppress logs except on failure
+		OverrideInputMappings: core.BoolPtr(true),
 	})
+	region := "eu-de"
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, region, options.ResourceGroup)
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
 		"deploy-arch-ibm-slz-ocp",
 		"fully-configurable",
 		map[string]interface{}{
-			"region": "eu-de",
+			"region":                       region,
+			"existing_resource_group_name": options.ResourceGroup,
 		},
 	)
 
@@ -306,4 +384,41 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
+}
+
+func setupOptions(t *testing.T, prefix string, terraformDir string, ocpVersion string) *testhelper.TestOptions {
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:          t,
+		TerraformDir:     terraformDir,
+		Prefix:           prefix,
+		ResourceGroup:    resourceGroup,
+		CloudInfoService: sharedInfoSvc,
+		IgnoreUpdates: testhelper.Exemptions{ // Ignore for consistency check
+			List: []string{
+				"module.logs_agents.helm_release.logs_agent",
+			},
+		},
+		TerraformVars: map[string]interface{}{
+			"ocp_version":     ocpVersion,
+			"access_tags":     permanentResources["accessTags"],
+			"ocp_entitlement": "cloud_pak",
+		},
+		CheckApplyResultForUpgrade: true,
+	})
+
+	return options
+}
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "base-ocp", basicExampleDir, ocpVersion4)
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, options.Region, resourceGroup)
+
+	output, err := options.RunTestConsistency()
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }

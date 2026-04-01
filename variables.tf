@@ -102,13 +102,13 @@ variable "worker_pools" {
   }
 
   validation {
-    condition = alltrue([
+    condition = (contains(local.valid_ocp_versions, local.ocp_version_num)) && alltrue([
       for wp in var.worker_pools :
       (local.ocp_version_num == "4.14" && wp.operating_system == local.os_rhel) ||
       (local.ocp_version_num == "4.15" && contains([local.os_rhel, local.os_rhcos], wp.operating_system)) ||
       (contains(["4.16", "4.17"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhel, local.os_rhcos], wp.operating_system)) ||
-      (local.ocp_version_num == "4.18" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
-      (local.ocp_version_num == "4.19" && contains([local.os_rhel9, local.os_rhcos], wp.operating_system))
+      (contains(["4.18", "4.19", "4.20"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
+      (tonumber(local.ocp_version_num) >= 4.21 && wp.operating_system == local.os_rhcos)
     ])
     error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); v4.18: (RHCOS, RHEL_9_64); v4.19: (RHEL_9_64, RHCOS)"
   }
@@ -187,19 +187,13 @@ variable "ocp_version" {
   type        = string
   description = "The version of the OpenShift cluster that should be provisioned (format 4.x). If no value is specified, the current default version is used. You can also specify `default`. This input is used only during initial cluster provisioning and is ignored for updates. To prevent possible destructive changes, update the cluster version outside of Terraform."
   default     = null
-
   validation {
-    condition = anytrue([
-      var.ocp_version == null,
-      var.ocp_version == "default",
-      var.ocp_version == "4.14",
-      var.ocp_version == "4.15",
-      var.ocp_version == "4.16",
-      var.ocp_version == "4.17",
-      var.ocp_version == "4.18",
-      var.ocp_version == "4.19",
-    ])
-    error_message = "The specified ocp_version is not of the valid versions."
+    condition = (
+      var.ocp_version == null
+      || var.ocp_version == "default"
+      || try(contains(local.valid_ocp_versions, var.ocp_version), false)
+    )
+    error_message = "Invalid ocp_version provided. Supported versions are: ${join(", ", local.valid_ocp_versions)}"
   }
 }
 
@@ -364,9 +358,64 @@ variable "addons" {
   nullable    = false
   default     = {}
 
+  ########################################################################################################################
+  # OCP addons version validation
+  ########################################################################################################################
+
   validation {
-    condition     = (lookup(var.addons, "openshift-ai", null) != null ? lookup(var.addons["openshift-ai"], "version", null) == null : true) || (tonumber(local.ocp_version_num) >= 4.16)
-    error_message = "OCP AI add-on requires OCP version >= 4.16.0"
+    condition = alltrue([
+      for addon_name, addon_cfg in var.addons : (
+        try(addon_cfg.version, null) == null ? true :
+        contains(keys(local.ocp_all_addon_versions), addon_name) &&
+        contains(keys(local.ocp_all_addon_versions[addon_name]), tostring(addon_cfg.version)) &&
+        (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) >=
+        (
+          (
+            tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[0]) * 100 +
+            tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[1])
+          )
+        ) &&
+        (
+          (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) <
+          (
+            (
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[0]) * 100 +
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[1])
+            )
+          )
+        )
+      )
+    ])
+
+    error_message = join("\n", flatten([
+      "Addon validation failed:",
+      [
+        for addon_name, addon_cfg in var.addons : (
+          try(addon_cfg.version, null) == null ? [] :
+          !contains(keys(local.ocp_all_addon_versions), addon_name) ?
+          ["- Addon '${addon_name}' is not recognized."] :
+          !contains(keys(local.ocp_all_addon_versions[addon_name]), tostring(addon_cfg.version)) ?
+          ["- Addon '${addon_name}' version '${addon_cfg.version}' is not supported."] :
+
+          (
+            (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) <
+            (
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[0]) * 100 +
+              tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[0]))[1])
+            ) ||
+            (
+              (tonumber(split(".", local.ocp_version_num)[0]) * 100 + tonumber(split(".", local.ocp_version_num)[1])) >=
+              (
+                tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[0]) * 100 +
+                tonumber(split(".", regex("\\d+\\.\\d+", split(" ", lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range)[1]))[1])
+              )
+            )
+          ) ?
+          ["- Addon '${addon_name}' version '${addon_cfg.version}' requires OCP version '${lookup(local.ocp_all_addon_versions[addon_name], tostring(addon_cfg.version), { "supported_openshift_range" = "0.0 0.0" }).supported_openshift_range}'"] :
+          []
+        )
+      ]
+    ]))
   }
 
   validation {
@@ -473,8 +522,46 @@ variable "skip_ocp_secrets_manager_iam_auth_policy" {
   default     = false
 }
 
-variable "skip_cluster_apikey_creation" {
+variable "install_required_binaries" {
   type        = bool
-  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
-  default     = false
+  default     = true
+  description = "When set to true, a script will run to check if `kubectl` and `jq` exist on the runtime and if not attempt to download them from the public internet and install them to /tmp. Set to false to skip running this script."
+  nullable    = false
+}
+
+##############################################################
+# Cluster Timeout Configuration
+##############################################################
+
+variable "cluster_delete_timeout" {
+  type        = string
+  description = "Timeout duration for cluster deletion operations. Specify a duration string (e.g., '2h', '30m')."
+  default     = "2h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_delete_timeout))
+    error_message = "The cluster_delete_timeout value must be a valid duration string (e.g., '2h', '30m', '90s')."
+  }
+}
+
+variable "cluster_create_timeout" {
+  type        = string
+  description = "Timeout duration for cluster creation operations. Specify a duration string (e.g., '3h', '45m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_create_timeout))
+    error_message = "The cluster_create_timeout value must be a valid duration string (e.g., '3h', '45m', '180s')."
+  }
+}
+
+variable "cluster_update_timeout" {
+  type        = string
+  description = "Timeout duration for cluster update operations. Specify a duration string (e.g., '3h', '1h30m')."
+  default     = "3h"
+  nullable    = false
+  validation {
+    condition     = can(regex("^[0-9]+(s|m|h)$", var.cluster_update_timeout))
+    error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
+  }
 }

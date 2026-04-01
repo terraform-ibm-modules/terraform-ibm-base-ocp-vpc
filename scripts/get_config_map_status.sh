@@ -2,6 +2,9 @@
 
 set -e
 
+# The binaries downloaded by the install-binaries script are located in the /tmp directory.
+export PATH=$PATH:${1:-"/tmp"}
+
 CONFIGMAP_NAME="iks-ca-configmap"
 NAMESPACE="kube-system"
 COUNTER=0

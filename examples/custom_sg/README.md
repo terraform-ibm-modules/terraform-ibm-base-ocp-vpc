@@ -1,5 +1,14 @@
 # Attaching custom security groups
 
+<!-- BEGIN SCHEMATICS DEPLOY HOOK -->
+<p>
+  <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-custom_sg-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/custom_sg">
+    <img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics">
+  </a><br>
+  ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
+</p>
+<!-- END SCHEMATICS DEPLOY HOOK -->
+
 An example showing how to attach additional security groups to the worker pools, VPE and load balancers:
 
 1. A custom security group, named `custom-cluster-sg`, is specified at cluster creation. This security group is attached to all worker nodes of the cluster, including the worker nodes created after the creation of the cluster.

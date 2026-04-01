@@ -4,7 +4,7 @@ terraform {
     # Use "greater than or equal to" range in modules
     ibm = {
       source  = "ibm-cloud/ibm"
-      version = ">= 1.78.2, < 2.0.0"
+      version = ">= 1.80.0, < 2.0.0"
     }
     null = {
       source  = "hashicorp/null"
@@ -12,11 +12,15 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.16.1, < 3.0.0"
+      version = ">= 3.0.0, < 4.0.0"
     }
     time = {
       source  = "hashicorp/time"
       version = ">= 0.9.1, < 1.0.0"
+    }
+    external = {
+      source  = "hashicorp/external"
+      version = ">=2.3.5, <3.0.0"
     }
   }
 }

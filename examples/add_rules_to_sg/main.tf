@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.0"
+  version = "1.5.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -158,7 +158,7 @@ locals {
       pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
       machine_type      = "bx2.4x16"
       workers_per_zone  = 2
-      operating_system  = "REDHAT_8_64"
+      operating_system  = "RHCOS"
       labels            = {}
       resource_group_id = module.resource_group.resource_group_id
     }
@@ -166,7 +166,10 @@ locals {
 }
 
 module "ocp_base" {
-  source               = "../.."
+  source = "../.."
+  # remove the above line and uncomment the below 2 lines to consume the module from the registry
+  # source            = "terraform-ibm-modules/base-ocp-vpc/ibm"
+  # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   cluster_name         = var.prefix
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region

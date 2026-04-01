@@ -1,5 +1,15 @@
 # GPU Worker Pool Example
 
+<!-- BEGIN SCHEMATICS DEPLOY HOOK -->
+<p>
+  <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-gpu-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/gpu">
+    <img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics">
+  </a><br>
+  ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
+</p>
+<!-- END SCHEMATICS DEPLOY HOOK -->
+
+
 This example illustrates how to create an OpenShift cluster on IBM Cloud VPC with:
 1. A default worker pool with basic machines (bx2.4x16) across 3 zones
 2. A second worker pool with a single GPU machine (gx3.16x80.l4) in one zone

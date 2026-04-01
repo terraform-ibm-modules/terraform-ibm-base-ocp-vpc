@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.0"
+  version                      = "1.5.0"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -14,21 +14,21 @@ module "resource_group" {
 module "existing_kms_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.existing_kms_instance_crn
 }
 
 module "existing_cluster_kms_key_crn_parser" {
   count   = var.existing_cluster_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.existing_cluster_kms_key_crn
 }
 
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = var.existing_boot_volume_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.existing_boot_volume_kms_key_crn
 }
 
@@ -95,7 +95,7 @@ module "kms" {
   }
   count                       = (var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null) || (var.kms_encryption_enabled_cluster && var.existing_cluster_kms_key_crn == null) ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.4.5"
+  version                     = "5.5.36"
   create_key_protect_instance = false
   region                      = local.cluster_kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -109,7 +109,7 @@ module "kms" {
 ########################################################################################################################
 module "existing_vpc_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.existing_vpc_crn
 }
 
@@ -239,13 +239,15 @@ module "ocp_base" {
   existing_secrets_manager_instance_crn    = var.existing_secrets_manager_instance_crn
   secrets_manager_secret_group_id          = var.secrets_manager_secret_group_id != null ? var.secrets_manager_secret_group_id : (var.enable_secrets_manager_integration ? module.secret_group[0].secret_group_id : null)
   skip_ocp_secrets_manager_iam_auth_policy = var.skip_ocp_secrets_manager_iam_auth_policy
-  skip_cluster_apikey_creation             = var.skip_cluster_apikey_creation
+  cluster_create_timeout                   = var.cluster_create_timeout
+  cluster_delete_timeout                   = var.cluster_delete_timeout
+  cluster_update_timeout                   = var.cluster_update_timeout
 }
 
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
@@ -280,7 +282,7 @@ module "secret_group" {
   }
   count                    = var.enable_secrets_manager_integration && var.secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.15"
+  version                  = "1.4.8"
   region                   = module.existing_secrets_manager_instance_parser[0].region
   secrets_manager_guid     = module.existing_secrets_manager_instance_parser[0].service_instance
   secret_group_name        = module.ocp_base.cluster_id
@@ -311,4 +313,5 @@ module "kube_audit" {
   audit_deployment_name                   = var.audit_deployment_name
   audit_webhook_listener_image            = var.audit_webhook_listener_image
   audit_webhook_listener_image_tag_digest = var.audit_webhook_listener_image_tag_digest
+  enable_https_traffic                    = var.enable_kube_audit_https_traffic
 }

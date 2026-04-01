@@ -24,7 +24,7 @@ variable "provider_visibility" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md). **Important:** Updating the prefix after the initial deployment may require recreating certain resources. Learn more about this limitation [here](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-known-issues#ki-vpc-prefix-change-recreate). "
   nullable    = true
   validation {
     condition = (var.prefix == null || var.prefix == "" ? true :
@@ -56,9 +56,8 @@ variable "openshift_version" {
 variable "cluster_name" {
   type        = string
   description = "The name of the new IBM Cloud OpenShift Cluster. If a `prefix` input variable is specified, it is added to this name in the `<prefix>-value` format."
-  default     = "openshift-qs"
+  default     = "cluster"
 }
-
 
 variable "address_prefix" {
   description = "The IP range that defines a certain location for the VPC. Use only with manual address prefixes."
@@ -72,11 +71,10 @@ variable "ocp_entitlement" {
   default     = null
 }
 
-
 variable "default_worker_pool_operating_system" {
   type        = string
   description = "The operating system installed on the worker nodes. [Learn more](https://cloud.ibm.com/docs/openshift?topic=openshift-vpc-flavors)."
-  default     = "RHEL_9_64"
+  default     = "RHCOS"
 }
 
 variable "access_tags" {
@@ -101,10 +99,4 @@ variable "allow_outbound_traffic" {
   type        = bool
   description = "Set to true to allow public outbound access from the cluster workers."
   default     = true
-}
-
-variable "skip_cluster_apikey_creation" {
-  type        = bool
-  description = "Set to true to skip explicit creation of the `containers-kubernetes-key` for the given region and resource group. You can set this to false if you plan to manually create this key, or if you want to allow the cluster creation process to create it. Please be aware that it may take multiple apply attempts when allowing the cluster creation process to create it it before it will be successful."
-  default     = false
 }
