@@ -144,7 +144,6 @@ func TestFSCloudInSchematic(t *testing.T) {
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 	}
-	options.PostApplyHook = getClusterIngressSchematics
 
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
