@@ -63,6 +63,10 @@ By default, the module automatically downloads the required dependant binaries (
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
+        <a href="./examples/gpu">GPU Worker Pool Example</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-gpu-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/gpu"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
         <a href="./examples/multiple_mzr_clusters">2 MZR clusters in same VPC example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-multiple_mzr_clusters-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/multiple_mzr_clusters"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
