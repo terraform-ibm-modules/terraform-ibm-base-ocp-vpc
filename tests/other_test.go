@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/IBM/go-sdk-core/v5/core"
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
@@ -17,25 +16,6 @@ const advancedExampleDir = "examples/advanced"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
 const gpuExampleDir = "examples/gpu"
-
-func getClusterIngress(options *testhelper.TestOptions) error {
-
-	// Get output of the last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
-	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
-		return nil
-	}
-
-	// Validate that the "cluster_name" key is present in the outputs
-	expectedOutputs := []string{"cluster_name"}
-	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
-
-	// Proceed with the cluster ingress health check if "cluster_name" is valid
-	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
-	}
-	return nil
-}
 
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
@@ -55,7 +35,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion1,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getMultiClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -76,7 +58,9 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion4,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -95,7 +79,9 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
 			"ocp_version":          ocpVersion3,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 
 	output, err := options.RunTestConsistency()
 
@@ -138,6 +124,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
 		TerraformVersion:       terraformVersion,
+		CloudInfoService:       sharedInfoSvc,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
