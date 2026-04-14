@@ -54,6 +54,7 @@ resource "helm_release" "kube_audit" {
   wait          = true
   recreate_pods = true
   force_update  = true
+  atomic        = true
 
   set = [
     {
