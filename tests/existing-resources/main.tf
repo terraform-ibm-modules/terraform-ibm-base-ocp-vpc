@@ -11,22 +11,47 @@ module "resource_group" {
 #############################################################################
 # Provision VPC
 #############################################################################
+locals {
+  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+  network_acl = {
+    name                         = "${local.prefix}acl"
+    add_ibm_cloud_internal_rules = true
+    add_vpc_connectivity_rules   = true
+    prepend_ibm_rules            = true
+    rules = [{
+      name        = "${local.prefix}inbound"
+      action      = "allow"
+      source      = "0.0.0.0/0"
+      destination = "0.0.0.0/0"
+      direction   = "inbound"
+      },
+      {
+        name        = "${local.prefix}outbound"
+        action      = "allow"
+        source      = "0.0.0.0/0"
+        destination = "0.0.0.0/0"
+        direction   = "outbound"
+      }
+    ]
+  }
+}
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.16.2"
+  version           = "8.17.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "vpc"
   prefix            = var.prefix
   tags              = var.resource_tags
+  network_acls      = [local.network_acl]
   subnets = {
     zone-1 = [
       {
         name           = "subnet-a"
         cidr           = "10.10.10.0/24"
         public_gateway = true
-        acl_name       = "vpc-acl"
+        acl_name       = "${local.prefix}acl"
       }
     ],
     zone-2 = [
@@ -34,7 +59,7 @@ module "vpc" {
         name           = "subnet-b"
         cidr           = "10.20.10.0/24"
         public_gateway = false
-        acl_name       = "vpc-acl"
+        acl_name       = "${local.prefix}acl"
       }
     ],
     zone-3 = [
@@ -42,7 +67,7 @@ module "vpc" {
         name           = "subnet-c"
         cidr           = "10.30.10.0/24"
         public_gateway = false
-        acl_name       = "vpc-acl"
+        acl_name       = "${local.prefix}acl"
       }
     ]
   }
