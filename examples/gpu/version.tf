@@ -1,11 +1,11 @@
 terraform {
   required_version = ">=1.9.0"
 
-  # Lock DA into an exact provider version - renovate automation will keep it updated
+  # Using the latest provider version to ensure GPU support
   required_providers {
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "2.0.0"
+      version = ">= 1.79.2"
     }
   }
 }

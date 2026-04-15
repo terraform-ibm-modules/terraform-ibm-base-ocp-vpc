@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/IBM/go-sdk-core/v5/core"
-	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
@@ -16,25 +15,7 @@ import (
 const advancedExampleDir = "examples/advanced"
 const fscloudExampleDir = "examples/fscloud"
 const crossKmsSupportExampleDir = "examples/cross_kms_support"
-
-func getClusterIngress(options *testhelper.TestOptions) error {
-
-	// Get output of the last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
-	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
-		return nil
-	}
-
-	// Validate that the "cluster_name" key is present in the outputs
-	expectedOutputs := []string{"cluster_name"}
-	_, ValidationErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
-
-	// Proceed with the cluster ingress health check if "cluster_name" is valid
-	if assert.NoErrorf(options.Testing, ValidationErr, "Some outputs not found or nil: %s", ValidationErr) {
-		options.CheckClusterIngressHealthyDefaultTimeout(outputs["cluster_name"].(string))
-	}
-	return nil
-}
+const gpuExampleDir = "examples/gpu"
 
 func TestRunMultiClusterExample(t *testing.T) {
 	t.Parallel()
@@ -54,7 +35,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion1,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getMultiClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -75,7 +58,9 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion4,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -94,7 +79,9 @@ func TestCrossKmsSupportExample(t *testing.T) {
 			"kms_cross_account_id": permanentResources["ge_ops_account_id"],
 			"ocp_version":          ocpVersion3,
 		},
+		CloudInfoService: sharedInfoSvc,
 	})
+	options.PostApplyHook = getClusterIngress
 
 	output, err := options.RunTestConsistency()
 
@@ -137,6 +124,7 @@ func TestFSCloudInSchematic(t *testing.T) {
 		DeleteWorkspaceOnFail:  false,
 		WaitJobCompleteMinutes: 240,
 		TerraformVersion:       terraformVersion,
+		CloudInfoService:       sharedInfoSvc,
 	})
 
 	// If "jp-osa" was the best region selected, default to us-south instead.
@@ -159,6 +147,33 @@ func TestFSCloudInSchematic(t *testing.T) {
 
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestRunGpuExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  gpuExampleDir,
+		Prefix:        "gpu-test",
+		ResourceGroup: resourceGroup,
+		ImplicitDestroy: []string{
+			"module.ocp_base.null_resource.confirm_network_healthy",
+			"module.ocp_base.null_resource.reset_api_key",
+		},
+		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
+		ImplicitRequired: false,
+		TerraformVars: map[string]interface{}{
+			"ocp_version":                      ocpVersion4,
+			"default_worker_pool_machine_type": "bx2.4x16",
+			"gpu_worker_pool_machine_type":     "bx2.4x16", // Use bx2.4x16 instead of gx3.16x80.l4 to reduce cost
+			"access_tags":                      permanentResources["accessTags"],
+			"ocp_entitlement":                  "cloud_pak",
+		},
+	})
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestAddonPermutations(t *testing.T) {
