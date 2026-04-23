@@ -130,7 +130,6 @@ variable "cluster_autoscaler_config" {
     coresTotal                   = optional(string)
     expander                     = optional(string)
     expendablePodsPriorityCutoff = optional(number)
-    extractor                    = optional(string)
     ignoreDaemonsetsUtilization  = optional(bool)
     imagePullPolicy              = optional(string)
 
@@ -191,7 +190,6 @@ variable "cluster_autoscaler_config" {
     enforceNodeGroupMinSize        = optional(bool)
     kubeClientBurst                = optional(number)
     kubeClientQPS                  = optional(number)
-    maxEmptyBulkDelete             = optional(number)
     scaleDownUnreadyEnabled        = optional(bool)
     maxPodEvictionTime             = optional(string)
     balancingIgnoreLabel           = optional(string)
