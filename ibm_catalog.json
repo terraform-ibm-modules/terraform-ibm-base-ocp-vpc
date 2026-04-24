@@ -504,6 +504,20 @@
               }
             },
             {
+              "key": "cluster_autoscaler_config",
+              "required": false,
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
+            },
+            {
               "key": "worker_pools_taints",
               "hidden": true,
               "custom_config": {

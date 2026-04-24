@@ -336,3 +336,80 @@ variable "cluster_update_timeout" {
     error_message = "The cluster_update_timeout value must be a valid duration string (e.g., '3h', '90m', '180s')."
   }
 }
+
+variable "cluster_autoscaler_config" {
+  description = "Cluster Autoscaler configuration parameters controlling scaling behavior of worker pools (scale-up/scale-down decisions, thresholds, and timing), only explicitly provided fields are applied, and unspecified fields use IKS defaults. [Learn more](https://cloud.ibm.com/docs/containers?topic=containers-cluster-scaling-install-addon-enable#ca-configmap)."
+
+  type = object({
+    coresTotal                   = optional(string)
+    expander                     = optional(string)
+    expendablePodsPriorityCutoff = optional(number)
+    ignoreDaemonsetsUtilization  = optional(bool)
+    imagePullPolicy              = optional(string)
+
+    livenessProbeFailureThreshold = optional(number)
+    livenessProbePeriodSeconds    = optional(number)
+    livenessProbeTimeoutSeconds   = optional(number)
+
+    logLevel = optional(string)
+
+    maxBulkSoftTaintCount     = optional(number)
+    maxBulkSoftTaintTime      = optional(string)
+    maxFailingTime            = optional(string)
+    maxGracefulTerminationSec = optional(number)
+    maxInactivity             = optional(string)
+    maxNodeProvisionTime      = optional(string)
+    maxRetryGap               = optional(number)
+    maxTotalUnreadyPercentage = optional(number)
+
+    memoryTotal         = optional(string)
+    minReplicaCount     = optional(number)
+    newPodScaleUpDelay  = optional(string)
+    okTotalUnreadyCount = optional(number)
+
+    resourcesLimitsCPU      = optional(string)
+    resourcesLimitsMemory   = optional(string)
+    resourcesRequestsCPU    = optional(string)
+    resourcesRequestsMemory = optional(string)
+
+    retryAttempts = optional(number)
+
+    scaleDownCandidatesPoolMinCount  = optional(number)
+    scaleDownCandidatesPoolRatio     = optional(number)
+    scaleDownDelayAfterAdd           = optional(string)
+    scaleDownDelayAfterDelete        = optional(string)
+    scaleDownDelayAfterFailure       = optional(string)
+    scaleDownEnabled                 = optional(bool)
+    scaleDownGPUUtilizationThreshold = optional(number)
+    scaleDownNonEmptyCandidatesCount = optional(number)
+    scaleDownUnneededTime            = optional(string)
+    scaleDownUnreadyTime             = optional(string)
+    scaleDownUtilizationThreshold    = optional(number)
+
+    scanInterval = optional(string)
+
+    skipNodesWithLocalStorage = optional(bool)
+    skipNodesWithSystemPods   = optional(bool)
+
+    unremovableNodeRecheckTimeout = optional(string)
+
+    # extended fields
+    maxNodeGroupBinpackingDuration = optional(string)
+    maxNodesPerScaleUp             = optional(number)
+    parallelDrain                  = optional(bool)
+    maxScaleDownParallelism        = optional(number)
+    maxDrainParallelism            = optional(number)
+    nodeDeletionBatcherInterval    = optional(string)
+    nodeDeleteDelayAfterTaint      = optional(string)
+    enforceNodeGroupMinSize        = optional(bool)
+    kubeClientBurst                = optional(number)
+    kubeClientQPS                  = optional(number)
+    scaleDownUnreadyEnabled        = optional(bool)
+    maxPodEvictionTime             = optional(string)
+    balancingIgnoreLabel           = optional(string)
+    OSReservedMemoryGi             = optional(number)
+    OSReservedCPUMili              = optional(number)
+  })
+
+  default = {}
+}
