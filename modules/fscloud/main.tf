@@ -37,5 +37,6 @@ module "fscloud" {
   enable_ocp_console                    = var.enable_ocp_console
   cluster_create_timeout                = var.cluster_create_timeout
   cluster_delete_timeout                = var.cluster_delete_timeout
+  cluster_autoscaler_config             = var.cluster_autoscaler_config
   cluster_update_timeout                = var.cluster_update_timeout
 }

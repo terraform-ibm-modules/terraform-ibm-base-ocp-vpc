@@ -631,13 +631,18 @@ resource "kubernetes_config_map_v1_data" "set_autoscaling" {
     namespace = "kube-system"
   }
 
-  data = {
-    "workerPoolsConfig.json" = jsonencode(local.worker_pool_config)
-  }
+  data = merge(
+    {
+      for k, v in var.cluster_autoscaler_config :
+      k => tostring(v) if v != null
+    },
+    {
+      "workerPoolsConfig.json" = jsonencode(local.worker_pool_config)
+    }
+  )
 
   force = true
 }
-
 
 ##############################################################################
 # Attach additional security groups to the load balancers managed by this
