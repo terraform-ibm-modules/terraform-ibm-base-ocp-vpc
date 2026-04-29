@@ -23,6 +23,12 @@ variable "cluster_resource_group_id" {
   description = "The resource group ID of the cluster."
 }
 
+variable "rollback_on_failure" {
+  description = "Flag to automatically rollback the helm chart on installation failure."
+  type        = bool
+  default     = true
+}
+
 variable "wait_till" {
   description = "To avoid long wait times when you run your Terraform code, you can specify the stage when you want Terraform to mark the cluster resource creation as completed. Depending on what stage you choose, the cluster creation might not be fully completed and continues to run in the background. However, your Terraform code can continue to run without waiting for the cluster to be fully created. Supported args are `MasterNodeReady`, `OneWorkerNodeReady`, `IngressReady` and `Normal`"
   type        = string
