@@ -79,11 +79,11 @@ module "vpc" {
 
 module "cos" {
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "10.15.1"
+  version                = "10.16.0"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
   cos_instance_name      = "${var.prefix}-cos"
-  cos_tags               = var.resource_tags
+  resource_tags          = var.resource_tags
   bucket_name            = "${var.prefix}-bucket"
   kms_encryption_enabled = false
 }
