@@ -136,13 +136,13 @@ variable "enable_registry_storage" {
 
 variable "kms_config" {
   type = object({
-    crk_id           = string
-    instance_id      = string
-    private_endpoint = optional(bool, true) # defaults to true
-    account_id       = optional(string)     # To attach HPCS instance from another account
-    wait_for_apply   = optional(bool, true) # defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed
+    crk_id           = string               # ID of the customer root key
+    instance_id      = string               # GUID of the KMS instance
+    private_endpoint = optional(bool, true) # Defaults to true to configure the KMS private service endpoint
+    account_id       = optional(string)     # To attach KMS instance from another account
+    wait_for_apply   = optional(bool, true) # Defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed
   })
-  description = "Use to attach a HPCS instance to the cluster. If account_id is not provided, defaults to the account in use."
+  description = "Use to attach a Key Protect or Hyper Protect Crypto Service instance to the cluster. If account_id is not provided, the current account is used. [Learn more](https://cloud.ibm.com/docs/key-protect?topic=key-protect-provision)"
 }
 
 variable "vpc_id" {
@@ -290,7 +290,7 @@ variable "cbr_rules" {
       }))
     })))
   }))
-  description = "The list of context-based restriction rules to create."
+  description = "The context-based restrictions rule to create. Reduce the attack surface with context-based restrictions. Only one rule is allowed. [Learn more](https://cloud.ibm.com/docs/iam?topic=iam-context-restrictions-whatis)"
   default     = []
 }
 
