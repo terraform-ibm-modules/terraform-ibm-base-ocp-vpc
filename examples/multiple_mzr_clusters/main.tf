@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.6.0"
+  version = "1.6.1"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -198,7 +198,7 @@ data "ibm_container_cluster_config" "cluster_config_c2" {
 
 module "monitoring_instance" {
   source                  = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version                 = "1.15.2"
+  version                 = "1.15.8"
   resource_group_id       = module.resource_group.resource_group_id
   region                  = var.region
   plan                    = "graduated-tier"
@@ -215,7 +215,7 @@ module "monitoring_agent_1" {
     helm = helm.helm_cluster_1
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.22.0"
+  version                   = "1.24.5"
   cluster_id                = module.ocp_base_cluster_1.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
@@ -227,7 +227,7 @@ module "monitoring_agent_2" {
     helm = helm.helm_cluster_2
   }
   source                    = "terraform-ibm-modules/monitoring-agent/ibm"
-  version                   = "1.22.0"
+  version                   = "1.24.5"
   cluster_id                = module.ocp_base_cluster_2.cluster_id
   cluster_resource_group_id = module.resource_group.resource_group_id
   access_key                = module.monitoring_instance.access_key
