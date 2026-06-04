@@ -578,6 +578,7 @@ removed {
 
 
 resource "ibm_container_addons" "ocp_addons" {
+  count = length(local.addons) > 0 ? 1 : 0
   # Worker pool creation can start before the 'ibm_container_vpc_cluster' completes since there is no explicit
   # depends_on in 'ibm_container_vpc_worker_pool', just an implicit depends_on on the cluster ID. Cluster ID can exist before
   # 'ibm_container_vpc_cluster' completes, so hence need to add explicit depends on against 'ibm_container_vpc_cluster' here.
