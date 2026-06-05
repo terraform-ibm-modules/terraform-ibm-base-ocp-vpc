@@ -3,6 +3,7 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -113,8 +114,8 @@ func setupTerraform(t *testing.T, prefix, realTerraformDir string) *terraform.Op
 		Upgrade: true,
 	})
 
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, err = terraform.InitAndApplyE(t, existingTerraformOptions)
+	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
+	_, err = terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
 	require.NoError(t, err, "Init and Apply of temp existing resource failed")
 
 	return existingTerraformOptions
@@ -159,8 +160,8 @@ func cleanupTerraform(t *testing.T, options *terraform.Options, prefix string) {
 		return
 	}
 	logger.Log(t, "START: Destroy (existing resources)")
-	terraform.Destroy(t, options)
-	terraform.WorkspaceDelete(t, options, prefix)
+	terraform.DestroyContext(t, context.Background(), options)
+	terraform.WorkspaceDeleteContext(t, context.Background(), options, prefix)
 	logger.Log(t, "END: Destroy (existing resources)")
 }
 
@@ -185,7 +186,7 @@ func createContainersApikey(t *testing.T, region string, rg string) {
 func getClusterIngress(options *testhelper.TestOptions) error {
 
 	// Get output of the last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	outputs, outputErr := terraform.OutputAllContextE(options.Testing, context.Background(), options.TerraformOptions)
 	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
 		return nil
 	}
@@ -205,7 +206,7 @@ func getClusterIngress(options *testhelper.TestOptions) error {
 func getMultiClusterIngress(options *testhelper.TestOptions) error {
 
 	// Get output of the last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	outputs, outputErr := terraform.OutputAllContextE(options.Testing, context.Background(), options.TerraformOptions)
 	if !assert.NoError(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
 		return nil
 	}
@@ -244,7 +245,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 	t.Parallel()
 
 	// Provision resources first
-	prefix := fmt.Sprintf("ocp-fc-%s", strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("ocp-fc-%s", strings.ToLower(random.UniqueID()))
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
@@ -255,11 +256,11 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		Tags:                  []string{"test-schematic"},
 		DeleteWorkspaceOnFail: false,
 		TerraformVersion:      terraformVersion,
-		Region:                terraform.Output(t, existingTerraformOptions, "region"),
+		Region:                terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
 		CloudInfoService:      sharedInfoSvc,
 	})
 
-	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
+	rg := terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name")
 
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -268,8 +269,8 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "openshift_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 		{Name: "existing_resource_group_name", Value: rg, DataType: "string"},
-		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
-		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		{Name: "existing_cos_instance_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "cos_instance_id"), DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
@@ -288,7 +289,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 func TestRunUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
 	// Provision existing resources first
-	prefix := fmt.Sprintf("ocp-existing-%s", strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("ocp-existing-%s", strings.ToLower(random.UniqueID()))
 	existingTerraformOptions := setupTerraform(t, prefix, "./existing-resources")
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing:                    t,
@@ -299,10 +300,10 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		DeleteWorkspaceOnFail:      false,
 		TerraformVersion:           terraformVersion,
 		CheckApplyResultForUpgrade: true,
-		Region:                     terraform.Output(t, existingTerraformOptions, "region"),
+		Region:                     terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
 		CloudInfoService:           sharedInfoSvc,
 	})
-	rg := terraform.Output(t, existingTerraformOptions, "resource_group_name")
+	rg := terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name")
 	options.IgnoreUpdates = testhelper.Exemptions{List: []string{"module.kube_audit[0].helm_release.kube_audit"}}
 	options.IgnoreDestroys = testhelper.Exemptions{List: []string{"module.kube_audit[0].terraform_data.install_required_binaries[0]"}}
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -311,9 +312,9 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "cluster_name", Value: "cluster", DataType: "string"},
 		{Name: "openshift_version", Value: ocpVersion1, DataType: "string"},
-		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-		{Name: "existing_cos_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "cos_instance_id"), DataType: "string"},
-		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "existing_cos_instance_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "cos_instance_id"), DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
