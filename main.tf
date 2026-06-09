@@ -549,23 +549,7 @@ resource "null_resource" "ocp_console_management" {
 # Addons
 ##############################################################################
 
-# Lookup the current default csi-driver version
-data "ibm_container_addons" "existing_addons" {
-  cluster = local.cluster_id
-}
-
 locals {
-  # # for each cluster, look for installed csi driver to get version. If array is empty (no csi driver) then null is returned
-  # csi_driver_version = anytrue([for key, value in var.addons : true if key == "vpc-block-csi-driver" && value != null]) ? [var.addons["vpc-block-csi-driver"].version] : [
-  #   for addon in data.ibm_container_addons.existing_addons.addons :
-  #   addon.version if addon.name == "vpc-block-csi-driver"
-  # ]
-
-  # # get the addons and their versions and create an addons map including the corresponding csi_driver_version
-  # addons = merge(
-  #   { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null },
-  #   length(local.csi_driver_version) > 0 ? { vpc-block-csi-driver = { version = local.csi_driver_version[0] } } : {}
-  # )
   addons = { for addon_name, addon_version in(var.addons != null ? var.addons : {}) : addon_name => addon_version if addon_version != null }
 }
 
