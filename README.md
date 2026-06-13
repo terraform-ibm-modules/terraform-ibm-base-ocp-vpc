@@ -31,54 +31,54 @@ By default, the module automatically downloads the required dependant binaries (
 ## Overview
 <ul>
   <li><a href="#terraform-ibm-base-ocp-vpc">terraform-ibm-base-ocp-vpc</a></li>
-  <li><a href="./modules">Submodules</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/modules">Submodules</a>
     <ul>
-      <li><a href="./modules/fscloud">fscloud</a></li>
-      <li><a href="./modules/kube-audit">kube-audit</a></li>
-      <li><a href="./modules/worker-pool">worker-pool</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/modules/fscloud">fscloud</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/modules/kube-audit">kube-audit</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/modules/worker-pool">worker-pool</a></li>
     </ul>
   </li>
-  <li><a href="./examples">Examples</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples">Examples</a>
     <ul>
       <li>
-        <a href="./examples/add_rules_to_sg">Cluster security group rules example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/add_rules_to_sg">Cluster security group rules example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-add_rules_to_sg-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/add_rules_to_sg"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/advanced">Advanced example (mzr, auto-scale, kms, taints)</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/advanced">Advanced example (mzr, auto-scale, kms, taints)</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-advanced-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/advanced"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/basic">Basic single zone cluster with allowed outbound traffic</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/basic">Basic single zone cluster with allowed outbound traffic</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/cross_kms_support">Cross account KMS encryption example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/cross_kms_support">Cross account KMS encryption example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-cross_kms_support-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/cross_kms_support"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/custom_sg">Attaching custom security groups</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/custom_sg">Attaching custom security groups</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-custom_sg-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/custom_sg"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/fscloud">Financial Services compliant example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/fscloud">Financial Services compliant example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/gpu">GPU Worker Pool Example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/gpu">GPU Worker Pool Example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-gpu-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/gpu"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/multiple_mzr_clusters">2 MZR clusters in same VPC example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/multiple_mzr_clusters">2 MZR clusters in same VPC example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=base-ocp-vpc-multiple_mzr_clusters-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/examples/multiple_mzr_clusters"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
     </ul>
     ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
   </li>
-  <li><a href="./solutions">Deployable Architectures</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/solutions">Deployable Architectures</a>
     <ul>
-      <li><a href="./solutions/fully-configurable">Cloud automation for Red Hat OpenShift Container Platform on VPC (Fully configurable)</a></li>
-      <li><a href="./solutions/quickstart">Cloud automation for Red Hat OpenShift Container Platform on VPC (QuickStart)</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/solutions/fully-configurable">Cloud automation for Red Hat OpenShift Container Platform on VPC (Fully configurable)</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/tree/main/solutions/quickstart">Cloud automation for Red Hat OpenShift Container Platform on VPC (QuickStart)</a></li>
     </ul>
   </li>
   <li><a href="#known-issues">Known issues</a></li>
@@ -215,7 +215,7 @@ Optionally, you need the following permissions to attach Access Management tags 
 | <a name="module_attach_sg_to_master_vpe"></a> [attach\_sg\_to\_master\_vpe](#module\_attach\_sg\_to\_master\_vpe) | terraform-ibm-modules/security-group/ibm | 2.10.0 |
 | <a name="module_attach_sg_to_registry_vpe"></a> [attach\_sg\_to\_registry\_vpe](#module\_attach\_sg\_to\_registry\_vpe) | terraform-ibm-modules/security-group/ibm | 2.10.0 |
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.5 |
-| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 10.16.4 |
+| <a name="module_cos_instance"></a> [cos\_instance](#module\_cos\_instance) | terraform-ibm-modules/cos/ibm | 10.16.5 |
 | <a name="module_existing_secrets_manager_instance_parser"></a> [existing\_secrets\_manager\_instance\_parser](#module\_existing\_secrets\_manager\_instance\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.1 |
 | <a name="module_worker_pools"></a> [worker\_pools](#module\_worker\_pools) | ./modules/worker-pool | n/a |
 
