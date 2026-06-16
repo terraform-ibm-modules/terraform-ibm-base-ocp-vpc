@@ -7,8 +7,6 @@ NETWORK_PLUGIN=${1:-"Calico"}
 # The binaries downloaded by the install-binaries script are located in the /tmp directory.
 export PATH=$PATH:${2:-"/tmp"}
 
-
-
 # Set namespace and pod prefix based on network plugin
 if [ "${NETWORK_PLUGIN}" == "OVNKubernetes" ]; then
   namespace=openshift-ovn-kubernetes
