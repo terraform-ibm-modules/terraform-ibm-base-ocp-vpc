@@ -643,6 +643,24 @@ variable "enable_kube_audit_https_traffic" {
   nullable    = false
 }
 
+variable "network_plugin" {
+  description = "The Container Network Interface (CNI) plugin for the cluster. Requires OpenShift >= 4.20. Supported values are Calico (default) and OVNKubernetes."
+  type        = string
+  default     = "Calico"
+  nullable    = false
+  validation {
+    error_message = "Invalid network plugin type! Valid values are 'Calico', 'OVNKubernetes'."
+    condition     = contains(["Calico", "OVNKubernetes"], var.network_plugin)
+  }
+}
+
+variable "image_security_enforcement" {
+  description = "Set to true to enable image security enforcement policies in a cluster. When you enable image security enforcement in your cluster, you install the open-source Portieris Kubernetes project. Then, you can create image policies to prevent pods that don't meet the policies, such as unsigned images, from running in your cluster. For more information, see the Portieris documentation (https://github.com/IBM/portieris)."
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 ##############################################################
 # Cluster Timeout Configuration
 ##############################################################
