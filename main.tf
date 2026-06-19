@@ -43,8 +43,8 @@ locals {
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
-  # for versions older than 4.20, this value must be null, or provider gives error
-  network_plugin = tonumber(regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]) > 4.19 ? var.network_plugin : null
+  # Cluster network plugin setting is only available for Red Hat OpenShift VPC clusters with version >= 4.20 and RHCOS operating system
+  network_plugin = tonumber(regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]) > 4.19 && local.default_pool.operating_system == local.os_rhcos ? var.network_plugin : null
 
   binaries_path = "/tmp"
 }
