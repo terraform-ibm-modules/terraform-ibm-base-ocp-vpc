@@ -43,8 +43,8 @@ locals {
   # attach_ibm_managed_security_group is false and custom_security_group_ids is set => only use the custom security group ids
   cluster_security_groups = var.attach_ibm_managed_security_group == true ? (var.custom_security_group_ids == null ? null : concat(["cluster"], var.custom_security_group_ids)) : (var.custom_security_group_ids == null ? null : var.custom_security_group_ids)
 
-  # for versions older than 4.15, this value must be null, or provider gives error
-  disable_outbound_traffic_protection = startswith(local.ocp_version, "4.14") ? null : var.disable_outbound_traffic_protection
+  # Cluster network plugin setting is only available for Red Hat OpenShift VPC clusters with version >= 4.20 and RHCOS operating system
+  network_plugin = tonumber(regex("^([0-9]+\\.[0-9]+)", local.ocp_version)[0]) > 4.19 && local.default_pool.operating_system == local.os_rhcos ? var.network_plugin : null
 
   binaries_path = "/tmp"
 }
@@ -185,7 +185,9 @@ resource "ibm_container_vpc_cluster" "cluster" {
   operating_system                    = local.default_pool.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  image_security_enforcement          = var.image_security_enforcement
+  network_plugin                      = local.network_plugin
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
@@ -255,7 +257,9 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
   operating_system                    = local.default_pool.operating_system
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  image_security_enforcement          = var.image_security_enforcement
+  network_plugin                      = local.network_plugin
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
@@ -324,7 +328,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   service_subnet                      = var.service_subnet_cidr
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  image_security_enforcement          = var.image_security_enforcement
+  network_plugin                      = local.network_plugin
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
@@ -394,7 +400,9 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
   service_subnet                      = var.service_subnet_cidr
   disable_public_service_endpoint     = var.disable_public_endpoint
   worker_labels                       = local.default_pool.labels
-  disable_outbound_traffic_protection = local.disable_outbound_traffic_protection
+  image_security_enforcement          = var.image_security_enforcement
+  network_plugin                      = local.network_plugin
+  disable_outbound_traffic_protection = var.disable_outbound_traffic_protection
   crk                                 = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.crk
   kms_instance_id                     = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_instance_id
   kms_account_id                      = local.default_pool.boot_volume_encryption_kms_config == null ? null : local.default_pool.boot_volume_encryption_kms_config.kms_account_id
@@ -518,7 +526,7 @@ resource "null_resource" "confirm_network_healthy" {
   }
 
   provisioner "local-exec" {
-    command     = "${path.module}/scripts/confirm_network_healthy.sh ${local.binaries_path}"
+    command     = "${path.module}/scripts/confirm_network_healthy.sh ${var.network_plugin} ${local.binaries_path}"
     interpreter = ["/bin/bash", "-c"]
     environment = {
       KUBECONFIG = data.ibm_container_cluster_config.cluster_config[0].config_file_path

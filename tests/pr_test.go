@@ -276,6 +276,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
+		{Name: "network_plugin", Value: "OVNKubernetes", DataType: "string"},
 	}
 	options.PostApplyHook = getClusterIngressSchematics
 

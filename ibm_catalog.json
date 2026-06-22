@@ -471,6 +471,25 @@
               ]
             },
             {
+              "key": "network_plugin",
+              "hidden": true,
+              "type": "string",
+              "options": [
+                {
+                  "displayname": "Calico",
+                  "value": "Calico"
+                },
+                {
+                  "displayname": "OVNKubernetes",
+                  "value": "OVNKubernetes"
+                }
+              ]
+            },
+            {
+              "key": "image_security_enforcement",
+              "hidden": true
+            },
+            {
               "key": "enable_ocp_console",
               "hidden": true
             },
