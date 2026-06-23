@@ -39,4 +39,6 @@ module "fscloud" {
   cluster_delete_timeout                = var.cluster_delete_timeout
   cluster_autoscaler_config             = var.cluster_autoscaler_config
   cluster_update_timeout                = var.cluster_update_timeout
+  network_plugin                        = var.network_plugin
+  image_security_enforcement            = var.image_security_enforcement
 }
