@@ -156,6 +156,7 @@ moved {
 }
 
 resource "ibm_resource_tag" "cos_access_tag" {
+  depends_on  = [data.ibm_iam_access_tag.access_tag] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
   count       = var.enable_registry_storage && !var.use_existing_cos && length(var.access_tags) > 0 ? 1 : 0
   resource_id = module.cos_instance[0].cos_instance_id
   tags        = var.access_tags
@@ -170,7 +171,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 0 : 1)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
-  tags                                = var.tags
+  tags                                = var.resource_tags
   kube_version                        = local.ocp_version
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
@@ -242,7 +243,7 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 0 : 1) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
-  tags                                = var.tags
+  tags                                = var.resource_tags
   kube_version                        = local.ocp_version
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
@@ -313,7 +314,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   count                               = var.enable_openshift_version_upgrade ? 0 : (var.ignore_worker_pool_size_changes ? 1 : 0)
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
-  tags                                = var.tags
+  tags                                = var.resource_tags
   kube_version                        = local.ocp_version
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
@@ -385,7 +386,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
   count                               = var.enable_openshift_version_upgrade ? (var.ignore_worker_pool_size_changes ? 1 : 0) : 0
   name                                = var.cluster_name
   vpc_id                              = var.vpc_id
-  tags                                = var.tags
+  tags                                = var.resource_tags
   kube_version                        = local.ocp_version
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
@@ -459,6 +460,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
 ##############################################################################
 
 resource "ibm_resource_tag" "cluster_access_tag" {
+  depends_on  = [data.ibm_iam_access_tag.access_tag] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
   count       = length(var.access_tags) == 0 ? 0 : 1
   resource_id = local.cluster_crn
   tags        = var.access_tags

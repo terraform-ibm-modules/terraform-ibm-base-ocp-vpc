@@ -52,7 +52,7 @@ variable "cluster_resource_tags" {
 
 variable "access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the resources created by the module."
+  description = "Add access management tags to the OpenShift VPC cluster instance to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
   default     = []
 }
 

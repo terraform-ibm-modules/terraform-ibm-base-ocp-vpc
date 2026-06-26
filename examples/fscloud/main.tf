@@ -243,7 +243,7 @@ module "ocp_fscloud" {
   vpc_subnets                      = local.cluster_vpc_subnets
   existing_cos_id                  = module.cos_fscloud.cos_instance_id
   worker_pools                     = local.worker_pools
-  tags                             = var.resource_tags
+  resource_tags                    = var.resource_tags
   access_tags                      = var.access_tags
   ocp_version                      = var.ocp_version
   additional_lb_security_group_ids = [module.custom_sg["custom-lb-sg"].security_group_id]

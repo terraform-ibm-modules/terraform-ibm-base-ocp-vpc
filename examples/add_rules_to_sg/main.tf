@@ -137,6 +137,6 @@ module "ocp_base" {
   vpc_subnets          = local.cluster_vpc_subnets
   worker_pools         = local.worker_pools
   ocp_version          = var.ocp_version
-  tags                 = var.resource_tags
+  resource_tags        = var.resource_tags
   ocp_entitlement      = var.ocp_entitlement
 }
