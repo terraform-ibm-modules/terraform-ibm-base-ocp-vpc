@@ -14,21 +14,21 @@ module "resource_group" {
 module "existing_kms_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.existing_kms_instance_crn
 }
 
 module "existing_cluster_kms_key_crn_parser" {
   count   = var.existing_cluster_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.existing_cluster_kms_key_crn
 }
 
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = var.existing_boot_volume_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.existing_boot_volume_kms_key_crn
 }
 
@@ -109,7 +109,7 @@ module "kms" {
 ########################################################################################################################
 module "existing_vpc_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.existing_vpc_crn
 }
 
@@ -250,7 +250,7 @@ module "ocp_base" {
 module "existing_secrets_manager_instance_parser" {
   count   = var.enable_secrets_manager_integration ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
