@@ -46,13 +46,13 @@ variable "existing_resource_group_name" {
 
 variable "cluster_resource_tags" {
   type        = list(string)
-  description = "Metadata labels describing this cluster deployment, i.e. test."
+  description = "Add user resource tags to the cluster to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types)."
   default     = []
 }
 
 variable "access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the resources created by the module."
+  description = "Add access management tags to the resources created to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
   default     = []
 }
 

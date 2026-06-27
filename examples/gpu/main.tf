@@ -151,7 +151,7 @@ module "ocp_base" {
   source               = "../.."
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
-  tags                 = var.resource_tags
+  resource_tags        = var.resource_tags
   cluster_name         = var.prefix
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id

@@ -23,7 +23,7 @@ module "fscloud" {
   enable_registry_storage               = var.enable_registry_storage
   use_existing_cos                      = var.enable_registry_storage
   existing_cos_id                       = var.existing_cos_id
-  tags                                  = var.tags
+  resource_tags                         = var.resource_tags
   kms_config                            = var.kms_config
   addons                                = var.addons
   access_tags                           = var.access_tags
