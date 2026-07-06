@@ -56,7 +56,7 @@ locals {
 data "ibm_iam_auth_token" "tokendata" {}
 
 data "external" "ocp_addon_versions" {
-  program = ["python3", "${path.module}/scripts/get_ocp_addon_versions.py"]
+  program = ["bash", "${path.module}/scripts/get_ocp_addon_versions.sh"]
   query = {
     IAM_TOKEN = sensitive(data.ibm_iam_auth_token.tokendata.iam_access_token)
     REGION    = var.region
