@@ -20,7 +20,7 @@ module "vpc" {
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
-  tags              = var.resource_tags
+  resource_tags     = var.resource_tags
   name              = "${var.prefix}-vpc"
 
   # Define subnets across 3 zones for the default worker pool
