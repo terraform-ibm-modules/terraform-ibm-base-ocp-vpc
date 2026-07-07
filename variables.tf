@@ -111,10 +111,10 @@ variable "worker_pools" {
       (local.ocp_version_num == "4.14" && wp.operating_system == local.os_rhel) ||
       (local.ocp_version_num == "4.15" && contains([local.os_rhel, local.os_rhcos], wp.operating_system)) ||
       (contains(["4.16", "4.17"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhel, local.os_rhcos], wp.operating_system)) ||
-      (contains(["4.18", "4.19", "4.20"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
-      (tonumber(local.ocp_version_num) >= 4.21 && wp.operating_system == local.os_rhcos)
+      (contains(["4.18", "4.19", "4.20", "4.21"], local.ocp_version_num) && contains([local.os_rhel9, local.os_rhcos], wp.operating_system)) ||
+      (tonumber(local.ocp_version_num) >= 4.22 && wp.operating_system == local.os_rhcos)
     ])
-    error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); v4.18: (RHCOS, RHEL_9_64); v4.19: (RHEL_9_64, RHCOS)"
+    error_message = "Invalid operating system for the given OCP version. Ensure the OS is compatible with the OCP version. Supported compatible OCP version and OS are v4.14: (REDHAT_8_64); v4.15: (REDHAT_8_64, RHCOS) ; v4.16 and v4.17: (REDHAT_8_64, RHCOS, RHEL_9_64); RHEL_9_64 and RHCOS are supported for OCP versions 4.18 to 4.21 but RHEL_9_64 is deprecated and won't be supported from 4.22 version onwards."
   }
 
   validation {
