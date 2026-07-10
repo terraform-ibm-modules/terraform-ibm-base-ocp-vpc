@@ -43,6 +43,9 @@ HOST="$(printf '%s' "$API_ENDPOINT" | sed 's|https://||; s|/.*||')"
 URL="https://${HOST}${BASE_PATH}/v1/addons"
 
 # Fetch addon list with retry and exponential back-off
+body_tmp="$(mktemp)"
+trap 'rm -f "$body_tmp"' EXIT
+
 attempt=0
 delay=$RETRY_DELAY
 raw_response=""
@@ -50,20 +53,19 @@ raw_response=""
 while true; do
   attempt=$(( attempt + 1 ))
 
-  http_response="$(
+  http_status="$(
     curl --silent \
          --show-error \
          --fail-with-body \
          --max-time "$CURL_TIMEOUT" \
-         --write-out '\n%{http_code}' \
+         --output "$body_tmp" \
+         --write-out '%{http_code}' \
          -H "Authorization: Bearer ${IAM_TOKEN}" \
          -H "Accept: application/json" \
          -H "X-Region: ${REGION}" \
-         "$URL" 2>&1
+         "$URL"
   )" && curl_exit=0 || curl_exit=$?
-
-  http_status="$(printf '%s' "$http_response" | tail -n1)"
-  body="$(printf '%s' "$http_response" | awk 'NR>1{print prev} {prev=$0}')"
+  body="$(cat "$body_tmp")"
 
   if [[ $curl_exit -eq 0 && "$http_status" == "200" ]]; then
     raw_response="$body"
