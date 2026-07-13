@@ -56,7 +56,6 @@ while true; do
   http_status="$(
     curl --silent \
          --show-error \
-         --fail-with-body \
          --max-time "$CURL_TIMEOUT" \
          --output "$body_tmp" \
          --write-out '%{http_code}' \
