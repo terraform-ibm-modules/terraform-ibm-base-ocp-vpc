@@ -3,7 +3,7 @@
   "region": "au-syd",
   "resource_tags": $TAGS,
   "prefix": $PREFIX,
-  "hpcs_instance_guid": $HPCS_US_SOUTH_GUID,
-  "hpcs_key_crn_cluster": $HPCS_US_SOUTH_ROOT_KEY_CRN,
-  "hpcs_key_crn_worker_pool": $HPCS_US_SOUTH_ROOT_KEY_CRN
+  "kp_instance_guid": $KP_DEDICATED_US_SOUTH_INSTANCE_ID,
+  "kp_key_crn_cluster": $KP_DEDICATED_US_SOUTH_ROOT_KEY_CRN,
+  "kp_key_crn_worker_pool": $KP_DEDICATED_US_SOUTH_ROOT_KEY_CRN
 }
