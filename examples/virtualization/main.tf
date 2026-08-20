@@ -122,7 +122,8 @@ module "ocp_base" {
   offering             = "openshift-vs"
   addons = {
     "openshift-data-foundation" = {
-      version         = "${var.ocp_version}.0"
+      version = "${var.ocp_version}.0"
+      # The following parameters need to be added to enable ODF for virtualization.
       parameters_json = <<PARAMETERS_JSON
         {
             "odfDeploy":"true",
