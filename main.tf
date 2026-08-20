@@ -78,9 +78,10 @@ locals {
   worker_specs = {
     for pool in var.worker_pools :
     pool.pool_name => {
-      cpu_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[0])
-      ram_count = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[1])
-      is_gpu    = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
+      cpu_count     = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[0])
+      ram_count     = tonumber(regex("^.*?(\\d+)x(\\d+)", pool.machine_type)[1])
+      is_gpu        = contains(["gx2", "gx3", "gx4"], split(".", pool.machine_type)[0])
+      is_bare_metal = can(regex("metal", pool.machine_type))
     }
   }
 }
@@ -119,6 +120,15 @@ locals {
 
   # tflint-ignore: terraform_unused_declarations
   default_wp_validation = local.rhcos_check ? true : tobool("If RHCOS is used with this cluster, the default worker pool should be created with RHCOS.")
+
+  # Compute total worker count as workers_per_zone * number_of_subnets, summed across all pools
+  total_worker_count = sum([
+    for pool in var.worker_pools :
+    pool.workers_per_zone * (pool.vpc_subnets != null ? length(pool.vpc_subnets) : length(lookup(var.vpc_subnets, pool.subnet_prefix, [])))
+  ])
+
+  # tflint-ignore: terraform_unused_declarations
+  vs_worker_count_validation = var.offering != "openshift-vs" || local.total_worker_count >= 3 ? true : tobool("When 'offering' is set to 'openshift-vs', the total number of worker nodes (workers_per_zone * number of subnets, summed across all pools) must be at least 3.")
 }
 
 resource "terraform_data" "install_required_binaries" {
@@ -186,6 +196,7 @@ resource "ibm_container_vpc_cluster" "cluster" {
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
   force_delete_storage                = var.force_delete_storage
+  offering                            = var.offering
   secondary_storage                   = local.default_pool.secondary_storage
   pod_subnet                          = var.pod_subnet_cidr
   service_subnet                      = var.service_subnet_cidr
@@ -254,6 +265,7 @@ resource "ibm_container_vpc_cluster" "cluster_with_upgrade" {
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
   cos_instance_crn                    = local.cos_instance_crn
+  offering                            = var.offering
   worker_count                        = local.default_pool.workers_per_zone
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
@@ -325,6 +337,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster" {
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
   cos_instance_crn                    = local.cos_instance_crn
+  offering                            = var.offering
   worker_count                        = local.default_pool.workers_per_zone
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
@@ -397,6 +410,7 @@ resource "ibm_container_vpc_cluster" "autoscaling_cluster_with_upgrade" {
   flavor                              = local.default_pool.machine_type
   entitlement                         = var.ocp_entitlement
   cos_instance_crn                    = local.cos_instance_crn
+  offering                            = var.offering
   worker_count                        = local.default_pool.workers_per_zone
   resource_group_id                   = var.resource_group_id
   wait_till                           = var.cluster_ready_when
