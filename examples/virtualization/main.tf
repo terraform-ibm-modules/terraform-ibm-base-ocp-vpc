@@ -13,21 +13,20 @@ module "resource_group" {
 # Provision VPC
 #############################################################################
 locals {
-  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
   network_acl = {
-    name                         = "${local.prefix}acl"
+    name                         = "${var.prefix}-acl"
     add_ibm_cloud_internal_rules = true
     add_vpc_connectivity_rules   = true
     prepend_ibm_rules            = true
     rules = [{
-      name        = "${local.prefix}inbound"
+      name        = "${var.prefix}-inbound"
       action      = "allow"
       source      = "0.0.0.0/0"
       destination = "0.0.0.0/0"
       direction   = "inbound"
       },
       {
-        name        = "${local.prefix}outbound"
+        name        = "${var.prefix}-outbound"
         action      = "allow"
         source      = "0.0.0.0/0"
         destination = "0.0.0.0/0"
@@ -52,7 +51,7 @@ module "vpc" {
         name           = "subnet-a"
         cidr           = "10.10.10.0/24"
         public_gateway = true
-        acl_name       = "${local.prefix}acl"
+        acl_name       = "${var.prefix}-acl"
       }
     ],
     zone-2 = [
@@ -60,7 +59,7 @@ module "vpc" {
         name           = "subnet-b"
         cidr           = "10.20.10.0/24"
         public_gateway = false
-        acl_name       = "${local.prefix}acl"
+        acl_name       = "${var.prefix}-acl"
       }
     ],
     zone-3 = [
@@ -68,7 +67,7 @@ module "vpc" {
         name           = "subnet-c"
         cidr           = "10.30.10.0/24"
         public_gateway = false
-        acl_name       = "${local.prefix}acl"
+        acl_name       = "${var.prefix}-acl"
       }
     ]
   }
