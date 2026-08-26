@@ -113,7 +113,7 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
-  ocp_version          = "4.21"
+  ocp_version          = "4.21" # Hardcode the version to 4.21, as it is the only OCP version that supports OCP Virtualization. The ODF version follows the same versioning pattern as OCP.
   worker_pools         = local.worker_pools
   access_tags          = var.access_tags
   network_plugin       = "OVNKubernetes"
