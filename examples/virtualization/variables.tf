@@ -34,12 +34,6 @@ variable "resource_tags" {
   default     = []
 }
 
-variable "ocp_version" {
-  type        = string
-  description = "Version of the OCP cluster to provision"
-  default     = "4.21"
-}
-
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the resources created by the module."

@@ -113,7 +113,7 @@ module "ocp_base" {
   force_delete_storage = true
   vpc_id               = module.vpc.vpc_id
   vpc_subnets          = local.cluster_vpc_subnets
-  ocp_version          = var.ocp_version
+  ocp_version          = "4.21"
   worker_pools         = local.worker_pools
   access_tags          = var.access_tags
   network_plugin       = "OVNKubernetes"
@@ -121,7 +121,7 @@ module "ocp_base" {
   offering             = "openshift-vs"
   addons = {
     "openshift-data-foundation" = {
-      version = "${var.ocp_version}.0"
+      version = "4.21.0"
       # The following parameters need to be added to enable ODF for virtualization.
       parameters_json = <<PARAMETERS_JSON
         {
