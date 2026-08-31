@@ -192,7 +192,7 @@ The Standard - Integrated setup with configurable services variation of Landing 
 
 ## KMS encryption
 
-- **Boot volume and cluster encryption**: Optionally integrates with Key Protect or Hyper Protect Crypto Services.
+- **Boot volume and cluster encryption**: Optionally integrates with Key Protect (KMS) for encryption.
 - **Flexible key options**: Supports creating new encryption keys or using existing ones.
 - **Compliance support**: Ensures data at rest is protected in line with regulatory standards.
 

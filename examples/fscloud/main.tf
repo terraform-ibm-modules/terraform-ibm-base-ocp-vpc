@@ -36,8 +36,8 @@ module "flowlogs_bucket" {
     {
       bucket_name            = "${var.prefix}-vpc-flowlogs"
       kms_encryption_enabled = true
-      kms_guid               = var.hpcs_instance_guid
-      kms_key_crn            = var.hpcs_key_crn_cluster
+      kms_guid               = var.kp_instance_guid
+      kms_key_crn            = var.kp_key_crn_cluster
       region_location        = var.region
       resource_instance_id   = module.cos_fscloud.cos_instance_id
       resource_group_id      = module.resource_group.resource_group_id
@@ -185,8 +185,8 @@ module "cbr_rules" {
 ########################################################################################################################
 
 locals {
-  cluster_hpcs_worker_pool_key_id = regex("key:(.*)", var.hpcs_key_crn_worker_pool)[0]
-  cluster_hpcs_cluster_key_id     = regex("key:(.*)", var.hpcs_key_crn_cluster)[0]
+  cluster_kp_worker_pool_key_id = regex("key:(.*)", var.kp_key_crn_worker_pool)[0]
+  cluster_kp_cluster_key_id     = regex("key:(.*)", var.kp_key_crn_cluster)[0]
   cluster_vpc_subnets = {
     default = [
       for subnet in module.vpc.subnet_zone_list :
@@ -208,8 +208,8 @@ locals {
       labels            = {}
       resource_group_id = module.resource_group.resource_group_id
       boot_volume_encryption_kms_config = {
-        crk              = local.cluster_hpcs_worker_pool_key_id
-        kms_instance_id  = var.hpcs_instance_guid
+        crk              = local.cluster_kp_worker_pool_key_id
+        kms_instance_id  = var.kp_instance_guid
         private_endpoint = true
       }
     }
@@ -250,8 +250,8 @@ module "ocp_fscloud" {
   ocp_entitlement                  = var.ocp_entitlement
   enable_ocp_console               = false
   kms_config = {
-    instance_id      = var.hpcs_instance_guid
-    crk_id           = local.cluster_hpcs_cluster_key_id
+    instance_id      = var.kp_instance_guid
+    crk_id           = local.cluster_kp_cluster_key_id
     private_endpoint = true
   }
   cbr_rules = [
