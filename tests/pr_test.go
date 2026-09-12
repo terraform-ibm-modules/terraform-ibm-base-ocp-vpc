@@ -272,7 +272,7 @@ func TestRunFullyConfigurableInSchematics(t *testing.T) {
 		{Name: "existing_cos_instance_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "cos_instance_id"), DataType: "string"},
 		{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
@@ -319,7 +319,7 @@ func TestRunUpgradeFullyConfigurable(t *testing.T) {
 		{Name: "enable_secrets_manager_integration", Value: "true", DataType: "bool"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "kms_encryption_enabled_cluster", Value: "true", DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "kms_encryption_enabled_boot_volume", Value: "true", DataType: "bool"},
 	}
 	options.PostApplyHook = getClusterIngressSchematics
