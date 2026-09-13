@@ -142,7 +142,7 @@ variable "kms_config" {
     account_id       = optional(string)     # To attach KMS instance from another account
     wait_for_apply   = optional(bool, true) # Defaults to true so terraform will wait until the KMS is applied to the master, ready and deployed
   })
-  description = "Use to attach a Key Protect or Hyper Protect Crypto Service instance to the cluster. If account_id is not provided, the current account is used. [Learn more](https://cloud.ibm.com/docs/key-protect?topic=key-protect-provision)"
+  description = "Use to attach a Key Protect instance to the cluster. If account_id is not provided, the current account is used. [Learn more](https://cloud.ibm.com/docs/key-protect?topic=key-protect-provision)"
 }
 
 variable "vpc_id" {
