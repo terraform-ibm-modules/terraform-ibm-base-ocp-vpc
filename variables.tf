@@ -45,6 +45,37 @@ variable "allow_default_worker_pool_replacement" {
   nullable    = false
 }
 
+variable "offering" {
+  description = "The type of IBM Cloud OpenShift cluster offering to deploy. Supported values are `openshift` (Red Hat OpenShift Kubernetes Service cluster, default), and `openshift-vs` (Red Hat OpenShift Virtualization Service cluster)."
+  type        = string
+  default     = "openshift"
+  nullable    = false
+  validation {
+    error_message = "Invalid cluster offering Type! Valid values are 'openshift' or 'openshift-vs'"
+    condition     = contains(["openshift", "openshift-vs"], var.offering)
+  }
+
+  validation {
+    condition     = var.offering != "openshift-vs" || alltrue([for pool in var.worker_pools : lookup(local.worker_specs[pool.pool_name], "is_bare_metal", false)])
+    error_message = "When 'offering' is set to 'openshift-vs', all worker pools must use bare metal nodes (machine type containing 'metal')."
+  }
+
+  validation {
+    condition     = var.offering != "openshift-vs" || tonumber(local.ocp_version_num) >= 4.21
+    error_message = "When 'offering' is set to 'openshift-vs', OpenShift version must be greater than or equal to 4.21."
+  }
+
+  validation {
+    condition     = var.offering != "openshift-vs" || alltrue([for pool in var.worker_pools : pool.operating_system == local.os_rhcos])
+    error_message = "When 'offering' is set to 'openshift-vs', all worker pools must use the RHCOS operating system."
+  }
+
+  validation {
+    condition     = var.offering != "openshift-vs" || var.network_plugin == "OVNKubernetes"
+    error_message = "When 'offering' is set to 'openshift-vs', the 'network_plugin' variable must be set to 'OVNKubernetes'."
+  }
+}
+
 variable "worker_pools" {
   type = list(object({
     subnet_prefix = optional(string)
@@ -431,6 +462,14 @@ variable "addons" {
       parameters_json = optional(string)
     }))
     openshift-ai = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    acm = optional(object({
+      version         = optional(string)
+      parameters_json = optional(string)
+    }))
+    ibm-object-csi-driver = optional(object({
       version         = optional(string)
       parameters_json = optional(string)
     }))
