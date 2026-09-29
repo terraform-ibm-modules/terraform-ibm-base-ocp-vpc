@@ -127,20 +127,14 @@ func TestFSCloudInSchematic(t *testing.T) {
 		CloudInfoService:       sharedInfoSvc,
 	})
 
-	// If "jp-osa" was the best region selected, default to us-south instead.
-	// "jp-osa" is currently not allowing hs-crypto be used for encrypting in that region.
-	if options.Region == "jp-osa" {
-		options.Region = "us-south"
-	}
-
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "region", Value: options.Region, DataType: "string"},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "resource_group", Value: options.ResourceGroup, DataType: "string"},
-		{Name: "hpcs_instance_guid", Value: permanentResources["hpcs_south"], DataType: "string"},
-		{Name: "hpcs_key_crn_cluster", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "hpcs_key_crn_worker_pool", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "kp_instance_guid", Value: permanentResources["kp_dedicated_us_south_instance_id"], DataType: "string"},
+		{Name: "kp_key_crn_cluster", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
+		{Name: "kp_key_crn_worker_pool", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
 		{Name: "ocp_version", Value: ocpVersion1, DataType: "string"},
 		{Name: "ocp_entitlement", Value: "cloud_pak", DataType: "string"},
 	}

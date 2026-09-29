@@ -35,18 +35,18 @@ variable "resource_tags" {
 }
 
 
-variable "hpcs_instance_guid" {
+variable "kp_instance_guid" {
   type        = string
-  description = "The GUID of the Hyper Protect Crypto service to provision the encryption keys"
+  description = "The GUID of the Key Protect instance to provision the encryption keys"
 }
 
-variable "hpcs_key_crn_cluster" {
-  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the cluster boot volume"
+variable "kp_key_crn_cluster" {
+  description = "CRN of the Key Protect key to use to encrypt the cluster boot volume"
   type        = string
 }
 
-variable "hpcs_key_crn_worker_pool" {
-  description = "CRN of the Hyper Protect Crypto service key to use to encrypt the worker pool boot volumes"
+variable "kp_key_crn_worker_pool" {
+  description = "CRN of the Key Protect key to use to encrypt the worker pool boot volumes"
   type        = string
 }
 
