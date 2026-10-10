@@ -54,7 +54,7 @@ module "kube_audit" {
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0.0, <4.0.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.80.0, <3.0.0 |
@@ -68,7 +68,7 @@ No modules.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [helm_release.kube_audit](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [null_resource.enable_https_traffic](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [null_resource.set_audit_webhook](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
@@ -80,7 +80,7 @@ No modules.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_audit_deployment_name"></a> [audit\_deployment\_name](#input\_audit\_deployment\_name) | The name of log collection deployment and service. | `string` | `"ibmcloud-kube-audit"` | no |
 | <a name="input_audit_log_policy"></a> [audit\_log\_policy](#input\_audit\_log\_policy) | Specify the amount of information that is logged to the API server audit logs by choosing the audit log policy profile to use. Supported values are `default` and `verbose`. | `string` | `"default"` | no |
 | <a name="input_audit_namespace"></a> [audit\_namespace](#input\_audit\_namespace) | The name of the namespace where log collection service and a deployment will be created. | `string` | `"ibm-kube-audit"` | no |
