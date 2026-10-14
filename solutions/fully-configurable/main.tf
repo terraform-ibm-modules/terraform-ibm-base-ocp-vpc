@@ -105,6 +105,21 @@ module "kms" {
 }
 
 ########################################################################################################################
+# HPCS deprecation warning
+########################################################################################################################
+
+check "warn_hpcs_deprecation" {
+  assert {
+    condition = !(
+      (var.existing_kms_instance_crn != null && can(regex(".*hs-crypto.*", var.existing_kms_instance_crn))) ||
+      (var.existing_cluster_kms_key_crn != null && can(regex(".*hs-crypto.*", var.existing_cluster_kms_key_crn))) ||
+      (var.existing_boot_volume_kms_key_crn != null && can(regex(".*hs-crypto.*", var.existing_boot_volume_kms_key_crn)))
+    )
+    error_message = "WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) instance or key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is deprecated. Consider migrating to a supported alternative."
+  }
+}
+
+########################################################################################################################
 # OCP VPC cluster
 ########################################################################################################################
 module "existing_vpc_crn_parser" {
