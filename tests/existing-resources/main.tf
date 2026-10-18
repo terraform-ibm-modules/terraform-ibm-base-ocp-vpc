@@ -38,7 +38,7 @@ locals {
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "10.1.2"
+  version           = "10.1.4"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "vpc"
@@ -79,7 +79,7 @@ module "vpc" {
 
 module "cos" {
   source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "11.1.1"
+  version                = "11.1.4"
   resource_group_id      = module.resource_group.resource_group_id
   region                 = var.region
   cos_instance_name      = "${var.prefix}-cos"
