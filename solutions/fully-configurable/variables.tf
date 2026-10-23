@@ -395,7 +395,7 @@ variable "kms_encryption_enabled_cluster" {
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing Key Protect or Hyper Protect Crypto Services (HPCS) instance. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
+  description = "The CRN of an existing Key Protect instance. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
 
   validation {
     condition = anytrue([
@@ -409,7 +409,7 @@ variable "existing_kms_instance_crn" {
 variable "existing_cluster_kms_key_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS key (Key Protect or HPCS) to use for encrypting the Object Storage of the Cluster. If no value is set for this variable, specify a value for `existing_kms_instance_crn` variable to create a key ring and key."
+  description = "The CRN of an existing KMS key to use for encrypting the Object Storage of the Cluster. If no value is set for this variable, specify a value for `existing_kms_instance_crn` variable to create a key ring and key."
 
   validation {
     condition = anytrue([
@@ -481,7 +481,7 @@ variable "kms_encryption_enabled_boot_volume" {
 variable "existing_boot_volume_kms_key_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS key (Key Protect or HPCS) to use to encrypt the block storage volumes for VPC. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key."
+  description = "The CRN of an existing KMS key to use to encrypt the block storage volumes for VPC. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key."
 
   validation {
     condition = anytrue([
