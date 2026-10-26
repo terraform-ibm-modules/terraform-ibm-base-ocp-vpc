@@ -249,16 +249,20 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.20",
+              "default_value": "4.21",
               "required": true,
               "options": [
                 {
-                  "displayname": "4.20",
-                  "value": "4.20"
-                },
-                {
                   "displayname": "4.21",
                   "value": "4.21"
+                },
+                {
+                  "displayname": "4.22",
+                  "value": "4.22"
+                },
+                {
+                  "displayname": "4.20",
+                  "value": "4.20"
                 },
                 {
                   "displayname": "4.19",
@@ -267,14 +271,6 @@
                 {
                   "displayname": "4.18",
                   "value": "4.18"
-                },
-                {
-                  "displayname": "4.17",
-                  "value": "4.17"
-                },
-                {
-                  "displayname": "4.16",
-                  "value": "4.16"
                 }
               ]
             },
@@ -1479,16 +1475,20 @@
             },
             {
               "key": "openshift_version",
-              "default_value": "4.20",
+              "default_value": "4.21",
               "required": true,
               "options": [
                 {
-                  "displayname": "4.20",
-                  "value": "4.20"
-                },
-                {
                   "displayname": "4.21",
                   "value": "4.21"
+                },
+                {
+                  "displayname": "4.22",
+                  "value": "4.22"
+                },
+                {
+                  "displayname": "4.20",
+                  "value": "4.20"
                 },
                 {
                   "displayname": "4.19",
@@ -1497,14 +1497,6 @@
                 {
                   "displayname": "4.18",
                   "value": "4.18"
-                },
-                {
-                  "displayname": "4.17",
-                  "value": "4.17"
-                },
-                {
-                  "displayname": "4.16",
-                  "value": "4.16"
                 }
               ]
             },
