@@ -1297,7 +1297,7 @@
               "name": "deploy-arch-ibm-scc-workload-protection",
               "description": "Integrate with Workload Protection to monitor and manage your cluster’s security posture, helping detect misconfigurations and enforce compliance.",
               "id": "4322cf44-2289-49aa-a719-dd79e39b14dc-global",
-              "version": "v1.22.20",
+              "version": "v1.22.21",
               "flavors": [
                 "fully-configurable"
               ],
