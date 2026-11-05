@@ -62,10 +62,6 @@ resource "ibm_is_subnet" "subnet_cluster_2" {
 ########################################################################################################################
 
 locals {
-
-  # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
-  # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
-
   os_rhcos = "RHCOS"
   cluster_1_vpc_subnets = {
     default = [
