@@ -22,7 +22,7 @@ locals {
 
 module "kp_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.6.19"
+  version                   = "5.6.20"
   key_protect_instance_name = "${var.prefix}-kp-instance"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
@@ -240,7 +240,7 @@ locals {
 
 module "cloud_logs" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "2.1.12"
+  version           = "2.1.15"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   plan              = "standard"
