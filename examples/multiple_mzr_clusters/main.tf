@@ -87,19 +87,25 @@ locals {
 
   worker_pools = [
     {
-      subnet_prefix    = "default"
-      pool_name        = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      operating_system = local.os_rhcos
+      subnet_prefix     = "default"
+      pool_name         = "default" # ibm_container_vpc_cluster automatically names standard pool "standard" (See https://github.com/IBM-Cloud/terraform-provider-ibm/issues/2849)
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      minSize           = 2
+      maxSize           = 3
+      enableAutoscaling = true
+      operating_system  = local.os_rhcos
     },
     {
-      subnet_prefix    = "default"
-      pool_name        = "logging-worker-pool"
-      machine_type     = "bx2.4x16"
-      workers_per_zone = 2
-      labels           = { "dedicated" : "logging-worker-pool" }
-      operating_system = local.os_rhcos
+      subnet_prefix     = "default"
+      pool_name         = "logging-worker-pool"
+      machine_type      = "bx2.4x16"
+      workers_per_zone  = 2
+      labels            = { "dedicated" : "logging-worker-pool" }
+      minSize           = 2
+      maxSize           = 3
+      enableAutoscaling = true
+      operating_system  = local.os_rhcos
     }
   ]
 
@@ -131,6 +137,9 @@ module "ocp_base_cluster_1" {
   ocp_version                         = var.ocp_version
   resource_tags                       = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
+  addons = {
+    cluster-autoscaler = { version = "2.0.0" }
+  }
 }
 
 module "ocp_base_cluster_2" {
@@ -153,6 +162,9 @@ module "ocp_base_cluster_2" {
   ocp_version                         = var.ocp_version
   resource_tags                       = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
+  addons = {
+    cluster-autoscaler = { version = "2.0.0" }
+  }
 }
 
 ########################################################################################################################
