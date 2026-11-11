@@ -62,12 +62,7 @@ resource "ibm_is_subnet" "subnet_cluster_2" {
 ########################################################################################################################
 
 locals {
-
-  # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
-  # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
-
-  os_rhcos  = "RHCOS"
-  os_rhel_9 = "RHEL_9_64"
+  os_rhcos = "RHCOS"
   cluster_1_vpc_subnets = {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
@@ -110,7 +105,7 @@ locals {
       minSize           = 2
       maxSize           = 3
       enableAutoscaling = true
-      operating_system  = local.os_rhel_9
+      operating_system  = local.os_rhcos
     }
   ]
 
@@ -143,9 +138,7 @@ module "ocp_base_cluster_1" {
   resource_tags                       = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
   addons = {
-    cluster-autoscaler = {
-      version = "1.2.4"
-    }
+    cluster-autoscaler = { version = "2.0.0" }
   }
 }
 
@@ -170,9 +163,7 @@ module "ocp_base_cluster_2" {
   resource_tags                       = var.resource_tags
   ocp_entitlement                     = var.ocp_entitlement
   addons = {
-    cluster-autoscaler = {
-      version = "1.2.4"
-    }
+    cluster-autoscaler = { version = "2.0.0" }
   }
 }
 
