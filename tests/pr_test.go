@@ -447,16 +447,9 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 				"enable_activity_tracker_event_routing_to_cloud_logs": false,
 			},
 		},
+		// Disable SCC Workload Protection (and with it the required App Configuration dependency) to help prevent hitting quota in account
 		{
 			OfferingName:   "deploy-arch-ibm-scc-workload-protection",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"app_config_crn": permanentResources["app_config_crn"],
-			},
-			Enabled: core.BoolPtr(true),
-		},
-		{
-			OfferingName:   "deploy-arch-ibm-apprapp",
 			OfferingFlavor: "fully-configurable",
 			Enabled:        core.BoolPtr(false),
 		},
