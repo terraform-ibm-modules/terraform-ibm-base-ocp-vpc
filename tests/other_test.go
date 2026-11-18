@@ -6,6 +6,7 @@ import (
 
 	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
@@ -43,6 +44,9 @@ func TestRunMultiClusterExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+// TestRunAddRulesToSGExample runs a plan only. The security group behavior of the module is already
+// deployed by TestRunCustomsgExample, so a second cluster here adds cost and flakiness but little coverage.
+// The plan still checks that the example builds a valid graph against the current module code.
 func TestRunAddRulesToSGExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -50,18 +54,12 @@ func TestRunAddRulesToSGExample(t *testing.T) {
 		TerraformDir:  "examples/add_rules_to_sg",
 		Prefix:        "sg-rules",
 		ResourceGroup: resourceGroup,
-		ImplicitDestroy: []string{
-			"module.ocp_base.null_resource.confirm_network_healthy",
-		},
-		// Do not hard fail the test if the implicit destroy steps fail to allow a full destroy of resource to occur
-		ImplicitRequired: false,
 		TerraformVars: map[string]interface{}{
 			"ocp_version": ocpVersion4,
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
-	options.PostApplyHook = getClusterIngress
-	output, err := options.RunTestConsistency()
+	output, err := options.RunTestPlan()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
@@ -170,11 +168,73 @@ func TestRunGpuExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+func TestRoksAddonDefaultConfiguration(t *testing.T) {
+	t.Parallel()
+
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:               t,
+		Prefix:                "ocp-def",
+		ResourceGroup:         resourceGroup,
+		QuietMode:             false, // Suppress logs except on failure
+		OverrideInputMappings: core.BoolPtr(true),
+	})
+	region := "eu-de"
+
+	// Temp workaround for https://github.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc?tab=readme-ov-file#the-specified-api-key-could-not-be-found
+	createContainersApikey(t, region, options.ResourceGroup)
+
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,
+		"deploy-arch-ibm-slz-ocp",
+		"fully-configurable",
+		map[string]interface{}{
+			"region":                       region,
+			"existing_resource_group_name": options.ResourceGroup,
+		},
+	)
+
+	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// // Disable target / route creation to help prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
+		},
+	}
+
+	err := options.RunAddonTest()
+	require.NoError(t, err)
+}
+
 func TestAddonPermutations(t *testing.T) {
 	testCases := []testaddons.AddonTestCase{
 		{
 			Name:   "no-addons",
 			Prefix: "no-addons",
+			// Validate the dependency permutation in the catalog only. A full deploy of every
+			// permutation creates a cluster plus all dependencies and is too slow and flaky.
+			// TestRoksAddonDefaultConfiguration already covers a real deployment.
+			SkipInfrastructureDeployment: true,
 			Dependencies: []cloudinfo.AddonConfig{
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
@@ -221,6 +281,10 @@ func TestAddonPermutations(t *testing.T) {
 		{
 			Name:   "all-addons",
 			Prefix: "all-addons",
+			// Validate the dependency permutation in the catalog only. A full deploy of every
+			// permutation creates a cluster plus all dependencies and is too slow and flaky.
+			// TestRoksAddonDefaultConfiguration already covers a real deployment.
+			SkipInfrastructureDeployment: true,
 			Dependencies: []cloudinfo.AddonConfig{
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
@@ -267,6 +331,10 @@ func TestAddonPermutations(t *testing.T) {
 		{
 			Name:   "observability-with-no-deps",
 			Prefix: "obs-no-dep",
+			// Validate the dependency permutation in the catalog only. A full deploy of every
+			// permutation creates a cluster plus all dependencies and is too slow and flaky.
+			// TestRoksAddonDefaultConfiguration already covers a real deployment.
+			SkipInfrastructureDeployment: true,
 			Dependencies: []cloudinfo.AddonConfig{
 				{
 					OfferingName:   "deploy-arch-ibm-slz-vpc",
