@@ -66,8 +66,7 @@ locals {
   # Choosing RHEL for the default worker pool will limit all additional worker pools to RHEL.
   # If we plan to use RHCOS with the cluster, we should create the default worker pool with RHCOS.
 
-  os_rhcos  = "RHCOS"
-  os_rhel_9 = "RHEL_9_64"
+  os_rhcos = "RHCOS"
   cluster_1_vpc_subnets = {
     default = [
       for subnet in ibm_is_subnet.subnet_cluster_1 :
@@ -110,7 +109,7 @@ locals {
       minSize           = 2
       maxSize           = 3
       enableAutoscaling = true
-      operating_system  = local.os_rhel_9
+      operating_system  = local.os_rhcos
     }
   ]
 
