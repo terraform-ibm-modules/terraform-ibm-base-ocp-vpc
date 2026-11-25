@@ -447,6 +447,14 @@ func TestRoksAddonDefaultConfiguration(t *testing.T) {
 				"enable_activity_tracker_event_routing_to_cloud_logs": false,
 			},
 		},
+		{
+			OfferingName:   "deploy-arch-ibm-scc-workload-protection",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"app_config_crn": permanentResources["app_config_crn"],
+			},
+			Enabled: core.BoolPtr(true),
+		},
 	}
 
 	err := options.RunAddonTest()
